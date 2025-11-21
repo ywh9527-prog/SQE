@@ -57,6 +57,7 @@
     background: white;
     position: relative;
     overflow: hidden;
+    z-index: 0;
 }
 
 .upload-area::before {
@@ -69,6 +70,7 @@
     background: linear-gradient(135deg, var(--primary-50) 0%, var(--accent-50) 100%);
     opacity: 0;
     transition: opacity var(--transition-slow);
+    z-index: -1;
 }
 
 .upload-area:hover {
@@ -143,6 +145,8 @@
     transition: all var(--transition-base);
     box-shadow: 0 4px 12px rgba(26, 54, 93, 0.2);
     letter-spacing: 0.3px;
+    position: relative;
+    z-index: 2;
 }
 
 .btn-primary:hover {
@@ -556,6 +560,8 @@
 .sheet-selection {
     margin-top: 28px;
     animation: slideDown var(--transition-slow);
+    position: relative;
+    z-index: 2;
 }
 
 @keyframes slideDown {
@@ -611,27 +617,6 @@
     cursor: pointer;
     border: 2px solid transparent;
     transition: all var(--transition-base);
-    font-size: 15px;
-    font-weight: 600;
-    color: var(--gray-700);
-}
-
-.sheet-tab:hover {
-    background: var(--gray-200);
-    transform: translateY(-2px);
-}
-
-.sheet-tab.selected {
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-    color: white;
-    box-shadow: 0 4px 12px rgba(26, 54, 93, 0.3);
-    border-color: var(--primary-700);
-}
-
-/* ============================================
-   搜索区域
-   ============================================ */
-.supplier-search-section {
     background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
 }
 

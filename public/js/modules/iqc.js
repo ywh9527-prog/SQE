@@ -19,10 +19,11 @@
         init() {
             if (state.isInitialized) return;
 
-            console.log('IQC Module Initializing...');
+            console.log('IQC Module: Initializing...');
             this.cacheElements();
             this.bindEvents();
             state.isInitialized = true;
+            console.log('IQC Module: Initialization complete');
         },
 
         // 缓存 DOM 元素
@@ -51,22 +52,39 @@
                 previousPeriodStart: document.getElementById('previousPeriodStart'),
                 previousPeriodEnd: document.getElementById('previousPeriodEnd')
             };
+            console.log('IQC Module: Elements cached', {
+                form: !!els.uploadForm,
+                input: !!els.fileInput,
+                btn: !!els.uploadBtn
+            });
         },
 
         // 绑定事件
         bindEvents() {
             // 文件选择监听 (优化 UX: 选择文件后自动显示文件名)
             if (els.fileInput) {
+                console.log('IQC Module: Binding file input change event');
                 els.fileInput.addEventListener('change', (e) => {
+                    console.log('IQC Module: File selected', e.target.files[0]?.name);
                     const fileName = e.target.files[0]?.name;
                     const label = e.target.nextElementSibling.querySelector('span');
                     if (fileName && label) label.textContent = fileName;
+
+                    // 用户期望：选择文件后自动开始分析
+                    if (fileName) {
+                        console.log('IQC Module: Auto-triggering upload...');
+                        this.handleUpload({ preventDefault: () => { } });
+                    }
                 });
             }
 
             // 1. 上传表单提交
             if (els.uploadForm) {
-                els.uploadForm.addEventListener('submit', (e) => this.handleUpload(e));
+                console.log('IQC Module: Binding form submit event');
+                els.uploadForm.addEventListener('submit', (e) => {
+                    console.log('IQC Module: Form submit triggered');
+                    this.handleUpload(e);
+                });
             }
 
             // 2. 确认工作表
@@ -99,9 +117,18 @@
 
         // 处理上传
         async handleUpload(e) {
-            e.preventDefault();
+            if (e && e.preventDefault) e.preventDefault();
+
             const file = els.fileInput.files[0];
-            if (!file) return this.showToast('请选择一个Excel文件', 'warning');
+            if (!file) {
+                // 如果是点击按钮触发的，且没文件，则打开文件选择框
+                if (e && e.type === 'submit') {
+                    console.log('IQC Module: Upload button clicked without file, triggering file input');
+                    els.fileInput.click();
+                    return;
+                }
+                return this.showToast('请选择一个Excel文件', 'warning');
+            }
 
             this.showLoading(true);
             const formData = new FormData();
@@ -309,7 +336,8 @@
         showLoading(show) {
             if (show) {
                 els.loading.classList.remove('hidden');
-                els.results.classList.add('hidden');
+                // 不隐藏结果区域，防止布局跳动，Loading 遮罩会覆盖在上面
+                // els.results.classList.add('hidden');
             } else {
                 els.loading.classList.add('hidden');
             }

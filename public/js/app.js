@@ -19,5 +19,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 手动触发一次路由处理，确保直接访问带 hash 的 URL 时能正确渲染
-    // (Router 构造函数中已经绑定了 load 事件，但为了保险起见)
+    if (window.App.Router) {
+        window.App.Router.handleHashChange();
+    }
 });
