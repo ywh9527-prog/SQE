@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQE 供应商管理系统 v2.0</title>
+    <link rel="stylesheet" href="css/style_v2.css">
+    <!-- 模块化 CSS -->
+    <link rel="stylesheet" href="css/modules/iqc_v2.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- 引入图标库 -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">SQE</div>
+                <h2>质量管理平台</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-module="dashboard">
+                    <i class="ph ph-squares-four"></i>
+                    <span>工作台</span>
+                </a>
+                <a href="#iqc" class="nav-item" data-module="iqc">
+                    <i class="ph ph-chart-bar"></i>
+                    <span>IQC 质量分析</span>
+                </a>
+                <a href="#suppliers" class="nav-item" data-module="suppliers">
+                    <i class="ph ph-users"></i>
+                    <span>供应商档案</span>
+                </a>
+                <a href="#certificates" class="nav-item" data-module="certificates">
+                    <i class="ph ph-certificate"></i>
+                    <span>资质证书</span>
+                </a>
+                <a href="#performance" class="nav-item" data-module="performance">
+                    <i class="ph ph-trend-up"></i>
+                    <span>绩效评价</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info">
+                    <div class="avatar">A</div>
+                    <div class="details">
+                        <span class="name">Admin</span>
+                        <span class="role">SQE Manager</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 id="page-title">工作台</h2>
+                <div class="top-actions">
+                    <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                    <button class="icon-btn"><i class="ph ph-gear"></i></button>
+                </div>
+            </header>
+
+            <!-- 内容容器：各模块内容将动态渲染到这里 -->
+            <div id="content-container" class="content-container">
+                <!-- 默认显示 Dashboard -->
+                <div id="module-dashboard" class="module-view">
+                    <div class="welcome-card">
+                        <h3>欢迎回来，Admin</h3>
+                        <p>今天是 2025年11月21日，系统运行正常。</p>
+                    </div>
+                    <!-- 仪表盘概览卡片占位 -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon warning"><i class="ph ph-warning-circle"></i></div>
+                            <div class="stat-info">
+                                <span class="label">即将过期证书</span>
+                                <span class="value">3</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success"><i class="ph ph-check-circle"></i></div>
+                            <div class="stat-info">
+                                <span class="label">本月合格率</span>
+                                <span class="value">98.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IQC 模块容器 (初始隐藏) -->
+                <div id="module-iqc" class="module-view hidden">
+                    <div class="module-header">
+                        <h3>IQC 来料检验分析</h3>
+                    </div>
+
+                    <!-- 上传区域 -->
+                    <section class="upload-section card">
+                        <div class="section-header">
+                            <h4><i class="ph ph-upload-simple"></i> 上传数据</h4>
+                        </div>
+                        <div class="upload-area">
+                            <form id="uploadForm" enctype="multipart/form-data">
+                                <div class="file-input-wrapper">
+                                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" required
+                                        class="file-input">
+                                    <label for="excelFile" class="file-label">
+                                        <i class="ph ph-file-xls"></i>
+                                        <span>点击选择或拖拽 Excel 文件</span>
+                                    </label>
+                                </div>
+
+                                <div id="sheetSelection" class="sheet-selection hidden">
+                                    <div class="sheet-selection-card">
+                                        <h5><i class="ph ph-table"></i> 选择工作表</h5>
+                                        <p class="sheet-hint">检测到多个工作表，请选择需要分析的数据表</p>
+                                        <div class="sheet-tab-buttons" id="sheetTabContainer"></div>
+                                        <button type="button" id="confirmSheetBtn" class="btn-primary">开始分析</button>
+                                    </div>
+                                </div>
+
+                                <button type="submit" id="uploadBtn" class="btn-primary btn-block">上传并分析</button>
+                            </form>
+                        </div>
+
+                        <!-- Loading 状态 -->
+                        <div id="loading" class="loading hidden">
+                            <div class="loading-container">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">正在分析数据...</div>
+                                <div class="progress-bar">
+                                    <div class="progress-bar-fill"></div>
+                                </div>
+                                <div class="loading-tips">请稍候，正在处理您的Excel文件</div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 供应商搜索区域 -->
+                    <section id="supplierSearch" class="supplier-search-section card hidden">
+                        <div class="section-header">
+                            <h4><i class="ph ph-magnifying-glass"></i> 供应商筛选</h4>
+                        </div>
+                        <div class="search-controls">
+                            <div class="input-group">
+                                <input type="text" id="supplierSearchInput" list="supplierOptions"
+                                    placeholder="输入供应商名称..." class="form-input">
+                                <datalist id="supplierOptions"></datalist>
+                            </div>
+                            <div class="btn-group">
+                                <button id="searchSupplierBtn" class="btn-secondary"><i
+                                        class="ph ph-magnifying-glass"></i> 搜索</button>
+                                <button id="showAllBtn" class="btn-outline"><i class="ph ph-list"></i> 显示全部</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 错误提示 -->
+                    <section id="error" class="error-section hidden">
+                        <div class="error-card">
+                            <i class="ph ph-warning-circle"></i>
+                            <p id="errorMessage"></p>
+                        </div>
+                    </section>
+
+                    <!-- 分析结果区域 -->
+                    <section id="results" class="results-section hidden">
+                        <div class="section-header">
+                            <h4>分析结果 <span id="filter-info" class="filter-tag"></span></h4>
+                        </div>
+
+                        <!-- 汇总卡片 -->
+                        <div class="summary-stats">
+                            <div class="stat-card-mini">
+                                <div class="label">总批次数</div>
+                                <div class="value" id="totalBatches">-</div>
+                            </div>
+                            <div class="stat-card-mini success">
+                                <div class="label">合格批次数</div>
+                                <div class="value" id="okBatches">-</div>
+                            </div>
+                            <div class="stat-card-mini danger">
+                                <div class="label">退货批次数</div>
+                                <div class="value" id="returnBatches">-</div>
+                            </div>
+                            <div class="stat-card-mini warning">
+                                <div class="label">特采批次数</div>
+                                <div class="value" id="specialBatches">-</div>
+                            </div>
+                            <div class="stat-card-mini primary">
+                                <div class="label">批次合格率</div>
+                                <div class="value" id="passRate">-%</div>
+                            </div>
+                        </div>
+
+                        <div class="charts-grid">
+                            <!-- 缺陷分布图 -->
+                            <div class="chart-card">
+                                <h5>缺陷类型分布</h5>
+                                <div class="chart-wrapper">
+                                    <canvas id="defectDistributionChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 供应商良率排名 -->
+                            <div class="chart-card">
+                                <h5>供应商良率排名</h5>
+                                <div class="chart-wrapper">
+                                    <canvas id="supplierDefectRateChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 平均合格率趋势 -->
+                        <div class="chart-card full-width">
+                            <h5>平均合格率趋势</h5>
+                            <div class="chart-wrapper large">
+                                <canvas id="monthlyTrendChart"></canvas>
+                            </div>
+
+                            <!-- 数据表格折叠区域 -->
+                            <div class="data-table-container">
+                                <div class="table-header-action">
+                                    <h6>详细数据表</h6>
+                                </div>
+                                <div class="table-wrapper">
+                                    <table id="cumulativePassRateTable" class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>月份</th>
+                                                <th>批次数</th>
+                                                <th>合格数</th>
+                                                <th>特采数</th>
+                                                <th>批退数</th>
+                                                <th>当月合格率</th>
+                                                <th>平均合格率</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 周度对比 -->
+                        <div class="comparison-section card">
+                            <div class="section-header">
+                                <h5><i class="ph ph-arrows-left-right"></i> 周度数据对比</h5>
+                            </div>
+
+                            <div class="comparison-controls">
+                                <div class="date-range-group">
+                                    <label>本周:</label>
+                                    <input type="date" id="currentPeriodStart" class="form-input date-input">
+                                    <span>至</span>
+                                    <input type="date" id="currentPeriodEnd" class="form-input date-input">
+                                </div>
+                                <div class="date-range-group">
+                                    <label>上周:</label>
+                                    <input type="date" id="previousPeriodStart" class="form-input date-input">
+                                    <span>至</span>
+                                    <input type="date" id="previousPeriodEnd" class="form-input date-input">
+                                </div>
+                                <div class="btn-group">
+                                    <button id="compareBtn" class="btn-secondary">自定义对比</button>
+                                    <button id="resetBtn" class="btn-outline">重置</button>
+                                </div>
+                            </div>
+
+                            <div class="comparison-results">
+                                <div class="comparison-col">
+                                    <h6 id="currentPeriodTitle">本周数据</h6>
+                                    <div id="currentWeekData" class="data-list">
+                                        <div class="data-row"><span>总批次:</span> <span id="currentWeekTotal">-</span>
+                                        </div>
+                                        <div class="data-row"><span>合格:</span> <span id="currentWeekOk">-</span></div>
+                                        <div class="data-row"><span>退货:</span> <span id="currentWeekReturn">-</span>
+                                        </div>
+                                        <div class="data-row"><span>特采:</span> <span id="currentWeekSpecial">-</span>
+                                        </div>
+                                        <div class="data-row highlight"><span>合格率:</span> <span
+                                                id="currentWeekPassRate">-%</span></div>
+                                    </div>
+                                </div>
+                                <div class="comparison-divider">VS</div>
+                                <div class="comparison-col">
+                                    <h6 id="previousPeriodTitle">上周数据</h6>
+                                    <div id="previousWeekData" class="data-list">
+                                        <div class="data-row"><span>总批次:</span> <span id="previousWeekTotal">-</span>
+                                        </div>
+                                        <div class="data-row"><span>合格:</span> <span id="previousWeekOk">-</span></div>
+                                        <div class="data-row"><span>退货:</span> <span id="previousWeekReturn">-</span>
+                                        </div>
+                                        <div class="data-row"><span>特采:</span> <span id="previousWeekSpecial">-</span>
+                                        </div>
+                                        <div class="data-row highlight"><span>合格率:</span> <span
+                                                id="previousWeekPassRate">-%</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 月度统计详情 -->
+                        <div class="monthly-stats-section card">
+                            <div class="section-header">
+                                <h5>月度统计详情</h5>
+                            </div>
+                            <div id="monthlyData" class="monthly-grid"></div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 其他模块占位 -->
+                <div id="module-suppliers" class="module-view hidden">
+                    <h3>供应商档案 (开发中)</h3>
+                </div>
+                <div id="module-certificates" class="module-view hidden">
+                    <h3>资质证书 (开发中)</h3>
+                </div>
+                <div id="module-performance" class="module-view hidden">
+                    <h3>绩效评价 (开发中)</h3>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 核心脚本 -->
+    <script src="js/api_core.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/charts.js"></script>
+
+    <!-- 模块脚本 -->
+    <script src="js/modules/router.js"></script>
+    <script src="js/modules/iqc.js"></script>
+
+    <!-- 主入口脚本 (必须最后加载) -->
+    <script src="js/app.js"></script>
+</body>
+
+</html>
