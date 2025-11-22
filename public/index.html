@@ -116,28 +116,13 @@
                                 </div>
 
                                 <div id="sheetSelection" class="sheet-selection hidden">
-                                    <div class="sheet-selection-card">
-                                        <h5><i class="ph ph-table"></i> 选择工作表</h5>
-                                        <p class="sheet-hint">检测到多个工作表，请选择需要分析的数据表</p>
-                                        <div class="sheet-tab-buttons" id="sheetTabContainer"></div>
-                                        <button type="button" id="confirmSheetBtn" class="btn-primary">开始分析</button>
+                                    <div class="loading-spinner"></div>
+                                    <div class="loading-text">正在分析数据...</div>
+                                    <div class="progress-bar">
+                                        <div class="progress-bar-fill"></div>
                                     </div>
+                                    <div class="loading-tips">请稍候，正在处理您的Excel文件</div>
                                 </div>
-
-                                <button type="submit" id="uploadBtn" class="btn-primary btn-block">上传并分析</button>
-                            </form>
-                        </div>
-
-                        <!-- Loading 状态 -->
-                        <div id="loading" class="loading hidden">
-                            <div class="loading-container">
-                                <div class="loading-spinner"></div>
-                                <div class="loading-text">正在分析数据...</div>
-                                <div class="progress-bar">
-                                    <div class="progress-bar-fill"></div>
-                                </div>
-                                <div class="loading-tips">请稍候，正在处理您的Excel文件</div>
-                            </div>
                         </div>
                     </section>
 

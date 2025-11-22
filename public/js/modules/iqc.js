@@ -78,11 +78,21 @@
                 });
             }
 
-            // 1. 上传表单提交
+            // 1. 上传按钮点击监听 (直接绑定 click，不依赖 form submit)
+            if (els.uploadBtn) {
+                console.log('IQC Module: Binding upload button click event');
+                els.uploadBtn.addEventListener('click', (e) => {
+                    console.log('IQC Module: Upload button clicked');
+                    e.preventDefault();
+                    this.handleUpload(e);
+                });
+            }
+
+            // 保留 form submit 作为后备，防止回车提交等情况
             if (els.uploadForm) {
-                console.log('IQC Module: Binding form submit event');
                 els.uploadForm.addEventListener('submit', (e) => {
                     console.log('IQC Module: Form submit triggered');
+                    e.preventDefault();
                     this.handleUpload(e);
                 });
             }
@@ -121,13 +131,10 @@
 
             const file = els.fileInput.files[0];
             if (!file) {
-                // 如果是点击按钮触发的，且没文件，则打开文件选择框
-                if (e && e.type === 'submit') {
-                    console.log('IQC Module: Upload button clicked without file, triggering file input');
-                    els.fileInput.click();
-                    return;
-                }
-                return this.showToast('请选择一个Excel文件', 'warning');
+                // 只要没文件，点击按钮就触发文件选择
+                console.log('IQC Module: No file selected, triggering file input');
+                els.fileInput.click();
+                return;
             }
 
             this.showLoading(true);
