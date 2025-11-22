@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/style_v2.css">
     <!-- 模块化 CSS -->
     <link rel="stylesheet" href="css/modules/iqc_v2.css">
+    <link rel="stylesheet" href="css/modules/sheet-selection-debug.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -116,12 +117,11 @@
                                 </div>
 
                                 <div id="sheetSelection" class="sheet-selection hidden">
-                                    <div class="loading-spinner"></div>
-                                    <div class="loading-text">正在分析数据...</div>
-                                    <div class="progress-bar">
-                                        <div class="progress-bar-fill"></div>
+                                    <h5>请选择数据工作表:</h5>
+                                    <div id="sheetTabContainer" class="sheet-tabs"></div>
+                                    <div class="sheet-actions">
+                                        <button type="button" id="confirmSheetBtn" class="btn-primary">确认分析</button>
                                     </div>
-                                    <div class="loading-tips">请稍候，正在处理您的Excel文件</div>
                                 </div>
                         </div>
                     </section>

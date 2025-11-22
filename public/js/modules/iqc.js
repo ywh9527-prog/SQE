@@ -152,7 +152,9 @@
 
                 // 显示工作表选择区域，隐藏上传按钮
                 els.sheetSelection.classList.remove('hidden');
-                els.uploadBtn.classList.add('hidden');
+                if (els.uploadBtn) {
+                    els.uploadBtn.classList.add('hidden');
+                }
                 this.showLoading(false);
 
             } catch (error) {
@@ -341,6 +343,10 @@
 
         // --- 工具方法 ---
         showLoading(show) {
+            if (!els.loading) {
+                console.warn('IQC Module: loading element not found');
+                return;
+            }
             if (show) {
                 els.loading.classList.remove('hidden');
                 // 不隐藏结果区域，防止布局跳动，Loading 遮罩会覆盖在上面
