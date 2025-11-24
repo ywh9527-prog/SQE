@@ -48,7 +48,28 @@ class DataProcessorService {
 
         // 时间筛选
         if (timeFilter) {
-          const itemDate = new Date(row.time);
+          if (!row.time) return false;
+          
+          let itemDate;
+          try {
+            // 如果已经是 Date 对象，直接使用
+            if (row.time instanceof Date) {
+              itemDate = row.time;
+            } else {
+              // 如果是字符串，转换为 Date
+              itemDate = new Date(row.time);
+            }
+            
+            // 检查日期是否有效
+            if (isNaN(itemDate.getTime())) {
+              console.warn('Invalid date format:', row.time);
+              return false;
+            }
+          } catch (e) {
+            console.warn('Date parsing error:', e.message, 'for value:', row.time);
+            return false;
+          }
+          
           if (timeFilter.type === 'month' && timeFilter.value) {
             const [year, month] = timeFilter.value.split('-');
             if (itemDate.getFullYear() !== parseInt(year) ||
@@ -312,7 +333,8 @@ class DataProcessorService {
     const monthlyData = {};
 
     validData.forEach(item => {
-      const monthKey = `${item.time.getFullYear()}-${String(item.time.getMonth() + 1).padStart(2, '0')}`;
+      const itemDate = item.time instanceof Date ? item.time : new Date(item.time);
+      const monthKey = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}`;
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = {
           total: 0,
@@ -374,12 +396,14 @@ class DataProcessorService {
 
     // 筛选本周和上周数据，只比较日期部分
     const currentWeekData = validData.filter(item => {
-      const itemDate = new Date(item.time.getFullYear(), item.time.getMonth(), item.time.getDate());
+      const itemTime = item.time instanceof Date ? item.time : new Date(item.time);
+      const itemDate = new Date(itemTime.getFullYear(), itemTime.getMonth(), itemTime.getDate());
       return itemDate >= currentWeekStartBoundary && itemDate <= currentWeekEndBoundary;
     });
 
     const previousWeekData = validData.filter(item => {
-      const itemDate = new Date(item.time.getFullYear(), item.time.getMonth(), item.time.getDate());
+      const itemTime = item.time instanceof Date ? item.time : new Date(item.time);
+      const itemDate = new Date(itemTime.getFullYear(), itemTime.getMonth(), itemTime.getDate());
       return itemDate >= previousWeekStartBoundary && itemDate <= previousWeekEndBoundary;
     });
 

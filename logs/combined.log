@@ -530,3 +530,74 @@
 2025-11-24 14:37:42 [INFO]: 检测到文件类型: purchase
 2025-11-24 14:37:42 [INFO]: 数据处理统计: 总行数=1089, 有效日期行=0, 有效结果行=0, 最终筛选行=0
 2025-11-24 14:37:42 [INFO]: 数据处理完成，有效数据行数: 0
+2025-11-24 15:51:30 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 15:51:30 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 15:51:39 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 15:51:39 [INFO]: 检测到文件类型: purchase
+2025-11-24 15:51:39 [INFO]: 数据处理统计: 总行数=1089, 有效日期行=0, 有效结果行=0, 最终筛选行=0
+2025-11-24 15:51:39 [INFO]: 数据处理完成，有效数据行数: 0
+2025-11-24 15:53:29 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 15:53:29 [INFO]: 检测到文件类型: purchase
+2025-11-24 15:53:29 [INFO]: 数据处理统计: 总行数=1089, 有效日期行=0, 有效结果行=0, 最终筛选行=0
+2025-11-24 15:53:29 [INFO]: 数据处理完成，有效数据行数: 0
+2025-11-24 15:57:23 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 15:57:23 [INFO]: 检测到文件类型: external
+2025-11-24 15:57:23 [INFO]: 数据处理统计: 总行数=1622, 有效日期行=1089, 有效结果行=1089, 最终筛选行=1089
+2025-11-24 15:57:23 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 15:57:23 [INFO]: 数据处理完成，有效数据行数: 1089
+2025-11-24 16:10:51 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:10:51 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:17:23 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:17:23 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:24:34 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:24:34 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:24:50 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:24:50 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:27:04 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 16:27:04 [INFO]: 检测到文件类型: external
+2025-11-24 16:27:04 [INFO]: 数据处理统计: 总行数=1622, 有效日期行=1089, 有效结果行=1089, 最终筛选行=1089
+2025-11-24 16:27:04 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 16:27:04 [INFO]: 数据处理完成，有效数据行数: 1089
+2025-11-24 16:28:58 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:28:58 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:33:46 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:33:46 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:47:22 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:47:22 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:50:10 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 16:58:31 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 16:58:31 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 16:58:39 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 16:59:17 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 16:59:21 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 16:59:31 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 16:59:41 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 17:00:58 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 17:00:59 [ERROR]: 重新计算失败: item.time.getFullYear is not a function
+2025-11-24 17:01:32 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 17:01:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 17:01:40 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 17:01:50 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 17:02:06 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 17:02:06 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 17:05:34 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 17:05:34 [INFO]: 检测到文件类型: external
+2025-11-24 17:05:34 [INFO]: 数据处理统计: 总行数=1622, 有效日期行=1089, 有效结果行=1089, 最终筛选行=1089
+2025-11-24 17:05:34 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 17:05:34 [INFO]: 数据处理完成，有效数据行数: 1089
+2025-11-24 17:05:34 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 17:05:44 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 17:05:44 [INFO]: 检测到文件类型: external
+2025-11-24 17:05:44 [INFO]: 数据处理统计: 总行数=1622, 有效日期行=1089, 有效结果行=1089, 最终筛选行=1089
+2025-11-24 17:05:44 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 17:05:44 [INFO]: 数据处理完成，有效数据行数: 1089
+2025-11-24 17:06:31 [INFO]: 开始处理文件: IQCæ¥ææ£éªå°è´¦ï¼å¤åï¼.xlsx.xlsx, 供应商筛选: 无, 时间筛选: null
+2025-11-24 17:06:31 [INFO]: 检测到文件类型: external
+2025-11-24 17:06:31 [INFO]: 数据处理统计: 总行数=1622, 有效日期行=1089, 有效结果行=1089, 最终筛选行=1089
+2025-11-24 17:06:31 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0
+2025-11-24 17:06:31 [INFO]: 数据处理完成，有效数据行数: 1089
+2025-11-24 17:12:51 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 17:12:51 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 17:13:00 [INFO]: 数据库连接成功 (SQLite)
+2025-11-24 17:13:00 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-11-24 17:13:03 [INFO]: 周度统计: 本周(2025-11-21~2025-11-27) 数据量=0, 上周(2025-11-14~2025-11-20) 数据量=0

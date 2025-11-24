@@ -84,10 +84,15 @@
         },
 
         // 自定义时间段对比
-        async compareCustomPeriods(formData) {
+        async compareCustomPeriods(requestData) {
+            const isFormData = requestData instanceof FormData;
+            
             const response = await fetch('/api/compare-custom-periods', {
                 method: 'POST',
-                body: formData
+                headers: isFormData ? {} : {
+                    'Content-Type': 'application/json'
+                },
+                body: isFormData ? requestData : JSON.stringify(requestData)
             });
             if (!response.ok) {
                 const errorText = await response.text();

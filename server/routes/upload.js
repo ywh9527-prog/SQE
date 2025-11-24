@@ -326,19 +326,48 @@ router.get('/latest-data', async (req, res) => {
       return res.status(404).json({ error: 'No data found' });
     }
 
-    // 重新计算数据以确保格式一致
-    const dataProcessor = new DataProcessorService();
-    const result = dataProcessor.processIQCData(record.rawData, null, null, record.fileName);
+    // 转换月度数据为趋势格式
+    const monthlyTrend = [];
+    if (record.monthlyData) {
+      Object.keys(record.monthlyData).forEach(month => {
+        const data = record.monthlyData[month];
+        monthlyTrend.push({
+          month: month,
+          total: data.total,
+          passRate: data.total > 0 ? ((data.ok / data.total) * 100).toFixed(2) : 0,
+          returnCount: data.return || 0,
+          specialCount: data.special || 0
+        });
+      });
+      // 按月份排序
+      monthlyTrend.sort((a, b) => a.month.localeCompare(b.month));
+    }
 
-    // 补充 fileId 和 sheetInfo
-    result.fileId = record.id;
-    result.sheetInfo = {
-      selectedSheet: record.sheetName,
-      message: `已自动加载历史数据: ${record.fileName} (${record.sheetName})`
+    // 直接使用已存储的统计数据，包装成前端期望的格式
+    const result = {
+      summary: record.summary,
+      monthlyData: record.monthlyData,
+      monthlyTrend: monthlyTrend,
+      fileId: record.id,
+      fileName: record.fileName,
+      sheetInfo: {
+        selectedSheet: record.sheetName,
+        message: `已自动加载: ${record.fileName}`
+      }
     };
 
-    // 移除 rawData
-    delete result.rawData;
+    // 重新计算供应商排名、缺陷分布和周度对比（基于已处理的rawData）
+    if (record.rawData && record.rawData.length > 0) {
+      const dataProcessor = new DataProcessorService();
+      const supplierRanking = dataProcessor.calculateSupplierRanking(record.rawData);
+      const defectDistribution = dataProcessor.calculateDefectDistribution(record.rawData);
+      const recentTwoWeeks = dataProcessor.calculateWeekComparison(record.rawData);
+      
+      result.supplierRanking = supplierRanking;
+      result.defectDistribution = defectDistribution;
+      result.supplierDefectDistribution = []; // 空数组，前端会根据需要重新计算
+      result.recentTwoWeeks = recentTwoWeeks;
+    }
 
     res.json(result);
   } catch (error) {

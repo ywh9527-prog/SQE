@@ -305,14 +305,31 @@
             btn.disabled = true;
 
             try {
-                const formData = new FormData();
-                formData.append('excelFile', state.uploadedFile);
-                formData.append('currentPeriodStart', s1);
-                formData.append('currentPeriodEnd', e1);
-                formData.append('previousPeriodStart', s2);
-                formData.append('previousPeriodEnd', e2);
+                let requestData;
+                
+                if (state.uploadedFile) {
+                    // 有上传文件时使用 FormData
+                    const formData = new FormData();
+                    formData.append('excelFile', state.uploadedFile);
+                    formData.append('currentPeriodStart', s1);
+                    formData.append('currentPeriodEnd', e1);
+                    formData.append('previousPeriodStart', s2);
+                    formData.append('previousPeriodEnd', e2);
+                    requestData = formData;
+                } else if (state.fileId) {
+                    // 自动加载时使用 JSON 数据
+                    requestData = {
+                        currentPeriodStart: s1,
+                        currentPeriodEnd: e1,
+                        previousPeriodStart: s2,
+                        previousPeriodEnd: e2,
+                        fileId: state.fileId
+                    };
+                } else {
+                    throw new Error('没有可用的数据源');
+                }
 
-                const data = await window.App.API.compareCustomPeriods(formData);
+                const data = await window.App.API.compareCustomPeriods(requestData);
 
                 if (data.error) throw new Error(data.error);
 

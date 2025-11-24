@@ -13,25 +13,63 @@ set "NODE_PORTABLE=%~dp0nodejs-portable"
 set "NODE_EXE=%NODE_PORTABLE%\node.exe"
 set "NPM_CMD=%NODE_PORTABLE%\npm.cmd"
 
-REM Check if port 8888 is in use
+REM Check if port 8888 is in use and identify the process
+set "FOUND_SQE_PROCESS=0"
 for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8888"') do (
-    set PID=%%a
-    goto :found_port
+    if "%%a" NEQ "0" (
+        echo [!] Port 8888 is in use by process ID: %%a
+        REM Check if this is our SQE server by examining the command line
+        wmic process where "ProcessId=%%a" get CommandLine /value 2>nul | findstr /i "server\\index.js" >nul
+        if errorlevel 1 (
+            echo [!] Process %%a is not our SQE server, checking details...
+            REM Additional check: look for SQE in the process path or command line
+            wmic process where "ProcessId=%%a" get CommandLine,ExecutablePath /value 2>nul | findstr /i "SQE\|sqe" >nul
+            if errorlevel 1 (
+                echo [!] Process %%a is not SQE-related, skipping to avoid disrupting other services
+            ) else (
+                echo [+] Found SQE-related process %%a, terminating...
+                taskkill /PID %%a /F >nul 2>&1
+                if errorlevel 1 (
+                    echo [x] Failed to stop SQE process %%a
+                ) else (
+                    echo [OK] SQE process %%a stopped successfully
+                    set "FOUND_SQE_PROCESS=1"
+                )
+            )
+        ) else (
+            echo [+] Found our SQE server process %%a, terminating...
+            taskkill /PID %%a /F >nul 2>&1
+            if errorlevel 1 (
+                echo [x] Failed to stop SQE server process %%a
+            ) else (
+                echo [OK] SQE server process %%a stopped successfully
+                set "FOUND_SQE_PROCESS=1"
+            )
+        )
+    )
 )
-goto :no_port
 
-:found_port
-echo [!] Port 8888 is already in use by process ID: %PID%
-echo [+] Attempting to stop the process...
-taskkill /PID %PID% /F >nul 2>&1
-if errorlevel 1 (
-    echo [x] Failed to stop the process. Please close it manually.
-    pause
-    exit /b 1
+if %FOUND_SQE_PROCESS%==1 (
+    echo.
+    echo [OK] SQE processes cleaned up, waiting for ports to release...
+    timeout /t 3 >nul
+) else (
+    echo.
+    echo [!] No SQE processes were terminated. If port 8888 is still in use by another application:
+    echo [!] - The SQE server may fail to start
+    echo [!] - You may need to manually close the other application using port 8888
+    echo.
 )
-echo [OK] Process stopped successfully.
+
+REM Final check if port is still in use
+netstat -ano | findstr ":8888" >nul 2>&1
+if errorlevel 1 (
+    echo [OK] Port 8888 is now available
+) else (
+    echo [!] Port 8888 is still in use by another process
+    echo [!] SQE server will attempt to start anyway...
+)
 echo.
-timeout /t 2 >nul
 
 :no_port
 
