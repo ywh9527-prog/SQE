@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     window.App.Router.register('suppliers', () => {
         console.log('供应商模块已激活');
+        if (window.App.Modules && window.App.Modules.Suppliers) {
+            window.App.Modules.Suppliers.init();
+        }
     });
 
     // 手动触发一次路由处理，确保直接访问带 hash 的 URL 时能正确渲染

@@ -1,24 +1,13 @@
 const express = require('express');
 const fs = require('fs');
+const crypto = require('crypto');
 const ExcelParserService = require('../services/excel-parser');
 const DataProcessorService = require('../services/data-processor');
 const SupplierService = require('../services/supplier-service');
 const upload = require('../middleware/upload-config');
+const IQCData = require('../models/IQCData');
 
 const router = express.Router();
-
-// 简单的内存缓存，用于存储已解析的数据
-const fileCache = new Map();
-
-// 缓存清理机制：每小时清理一次过期数据（超过24小时）
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, value] of fileCache.entries()) {
-    if (now - value.timestamp > 24 * 60 * 60 * 1000) {
-      fileCache.delete(key);
-    }
-  }
-}, 60 * 60 * 1000);
 
 // 获取Excel文件的工作表信息路由
 router.post('/get-sheets', upload.single('excelFile'), (req, res) => {
@@ -60,13 +49,19 @@ router.post('/get-sheets', upload.single('excelFile'), (req, res) => {
   }
 });
 
-// 文件上传路由
-router.post('/upload', upload.single('excelFile'), (req, res) => {
+// 文件上传路由 - 持久化存储
+router.post('/upload', upload.single('excelFile'), async (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');
   }
 
   try {
+    // 计算文件 Hash
+    const fileBuffer = fs.readFileSync(req.file.path);
+    const hashSum = crypto.createHash('md5');
+    hashSum.update(fileBuffer);
+    const fileHash = hashSum.digest('hex');
+
     // 解析Excel文件（使用改进的版本，自动选择最新年份工作表）
     const parseResult = ExcelParserService.parseExcelFileWithSheets(req.file.path);
     const jsonData = parseResult.data;
@@ -77,6 +72,16 @@ router.post('/upload', upload.single('excelFile'), (req, res) => {
     const dataProcessor = new DataProcessorService();
     const result = dataProcessor.processIQCData(jsonData, null, null, req.file.originalname);
 
+    // 保存到数据库
+    const record = await IQCData.create({
+      fileName: req.file.originalname,
+      fileHash: fileHash,
+      summary: result.summary,
+      monthlyData: result.monthlyData,
+      rawData: result.rawData,
+      sheetName: parseResult.selectedSheet
+    });
+
     // 添加工作表信息到结果中
     result.sheetInfo = {
       selectedSheet: parseResult.selectedSheet,
@@ -84,24 +89,11 @@ router.post('/upload', upload.single('excelFile'), (req, res) => {
       message: `已分析工作表: ${parseResult.selectedSheet}`
     };
 
-    // 生成文件ID并缓存原始数据
-    const fileId = Date.now().toString();
-
-    // 限制缓存大小，防止内存溢出
-    if (fileCache.size > 50) {
-      const firstKey = fileCache.keys().next().value;
-      fileCache.delete(firstKey);
-    }
-
-    fileCache.set(fileId, {
-      rawData: result.rawData,
-      fileName: req.file.originalname,
-      timestamp: Date.now()
-    });
+    // 使用数据库 ID 作为 fileId
+    result.fileId = record.id;
 
     // 从响应中移除原始数据以减少传输量
     delete result.rawData;
-    result.fileId = fileId;
 
     res.json(result);
   } catch (error) {
@@ -121,26 +113,29 @@ router.post('/upload', upload.single('excelFile'), (req, res) => {
   }
 });
 
-// 基于缓存数据的筛选路由（无需重新上传）
-router.post('/filter-data', express.json(), (req, res) => {
+// 基于数据库数据的筛选路由
+router.post('/filter-data', express.json(), async (req, res) => {
   const { fileId, supplierName, timeFilterType, timeFilterValue } = req.body;
 
-  if (!fileId || !fileCache.has(fileId)) {
-    return res.status(400).json({ error: '文件会话已过期或无效，请重新上传文件。' });
+  if (!fileId) {
+    return res.status(400).json({ error: 'File ID is required.' });
   }
 
   try {
-    const cachedData = fileCache.get(fileId);
-    const dataProcessor = new DataProcessorService();
+    const record = await IQCData.findByPk(fileId);
+    if (!record) {
+      return res.status(404).json({ error: '记录不存在或已过期' });
+    }
 
+    const dataProcessor = new DataProcessorService();
     const timeFilter = timeFilterType && timeFilterValue ? { type: timeFilterType, value: timeFilterValue } : null;
 
     // 使用 recalculate 方法重新计算
-    const result = dataProcessor.recalculate(cachedData.rawData, supplierName, timeFilter);
+    const result = dataProcessor.recalculate(record.rawData, supplierName, timeFilter);
 
     // 保持 fileId
-    result.fileId = fileId;
-    result.fileName = cachedData.fileName;
+    result.fileId = record.id;
+    result.fileName = record.fileName;
 
     res.json(result);
   } catch (error) {
@@ -149,19 +144,22 @@ router.post('/filter-data', express.json(), (req, res) => {
   }
 });
 
-// 获取指定月份详细数据路由
-router.post('/get-month-details', express.json(), (req, res) => {
+// 获取指定月份详细数据路由 - 从数据库读取
+router.post('/get-month-details', express.json(), async (req, res) => {
   const { fileId, month, supplierName } = req.body;
 
-  if (!fileId || !fileCache.has(fileId)) {
-    return res.status(400).json({ error: '文件会话已过期或无效，请重新上传文件。' });
+  if (!fileId) {
+    return res.status(400).json({ error: 'File ID is required.' });
   }
 
   try {
-    const cachedData = fileCache.get(fileId);
+    const record = await IQCData.findByPk(fileId);
+    if (!record) {
+      return res.status(404).json({ error: '记录不存在或已过期' });
+    }
 
     // 筛选指定月份的数据
-    const monthData = cachedData.rawData.filter(item => {
+    const monthData = record.rawData.filter(item => {
       // 1. 时间筛选
       const itemDate = new Date(item.time);
       const itemMonthKey = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}`;
@@ -299,6 +297,53 @@ router.post('/get-supplier-ranking', upload.single('excelFile'), (req, res) => {
         console.error('Error deleting temp file:', err);
       }
     }
+  }
+});
+
+// 获取上传历史记录
+router.get('/history', async (req, res) => {
+  try {
+    const history = await IQCData.findAll({
+      attributes: ['id', 'fileName', 'uploadTime', 'sheetName'],
+      order: [['uploadTime', 'DESC']],
+      limit: 20
+    });
+    res.json(history);
+  } catch (error) {
+    console.error('Error fetching history:', error);
+    res.status(500).json({ error: '获取历史记录失败' });
+  }
+});
+
+// 获取最新上传的数据（用于自动加载）
+router.get('/latest-data', async (req, res) => {
+  try {
+    const record = await IQCData.findOne({
+      order: [['uploadTime', 'DESC']]
+    });
+
+    if (!record) {
+      return res.status(404).json({ error: 'No data found' });
+    }
+
+    // 重新计算数据以确保格式一致
+    const dataProcessor = new DataProcessorService();
+    const result = dataProcessor.processIQCData(record.rawData, null, null, record.fileName);
+
+    // 补充 fileId 和 sheetInfo
+    result.fileId = record.id;
+    result.sheetInfo = {
+      selectedSheet: record.sheetName,
+      message: `已自动加载历史数据: ${record.fileName} (${record.sheetName})`
+    };
+
+    // 移除 rawData
+    delete result.rawData;
+
+    res.json(result);
+  } catch (error) {
+    console.error('Error fetching latest data:', error);
+    res.status(500).json({ error: 'Failed to fetch latest data' });
   }
 });
 

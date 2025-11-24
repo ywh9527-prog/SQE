@@ -22,6 +22,8 @@
             console.log('IQC Module: Initializing...');
             this.cacheElements();
             this.bindEvents();
+            this.loadHistory();
+            this.loadLatestData();
             state.isInitialized = true;
             console.log('IQC Module: Initialization complete');
         },
@@ -50,7 +52,9 @@
                 currentPeriodStart: document.getElementById('currentPeriodStart'),
                 currentPeriodEnd: document.getElementById('currentPeriodEnd'),
                 previousPeriodStart: document.getElementById('previousPeriodStart'),
-                previousPeriodEnd: document.getElementById('previousPeriodEnd')
+                previousPeriodEnd: document.getElementById('previousPeriodEnd'),
+                historySection: document.getElementById('historySection'),
+                historyList: document.getElementById('historyList')
             };
             console.log('IQC Module: Elements cached', {
                 form: !!els.uploadForm,
@@ -339,6 +343,89 @@
             els.previousPeriodStart.value = '';
             els.previousPeriodEnd.value = '';
             this.handleShowAll(); // 重新加载默认数据
+        },
+
+        // 加载历史记录
+        async loadHistory() {
+            try {
+                const history = await window.App.API.getHistory();
+                this.renderHistoryList(history);
+            } catch (error) {
+                console.error('Failed to load history:', error);
+            }
+        },
+
+        // 渲染历史记录列表
+        renderHistoryList(history) {
+            if (!history || history.length === 0) {
+                if (els.historySection) els.historySection.classList.add('hidden');
+                return;
+            }
+
+            if (els.historyList) {
+                els.historyList.innerHTML = '';
+                history.forEach(item => {
+                    const div = document.createElement('div');
+                    div.className = 'history-item';
+                    div.innerHTML = `
+                        <h5 title="${item.fileName}">${item.fileName}</h5>
+                        <p>工作表: ${item.sheetName || '-'}</p>
+                        <div class="meta">
+                            <span>${new Date(item.uploadTime).toLocaleDateString()}</span>
+                            <span>${new Date(item.uploadTime).toLocaleTimeString()}</span>
+                        </div>
+                    `;
+                    div.addEventListener('click', () => this.handleHistoryClick(item.id));
+                    els.historyList.appendChild(div);
+                });
+            }
+
+            if (els.historySection) els.historySection.classList.remove('hidden');
+        },
+
+        // 处理历史记录点击
+        async handleHistoryClick(fileId) {
+            this.showLoading(true);
+            try {
+                const data = await window.App.API.filterData({ fileId });
+                this.processAnalysisResult(data);
+
+                // 滚动到结果区域
+                if (els.results) els.results.scrollIntoView({ behavior: 'smooth' });
+            } catch (error) {
+                this.showError(error.message);
+            }
+        },
+
+        // 自动加载最新数据
+        async loadLatestData() {
+            try {
+                console.log('IQC Module: Attempting to auto-load latest data...');
+                const data = await window.App.API.getLatestData();
+                console.log('IQC Module: getLatestData returned:', data);
+
+                if (data) {
+                    console.log('IQC Module: Latest data loaded -', data.fileName);
+                    state.fileId = data.fileId;
+                    state.uploadedFile = null;
+                    this.processAnalysisResult(data, false);
+
+                    if (els.uploadBtn) els.uploadBtn.classList.add('hidden');
+                    if (els.sheetSelection) els.sheetSelection.classList.add('hidden');
+
+                    if (data.supplierRanking) {
+                        const suppliers = data.supplierRanking.map(item => item.supplier);
+                        console.log('IQC Module: Found', suppliers.length, 'suppliers');
+                        window.App.UI.populateSupplierDatalist(suppliers);
+                    }
+
+                    this.showToast(`已自动加载: ${data.fileName}`, 'success');
+                } else {
+                    console.log('IQC Module: No data available (database empty)');
+                }
+            } catch (error) {
+                console.error('IQC Module: Auto-load failed:', error);
+            }
         },
 
         // --- 工具方法 ---

@@ -1,0 +1,48 @@
+/* 展开的详情容器样式 */
+.monthly-record.expanded .month-details-container {
+    max-height: 1000px !important;
+    padding: 20px !important;
+    opacity: 1 !important;
+    border-top: 1px solid var(--gray-200) !important;
+}
+
+/* 月度详情表格样式 */
+.month-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    table-layout: auto;
+}
+
+.month-details-table th,
+.month-details-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.month-details-table th {
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-700);
+    white-space: nowrap;
+}
+
+.month-details-table td {
+    color: var(--gray-600);
+}
+
+.month-details-table .appearance-rate {
+    font-weight: 500;
+    color: var(--primary-600);
+}
+
+.month-details-table .status-ok {
+    color: var(--success-600);
+    font-weight: 600;
+}
+
+.month-details-table .status-ng {
+    color: var(--danger-600);
+    font-weight: 600;
+}

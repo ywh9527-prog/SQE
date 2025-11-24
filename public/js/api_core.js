@@ -96,21 +96,26 @@
             return await response.json();
         },
 
-        // 获取月度详细数据
-        async getMonthDetails(data) {
-            const response = await fetch('/api/get-month-details', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify(data)
-            });
+        // 获取最新数据
+        async getLatestData() {
+            const response = await fetch('/api/latest-data');
             if (!response.ok) {
+                if (response.status === 404) return null;
                 const errorText = await response.text();
-                throw new Error(errorText || '获取月度详情失败');
+                throw new Error(errorText || '获取最新数据失败');
             }
             return await response.json();
-        }
+        },
+
+        // 获取历史记录
+        async getHistory() {
+            const response = await fetch('/api/history');
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || '获取历史记录失败');
+            }
+            return await response.json();
+        },
     };
 
     window.App = window.App || {};

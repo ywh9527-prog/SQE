@@ -215,8 +215,6 @@
                 return;
             }
 
-            const grid = document.createElement('div');
-            grid.className = 'monthly-stats-grid';
 
             sortedMonths.forEach(month => {
                 const data = monthlyData[month];
@@ -307,9 +305,8 @@
                     }
                 });
 
-                grid.appendChild(div);
+                container.appendChild(div);
             });
-            container.appendChild(grid);
         },
 
         renderMonthDetails(container, data) {
@@ -327,6 +324,7 @@
                         <th>供应商</th>
                         <th>判定</th>
                         <th>处理</th>
+                        <th>外观良率</th>
                         <th>不良描述</th>
                     </tr>
                 </thead>
@@ -338,11 +336,28 @@
             data.forEach(item => {
                 const tr = document.createElement('tr');
                 const dateStr = new Date(item.time).toLocaleDateString('zh-CN');
+
+                // 计算外观良率
+                let appearanceRate = item.appearanceRate || '-';
+                // 如果后端返回的是数字,添加百分号
+                if (appearanceRate && appearanceRate !== '-' && !String(appearanceRate).includes('%')) {
+                    appearanceRate = appearanceRate + '%';
+                }
+                // 如果没有数据,根据判定结果推断
+                if (!appearanceRate || appearanceRate === '-') {
+                    if (item.result === 'OK') {
+                        appearanceRate = '100%';
+                    } else if (item.result === 'NG') {
+                        appearanceRate = '0%';
+                    }
+                }
+
                 tr.innerHTML = `
                     <td>${dateStr}</td>
                     <td title="${item.supplier}">${item.supplier}</td>
                     <td class="${item.result === 'NG' ? 'status-ng' : 'status-ok'}">${item.result}</td>
                     <td>${item.action}</td>
+                    <td class="appearance-rate">${appearanceRate}</td>
                     <td title="${item.defectDetail || ''}">${item.defectDetail || '-'}</td>
                 `;
                 tbody.appendChild(tr);

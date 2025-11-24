@@ -13,15 +13,15 @@ set "NODE_PORTABLE=%~dp0nodejs-portable"
 set "NODE_EXE=%NODE_PORTABLE%\node.exe"
 set "NPM_CMD=%NODE_PORTABLE%\npm.cmd"
 
-REM Check if port 3000 is in use
-for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":3000"') do (
+REM Check if port 8888 is in use
+for /f "tokens=5" %%a in ('netstat -ano ^| findstr ":8888"') do (
     set PID=%%a
     goto :found_port
 )
 goto :no_port
 
 :found_port
-echo [!] Port 3000 is already in use by process ID: %PID%
+echo [!] Port 8888 is already in use by process ID: %PID%
 echo [+] Attempting to stop the process...
 taskkill /PID %PID% /F >nul 2>&1
 if errorlevel 1 (
@@ -92,7 +92,7 @@ if not exist "node_modules" (
 echo ========================================
 echo [OK] Starting server...
 echo.
-echo Server URL: http://localhost:3000
+echo Server URL: http://localhost:8888
 echo.
 echo Tip: Browser will open automatically
 echo      Press Ctrl+C to stop the server

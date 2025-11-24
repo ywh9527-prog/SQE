@@ -1,4 +1,4 @@
-/* ============================================
+﻿/* ============================================
    IQC 模块专用样式 v2.0
    设计理念：数据密集型界面的优雅呈现
    ============================================ */
@@ -44,6 +44,11 @@
 /* ============================================
    上传区域 - 精致设计
    ============================================ */
+.iqc-upload-section {
+    background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+}
+
+/* 兼容旧代码，逐步废弃 */
 .upload-section {
     background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
 }
@@ -223,7 +228,8 @@
     margin-bottom: 36px;
 }
 
-.stat-card-mini {
+/* BEM 重构: .iqc-stat-card */
+.iqc-stat-card {
     background: white;
     padding: 24px;
     border-radius: var(--border-radius-lg);
@@ -236,28 +242,48 @@
     border-left-width: 4px;
 }
 
-.stat-card-mini:hover {
+/* 兼容旧代码 */
+.iqc-stat-card--mini {
+    background: white;
+    padding: 24px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+    border-left: 4px solid var(--primary-600);
+    display: flex;
+    flex-direction: column;
+    transition: all var(--transition-base);
+    border: 1px solid var(--gray-200);
+    border-left-width: 4px;
+}
+
+.iqc-stat-card:hover,
+.iqc-stat-card--mini:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
 }
 
-.stat-card-mini.success {
+.iqc-stat-card--success,
+.iqc-stat-card--mini.iqc-stat-card--success {
     border-left-color: var(--success);
 }
 
-.stat-card-mini.danger {
+.iqc-stat-card--danger,
+.iqc-stat-card--mini.iqc-stat-card--danger {
     border-left-color: var(--danger);
 }
 
-.stat-card-mini.warning {
+.iqc-stat-card--warning,
+.iqc-stat-card--mini.iqc-stat-card--warning {
     border-left-color: var(--warning);
 }
 
-.stat-card-mini.primary {
+.iqc-stat-card--primary,
+.iqc-stat-card--mini.iqc-stat-card--primary {
     border-left-color: var(--primary-600);
 }
 
-.stat-card-mini .label {
+.iqc-stat-card__label,
+.iqc-stat-card--mini__label {
     font-size: 13px;
     color: var(--gray-600);
     margin-bottom: 10px;
@@ -266,7 +292,8 @@
     letter-spacing: 0.5px;
 }
 
-.stat-card-mini .value {
+.iqc-stat-card__value,
+.iqc-stat-card--mini__value {
     font-size: 32px;
     font-weight: 800;
     color: var(--gray-900);
@@ -283,6 +310,16 @@
     margin-bottom: 36px;
 }
 
+.iqc-chart-card {
+    background: white;
+    padding: 32px;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    transition: all var(--transition-base);
+}
+
+/* 兼容旧代码 */
 .chart-card {
     background: white;
     padding: 32px;
@@ -292,14 +329,17 @@
     transition: all var(--transition-base);
 }
 
+.iqc-chart-card:hover,
 .chart-card:hover {
     box-shadow: var(--shadow-xl);
 }
 
+.iqc-chart-card--full-width,
 .chart-card.full-width {
     grid-column: 1 / -1;
 }
 
+.iqc-chart-card h5,
 .chart-card h5 {
     margin-bottom: 24px;
     color: var(--gray-900);
@@ -312,6 +352,9 @@
     height: 380px;
     position: relative;
     width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .chart-wrapper.large {
@@ -385,6 +428,11 @@
 /* ============================================
    对比区域
    ============================================ */
+.iqc-comparison-section {
+    background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+}
+
+/* 兼容旧代码 */
 .comparison-section {
     background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
 }
@@ -504,14 +552,31 @@
 /* ============================================
    月度详情网格
    ============================================ */
+.iqc-monthly-stats-section {
+    background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+}
+
+/* 兼容旧代码 */
 .monthly-stats-section {
     background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
 }
 
 .monthly-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(3, 1fr);
     gap: 24px;
+}
+
+@media (max-width: 1200px) {
+    .monthly-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .monthly-grid {
+        grid-template-columns: 1fr;
+    }
 }
 
 .monthly-record {
@@ -549,9 +614,34 @@
 }
 
 .month-details-container {
-    border-top: 1px solid var(--gray-200);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.5s ease-in-out, padding 0.3s ease, opacity 0.3s ease;
     background: var(--gray-50);
+    padding: 0 20px;
+    opacity: 0;
+    border-top: none;
+}
+
+
+/* 让展开的月度记录占据整行,提供更宽的显示空间 */
+.monthly-record.expanded {
+    grid-column: 1 / -1;
+}
+/* 确保展开的详情容器占满整个宽度 */
+.monthly-record.expanded .month-details-container {
+    width: 100%;
+}
+
+.monthly-record.expanded .details-content {
+    width: 100%;
+}
+
+.monthly-record.expanded .month-details-container {
+    max-height: 800px;
     padding: 20px;
+    opacity: 1;
+    border-top: 1px solid var(--gray-200);
 }
 
 /* ============================================
@@ -797,17 +887,116 @@
     .summary-stats {
         grid-template-columns: 1fr;
     }
+}
+/* ============================================
+   ��ʷ��¼����
+   ============================================ */
+.iqc-history-section {
+    background: white;
+}
 
-    .monthly-grid {
-        grid-template-columns: 1fr;
-    }
+.history-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 16px;
+}
 
-    .search-controls {
-        flex-direction: column;
-        align-items: stretch;
-    }
+.history-item {
+    padding: 16px;
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    background: var(--gray-50);
+    display: flex;
+    flex-direction: column;
+}
 
-    .btn-group {
-        flex-direction: column;
-    }
+.history-item:hover {
+    border-color: var(--primary-500);
+    background: white;
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+}
+
+.history-item h5 {
+    margin: 0 0 8px 0;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--gray-900);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-item p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--gray-600);
+}
+
+.history-item .meta {
+    display: flex;
+    justify-content: space-between;
+    margin-top: auto;
+    padding-top: 12px;
+    font-size: 12px;
+    color: var(--gray-500);
+}
+
+
+/* 月度详情表格样式 */
+.month-details-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    table-layout: auto;
+}
+
+.month-details-table th,
+.month-details-table td {
+    padding: 12px 16px;
+    text-align: left;
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.month-details-table th {
+    background: var(--gray-100);
+    font-weight: 600;
+    color: var(--gray-700);
+    white-space: nowrap;
+}
+
+.month-details-table td {
+    color: var(--gray-600);
+}
+
+.month-details-table .appearance-rate {
+    font-weight: 500;
+    color: var(--primary-600);
+}
+
+.month-details-table .status-ok {
+    color: var(--success-600);
+    font-weight: 600;
+}
+
+.month-details-table .status-ng {
+    color: var(--danger-600);
+    font-weight: 600;
+}
+/* 调试:确保月度统计区域占满宽度 */
+.iqc-monthly-stats-section {
+    width: 100%;
+    max-width: 100%;
+}
+
+.monthly-grid {
+    width: 100%;
+}
+
+/* 强制展开的卡片占据整行 */
+.monthly-record.expanded {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
 }

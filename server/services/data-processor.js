@@ -124,6 +124,7 @@ class DataProcessorService {
       SUPPLIER_INDEX: common.SUPPLIER,
       RESULT_INDEX: specific.RESULT,
       ACTION_INDEX: specific.ACTION,
+      APPEARANCE_RATE_INDEX: specific.APPEARANCE_RATE,
       DEFECT_DETAIL_INDEX: specific.DEFECT_DETAIL,
       APPEARANCE_DEFECT_INDEX: specific.APPEARANCE_DEFECT,
       DIMENSION_DEFECT_INDEX: specific.DIMENSION_DEFECT,
@@ -142,13 +143,13 @@ class DataProcessorService {
   // 过滤并转换数据
   filterAndTransformData(data, indices, supplierFilter, timeFilter) {
     const { TIME_INDEX, RESULT_INDEX, ACTION_INDEX, SUPPLIER_INDEX,
-      DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
+      APPEARANCE_RATE_INDEX, DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
       DIMENSION_DEFECT_INDEX, PERFORMANCE_DEFECT_INDEX } = indices;
 
     // 获取最大索引以进行安全检查
     const maxIndex = Math.max(
       TIME_INDEX, RESULT_INDEX, ACTION_INDEX, SUPPLIER_INDEX,
-      DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
+      APPEARANCE_RATE_INDEX, DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
       DIMENSION_DEFECT_INDEX, PERFORMANCE_DEFECT_INDEX
     );
 
@@ -245,6 +246,16 @@ class DataProcessorService {
           result: String(row[RESULT_INDEX] || '').toUpperCase().trim(), // 允许空值
           action: String(ACTION_INDEX < row.length ? row[ACTION_INDEX] || '' : '').toUpperCase().trim(),
           supplier: String(row[SUPPLIER_INDEX] || '').trim(),
+          appearanceRate: APPEARANCE_RATE_INDEX >= 0 && APPEARANCE_RATE_INDEX < row.length ? (() => {
+            const val = row[APPEARANCE_RATE_INDEX];
+            if (!val || val === '') return '';
+            const num = parseFloat(val);
+            // 如果是小数(0-1之间),转换为百分比
+            if (!isNaN(num)) {
+              return num < 1 ? (num * 100).toFixed(2) : num.toFixed(2);
+            }
+            return String(val).trim();
+          })() : '',
           defectDetail: DEFECT_DETAIL_INDEX >= 0 && DEFECT_DETAIL_INDEX < row.length ? String(row[DEFECT_DETAIL_INDEX] || '').trim() : '',
           appearanceDefect: APPEARANCE_DEFECT_INDEX >= 0 && APPEARANCE_DEFECT_INDEX < row.length ? String(row[APPEARANCE_DEFECT_INDEX] || '').trim() : '',
           dimensionDefect: DIMENSION_DEFECT_INDEX >= 0 && DIMENSION_DEFECT_INDEX < row.length ? String(row[DIMENSION_DEFECT_INDEX] || '').trim() : '',

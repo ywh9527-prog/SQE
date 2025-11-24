@@ -30,24 +30,29 @@ function createWindow() {
         mainWindow.loadURL('http://localhost:3000');
     };
 
-    // 简单的重试逻辑：每秒尝试加载一次，直到成功
+    // 改进的重试逻辑：每秒尝试一次，打印状态，直到服务器返回 200
     const tryLoad = () => {
         const http = require('http');
         http.get('http://localhost:3000', (res) => {
+            console.log(`[Electron] 服务器响应状态码: ${res.statusCode}`);
             if (res.statusCode === 200) {
+                console.log('[Electron] 服务器已就绪，加载 UI');
                 loadApp();
             } else {
+                console.warn(`[Electron] 服务器返回 ${res.statusCode}，1 秒后重试`);
                 setTimeout(tryLoad, 1000);
             }
-        }).on('error', () => {
+        }).on('error', (err) => {
+            console.warn('[Electron] 请求服务器失败，1 秒后重试', err.message);
             setTimeout(tryLoad, 1000);
         });
     };
 
+    console.log('[Electron] 开始轮询服务器...');
     tryLoad();
 
     // 打开开发者工具 (可选)
-    // mainWindow.webContents.openDevTools();
+    mainWindow.webContents.openDevTools();
 
     mainWindow.on('closed', () => {
         mainWindow = null;
