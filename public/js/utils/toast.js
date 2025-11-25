@@ -26,51 +26,35 @@
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
             
-            // 设置样式
-            const typeStyles = {
-                success: { bg: '#28a745', icon: '✓' },
-                warning: { bg: '#ffc107', icon: '⚠' },
-                error: { bg: '#dc3545', icon: '✕' },
-                info: { bg: '#17a2b8', icon: 'ℹ' }
+            // 图标映射
+            const icons = {
+                success: '✓',
+                warning: '⚠',
+                error: '✕',
+                info: 'ℹ'
             };
             
-            const style = typeStyles[type] || typeStyles.info;
-            
-            toast.style.cssText = `
-                background: ${style.bg};
-                color: white;
-                padding: 12px 20px;
-                border-radius: 4px;
-                margin-bottom: 10px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-                font-size: 14px;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-                display: flex;
-                align-items: center;
-                gap: 8px;
-                min-width: 250px;
-                max-width: 400px;
-                pointer-events: auto;
-                cursor: pointer;
-                transform: translateX(100%);
-                transition: transform 0.3s ease-out;
-                opacity: 0;
-            `;
+            const icon = icons[type] || icons.info;
             
             toast.innerHTML = `
-                <span style="font-size: 16px; font-weight: bold;">${style.icon}</span>
-                <span>${message}</span>
+                <div class="toast-icon">${icon}</div>
+                <div class="toast-message">${message}</div>
+                <button class="toast-close" aria-label="关闭">×</button>
             `;
             
             this.container.appendChild(toast);
             
-            // 触发动画
+            // 触发入场动画
             setTimeout(() => {
-                toast.style.transform = 'translateX(0)';
-                toast.style.opacity = '1';
+                toast.classList.add('toast-show');
             }, 10);
             
-            // 点击关闭
+            // 绑定关闭事件
+            const closeBtn = toast.querySelector('.toast-close');
+            closeBtn.addEventListener('click', () => {
+                this.remove(toast);
+            });
+            
             toast.addEventListener('click', () => {
                 this.remove(toast);
             });
@@ -86,14 +70,15 @@
         remove(toast) {
             if (!toast || !toast.parentNode) return;
             
-            toast.style.transform = 'translateX(100%)';
-            toast.style.opacity = '0';
+            // 触发出场动画
+            toast.classList.remove('toast-show');
+            toast.classList.add('toast-hide');
             
             setTimeout(() => {
                 if (toast.parentNode) {
                     toast.parentNode.removeChild(toast);
                 }
-            }, 300);
+            }, 400);
         }
         
         // 便捷方法

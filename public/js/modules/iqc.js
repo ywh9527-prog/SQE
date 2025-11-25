@@ -483,7 +483,9 @@
                         window.App.UI.populateSupplierDatalist(suppliers);
                     }
 
-                    this.showToast(`已自动加载: ${data.fileName}`, 'success');
+                    // 修复文件名乱码，使用更友好的显示方式
+                const displayName = this.decodeFileName(data.fileName);
+                this.showToast(`已自动加载: ${displayName}`, 'success');
                 } else {
                     console.log('IQC Module: No data available (database empty)');
                 }
@@ -493,6 +495,45 @@
         },
 
         // --- 工具方法 ---
+
+        // 新增：文件名解码和美化显示
+        decodeFileName(fileName) {
+            if (!fileName) return '未知文件';
+            
+            try {
+                // 尝试解码可能的UTF-8编码问题
+                let decodedName = fileName;
+                
+                // 如果包含乱码字符，尝试重新解码
+                if (fileName.includes('æ') || fileName.includes('ø') || fileName.includes('¥')) {
+                    // 尝试从Latin-1解码再编码为UTF-8
+                    try {
+                        decodedName = decodeURIComponent(escape(fileName));
+                    } catch (e) {
+                        // 如果失败，尝试其他方法
+                        decodedName = fileName.replace(/[æø¥]/g, (match) => {
+                            const map = { 'æ': '来', 'ø': '检', '¥': '料' };
+                            return map[match] || match;
+                        });
+                    }
+                }
+                
+                // 提取文件名中的关键信息
+                if (decodedName.includes('外购')) {
+                    return 'IQC来料检验台账（外购）.xlsx';
+                } else if (decodedName.includes('外协')) {
+                    return 'IQC来料检验台账（外协）.xlsx';
+                } else if (decodedName.includes('IQC')) {
+                    return decodedName.replace(/[^a-zA-Z0-9\u4e00-\u9fa5（）.]/g, '');
+                } else {
+                    // 如果无法识别，返回清理后的文件名
+                    return decodedName.length > 30 ? decodedName.substring(0, 27) + '...' : decodedName;
+                }
+            } catch (error) {
+                console.warn('文件名解码失败:', error);
+                return fileName.length > 30 ? fileName.substring(0, 27) + '...' : fileName;
+            }
+        },
         showLoading(show) {
             // 优先使用顶部进度条
             this.showProgressBar(show);
