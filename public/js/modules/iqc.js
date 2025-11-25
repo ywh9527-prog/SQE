@@ -243,8 +243,8 @@
                 const data = await window.App.API.uploadFile(formData);
                 this.processAnalysisResult(data, false); // 不重新获取供应商列表
 
-                // 上传成功后重新加载数据源统计
-                await this.loadDataSourceStats();
+                // 上传成功后重新加载数据源统计，但不自动选择
+                await this.loadDataSourceStats(false);
 
             } catch (error) {
                 this.showError(error.message);
@@ -617,14 +617,14 @@
         // --- 新增：数据源管理方法 ---
 
         // 新增：加载数据源统计
-        async loadDataSourceStats() {
+        async loadDataSourceStats(autoSelect = true) {
             try {
                 const stats = await window.App.API.getDataSourceStats();
                 state.dataSourceStats = stats;
                 this.updateDataCards(stats);
-
+                
                 // 自动选中最新数据（如果当前没有选中任何类型）
-                if (!state.currentDataType) {
+                if (autoSelect && !state.currentDataType) {
                     const latestType = this.getLatestDataType(stats);
                     if (latestType && stats[latestType].hasData) {
                         await this.handleCardClick(latestType, false); // false表示不显示toast
@@ -650,12 +650,14 @@
 
         // 新增：更新数据卡片显示
         updateDataCards(stats) {
+            console.log('更新数据卡片:', stats);
             this.updateCard('purchase', stats.purchase);
             this.updateCard('external', stats.external);
         },
 
         // 新增：更新单个卡片
         updateCard(type, data) {
+            console.log(`更新${type}卡片:`, data);
             if (!data.hasData) {
                 // 无数据时的显示
                 document.getElementById(`${type}-total-count`).textContent = '0';
@@ -806,8 +808,8 @@
                 const data = await window.App.API.uploadFile(formData);
                 this.processAnalysisResult(data, false); // 不重新获取供应商列表
 
-                // 上传成功后重新加载数据源统计
-                await this.loadDataSourceStats();
+                // 上传成功后重新加载数据源统计，但不自动选择
+                await this.loadDataSourceStats(false);
 
             } catch (error) {
                 this.showError(error.message);
