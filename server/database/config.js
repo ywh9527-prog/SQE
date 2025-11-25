@@ -25,9 +25,9 @@ const connectDB = async () => {
         logger.info('数据库连接成功 (SQLite)');
         logger.info(`数据库路径: ${dbPath}`);
 
-        // 同步模型 (仅在开发阶段使用 alter: true，生产环境建议使用迁移脚本)
-        // await sequelize.sync({ alter: true });
-        // logger.info('数据库模型同步完成');
+        // 简单同步，避免结构问题
+        await sequelize.sync();
+        logger.info('数据库模型已同步');
 
     } catch (error) {
         logger.error('无法连接到数据库:', error);

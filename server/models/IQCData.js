@@ -22,6 +22,27 @@ const IQCData = sequelize.define('IQCData', {
         defaultValue: DataTypes.NOW,
         comment: '上传时间'
     },
+    dataType: {
+        type: DataTypes.ENUM('purchase', 'external'),
+        allowNull: false,
+        comment: '数据类型：purchase-外购, external-外协'
+    },
+    recordCount: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
+        comment: '记录条数'
+    },
+    timeRangeStart: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        comment: '数据时间范围开始（基于G列检验时间）'
+    },
+    timeRangeEnd: {
+        type: DataTypes.DATEONLY,
+        allowNull: true,
+        comment: '数据时间范围结束（基于G列检验时间）'
+    },
     summary: {
         type: DataTypes.JSON,
         allowNull: true,

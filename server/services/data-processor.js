@@ -94,10 +94,16 @@ class DataProcessorService {
     }
   }
 
-  // 检测文件类型
+  // 检测文件类型（外购/外协）
   detectFileType(data, fileName) {
     // 优先通过表头检测
     const headerType = this.detectByHeader(data);
+    
+    // 调试日志：记录文件类型检测结果
+    const detectedType = headerType || 'purchase';
+    console.log(`[FILE-TYPE] 文件: ${fileName}, 检测类型: ${detectedType}`);
+    
+    return detectedType;
     if (headerType !== FILE_TYPE_CONSTANTS.UNKNOWN) {
       return headerType;
     }

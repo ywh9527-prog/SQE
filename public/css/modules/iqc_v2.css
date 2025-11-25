@@ -998,5 +998,241 @@
 /* 强制展开的卡片占据整行 */
 .monthly-record.expanded {
     grid-column: 1 / -1 !important;
+}
+
+/* ============================================
+   数据源卡片样式
+   ============================================ */
+
+/* 数据源卡片区域 */
+.iqc-data-source-section {
+    margin-bottom: 2rem;
+}
+
+.data-source-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.data-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    border: 2px solid transparent;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.data-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-500), var(--primary-300));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.data-card:hover::before {
+    opacity: 1;
+}
+
+.data-card:hover {
+    border-color: var(--primary-500);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.data-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255,255,255,0.1);
+    opacity: 0;
+    transition: opacity 0.2s ease;
+    pointer-events: none;
+}
+
+.data-card:hover::after {
+    opacity: 1;
+}
+
+/* 卡片选中状态 */
+.data-card.active {
+    border-color: var(--primary-500);
+    background: var(--primary-50);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+}
+
+.data-card.active::before {
+    opacity: 1;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.card-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.update-status {
+    padding: 0.25rem 0.75rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.update-status.none .status-none {
+    color: #6b7280;
+}
+
+.update-status.ok .status-ok {
+    color: #10b981;
+}
+
+.update-status.warning .status-warning {
+    color: #f59e0b;
+}
+
+.update-status.loading .status-loading {
+    color: #3b82f6;
+}
+
+.card-stats {
+    display: flex;
+    gap: 2rem;
+    margin-bottom: 1rem;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.stat-item .label {
+    font-size: 0.85rem;
+    color: var(--gray-600);
+}
+
+.stat-item .value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.card-time-range {
+    margin-bottom: 1.5rem;
+    padding: 0.75rem;
+    background: var(--gray-50);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: var(--gray-700);
+}
+
+.time-range-label {
+    font-weight: 500;
+    margin-right: 0.5rem;
+}
+
+.card-actions {
+    display: flex;
+    justify-content: center;
+}
+
+.card-actions .btn-secondary {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    background: white;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
+}
+
+.card-actions .btn-secondary:hover {
+    background: var(--gray-50);
+    border-color: var(--gray-400);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .data-source-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-stats {
+        gap: 1rem;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+    }
+}
+
+/* 加载状态动画 */
+.status-loading::after {
+    content: '';
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    margin-left: 8px;
+    border: 2px solid transparent;
+    border-top: 2px solid currentColor;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* 工作表选择样式优化 */
+.sheet-selection {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.sheet-selection.hidden {
+    display: none;
+}
+
+.sheet-selection-content {
+    background: white;
+    border-radius: 12px;
+    padding: 2rem;
+    max-width: 600px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
     width: 100% !important;
 }

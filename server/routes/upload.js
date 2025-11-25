@@ -68,14 +68,47 @@ router.post('/upload', upload.single('excelFile'), async (req, res) => {
 
     ExcelParserService.validateExcelData(jsonData);
 
+    // 使用现有的检测逻辑确定数据类型
+    const dataType = ExcelParserService.detectFileType(jsonData);
+    
+    // 强制输出调试信息
+    const logger = require('../utils/logger');
+    logger.info('=== 文件上传调试信息 ===');
+    logger.info(`文件名: ${req.file.originalname}`);
+    logger.info(`检测数据类型: ${dataType}`);
+    logger.info(`数据总行数: ${jsonData ? jsonData.length : 0}`);
+    
+    // 调试：记录所有目标供应商
+    if (jsonData && jsonData.length > 0) {
+      const targetSuppliers = ['幸福电子', '宜益', '中科', '亦高', '锐盛', '旷视'];
+      logger.info('=== 目标供应商检查 ===');
+      jsonData.forEach((row, index) => {
+        if (row && row.supplier) {
+          const supplier = String(row.supplier);
+          if (targetSuppliers.some(target => supplier.includes(target))) {
+            logger.info(`第${index+1}行: ${supplier}`);
+          }
+        }
+      });
+      logger.info('=== 检查完成 ===');
+    }
+
     // 处理数据并返回结果
     const dataProcessor = new DataProcessorService();
     const result = dataProcessor.processIQCData(jsonData, null, null, req.file.originalname);
 
-    // 保存到数据库
+    // 计算时间范围和记录数（使用有效数据，与分析结果保持一致）
+    const timeRange = calculateTimeRange(result.rawData);
+    const recordCount = result.rawData.length;
+
+    // 保存到数据库（恢复新增字段）
     const record = await IQCData.create({
       fileName: req.file.originalname,
       fileHash: fileHash,
+      dataType: dataType,  // 恢复：数据类型
+      recordCount: recordCount,  // 恢复：记录条数
+      timeRangeStart: timeRange.start,  // 恢复：时间范围开始
+      timeRangeEnd: timeRange.end,      // 恢复：时间范围结束
       summary: result.summary,
       monthlyData: result.monthlyData,
       rawData: result.rawData,
@@ -115,7 +148,7 @@ router.post('/upload', upload.single('excelFile'), async (req, res) => {
 
 // 基于数据库数据的筛选路由
 router.post('/filter-data', express.json(), async (req, res) => {
-  const { fileId, supplierName, timeFilterType, timeFilterValue } = req.body;
+  const { fileId, supplierName, timeFilterType, timeFilterValue, dataType } = req.body;
 
   if (!fileId) {
     return res.status(400).json({ error: 'File ID is required.' });
@@ -127,15 +160,21 @@ router.post('/filter-data', express.json(), async (req, res) => {
       return res.status(404).json({ error: '记录不存在或已过期' });
     }
 
+    // 恢复数据类型验证
+    if (dataType && record.dataType !== dataType) {
+      return res.status(400).json({ error: `数据类型不匹配，期望: ${dataType}, 实际: ${record.dataType}` });
+    }
+
     const dataProcessor = new DataProcessorService();
     const timeFilter = timeFilterType && timeFilterValue ? { type: timeFilterType, value: timeFilterValue } : null;
 
     // 使用 recalculate 方法重新计算
     const result = dataProcessor.recalculate(record.rawData, supplierName, timeFilter);
 
-    // 保持 fileId
+    // 保持现有字段
     result.fileId = record.id;
     result.fileName = record.fileName;
+    result.dataType = record.dataType;
 
     res.json(result);
   } catch (error) {
@@ -375,5 +414,39 @@ router.get('/latest-data', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch latest data' });
   }
 });
+
+// 计算时间范围的辅助函数
+function calculateTimeRange(data) {
+  if (!data || data.length === 0) {
+    return { start: null, end: null };
+  }
+  
+  const dates = data
+    .map(row => row.time)
+    .filter(date => {
+      // 处理Date对象和字符串格式
+      if (!date) return false;
+      
+      let dateObj;
+      if (date instanceof Date) {
+        dateObj = date;
+      } else {
+        dateObj = new Date(date);
+      }
+      
+      return !isNaN(dateObj.getTime());
+    })
+    .map(date => date instanceof Date ? date : new Date(date));
+    
+  if (dates.length === 0) {
+    return { start: null, end: null };
+  }
+  
+  dates.sort((a, b) => a - b);
+  return {
+    start: dates[0].toISOString().split('T')[0],  // YYYY-MM-DD格式
+    end: dates[dates.length - 1].toISOString().split('T')[0]
+  };
+}
 
 module.exports = router;

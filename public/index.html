@@ -101,31 +101,88 @@
                         <h3>IQC 来料检验分析</h3>
                     </div>
 
-                    <!-- 上传区域 -->
-                    <section class="iqc-upload-section card">
-                        <div class="section-header">
-                            <h4><i class="ph ph-upload-simple"></i> 上传数据</h4>
-                        </div>
-                        <div class="upload-area">
-                            <form id="uploadForm" enctype="multipart/form-data">
-                                <div class="file-input-wrapper">
-                                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" required
-                                        class="file-input">
-                                    <label for="excelFile" class="file-label">
-                                        <i class="ph ph-file-xls"></i>
-                                        <span>点击选择或拖拽 Excel 文件</span>
-                                    </label>
-                                </div>
-
-                                <div id="sheetSelection" class="sheet-selection hidden">
-                                    <h5>请选择数据工作表:</h5>
-                                    <div id="sheetTabContainer" class="sheet-tabs"></div>
-                                    <div class="sheet-actions">
-                                        <button type="button" id="confirmSheetBtn" class="btn-primary">确认分析</button>
+                    <!-- 数据源卡片区域 -->
+                    <section class="iqc-data-source-section">
+                        <div class="data-source-cards">
+                            <!-- 外购数据卡片 -->
+                            <div class="data-card" data-type="purchase">
+                                <div class="card-header">
+                                    <h4>📦 外购数据</h4>
+                                    <div class="update-status" id="purchase-update-status">
+                                        <span class="status-loading">加载中...</span>
                                     </div>
                                 </div>
+                                <div class="card-stats">
+                                    <div class="stat-item">
+                                        <span class="label">总数据</span>
+                                        <span class="value" id="purchase-total-count">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">本次新增</span>
+                                        <span class="value" id="purchase-recent-count">-</span>
+                                    </div>
+                                </div>
+                                <div class="card-time-range">
+                                    <span class="time-range-label">数据时间范围：</span>
+                                    <span id="purchase-time-range">-</span>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-secondary update-btn" data-type="purchase">
+                                        <i class="ph ph-arrow-clockwise"></i>
+                                        更新数据
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 外协数据卡片 -->
+                            <div class="data-card" data-type="external">
+                                <div class="card-header">
+                                    <h4>🏭 外协数据</h4>
+                                    <div class="update-status" id="external-update-status">
+                                        <span class="status-loading">加载中...</span>
+                                    </div>
+                                </div>
+                                <div class="card-stats">
+                                    <div class="stat-item">
+                                        <span class="label">总数据</span>
+                                        <span class="value" id="external-total-count">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">本次新增</span>
+                                        <span class="value" id="external-recent-count">-</span>
+                                    </div>
+                                </div>
+                                <div class="card-time-range">
+                                    <span class="time-range-label">数据时间范围：</span>
+                                    <span id="external-time-range">-</span>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-secondary update-btn" data-type="external">
+                                        <i class="ph ph-arrow-clockwise"></i>
+                                        更新数据
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </section>
+
+                    <!-- 隐藏的上传表单（用于数据更新） -->
+                    <div id="hiddenUploadForm" style="display: none;">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" class="file-input">
+                        </form>
+                    </div>
+
+                    <!-- 工作表选择（保持原有逻辑） -->
+                    <div id="sheetSelection" class="sheet-selection hidden">
+                        <div class="sheet-selection-content">
+                            <h5>请选择数据工作表:</h5>
+                            <div id="sheetTabContainer" class="sheet-tabs"></div>
+                            <div class="sheet-actions">
+                                <button type="button" id="confirmSheetBtn" class="btn-primary">确认分析</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- 供应商搜索区域 -->
                     <section id="supplierSearch" class="supplier-search-section card hidden">
@@ -143,6 +200,14 @@
                                         class="ph ph-magnifying-glass"></i> 搜索</button>
                                 <button id="showAllBtn" class="btn-outline"><i class="ph ph-list"></i> 显示全部</button>
                             </div>
+                        </div>
+                    </section>
+
+                    <!-- Loading 状态 -->
+                    <section id="loading" class="loading hidden">
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">正在处理数据，请稍候...</div>
                         </div>
                     </section>
 

@@ -23,10 +23,12 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
 const uploadRoutes = require('./routes/upload');
 const supplierRoutes = require('./routes/supplier');
 const comparisonRoutes = require('./routes/comparison');
+const dataSourceRoutes = require('./routes/data-source');
 
 app.use('/api', uploadRoutes);
 app.use('/api', supplierRoutes);
 app.use('/api', comparisonRoutes);
+app.use('/api', dataSourceRoutes);
 
 // 启动服务器
 const startServer = async () => {

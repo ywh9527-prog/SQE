@@ -144,6 +144,16 @@ console.log('🐱 API.js is loading...');
                 throw new Error(errorText || '获取历史记录失败');
             }
             return await response.json();
+        },
+
+        // 获取数据源统计
+        async getDataSourceStats() {
+            const response = await fetch('/api/data-source-stats');
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || '获取数据源统计失败');
+            }
+            return await response.json();
         }
     };
 

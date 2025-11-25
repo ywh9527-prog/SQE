@@ -398,18 +398,18 @@
         },
 
         updateFilterInfo(filter) {
-            const h2 = document.querySelector('#results h2');
+            const h4 = document.querySelector('#results h4');
             const existingInfo = document.getElementById('filter-info');
 
             if (filter) {
                 const html = `（${filter}）`;
                 if (existingInfo) {
                     existingInfo.innerHTML = html;
-                } else {
-                    h2.innerHTML = `分析结果 <span id="filter-info" style="color: #3498db; font-size: 0.8em;">${html}</span>`;
+                } else if (h4) {
+                    h4.innerHTML = `分析结果 <span id="filter-info" class="filter-tag">${html}</span>`;
                 }
             } else if (existingInfo) {
-                existingInfo.remove();
+                existingInfo.innerHTML = '';
             }
         },
 

@@ -8,7 +8,13 @@
         uploadedFile: null,
         selectedSheetName: null,
         fileId: null,
-        isInitialized: false
+        isInitialized: false,
+        // 新增：数据源状态
+        dataSourceStats: {
+            purchase: null,
+            external: null
+        },
+        currentDataType: null  // 当前分析的数据类型
     };
 
     // DOM 元素缓存
@@ -24,6 +30,7 @@
             this.bindEvents();
             this.loadHistory();
             this.loadLatestData();
+            this.loadDataSourceStats();  // 新增：加载数据源统计
             state.isInitialized = true;
             console.log('IQC Module: Initialization complete');
         },
@@ -54,25 +61,37 @@
                 previousPeriodStart: document.getElementById('previousPeriodStart'),
                 previousPeriodEnd: document.getElementById('previousPeriodEnd'),
                 historySection: document.getElementById('historySection'),
-                historyList: document.getElementById('historyList')
+                historyList: document.getElementById('historyList'),
+                
+                // 新增：数据源卡片相关元素
+                dataSourceSection: document.querySelector('.iqc-data-source-section'),
+                purchaseCard: document.querySelector('.data-card[data-type="purchase"]'),
+                externalCard: document.querySelector('.data-card[data-type="external"]'),
+                purchaseUpdateStatus: document.getElementById('purchase-update-status'),
+                externalUpdateStatus: document.getElementById('external-update-status'),
+                purchaseTotalCount: document.getElementById('purchase-total-count'),
+                externalTotalCount: document.getElementById('external-total-count'),
+                purchaseRecentCount: document.getElementById('purchase-recent-count'),
+                externalRecentCount: document.getElementById('external-recent-count'),
+                purchaseTimeRange: document.getElementById('purchase-time-range'),
+                externalTimeRange: document.getElementById('external-time-range')
             };
             console.log('IQC Module: Elements cached', {
                 form: !!els.uploadForm,
                 input: !!els.fileInput,
-                btn: !!els.uploadBtn
+                btn: !!els.uploadBtn,
+                cards: !!(els.purchaseCard && els.externalCard)
             });
         },
 
         // 绑定事件
         bindEvents() {
-            // 文件选择监听 (优化 UX: 选择文件后自动显示文件名)
+            // 文件选择监听 (优化 UX: 选择文件后自动开始分析)
             if (els.fileInput) {
                 console.log('IQC Module: Binding file input change event');
                 els.fileInput.addEventListener('change', (e) => {
                     console.log('IQC Module: File selected', e.target.files[0]?.name);
                     const fileName = e.target.files[0]?.name;
-                    const label = e.target.nextElementSibling.querySelector('span');
-                    if (fileName && label) label.textContent = fileName;
 
                     // 用户期望：选择文件后自动开始分析
                     if (fileName) {
@@ -125,6 +144,22 @@
             if (els.resetBtn) {
                 els.resetBtn.addEventListener('click', () => this.handleResetCompare());
             }
+            
+            // 新增：数据源卡片点击事件（直接切换数据）
+            if (els.purchaseCard && els.externalCard) {
+                els.purchaseCard.addEventListener('click', () => this.handleCardClick('purchase'));
+                els.externalCard.addEventListener('click', () => this.handleCardClick('external'));
+                
+                // 更新按钮事件
+                const updateBtns = document.querySelectorAll('.update-btn');
+                updateBtns.forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        e.stopPropagation(); // 防止触发卡片点击事件
+                        const dataType = e.currentTarget.dataset.type;
+                        this.handleUpdateData(dataType);
+                    });
+                });
+            }
         },
 
         // --- 业务逻辑处理 ---
@@ -132,6 +167,11 @@
         // 处理上传
         async handleUpload(e) {
             if (e && e.preventDefault) e.preventDefault();
+
+            // 如果已经有文件（通过handleUpdateData设置），直接处理
+            if (state.uploadedFile) {
+                return this.directUploadFile(state.uploadedFile);
+            }
 
             const file = els.fileInput.files[0];
             if (!file) {
@@ -154,11 +194,8 @@
                 state.uploadedFile = file;
                 state.fileId = null;
 
-                // 显示工作表选择区域，隐藏上传按钮
+                // 显示工作表选择区域
                 els.sheetSelection.classList.remove('hidden');
-                if (els.uploadBtn) {
-                    els.uploadBtn.classList.add('hidden');
-                }
                 this.showLoading(false);
 
             } catch (error) {
@@ -194,15 +231,14 @@
 
             const formData = new FormData();
             formData.append('excelFile', state.uploadedFile);
-            // 注意：后端 upload 接口目前可能还没处理 sheetName 参数，
-            // 如果后端逻辑是自动取第一个或推荐的，这里可能需要后端配合修改。
-            // 暂时假设后端会处理，或者我们先上传，后端解析逻辑不变。
-            // *修正*：查看后端代码，upload 接口确实没接收 sheetName。
-            // 但为了保持兼容，我们先按原逻辑走，后续优化后端。
 
             try {
                 const data = await window.App.API.uploadFile(formData);
-                this.processAnalysisResult(data);
+                this.processAnalysisResult(data, false); // 不重新获取供应商列表
+                
+                // 上传成功后重新加载数据源统计
+                await this.loadDataSourceStats();
+                
             } catch (error) {
                 this.showError(error.message);
             }
@@ -237,12 +273,17 @@
             this.showLoading(false);
 
             // 获取供应商列表
-            if (fetchSuppliers && state.uploadedFile) {
+            if (fetchSuppliers && state.fileId) {
                 try {
-                    const formData = new FormData();
-                    formData.append('excelFile', state.uploadedFile);
-                    const supplierData = await window.App.API.getSuppliers(formData);
-                    window.App.UI.populateSupplierDatalist(supplierData.suppliers);
+                    // 基于数据库中的数据获取供应商列表，包含数据类型
+                    const data = await window.App.API.filterData({ 
+                        fileId: state.fileId,
+                        dataType: state.currentDataType 
+                    });
+                    if (data.supplierRanking) {
+                        const suppliers = data.supplierRanking.map(item => item.supplier);
+                        window.App.UI.populateSupplierDatalist(suppliers);
+                    }
                 } catch (e) {
                     console.error('获取供应商列表失败', e);
                 }
@@ -307,17 +348,8 @@
             try {
                 let requestData;
                 
-                if (state.uploadedFile) {
-                    // 有上传文件时使用 FormData
-                    const formData = new FormData();
-                    formData.append('excelFile', state.uploadedFile);
-                    formData.append('currentPeriodStart', s1);
-                    formData.append('currentPeriodEnd', e1);
-                    formData.append('previousPeriodStart', s2);
-                    formData.append('previousPeriodEnd', e2);
-                    requestData = formData;
-                } else if (state.fileId) {
-                    // 自动加载时使用 JSON 数据
+                if (state.fileId) {
+                    // 优先使用数据库中的数据
                     requestData = {
                         currentPeriodStart: s1,
                         currentPeriodEnd: e1,
@@ -325,6 +357,15 @@
                         previousPeriodEnd: e2,
                         fileId: state.fileId
                     };
+                } else if (state.uploadedFile) {
+                    // 备用：有上传文件时使用 FormData
+                    const formData = new FormData();
+                    formData.append('excelFile', state.uploadedFile);
+                    formData.append('currentPeriodStart', s1);
+                    formData.append('currentPeriodEnd', e1);
+                    formData.append('previousPeriodStart', s2);
+                    formData.append('previousPeriodEnd', e2);
+                    requestData = formData;
                 } else {
                     throw new Error('没有可用的数据源');
                 }
@@ -427,7 +468,6 @@
                     state.uploadedFile = null;
                     this.processAnalysisResult(data, false);
 
-                    if (els.uploadBtn) els.uploadBtn.classList.add('hidden');
                     if (els.sheetSelection) els.sheetSelection.classList.add('hidden');
 
                     if (data.supplierRanking) {
@@ -469,6 +509,220 @@
         showToast(msg, type = 'info') {
             // 简单的 alert 替代，后续可接入 Toast 组件
             alert(msg);
+        },
+
+        // 新增：更新供应商列表
+        async updateSupplierList() {
+            if (!state.fileId || !state.currentDataType) return;
+            
+            try {
+                const data = await window.App.API.filterData({ 
+                    fileId: state.fileId,
+                    dataType: state.currentDataType 
+                });
+                if (data.supplierRanking) {
+                    // 去重并保持顺序
+                    const uniqueSuppliers = [...new Set(data.supplierRanking.map(item => item.supplier))];
+                    window.App.UI.populateSupplierDatalist(uniqueSuppliers);
+                }
+            } catch (e) {
+                console.error('更新供应商列表失败', e);
+            }
+        },
+
+        // --- 新增：数据源管理方法 ---
+
+        // 新增：加载数据源统计
+        async loadDataSourceStats() {
+            try {
+                const stats = await window.App.API.getDataSourceStats();
+                state.dataSourceStats = stats;
+                this.updateDataCards(stats);
+                
+                // 自动选中最新数据（如果当前没有选中任何类型）
+                if (!state.currentDataType) {
+                    const latestType = this.getLatestDataType(stats);
+                    if (latestType && stats[latestType].hasData) {
+                        await this.handleCardClick(latestType, false); // false表示不显示toast
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load data source stats:', error);
+                this.showToast('加载数据状态失败', 'error');
+            }
+        },
+
+        // 新增：获取最新数据类型
+        getLatestDataType(stats) {
+            if (!stats.purchase.hasData && !stats.external.hasData) return null;
+            if (!stats.purchase.hasData) return 'external';
+            if (!stats.external.hasData) return 'purchase';
+            
+            // 比较更新时间，返回最新的
+            const purchaseTime = new Date(stats.purchase.lastUpdate);
+            const externalTime = new Date(stats.external.lastUpdate);
+            return purchaseTime > externalTime ? 'purchase' : 'external';
+        },
+
+        // 新增：更新数据卡片显示
+        updateDataCards(stats) {
+            this.updateCard('purchase', stats.purchase);
+            this.updateCard('external', stats.external);
+        },
+
+        // 新增：更新单个卡片
+        updateCard(type, data) {
+            if (!data.hasData) {
+                // 无数据时的显示
+                document.getElementById(`${type}-total-count`).textContent = '0';
+                document.getElementById(`${type}-recent-count`).textContent = '0';
+                document.getElementById(`${type}-time-range`).textContent = '暂无数据';
+                
+                const statusEl = document.getElementById(`${type}-update-status`);
+                statusEl.className = 'update-status none';
+                statusEl.innerHTML = '<span class="status-none">📭 暂无数据</span>';
+                return;
+            }
+            
+            // 更新统计数据
+            document.getElementById(`${type}-total-count`).textContent = data.totalCount;
+            document.getElementById(`${type}-recent-count`).textContent = data.recentCount;
+            
+            // 更新时间范围
+            if (data.timeRange.start && data.timeRange.end) {
+                document.getElementById(`${type}-time-range`).textContent = 
+                    `${data.timeRange.start} 至 ${data.timeRange.end}`;
+            } else {
+                document.getElementById(`${type}-time-range`).textContent = '时间范围未知';
+            }
+            
+            // 更新状态指示
+            const statusEl = document.getElementById(`${type}-update-status`);
+            if (data.needsUpdate) {
+                statusEl.className = 'update-status warning';
+                statusEl.innerHTML = '<span class="status-warning">⚠️ 需要更新</span>';
+            } else {
+                const daysSinceUpdate = Math.floor((new Date() - new Date(data.lastUpdate)) / (1000 * 60 * 60 * 24));
+                statusEl.className = 'update-status ok';
+                statusEl.innerHTML = `<span class="status-ok">✅ ${daysSinceUpdate}天前更新</span>`;
+            }
+            
+            // 更新当前选中状态
+            const cardEl = document.querySelector(`.data-card[data-type="${type}"]`);
+            if (state.currentDataType === type && state.fileId === data.fileId) {
+                cardEl.classList.add('active');
+            } else {
+                cardEl.classList.remove('active');
+            }
+        },
+
+        // 新增：卡片点击切换数据类型
+        async handleCardClick(dataType, showToast = true) {
+            const stats = state.dataSourceStats[dataType];
+            if (!stats || !stats.hasData) {
+                if (showToast) {
+                    this.showToast(`${dataType === 'purchase' ? '外购' : '外协'}数据暂无记录，请先上传数据`, 'warning');
+                }
+                return;
+            }
+            
+            // 如果点击的是当前已选中的类型，不做任何操作
+            if (state.currentDataType === dataType && state.fileId === stats.fileId) {
+                if (showToast) {
+                    this.showToast('当前已是此类型数据', 'info');
+                }
+                return;
+            }
+            
+            this.showLoading(true);
+            state.currentDataType = dataType;
+            state.fileId = stats.fileId;
+            state.uploadedFile = null;
+            
+            try {
+                const data = await window.App.API.filterData({ 
+                    fileId: stats.fileId,
+                    dataType: dataType
+                });
+                
+                this.processAnalysisResult(data, false);
+                
+                // 更新卡片选中状态
+                document.querySelectorAll('.data-card').forEach(card => card.classList.remove('active'));
+                document.querySelector(`.data-card[data-type="${dataType}"]`).classList.add('active');
+                
+                // 重新获取对应数据类型的供应商列表
+                await this.updateSupplierList();
+                
+                if (showToast) {
+                    this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}数据`, 'success');
+                }
+            } catch (error) {
+                this.showError(error.message);
+            }
+        },
+
+        // 新增：更新数据（触发文件上传）
+        handleUpdateData(dataType) {
+            // 创建一个临时的文件输入，用于特定数据类型的上传
+            const tempInput = document.createElement('input');
+            tempInput.type = 'file';
+            tempInput.accept = '.xlsx,.xls';
+            tempInput.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    // 验证文件名是否包含对应的数据类型标识
+                    const expectedKeyword = dataType === 'purchase' ? '外购' : '外协';
+                    if (!file.name.includes(expectedKeyword)) {
+                        this.showToast(`请上传包含"${expectedKeyword}"的文件`, 'warning');
+                        return;
+                    }
+                    
+                    // 设置状态并直接处理上传
+                    state.currentDataType = dataType;
+                    this.directUploadFile(file);
+                }
+            });
+            tempInput.click();
+        },
+
+        // 新增：直接上传文件的方法
+        async directUploadFile(file) {
+            this.showLoading(true);
+            const formData = new FormData();
+            formData.append('excelFile', file);
+
+            try {
+                // 先尝试获取工作表
+                const sheetData = await window.App.API.getSheets(formData);
+                if (sheetData.error) throw new Error(sheetData.error);
+
+                this.renderSheetSelection(sheetData.sheetNames, sheetData.recommendedSheet);
+                state.uploadedFile = file;
+                state.fileId = null;
+
+                // 显示工作表选择区域
+                els.sheetSelection.classList.remove('hidden');
+                this.showLoading(false);
+
+            } catch (error) {
+                console.warn('获取工作表失败，尝试直接上传:', error);
+                this.directUpload(formData);
+            }
+        },
+
+        // 新增：直接上传到服务器的方法
+        async directUpload(formData) {
+            try {
+                const data = await window.App.API.uploadFile(formData);
+                this.processAnalysisResult(data, false); // 不重新获取供应商列表
+                
+                // 上传成功后重新加载数据源统计
+                await this.loadDataSourceStats();
+                
+            } catch (error) {
+                this.showError(error.message);
+            }
         }
     };
 
