@@ -75,8 +75,7 @@
                 externalRecentCount: document.getElementById('external-recent-count'),
                 purchaseTimeRange: document.getElementById('purchase-time-range'),
                 purchaseTimeRange: document.getElementById('purchase-time-range'),
-                externalTimeRange: document.getElementById('external-time-range'),
-                topProgressBar: document.getElementById('top-progress-bar')
+                externalTimeRange: document.getElementById('external-time-range')
             };
             console.log('IQC Module: Elements cached', {
                 form: !!els.uploadForm,
@@ -534,47 +533,17 @@
                 return fileName.length > 30 ? fileName.substring(0, 27) + '...' : fileName;
             }
         },
+        // --- 工具方法 ---
         showLoading(show) {
-            // 优先使用顶部进度条
-            this.showProgressBar(show);
-
-            // 如果是特定卡片的操作，同时也显示卡片加载状态
-            if (state.currentDataType) {
-                this.showCardLoading(state.currentDataType, show);
+            if (!els.loading) {
+                console.warn('IQC Module: loading element not found');
+                return;
             }
-
-            // 只有在非卡片操作且非静默加载时，才显示全屏遮罩（作为后备）
-            // 这里我们通过判断 loading 元素是否存在来决定
-            if (els.loading) {
-                if (show && !state.currentDataType) {
-                    els.loading.classList.remove('hidden');
-                } else {
-                    els.loading.classList.add('hidden');
-                }
-            }
-        },
-
-        // 新增：控制顶部进度条
-        showProgressBar(show) {
-            if (!els.topProgressBar) return;
-            els.topProgressBar.style.display = show ? 'block' : 'none';
-        },
-
-        // 新增：控制卡片加载状态
-        showCardLoading(dataType, show) {
-            const card = document.querySelector(`.data-card[data-type="${dataType}"]`);
-            if (!card) return;
-
+            
             if (show) {
-                card.classList.add('loading');
-                // 确保有 spinner
-                if (!card.querySelector('.card-loading-spinner')) {
-                    const spinner = document.createElement('div');
-                    spinner.className = 'card-loading-spinner';
-                    card.appendChild(spinner);
-                }
+                els.loading.classList.remove('hidden');
             } else {
-                card.classList.remove('loading');
+                els.loading.classList.add('hidden');
             }
         },
 

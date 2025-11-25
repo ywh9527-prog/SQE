@@ -1097,6 +1097,15 @@
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-header h4 .ph {
+    font-size: 1.3rem;
+    color: var(--primary-600);
+    font-weight: 400;
 }
 
 .update-status {
