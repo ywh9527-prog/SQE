@@ -19,12 +19,12 @@ const COLUMN_INDICES = {
     DIMENSION_DEFECT: 14,   // O列
     PERFORMANCE_DEFECT: 16  // Q列
   },
-  [FILE_TYPE_CONSTANTS.PURCHASE]: {
+  [PURCHASE]: {
     RESULT: 18,             // S列
     ACTION: 19,             // T列
     APPEARANCE_RATE: 10,    // K列 - 外观良率
-    DEFECT_DETAIL: 11,      // L列 - 不良描述
-    APPEARANCE_DEFECT: 12,  // M列
+    DEFECT_DETAIL: 12,      // M列 - 不良描述
+    APPEARANCE_DEFECT: 11,  // L列
     DIMENSION_DEFECT: 14,   // N列
     PERFORMANCE_DEFECT: 16  // P列
   }
