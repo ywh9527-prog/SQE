@@ -62,7 +62,7 @@
                 previousPeriodEnd: document.getElementById('previousPeriodEnd'),
                 historySection: document.getElementById('historySection'),
                 historyList: document.getElementById('historyList'),
-                
+
                 // 新增：数据源卡片相关元素
                 dataSourceSection: document.querySelector('.iqc-data-source-section'),
                 purchaseCard: document.querySelector('.data-card[data-type="purchase"]'),
@@ -74,7 +74,9 @@
                 purchaseRecentCount: document.getElementById('purchase-recent-count'),
                 externalRecentCount: document.getElementById('external-recent-count'),
                 purchaseTimeRange: document.getElementById('purchase-time-range'),
-                externalTimeRange: document.getElementById('external-time-range')
+                purchaseTimeRange: document.getElementById('purchase-time-range'),
+                externalTimeRange: document.getElementById('external-time-range'),
+                topProgressBar: document.getElementById('top-progress-bar')
             };
             console.log('IQC Module: Elements cached', {
                 form: !!els.uploadForm,
@@ -144,12 +146,12 @@
             if (els.resetBtn) {
                 els.resetBtn.addEventListener('click', () => this.handleResetCompare());
             }
-            
+
             // 新增：数据源卡片点击事件（直接切换数据）
             if (els.purchaseCard && els.externalCard) {
                 els.purchaseCard.addEventListener('click', () => this.handleCardClick('purchase'));
                 els.externalCard.addEventListener('click', () => this.handleCardClick('external'));
-                
+
                 // 更新按钮事件
                 const updateBtns = document.querySelectorAll('.update-btn');
                 updateBtns.forEach(btn => {
@@ -198,6 +200,11 @@
                 els.sheetSelection.classList.remove('hidden');
                 this.showLoading(false);
 
+                // 平滑滚动到工作表选择区域，提升体验
+                setTimeout(() => {
+                    els.sheetSelection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+
             } catch (error) {
                 console.warn('获取工作表失败，尝试直接上传:', error);
                 this.directUpload(formData);
@@ -235,10 +242,10 @@
             try {
                 const data = await window.App.API.uploadFile(formData);
                 this.processAnalysisResult(data, false); // 不重新获取供应商列表
-                
+
                 // 上传成功后重新加载数据源统计
                 await this.loadDataSourceStats();
-                
+
             } catch (error) {
                 this.showError(error.message);
             }
@@ -276,9 +283,9 @@
             if (fetchSuppliers && state.fileId) {
                 try {
                     // 基于数据库中的数据获取供应商列表，包含数据类型
-                    const data = await window.App.API.filterData({ 
+                    const data = await window.App.API.filterData({
                         fileId: state.fileId,
-                        dataType: state.currentDataType 
+                        dataType: state.currentDataType
                     });
                     if (data.supplierRanking) {
                         const suppliers = data.supplierRanking.map(item => item.supplier);
@@ -347,7 +354,7 @@
 
             try {
                 let requestData;
-                
+
                 if (state.fileId) {
                     // 优先使用数据库中的数据
                     requestData = {
@@ -487,16 +494,46 @@
 
         // --- 工具方法 ---
         showLoading(show) {
-            if (!els.loading) {
-                console.warn('IQC Module: loading element not found');
-                return;
+            // 优先使用顶部进度条
+            this.showProgressBar(show);
+
+            // 如果是特定卡片的操作，同时也显示卡片加载状态
+            if (state.currentDataType) {
+                this.showCardLoading(state.currentDataType, show);
             }
+
+            // 只有在非卡片操作且非静默加载时，才显示全屏遮罩（作为后备）
+            // 这里我们通过判断 loading 元素是否存在来决定
+            if (els.loading) {
+                if (show && !state.currentDataType) {
+                    els.loading.classList.remove('hidden');
+                } else {
+                    els.loading.classList.add('hidden');
+                }
+            }
+        },
+
+        // 新增：控制顶部进度条
+        showProgressBar(show) {
+            if (!els.topProgressBar) return;
+            els.topProgressBar.style.display = show ? 'block' : 'none';
+        },
+
+        // 新增：控制卡片加载状态
+        showCardLoading(dataType, show) {
+            const card = document.querySelector(`.data-card[data-type="${dataType}"]`);
+            if (!card) return;
+
             if (show) {
-                els.loading.classList.remove('hidden');
-                // 不隐藏结果区域，防止布局跳动，Loading 遮罩会覆盖在上面
-                // els.results.classList.add('hidden');
+                card.classList.add('loading');
+                // 确保有 spinner
+                if (!card.querySelector('.card-loading-spinner')) {
+                    const spinner = document.createElement('div');
+                    spinner.className = 'card-loading-spinner';
+                    card.appendChild(spinner);
+                }
             } else {
-                els.loading.classList.add('hidden');
+                card.classList.remove('loading');
             }
         },
 
@@ -507,18 +544,24 @@
         },
 
         showToast(msg, type = 'info') {
-            // 简单的 alert 替代，后续可接入 Toast 组件
-            alert(msg);
+            // 使用 Toast 组件替代 alert
+            if (window.App && window.App.Toast) {
+                window.App.Toast.show(msg, type);
+            } else {
+                // 降级方案：如果 Toast 组件未加载，使用 alert
+                console.warn('Toast component not loaded, falling back to alert');
+                alert(msg);
+            }
         },
 
         // 新增：更新供应商列表
         async updateSupplierList() {
             if (!state.fileId || !state.currentDataType) return;
-            
+
             try {
-                const data = await window.App.API.filterData({ 
+                const data = await window.App.API.filterData({
                     fileId: state.fileId,
-                    dataType: state.currentDataType 
+                    dataType: state.currentDataType
                 });
                 if (data.supplierRanking) {
                     // 去重并保持顺序
@@ -538,7 +581,7 @@
                 const stats = await window.App.API.getDataSourceStats();
                 state.dataSourceStats = stats;
                 this.updateDataCards(stats);
-                
+
                 // 自动选中最新数据（如果当前没有选中任何类型）
                 if (!state.currentDataType) {
                     const latestType = this.getLatestDataType(stats);
@@ -557,7 +600,7 @@
             if (!stats.purchase.hasData && !stats.external.hasData) return null;
             if (!stats.purchase.hasData) return 'external';
             if (!stats.external.hasData) return 'purchase';
-            
+
             // 比较更新时间，返回最新的
             const purchaseTime = new Date(stats.purchase.lastUpdate);
             const externalTime = new Date(stats.external.lastUpdate);
@@ -577,25 +620,25 @@
                 document.getElementById(`${type}-total-count`).textContent = '0';
                 document.getElementById(`${type}-recent-count`).textContent = '0';
                 document.getElementById(`${type}-time-range`).textContent = '暂无数据';
-                
+
                 const statusEl = document.getElementById(`${type}-update-status`);
                 statusEl.className = 'update-status none';
                 statusEl.innerHTML = '<span class="status-none">📭 暂无数据</span>';
                 return;
             }
-            
+
             // 更新统计数据
             document.getElementById(`${type}-total-count`).textContent = data.totalCount;
             document.getElementById(`${type}-recent-count`).textContent = data.recentCount;
-            
+
             // 更新时间范围
             if (data.timeRange.start && data.timeRange.end) {
-                document.getElementById(`${type}-time-range`).textContent = 
+                document.getElementById(`${type}-time-range`).textContent =
                     `${data.timeRange.start} 至 ${data.timeRange.end}`;
             } else {
                 document.getElementById(`${type}-time-range`).textContent = '时间范围未知';
             }
-            
+
             // 更新状态指示
             const statusEl = document.getElementById(`${type}-update-status`);
             if (data.needsUpdate) {
@@ -606,7 +649,7 @@
                 statusEl.className = 'update-status ok';
                 statusEl.innerHTML = `<span class="status-ok">✅ ${daysSinceUpdate}天前更新</span>`;
             }
-            
+
             // 更新当前选中状态
             const cardEl = document.querySelector(`.data-card[data-type="${type}"]`);
             if (state.currentDataType === type && state.fileId === data.fileId) {
@@ -625,7 +668,7 @@
                 }
                 return;
             }
-            
+
             // 如果点击的是当前已选中的类型，不做任何操作
             if (state.currentDataType === dataType && state.fileId === stats.fileId) {
                 if (showToast) {
@@ -633,27 +676,27 @@
                 }
                 return;
             }
-            
+
             this.showLoading(true);
             state.currentDataType = dataType;
             state.fileId = stats.fileId;
             state.uploadedFile = null;
-            
+
             try {
-                const data = await window.App.API.filterData({ 
+                const data = await window.App.API.filterData({
                     fileId: stats.fileId,
                     dataType: dataType
                 });
-                
+
                 this.processAnalysisResult(data, false);
-                
+
                 // 更新卡片选中状态
                 document.querySelectorAll('.data-card').forEach(card => card.classList.remove('active'));
                 document.querySelector(`.data-card[data-type="${dataType}"]`).classList.add('active');
-                
+
                 // 重新获取对应数据类型的供应商列表
                 await this.updateSupplierList();
-                
+
                 if (showToast) {
                     this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}数据`, 'success');
                 }
@@ -677,7 +720,7 @@
                         this.showToast(`请上传包含"${expectedKeyword}"的文件`, 'warning');
                         return;
                     }
-                    
+
                     // 设置状态并直接处理上传
                     state.currentDataType = dataType;
                     this.directUploadFile(file);
@@ -705,6 +748,11 @@
                 els.sheetSelection.classList.remove('hidden');
                 this.showLoading(false);
 
+                // 平滑滚动到工作表选择区域
+                setTimeout(() => {
+                    els.sheetSelection.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }, 100);
+
             } catch (error) {
                 console.warn('获取工作表失败，尝试直接上传:', error);
                 this.directUpload(formData);
@@ -716,10 +764,10 @@
             try {
                 const data = await window.App.API.uploadFile(formData);
                 this.processAnalysisResult(data, false); // 不重新获取供应商列表
-                
+
                 // 上传成功后重新加载数据源统计
                 await this.loadDataSourceStats();
-                
+
             } catch (error) {
                 this.showError(error.message);
             }

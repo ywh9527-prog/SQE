@@ -12,13 +12,18 @@
     <link rel="stylesheet" href="css/modules/sheet-selection-debug.css">
     <!-- IQC 卡片 UI/UX 增强样式 -->
     <link rel="stylesheet" href="css/modules/iqc_cards_enhanced.css">
+    <!-- Toast 提示框样式 -->
+    <link rel="stylesheet" href="css/utils/toast.css">
+    <!-- 进度指示器样式 -->
+    <link rel="stylesheet" href="css/utils/progress.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
-
 <body>
+    <!-- 顶部进度条 -->
+    <div id="top-progress-bar" class="top-progress-bar" style="display: none;"></div>
     <div class="app-container">
         <!-- 侧边栏导航 -->
         <aside class="sidebar">
@@ -77,7 +82,10 @@
                 <div id="module-dashboard" class="module-view">
                     <div class="welcome-card">
                         <h3>欢迎回来，Admin</h3>
-                        <p>今天是 2025年11月21日，系统运行正常。</p>
+                        <p>今天是 <span id="current-date"></span>，系统运行正常。</p>
+                        <script>
+                            document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+                        </script>
                     </div>
                     <!-- 仪表盘概览卡片占位 -->
                     <div class="stats-grid">
