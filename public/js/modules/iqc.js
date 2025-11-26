@@ -3,6 +3,22 @@
  * 负责处理 IQC 数据分析页面的所有逻辑
  */
 
+// 🎯 [CORE-CONFIG] 数据类型映射配置 - 修改类型名称请关注此处
+// 📍 所有"外购/外协"显示都从这里获取
+// 🔗 影响范围：提示消息、文件验证、数据显示
+const TYPE_CONFIG = {
+    // 数据类型到中文名称的映射
+    NAMES: {
+        purchase: '外购',
+        external: '外协'
+    },
+    
+    // 辅助函数：获取类型中文名称
+    getName(dataType) {
+        return this.NAMES[dataType] || '未知类型';
+    }
+};
+
 (function () {
     // 模块状态
     const state = {
@@ -179,6 +195,11 @@
 
             // 双卡片内年份选择器事件（实时切换）
             if (els.purchaseYearSelectCompact) {
+                // 阻止点击事件冒泡到卡片，避免触发多余的提示
+                els.purchaseYearSelectCompact.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+                
                 els.purchaseYearSelectCompact.addEventListener('change', async (e) => {
                     const selectedYear = e.target.value;
                     state.yearSelection.purchase = selectedYear;
@@ -187,6 +208,11 @@
             }
 
             if (els.externalYearSelectCompact) {
+                // 阻止点击事件冒泡到卡片，避免触发多余的提示
+                els.externalYearSelectCompact.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+                
                 els.externalYearSelectCompact.addEventListener('change', async (e) => {
                     const selectedYear = e.target.value;
                     state.yearSelection.external = selectedYear;
@@ -712,16 +738,13 @@
             const stats = state.dataSourceStats[dataType];
             if (!stats || !stats.hasData) {
                 if (showToast) {
-                    this.showToast(`${dataType === 'purchase' ? '外购' : '外协'}数据暂无记录，请先上传数据`, 'warning');
+                    this.showToast(`${TYPE_CONFIG.getName(dataType)}数据暂无记录，请先上传数据`, 'warning');
                 }
                 return;
             }
 
             // 如果点击的是当前已选中的类型，不做任何操作
             if (state.currentDataType === dataType && state.fileId === stats.fileId) {
-                if (showToast) {
-                    this.showToast('当前已是此类型数据', 'info');
-                }
                 return;
             }
 
@@ -746,7 +769,7 @@
                 await this.updateSupplierList();
 
                 if (showToast) {
-                    this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}数据`, 'success');
+                    this.showToast(`已切换到${TYPE_CONFIG.getName(dataType)}数据`, 'success');
                 }
             } catch (error) {
                 this.showError(error.message);
@@ -825,13 +848,13 @@
                     // 只更新当前切换的卡片
                     this.updateCard(dataType, stats[dataType]);
                     
-                    this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}${year}年数据`, 'success');
+                    this.showToast(`已切换到${TYPE_CONFIG.getName(dataType)}${year}年数据`, 'success');
                 } else {
                     // 加载最新数据
                     await this.loadLatestDataByType(dataType);
                     // 重新加载数据源统计
                     await this.loadDataSourceStats(false);
-                    this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}最新数据`, 'info');
+                    this.showToast(`已切换到${TYPE_CONFIG.getName(dataType)}最新数据`, 'info');
                 }
             } catch (error) {
                 this.showError(`切换年份失败: ${error.message}`);
@@ -845,7 +868,7 @@
             try {
                 const stats = state.dataSourceStats[dataType];
                 if (!stats || !stats.hasData) {
-                    throw new Error(`${dataType === 'purchase' ? '外购' : '外协'}数据暂无记录`);
+                    throw new Error(`${TYPE_CONFIG.getName(dataType)}数据暂无记录`);
                 }
 
                 const data = await window.App.API.getLatestData(null, dataType);
@@ -906,7 +929,7 @@
                 }
             } catch (error) {
                 console.error(`加载${dataType} ${year}年数据失败:`, error);
-                this.showToast(`加载${dataType === 'purchase' ? '外购' : '外协'}${year}年数据失败`, 'error');
+                this.showToast(`加载${TYPE_CONFIG.getName(dataType)}${year}年数据失败`, 'error');
             }
         },
 
@@ -967,7 +990,7 @@
                 const file = e.target.files[0];
                 if (file) {
                     // 验证文件名是否包含对应的数据类型标识
-                    const expectedKeyword = dataType === 'purchase' ? '外购' : '外协';
+                    const expectedKeyword = TYPE_CONFIG.getName(dataType);
                     if (!file.name.includes(expectedKeyword)) {
                         this.showToast(`请上传包含"${expectedKeyword}"的文件`, 'warning');
                         return;

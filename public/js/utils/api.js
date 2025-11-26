@@ -120,19 +120,12 @@ async getAvailableYearsByType(dataType) {
 
         // 获取指定年份的数据源统计
         async getDataSourceStats(year = null) {
-            // 强制绕过所有缓存
-            const timestamp = Date.now() + Math.random();
-            const params = year ? `?year=${year}&_t=${timestamp}&cache=${timestamp}&bypass=${timestamp}` : `?_t=${timestamp}&cache=${timestamp}&bypass=${timestamp}`;
+            // 简化的缓存绕过策略，让业务层处理具体缓存逻辑
+            const timestamp = Date.now();
+            const params = year ? `?year=${year}&_t=${timestamp}` : `?_t=${timestamp}`;
             
             const response = await fetch(`/api/data-source-stats${params}`, {
-                cache: 'no-cache',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache',
-                    'Expires': '0',
-                    'If-Modified-Since': '0',
-                    'If-None-Match': '*'
-                }
+                cache: 'no-cache'
             });
             
             if (!response.ok) {
@@ -193,16 +186,6 @@ async getAvailableYearsByType(dataType) {
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText || '获取历史记录失败');
-            }
-            return await response.json();
-        },
-
-        // 获取数据源统计
-        async getDataSourceStats() {
-            const response = await fetch('/api/data-source-stats');
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(errorText || '获取数据源统计失败');
             }
             return await response.json();
         }
