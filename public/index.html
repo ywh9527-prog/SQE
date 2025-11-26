@@ -12,11 +12,13 @@
     <link rel="stylesheet" href="css/modules/sheet-selection-debug.css">
     <!-- IQC 卡片 UI/UX 增强样式 -->
     <link rel="stylesheet" href="css/modules/iqc_cards_enhanced.css">
+    <!-- 年份选择器样式 -->
+    <link rel="stylesheet" href="css/modules/year_switcher.css">
     <!-- Toast 提示框样式 -->
     <link rel="stylesheet" href="css/utils/toast.css">
     <!-- 进度指示器样式 -->
     <link rel="stylesheet" href="css/utils/progress.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
@@ -137,6 +139,17 @@
                                     <span class="time-range-label">数据时间范围：</span>
                                     <span id="purchase-time-range">-</span>
                                 </div>
+                                <div class="card-year-selector">
+                                    <div class="year-select-group">
+                                        <label class="year-select-label">
+                                            <i class="ph ph-calendar"></i>
+                                            选择年份：
+                                        </label>
+                                        <select id="purchaseYearSelectCompact" class="year-select-compact">
+                                            <option value="">最新数据</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="card-actions">
                                     <button class="btn-secondary update-btn" data-type="purchase">
                                         <i class="ph ph-arrow-clockwise"></i>
@@ -166,6 +179,17 @@
                                 <div class="card-time-range">
                                     <span class="time-range-label">数据时间范围：</span>
                                     <span id="external-time-range">-</span>
+                                </div>
+                                <div class="card-year-selector">
+                                    <div class="year-select-group">
+                                        <label class="year-select-label">
+                                            <i class="ph ph-calendar"></i>
+                                            选择年份：
+                                        </label>
+                                        <select id="externalYearSelectCompact" class="year-select-compact">
+                                            <option value="">最新数据</option>
+                                        </select>
+                                    </div>
                                 </div>
                                 <div class="card-actions">
                                     <button class="btn-secondary update-btn" data-type="external">

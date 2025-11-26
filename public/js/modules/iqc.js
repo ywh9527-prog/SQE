@@ -2,6 +2,7 @@
  * IQC 模块控制器
  * 负责处理 IQC 数据分析页面的所有逻辑
  */
+
 (function () {
     // 模块状态
     const state = {
@@ -14,7 +15,17 @@
             purchase: null,
             external: null
         },
-        currentDataType: null  // 当前分析的数据类型
+        currentDataType: null,  // 当前分析的数据类型
+        // 新增：年份选择状态
+        yearSelection: {
+            purchase: '',
+            external: '',
+            availableYears: {
+                purchase: [],
+                external: []
+            },
+            isInitialized: false
+        }
     };
 
     // DOM 元素缓存
@@ -30,7 +41,10 @@
             this.bindEvents();
             this.loadHistory();
             this.loadLatestData();
-            this.loadDataSourceStats();  // 新增：加载数据源统计
+            this.loadDataSourceStats().then(() => {
+                // 在数据源统计加载完成后初始化年份选择器
+                this.initializeYearSelector();
+            });  // 新增：加载数据源统计
             state.isInitialized = true;
             console.log('IQC Module: Initialization complete');
         },
@@ -74,8 +88,9 @@
                 purchaseRecentCount: document.getElementById('purchase-recent-count'),
                 externalRecentCount: document.getElementById('external-recent-count'),
                 purchaseTimeRange: document.getElementById('purchase-time-range'),
-                purchaseTimeRange: document.getElementById('purchase-time-range'),
-                externalTimeRange: document.getElementById('external-time-range')
+                externalTimeRange: document.getElementById('external-time-range'),
+                purchaseYearSelectCompact: document.getElementById('purchaseYearSelectCompact'),
+                externalYearSelectCompact: document.getElementById('externalYearSelectCompact')
             };
             console.log('IQC Module: Elements cached', {
                 form: !!els.uploadForm,
@@ -161,6 +176,23 @@
                     });
                 });
             }
+
+            // 双卡片内年份选择器事件（实时切换）
+            if (els.purchaseYearSelectCompact) {
+                els.purchaseYearSelectCompact.addEventListener('change', async (e) => {
+                    const selectedYear = e.target.value;
+                    state.yearSelection.purchase = selectedYear;
+                    await this.handleYearChange('purchase', selectedYear);
+                });
+            }
+
+            if (els.externalYearSelectCompact) {
+                els.externalYearSelectCompact.addEventListener('change', async (e) => {
+                    const selectedYear = e.target.value;
+                    state.yearSelection.external = selectedYear;
+                    await this.handleYearChange('external', selectedYear);
+                });
+            }
         },
 
         // --- 业务逻辑处理 ---
@@ -218,10 +250,12 @@
                 btn.className = `sheet-tab ${name === recommendedSheet ? 'selected' : ''}`;
                 btn.textContent = name;
                 btn.dataset.name = name;
-                btn.onclick = () => {
+
+                btn.addEventListener('click', () => {
                     document.querySelectorAll('.sheet-tab').forEach(t => t.classList.remove('selected'));
                     btn.classList.add('selected');
-                };
+                });
+
                 els.sheetTabContainer.appendChild(btn);
             });
         },
@@ -237,6 +271,7 @@
 
             const formData = new FormData();
             formData.append('excelFile', state.uploadedFile);
+            formData.append('sheetName', state.selectedSheetName); // 传递用户选择的工作表
 
             try {
                 const data = await window.App.API.uploadFile(formData);
@@ -627,6 +662,7 @@
         // 新增：更新单个卡片
         updateCard(type, data) {
             console.log(`更新${type}卡片:`, data);
+            console.log(`卡片${type} - totalCount: ${data.totalCount}, recentCount: ${data.recentCount}`);
             if (!data.hasData) {
                 // 无数据时的显示
                 document.getElementById(`${type}-total-count`).textContent = '0';
@@ -717,6 +753,210 @@
             }
         },
 
+        // 处理年份变化（实时切换）
+        async handleYearChange(dataType, year) {
+            this.showLoading(true);
+            
+            try {
+                if (year && year !== '') {
+                    // 加载指定年份的数据
+                    await this.loadDataByYearAndType(dataType, year);
+                    
+                    // 智能缓存策略：按年份缓存并设置短期过期时间
+    const cacheKey = `stats_${year}`;
+    const now = Date.now();
+    const cachedData = localStorage.getItem(cacheKey);
+    const cacheExpiry = 5 * 60 * 1000; // 5分钟缓存
+    
+    let stats;
+    
+    if (cachedData) {
+      try {
+        const { data, timestamp } = JSON.parse(cachedData);
+        if (now - timestamp < cacheExpiry) {
+          console.log(`使用缓存的${year}年数据`);
+          stats = data;
+        } else {
+          console.log(`${year}年缓存已过期，重新获取`);
+          localStorage.removeItem(cacheKey);
+        }
+      } catch (error) {
+        console.warn('缓存数据解析失败，重新获取:', error);
+        localStorage.removeItem(cacheKey);
+      }
+    }
+    
+    if (!stats) {
+      // 使用时间戳参数避免浏览器缓存，但允许我们的localStorage缓存
+      const timestamp = Date.now();
+      const url = `/api/data-source-stats?year=${year}&_t=${timestamp}`;
+      const response = await fetch(url, {
+        cache: 'no-cache'
+      });
+      stats = await response.json();
+      
+      // 存储到localStorage
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify({
+          data: stats,
+          timestamp: now
+        }));
+        console.log(`获取并缓存${year}年数据:`, stats);
+      } catch (error) {
+        console.warn('缓存存储失败:', error);
+      }
+    }
+    
+    if (!stats) {
+      // 缓存未命中，从服务器获取
+      const url = CacheService.buildBypassUrl(`/api/data-source-stats?year=${year}`);
+      const options = CacheService.getBypassOptions();
+      const response = await fetch(url, options);
+      stats = await response.json();
+      
+      // 存储到缓存
+      CacheService.set(year, stats);
+      console.log(`获取并缓存${year}年数据:`, stats);
+    }
+                    
+                    // 更新全局状态
+                    state.dataSourceStats = stats;
+                    
+                    // 只更新当前切换的卡片
+                    this.updateCard(dataType, stats[dataType]);
+                    
+                    this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}${year}年数据`, 'success');
+                } else {
+                    // 加载最新数据
+                    await this.loadLatestDataByType(dataType);
+                    // 重新加载数据源统计
+                    await this.loadDataSourceStats(false);
+                    this.showToast(`已切换到${dataType === 'purchase' ? '外购' : '外协'}最新数据`, 'info');
+                }
+            } catch (error) {
+                this.showError(`切换年份失败: ${error.message}`);
+                } finally {
+                this.showLoading(false);
+            }
+        },
+
+        // 新增：按数据类型加载最新数据
+        async loadLatestDataByType(dataType) {
+            try {
+                const stats = state.dataSourceStats[dataType];
+                if (!stats || !stats.hasData) {
+                    throw new Error(`${dataType === 'purchase' ? '外购' : '外协'}数据暂无记录`);
+                }
+
+                const data = await window.App.API.getLatestData(null, dataType);
+                if (data) {
+                    state.fileId = data.fileId;
+                    state.uploadedFile = null;
+                    state.currentDataType = dataType;
+                    
+                    this.processAnalysisResult(data, false);
+
+                    // 更新卡片选中状态
+                    document.querySelectorAll('.data-card').forEach(card => card.classList.remove('active'));
+                    const targetCard = document.querySelector(`.data-card[data-type="${dataType}"]`);
+                    if (targetCard) {
+                        targetCard.classList.add('active');
+                    }
+
+                    // 更新供应商列表
+                    await this.updateSupplierList();
+                }
+            } catch (error) {
+                console.error(`加载${dataType}最新数据失败:`, error);
+                throw error;
+            }
+        },
+
+        // 新增：按年份和数据类型加载数据
+        async loadDataByYearAndType(dataType, year) {
+            try {
+                console.log(`loadDataByYearAndType: ${dataType}, ${year}`);
+                const data = await window.App.API.getLatestData(year, dataType);
+                if (data) {
+                    state.fileId = data.fileId;
+                    state.uploadedFile = null;
+                    state.currentDataType = dataType;
+                    
+                    this.processAnalysisResult(data, false);
+
+                    // 更新卡片选中状态
+                    document.querySelectorAll('.data-card').forEach(card => card.classList.remove('active'));
+                    const targetCard = document.querySelector(`.data-card[data-type="${dataType}"]`);
+                    if (targetCard) {
+                        targetCard.classList.add('active');
+                    }
+
+                    // 更新供应商列表
+                    await this.updateSupplierList();
+
+                    // 关键修复：确保卡片数据统计与当前选择的年份同步
+                    console.log(`正在获取${year}年统计...`);
+                    const stats = await window.App.API.getDataSourceStats(year);
+                    console.log(`获取到的stats[${dataType}]:`, stats[dataType]);
+                    
+                    state.dataSourceStats = stats;
+                    console.log(`正在更新${dataType}卡片...`);
+                    this.updateCard(dataType, stats[dataType]);
+                    console.log(`${dataType}卡片更新完成`);
+                }
+            } catch (error) {
+                console.error(`加载${dataType} ${year}年数据失败:`, error);
+                this.showToast(`加载${dataType === 'purchase' ? '外购' : '外协'}${year}年数据失败`, 'error');
+            }
+        },
+
+        // 新增：初始化年份选择器
+        async initializeYearSelector() {
+            if (state.yearSelection.isInitialized) return;
+
+            try {
+                // 获取各数据类型的可用年份
+                const [purchaseYears, externalYears] = await Promise.all([
+                    window.App.API.getAvailableYearsByType('purchase'),
+                    window.App.API.getAvailableYearsByType('external')
+                ]);
+
+                state.yearSelection.availableYears.purchase = purchaseYears.years || [];
+                state.yearSelection.availableYears.external = externalYears.years || [];
+
+                // 填充下拉框
+                this.populateYearSelect('purchase', state.yearSelection.availableYears.purchase);
+                this.populateYearSelect('external', state.yearSelection.availableYears.external);
+
+                state.yearSelection.isInitialized = true;
+            } catch (error) {
+                console.error('初始化年份选择器失败:', error);
+            }
+        },
+
+        // 新增：填充年份下拉框
+        populateYearSelect(dataType, years) {
+            const selectElement = dataType === 'purchase' ? els.purchaseYearSelect : els.externalYearSelect;
+            if (!selectElement) return;
+
+            // 清空现有选项（保留默认选项）
+            selectElement.innerHTML = '<option value="">最新数据</option>';
+
+            // 按年份倒序排列（最新的在前）
+            const sortedYears = years.sort((a, b) => b - a);
+
+            // 添加年份选项
+            sortedYears.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}年`;
+                selectElement.appendChild(option);
+            });
+
+            // 如果没有可用年份，禁用下拉框
+            selectElement.disabled = years.length === 0;
+        },
+
         // 新增：更新数据（触发文件上传）
         handleUpdateData(dataType) {
             // 创建一个临时的文件输入，用于特定数据类型的上传
@@ -783,6 +1023,38 @@
             } catch (error) {
                 this.showError(error.message);
             }
+        },
+
+        
+
+        
+
+        
+
+        // 填充卡片内年份下拉框
+        populateYearSelect(dataType, years) {
+            const selectElement = dataType === 'purchase' ? els.purchaseYearSelectCompact : els.externalYearSelectCompact;
+            if (!selectElement) return;
+
+            // 清空现有选项
+            selectElement.innerHTML = '';
+
+            // 添加默认选项
+            const defaultOption = document.createElement('option');
+            defaultOption.value = '';
+            defaultOption.textContent = '最新数据';
+            selectElement.appendChild(defaultOption);
+
+            // 添加年份选项
+            years.forEach(year => {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}年`;
+                selectElement.appendChild(option);
+            });
+
+            // 如果有可用年份，启用下拉框；否则禁用
+            selectElement.disabled = years.length === 0;
         }
     };
 

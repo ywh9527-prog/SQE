@@ -84,14 +84,65 @@ console.log('🐱 API.js is loading...');
         },
 
         // 获取最新数据
-        async getLatestData() {
-            const response = await fetch('/api/latest-data');
+        async getLatestData(year = null, dataType = null) {
+            const params = new URLSearchParams();
+            if (year) params.append('year', year);
+            if (dataType) params.append('dataType', dataType);
+            
+            const response = await fetch(`/api/latest-data?${params}`);
             if (!response.ok) {
                 if (response.status === 404) return null;
                 const errorText = await response.text();
                 throw new Error(errorText || '获取最新数据失败');
             }
             return await response.json();
+        },
+
+        // 获取可用年份列表
+async getAvailableYears() {
+    const response = await fetch('/api/available-years');
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || '获取可用年份失败');
+    }
+    return await response.json();
+},
+
+        // 按数据类型获取可用年份
+async getAvailableYearsByType(dataType) {
+    const response = await fetch(`/api/available-years/${dataType}`);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || '获取可用年份失败');
+    }
+    return await response.json();
+},
+
+        // 获取指定年份的数据源统计
+        async getDataSourceStats(year = null) {
+            // 强制绕过所有缓存
+            const timestamp = Date.now() + Math.random();
+            const params = year ? `?year=${year}&_t=${timestamp}&cache=${timestamp}&bypass=${timestamp}` : `?_t=${timestamp}&cache=${timestamp}&bypass=${timestamp}`;
+            
+            const response = await fetch(`/api/data-source-stats${params}`, {
+                cache: 'no-cache',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache',
+                    'Expires': '0',
+                    'If-Modified-Since': '0',
+                    'If-None-Match': '*'
+                }
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(errorText || '获取数据源统计失败');
+            }
+            
+            // 强制重新解析响应
+            const responseText = await response.text();
+            return JSON.parse(responseText);
         },
 
         // 自定义时间段对比

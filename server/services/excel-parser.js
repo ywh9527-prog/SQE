@@ -36,17 +36,16 @@ class ExcelParserService {
     return FILE_TYPE_CONSTANTS.PURCHASE;
   }
 
-  // 解析Excel文件并获取所有工作表信息
-  static parseExcelFileWithSheets(filePath) {
+  // 解析Excel文件（支持指定工作表）
+  static parseExcelFileWithSheets(filePath, selectedSheet = null) {
     try {
       const workbook = XLSX.readFile(filePath);
       const sheetNames = workbook.SheetNames;
 
-      // 找到包含最新年份的工作表
-      const latestSheetName = this.findLatestYearSheet(sheetNames);
-
-      // 如果找到了最新的年份工作表，则使用它，否则使用第一个工作表
-      const sheetNameToUse = latestSheetName || sheetNames[0];
+      // 使用用户指定的工作表，如果没有则使用第一个工作表
+      const sheetNameToUse = selectedSheet && sheetNames.includes(selectedSheet) 
+        ? selectedSheet 
+        : sheetNames[0];
       const worksheet = workbook.Sheets[sheetNameToUse];
 
       return {
@@ -56,7 +55,7 @@ class ExcelParserService {
         selectedSheet: sheetNameToUse
       };
     } catch (error) {
-      throw new Error(`Excel文件解析失败: ${error.message}`);
+      throw new Error(`解析Excel文件失败: ${error.message}`);
     }
   }
 
