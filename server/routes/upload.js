@@ -354,7 +354,9 @@ router.get('/history', async (req, res) => {
   }
 });
 
-// 获取最新上传的数据（用于自动加载）
+// 🎯 [API-ENDPOINT] 最新数据接口 - 获取指定类型的最新分析数据
+// 📍 前端分析结果显示的数据来源
+// 🔗 数据来源：IQCData表的rawData和summary字段
 router.get('/latest-data', async (req, res) => {
   try {
     const { year, dataType } = req.query;

@@ -776,95 +776,134 @@ const TYPE_CONFIG = {
             }
         },
 
-        // 处理年份变化（实时切换）
-        async handleYearChange(dataType, year) {
-            this.showLoading(true);
-            
-            try {
-                if (year && year !== '') {
-                    // 加载指定年份的数据
-                    await this.loadDataByYearAndType(dataType, year);
-                    
-                    // 智能缓存策略：按年份缓存并设置短期过期时间
-    const cacheKey = `stats_${year}`;
-    const now = Date.now();
-    const cachedData = localStorage.getItem(cacheKey);
-    const cacheExpiry = 5 * 60 * 1000; // 5分钟缓存
-    
-    let stats;
-    
-    if (cachedData) {
-      try {
-        const { data, timestamp } = JSON.parse(cachedData);
-        if (now - timestamp < cacheExpiry) {
-          console.log(`使用缓存的${year}年数据`);
-          stats = data;
-        } else {
-          console.log(`${year}年缓存已过期，重新获取`);
-          localStorage.removeItem(cacheKey);
-        }
-      } catch (error) {
-        console.warn('缓存数据解析失败，重新获取:', error);
-        localStorage.removeItem(cacheKey);
-      }
-    }
-    
-    if (!stats) {
-      // 使用时间戳参数避免浏览器缓存，但允许我们的localStorage缓存
-      const timestamp = Date.now();
-      const url = `/api/data-source-stats?year=${year}&_t=${timestamp}`;
-      const response = await fetch(url, {
-        cache: 'no-cache'
-      });
-      stats = await response.json();
-      
-      // 存储到localStorage
-      try {
-        localStorage.setItem(cacheKey, JSON.stringify({
-          data: stats,
-          timestamp: now
-        }));
-        console.log(`获取并缓存${year}年数据:`, stats);
-      } catch (error) {
-        console.warn('缓存存储失败:', error);
-      }
-    }
-    
-    if (!stats) {
-      // 缓存未命中，从服务器获取
-      const url = CacheService.buildBypassUrl(`/api/data-source-stats?year=${year}`);
-      const options = CacheService.getBypassOptions();
-      const response = await fetch(url, options);
-      stats = await response.json();
-      
-      // 存储到缓存
-      CacheService.set(year, stats);
-      console.log(`获取并缓存${year}年数据:`, stats);
-    }
-                    
-                    // 更新全局状态
-                    state.dataSourceStats = stats;
-                    
-                    // 只更新当前切换的卡片
+        // 处理年份变化（实时切换）- 🎯 [CORE-LOGIC] 年份切换核心逻辑 - 修改年份切换行为请关注此处
+    // 📍 处理单个卡片的年份切换，保持卡片间独立性
+    // 🔗 影响范围：年份选择、卡片数据更新、分析结果显示
+    async handleYearChange(dataType, year) {
+        this.showLoading(true);
+
+        try {
+            if (year && year !== '') {
+                // 获取指定年份的数据源统计
+                const stats = await this.getStatsByYear(year);
+
+                // 🎯 关键修复：只更新当前卡片的数据，不影响其他卡片
+                if (stats && stats[dataType]) {
+                    // 更新对应卡片的数据
                     this.updateCard(dataType, stats[dataType]);
-                    
+
+                    // 🎯 关键修复：独立更新当前卡片的年份状态
+                    if (!state.dataSourceStats) {
+                        state.dataSourceStats = {};
+                    }
+                    state.dataSourceStats[dataType] = stats[dataType];
+
+                    // 🎯 关键修复：更新当前卡片的年份选择状态
+                    state.yearSelection[dataType] = year;
+
+                    // 🎯 关键修复：基于当前卡片年份加载分析结果
+                    await this.loadAnalysisDataByTypeAndYear(dataType, year);
+
                     this.showToast(`已切换到${TYPE_CONFIG.getName(dataType)}${year}年数据`, 'success');
                 } else {
-                    // 加载最新数据
-                    await this.loadLatestDataByType(dataType);
-                    // 重新加载数据源统计
-                    await this.loadDataSourceStats(false);
-                    this.showToast(`已切换到${TYPE_CONFIG.getName(dataType)}最新数据`, 'info');
+                    this.showToast(`${TYPE_CONFIG.getName(dataType)}${year}年数据暂无记录`, 'warning');
+                }
+            } else {
+                // 加载最新数据
+                await this.loadLatestDataByType(dataType);
+                this.showToast(`已切换到${TYPE_CONFIG.getName(dataType)}最新数据`, 'info');
+            }
+        } catch (error) {
+            console.error('年份切换失败:', error);
+            this.showToast(`切换年份失败: ${error.message}`, 'error');
+        } finally {
+            this.showLoading(false);
+        }
+    },
+
+    // 🎯 [HELPER] 获取指定年份的统计数据 - 统一缓存逻辑
+    async getStatsByYear(year) {
+        // 智能缓存策略：按年份缓存并设置短期过期时间
+        const cacheKey = `stats_${year}`;
+        const now = Date.now();
+        const cachedData = localStorage.getItem(cacheKey);
+        const cacheExpiry = 5 * 60 * 1000; // 5分钟缓存
+
+        let stats;
+
+        if (cachedData) {
+            try {
+                const { data, timestamp } = JSON.parse(cachedData);
+                if (now - timestamp < cacheExpiry) {
+                    console.log(`使用缓存的${year}年数据`);
+                    stats = data;
+                } else {
+                    console.log(`${year}年缓存已过期，重新获取`);
+                    localStorage.removeItem(cacheKey);
                 }
             } catch (error) {
-                this.showError(`切换年份失败: ${error.message}`);
-                } finally {
-                this.showLoading(false);
+                console.warn('缓存数据解析失败，重新获取:', error);
+                localStorage.removeItem(cacheKey);
             }
-        },
+        }
 
-        // 新增：按数据类型加载最新数据
-        async loadLatestDataByType(dataType) {
+        if (!stats) {
+            // 使用时间戳参数避免浏览器缓存，但允许我们的localStorage缓存
+            const timestamp = Date.now();
+            const url = `/api/data-source-stats?year=${year}&_t=${timestamp}`;
+            const response = await fetch(url, {
+                cache: 'no-cache'
+            });
+            stats = await response.json();
+
+            // 存储到localStorage
+            try {
+                localStorage.setItem(cacheKey, JSON.stringify({
+                    data: stats,
+                    timestamp: now
+                }));
+                console.log(`获取并缓存${year}年数据:`, stats);
+            } catch (error) {
+                console.warn('缓存存储失败:', error);
+            }
+        }
+
+        return stats;
+    },
+
+    // 🎯 [HELPER] 按类型和年份加载分析数据 - 确保分析结果与选中年份匹配
+    async loadAnalysisDataByTypeAndYear(dataType, year) {
+        try {
+            // 🎯 关键：基于当前选中的年份加载分析数据
+            const response = await fetch(`/api/latest-data?year=${year}&dataType=${dataType}`, {
+                cache: 'no-cache'
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                // 更新分析结果 - 使用现有的displayResults方法
+                if (window.App && window.App.UI) {
+                    window.App.UI.displayResults(data);
+                    window.App.UI.showResults();
+                }
+                console.log(`已加载${TYPE_CONFIG.getName(dataType)}${year}年分析数据`);
+            } else if (response.status === 404) {
+                // 如果没有特定年份数据，清空分析结果
+                if (window.App && window.App.UI) {
+                    window.App.UI.showError(`${TYPE_CONFIG.getName(dataType)}${year}年暂无分析数据`);
+                }
+                console.log(`${TYPE_CONFIG.getName(dataType)}${year}年暂无分析数据`);
+            }
+        } catch (error) {
+            console.warn(`加载${TYPE_CONFIG.getName(dataType)}${year}年分析数据失败:`, error);
+            if (window.App && window.App.UI) {
+                window.App.UI.showError(`加载分析数据失败: ${error.message}`);
+            }
+        }
+    },
+
+    // 新增：按数据类型加载最新数据
+    async loadLatestDataByType(dataType) {
             try {
                 const stats = state.dataSourceStats[dataType];
                 if (!stats || !stats.hasData) {

@@ -118,8 +118,10 @@ async getAvailableYearsByType(dataType) {
     return await response.json();
 },
 
-        // 获取指定年份的数据源统计
+        // 🎯 [API-ENDPOINT] 获取数据源统计 - 调用后端/data-source-stats接口
         async getDataSourceStats(year = null) {
+            // 📍 支持年份参数的数据统计获取
+            // 🔗 后端接口：server/routes/data-source.js
             // 简化的缓存绕过策略，让业务层处理具体缓存逻辑
             const timestamp = Date.now();
             const params = year ? `?year=${year}&_t=${timestamp}` : `?_t=${timestamp}`;

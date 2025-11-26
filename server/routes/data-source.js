@@ -5,7 +5,9 @@ const IQCData = require('../models/IQCData');
 
 const router = express.Router();
 
-// 数据源统计接口
+// 🎯 [API-ENDPOINT] 数据源统计接口 - 获取外购/外协数据统计
+// 📍 前端年份选择功能的核心数据来源
+// 🔗 数据来源：IQCData表，按sheetName和dataType筛选
 router.get('/data-source-stats', async (req, res) => {
   const { year } = req.query;
   try {
