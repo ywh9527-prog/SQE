@@ -139,8 +139,9 @@
                     ]
                 },
                 options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
+      aspectRatio: 1, // 强制正方形比例
                     layout: { padding: { top: 20, bottom: 20 } },
                     scales: {
                         y: {
@@ -183,7 +184,9 @@
             return cumulativePassRates;
         },
 
-        // 渲染供应商良率排名图
+        // 🎯 [DATA-FLOW] 供应商良率排名图渲染 - 将API数据转换为柱状图
+        // 📍 数据来源：data.supplierDefectRates
+        // 🔗 前端显示：供应商良率排名柱状图
         renderSupplierDefectRateChart(data) {
             const ctx = document.getElementById('supplierDefectRateChart').getContext('2d');
             const allSuppliers = data.supplierRanking || [];
@@ -264,7 +267,9 @@
             });
         },
 
-        // 渲染缺陷类型分布图
+        // 🎯 [DATA-FLOW] 缺陷分布图渲染 - 将API数据转换为饼状图
+        // 📍 数据来源：data.defectDistribution或data.supplierDefectDistribution
+        // 🔗 前端显示：缺陷类型分布饼状图
         renderDefectDistributionChart(data) {
             const ctx = document.getElementById('defectDistributionChart').getContext('2d');
             let defectData = data.defectDistribution;
@@ -327,13 +332,30 @@
                             meta.data.forEach((element, index) => {
                                 const data = dataset.data[index];
                                 const percentage = totalDefects > 0 ? ((data / totalDefects) * 100).toFixed(1) : 0;
-                                const { x, y } = element.tooltipPosition();
-                                ctx.fillStyle = '#fff';
-                                ctx.font = 'bold 14px Arial';
-                                ctx.textAlign = 'center';
-                                ctx.textBaseline = 'middle';
-                                ctx.fillText(`${data}次`, x, y - 8);
-                                ctx.fillText(`${percentage}%`, x, y + 8);
+                                // ✅ 修复：使用更准确的元素中心位置
+            const { x, y } = element.getCenterPoint();
+
+            // 设置文字样式
+            ctx.fillStyle = '#fff';
+            ctx.font = 'bold 12px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            // 添加文字阴影以提高可读性
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = 3;
+            ctx.shadowOffsetX = 1;
+            ctx.shadowOffsetY = 1;
+
+            // 绘制文字标签，调整间距
+            ctx.fillText(`${data}次`, x, y - 10);
+            ctx.fillText(`${percentage}%`, x, y + 10);
+
+            // 重置阴影
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
                             });
                         });
                     }

@@ -215,8 +215,6 @@
                 return;
             }
 
-            const grid = document.createElement('div');
-            grid.className = 'monthly-stats-grid';
 
             sortedMonths.forEach(month => {
                 const data = monthlyData[month];
@@ -307,9 +305,8 @@
                     }
                 });
 
-                grid.appendChild(div);
+                container.appendChild(div);
             });
-            container.appendChild(grid);
         },
 
         renderMonthDetails(container, data) {
@@ -318,37 +315,140 @@
                 return;
             }
 
-            const table = document.createElement('table');
-            table.className = 'month-details-table';
-            table.innerHTML = `
-                <thead>
-                    <tr>
-                        <th>日期</th>
-                        <th>供应商</th>
-                        <th>判定</th>
-                        <th>处理</th>
-                        <th>不良描述</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
+            const totalCount = data.length;
+            const showCount = Math.min(totalCount, 20); // 默认显示前20条或全部
+            const needScroll = totalCount > showCount;
+
+            // 创建容器
+            container.innerHTML = `
+                <div class="details-wrapper">
+                    <div class="details-summary">
+                        <span class="total-count">共 ${totalCount} 条记录</span>
+                        ${needScroll ? '<span class="scroll-hint">↓ 滚动查看更多</span>' : ''}
+                    </div>
+                    <div class="virtual-scroll-container" style="${needScroll ? 'max-height: 400px' : 'max-height: none'}">
+                        <table class="month-details-table">
+                            <thead>
+                                <tr>
+                                    <th>日期</th>
+                                    <th>供应商</th>
+                                    <th>判定</th>
+                                    <th>处理</th>
+                                    <th>外观良率</th>
+                                    <th>不良描述</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             `;
 
-            const tbody = table.querySelector('tbody');
-            data.forEach(item => {
-                const tr = document.createElement('tr');
-                const dateStr = new Date(item.time).toLocaleDateString('zh-CN');
-                tr.innerHTML = `
-                    <td>${dateStr}</td>
-                    <td title="${item.supplier}">${item.supplier}</td>
-                    <td class="${item.result === 'NG' ? 'status-ng' : 'status-ok'}">${item.result}</td>
-                    <td>${item.action}</td>
-                    <td title="${item.defectDetail || ''}">${item.defectDetail || '-'}</td>
-                `;
-                tbody.appendChild(tr);
-            });
+            const tbody = container.querySelector('tbody');
+            const virtualContainer = container.querySelector('.virtual-scroll-container');
 
-            container.appendChild(table);
+            // 如果数据量不大，直接全部渲染
+            if (!needScroll) {
+                data.forEach(item => {
+                    const tr = document.createElement('tr');
+                    const dateStr = new Date(item.time).toLocaleDateString('zh-CN');
+
+                    // 计算外观良率
+                    let appearanceRate = item.appearanceRate || '-';
+                    if (appearanceRate && appearanceRate !== '-' && !String(appearanceRate).includes('%')) {
+                        appearanceRate = appearanceRate + '%';
+                    }
+                    if (!appearanceRate || appearanceRate === '-') {
+                        if (item.result === 'OK') {
+                            appearanceRate = '100%';
+                        } else if (item.result === 'NG') {
+                            appearanceRate = '0%';
+                        }
+                    }
+
+                    tr.innerHTML = `
+                        <td>${dateStr}</td>
+                        <td title="${item.supplier}">${item.supplier}</td>
+                        <td class="${item.result === 'NG' ? 'status-ng' : 'status-ok'}">${item.result}</td>
+                        <td>${item.action}</td>
+                        <td class="appearance-rate">${appearanceRate}</td>
+                        <td title="${item.defectDetail || '-'}" class="defect-detail">${item.defectDetail || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+                return;
+            }
+
+            // 虚拟滚动实现
+            let currentStart = 0;
+            const visibleCount = 25; // 虚拟滚动时可见的条目数
+            const rowHeight = 42; // 每行高度
+
+            const renderVisibleItems = (start = 0, end = Math.min(start + visibleCount + 5, totalCount)) => {
+                // 清空现有内容
+                tbody.innerHTML = '';
+
+                // 添加顶部空白占位
+                if (start > 0) {
+                    const spacer = document.createElement('tr');
+                    spacer.style.height = `${start * rowHeight}px`;
+                    spacer.innerHTML = '<td colspan="6"></td>';
+                    tbody.appendChild(spacer);
+                }
+
+                // 渲染可见条目
+                for (let i = start; i < end; i++) {
+                    const item = data[i];
+                    const tr = document.createElement('tr');
+                    const dateStr = new Date(item.time).toLocaleDateString('zh-CN');
+
+                    // 计算外观良率
+                    let appearanceRate = item.appearanceRate || '-';
+                    if (appearanceRate && appearanceRate !== '-' && !String(appearanceRate).includes('%')) {
+                        appearanceRate = appearanceRate + '%';
+                    }
+                    if (!appearanceRate || appearanceRate === '-') {
+                        if (item.result === 'OK') {
+                            appearanceRate = '100%';
+                        } else if (item.result === 'NG') {
+                            appearanceRate = '0%';
+                        }
+                    }
+
+                    tr.innerHTML = `
+                        <td>${dateStr}</td>
+                        <td title="${item.supplier}">${item.supplier}</td>
+                        <td class="${item.result === 'NG' ? 'status-ng' : 'status-ok'}">${item.result}</td>
+                        <td>${item.action}</td>
+                        <td class="appearance-rate">${appearanceRate}</td>
+                        <td title="${item.defectDetail || '-'}" class="defect-detail">${item.defectDetail || '-'}</td>
+                    `;
+                    tbody.appendChild(tr);
+                }
+
+                // 添加底部空白占位
+                if (end < totalCount) {
+                    const spacer = document.createElement('tr');
+                    spacer.style.height = `${(totalCount - end) * rowHeight}px`;
+                    spacer.innerHTML = '<td colspan="6"></td>';
+                    tbody.appendChild(spacer);
+                }
+            };
+
+            // 初始渲染
+            renderVisibleItems(0, showCount);
+
+            // 虚拟滚动事件
+            virtualContainer.addEventListener('scroll', (e) => {
+                const scrollTop = e.target.scrollTop;
+                const start = Math.floor(scrollTop / rowHeight);
+                const end = Math.min(start + visibleCount, totalCount);
+                
+                requestAnimationFrame(() => {
+                    renderVisibleItems(start, end);
+                });
+            });
         },
 
         populateCumulativePassRateTable(monthlyTrendData, cumulativePassRates) {
@@ -383,18 +483,18 @@
         },
 
         updateFilterInfo(filter) {
-            const h2 = document.querySelector('#results h2');
+            const h4 = document.querySelector('#results h4');
             const existingInfo = document.getElementById('filter-info');
 
             if (filter) {
                 const html = `（${filter}）`;
                 if (existingInfo) {
                     existingInfo.innerHTML = html;
-                } else {
-                    h2.innerHTML = `分析结果 <span id="filter-info" style="color: #3498db; font-size: 0.8em;">${html}</span>`;
+                } else if (h4) {
+                    h4.innerHTML = `分析结果 <span id="filter-info" class="filter-tag">${html}</span>`;
                 }
             } else if (existingInfo) {
-                existingInfo.remove();
+                existingInfo.innerHTML = '';
             }
         },
 

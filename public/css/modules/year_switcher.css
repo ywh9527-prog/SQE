@@ -1,0 +1,126 @@
+/* ============================================
+   卡片内年份选择器样式
+   整合到数据源卡片中的紧凑设计
+   ============================================ */
+
+.card-year-selector {
+    margin: 16px 0;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--gray-200);
+}
+
+.year-select-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.year-select-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin: 0;
+    min-width: 80px;
+}
+
+.year-select-label i {
+    color: var(--primary-600);
+    font-size: 14px;
+}
+
+.year-select-compact {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-sm);
+    background: white;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--gray-900);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    min-height: 32px;
+}
+
+.year-select-compact:hover {
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 2px rgba(157, 122, 84, 0.1);
+}
+
+.year-select-compact:focus {
+    outline: none;
+    border-color: var(--primary-600);
+    box-shadow: 0 0 0 2px rgba(157, 122, 84, 0.15);
+}
+
+.year-select-compact:disabled {
+    background: var(--gray-100);
+    color: var(--gray-500);
+    cursor: not-allowed;
+    border-color: var(--gray-200);
+}
+
+/* 卡片激活状态时的年份选择器样式 */
+.data-card.active .card-year-selector {
+    background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
+    border-color: var(--primary-200);
+}
+
+.data-card.active .year-select-label {
+    color: var(--primary-700);
+}
+
+.data-card.active .year-select-label i {
+    color: var(--primary-700);
+}
+
+/* 加载状态 */
+.year-select-compact.loading {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="%239d7a54" stroke-width="2" opacity="0.25"/><path d="M12 2a10 10 0 0 1 0 20" fill="none" stroke="%239d7a54" stroke-width="2"><animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="1s" repeatCount="indefinite"/></path></svg>');
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 32px;
+}
+
+/* 空状态 */
+.year-select-compact:disabled option {
+    color: var(--gray-400);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .year-select-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .year-select-label {
+        min-width: auto;
+    }
+    
+    .year-select-compact {
+        width: 100%;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-year-selector {
+    animation: fadeIn 0.3s ease-out;
+}

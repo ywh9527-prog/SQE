@@ -1,0 +1,585 @@
+/* ============================================
+   IQC 数据卡片增强样式 - UI/UX 优化版
+   创建时间: 2025-11-25
+   优化目标: 现代化、专业化、高级感
+   ============================================ */
+
+/* ============================================
+   优化 1: 数据源卡片区域 - 增强视觉层次
+   ============================================ */
+
+.iqc-data-source-section {
+    margin-bottom: 2.5rem;
+    position: relative;
+}
+
+/* 添加区域标题提示 */
+.iqc-data-source-section::before {
+    content: '数据源选择';
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: var(--gray-500);
+    margin-bottom: 1rem;
+    padding-left: 0.5rem;
+}
+
+.data-source-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+/* ============================================
+   优化 2: 数据卡片 - 渐变背景和深度效果
+   ============================================ */
+
+.data-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 2px solid var(--gray-200);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transform: translateY(0);
+}
+
+/* 顶部装饰条 - 渐变效果 */
+.data-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg,
+            var(--primary-500) 0%,
+            var(--primary-400) 50%,
+            var(--accent-500) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+/* 背景光晕效果 */
+.data-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle,
+            rgba(157, 122, 84, 0.08) 0%,
+            transparent 70%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+/* Hover 状态 - 提升和光晕 */
+.data-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.12),
+        0 16px 48px rgba(157, 122, 84, 0.15);
+    border-color: var(--primary-400);
+}
+
+.data-card:hover::before {
+    opacity: 1;
+}
+
+.data-card:hover::after {
+    opacity: 1;
+}
+
+/* ============================================
+   优化 3: 选中状态 - 强烈视觉反馈
+   ============================================ */
+
+.data-card.active {
+    background: linear-gradient(135deg,
+            var(--primary-50) 0%,
+            #ffffff 100%);
+    border-color: var(--primary-500);
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:
+        0 8px 24px rgba(157, 122, 84, 0.2),
+        0 16px 48px rgba(157, 122, 84, 0.25),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.data-card.active::before {
+    opacity: 1;
+    height: 6px;
+}
+
+.data-card.active::after {
+    opacity: 1;
+}
+
+/* 选中状态的脉冲动画 */
+@keyframes pulse-border {
+
+    0%,
+    100% {
+        box-shadow:
+            0 8px 24px rgba(157, 122, 84, 0.2),
+            0 16px 48px rgba(157, 122, 84, 0.25),
+            0 0 0 0 rgba(157, 122, 84, 0.4);
+    }
+
+    50% {
+        box-shadow:
+            0 8px 24px rgba(157, 122, 84, 0.2),
+            0 16px 48px rgba(157, 122, 84, 0.25),
+            0 0 0 8px rgba(157, 122, 84, 0);
+    }
+}
+
+.data-card.active {
+    animation: pulse-border 2s ease-in-out infinite;
+}
+
+/* ============================================
+   优化 4: 卡片头部 - 图标和状态优化
+   ============================================ */
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.card-header h4 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    letter-spacing: -0.02em;
+}
+
+/* 为外购/外协添加不同的图标颜色 */
+.data-card[data-type="purchase"] .card-header h4 {
+    color: #2563eb;
+    /* 蓝色 */
+}
+
+.data-card[data-type="external"] .card-header h4 {
+    color: #7c3aed;
+    /* 紫色 */
+}
+
+/* ============================================
+   优化 5: 更新状态 - 徽章样式
+   ============================================ */
+
+.update-status {
+    padding: 0.375rem 0.875rem;
+    border-radius: 24px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+}
+
+/* 无数据状态 */
+.update-status.none {
+    background: rgba(107, 114, 128, 0.1);
+    color: #6b7280;
+    border: 1px solid rgba(107, 114, 128, 0.2);
+}
+
+/* 正常状态 - 绿色徽章 */
+.update-status.ok {
+    background: linear-gradient(135deg,
+            rgba(16, 185, 129, 0.15) 0%,
+            rgba(16, 185, 129, 0.08) 100%);
+    color: #059669;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* 警告状态 - 橙色徽章 */
+.update-status.warning {
+    background: linear-gradient(135deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(245, 158, 11, 0.08) 100%);
+    color: #d97706;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    animation: warning-pulse 2s ease-in-out infinite;
+}
+
+@keyframes warning-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+/* 加载状态 - 蓝色徽章 */
+.update-status.loading {
+    background: linear-gradient(135deg,
+            rgba(59, 130, 246, 0.15) 0%,
+            rgba(59, 130, 246, 0.08) 100%);
+    color: #2563eb;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* ============================================
+   优化 6: 统计数据 - 数字动画和视觉强化
+   ============================================ */
+
+.card-stats {
+    display: flex;
+    gap: 2.5rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+    flex: 1;
+}
+
+.stat-item .label {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-600);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-item .value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    transition: all 0.3s ease;
+}
+
+/* 数字 hover 效果 */
+.data-card:hover .stat-item .value {
+    color: var(--primary-700);
+    transform: scale(1.05);
+}
+
+/* 数字加载动画 */
+@keyframes number-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.stat-item .value {
+    animation: number-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ============================================
+   优化 7: 时间范围 - 信息卡片化
+   ============================================ */
+
+.card-time-range {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg,
+            var(--gray-50) 0%,
+            rgba(255, 255, 255, 0.5) 100%);
+    border-radius: 12px;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+    position: relative;
+    z-index: 1;
+    transition: all 0.3s ease;
+}
+
+.card-time-range:hover {
+    background: linear-gradient(135deg,
+            var(--primary-50) 0%,
+            rgba(255, 255, 255, 0.5) 100%);
+    border-color: var(--primary-300);
+}
+
+.time-range-label {
+    font-weight: 600;
+    margin-right: 0.5rem;
+    color: var(--gray-600);
+}
+
+/* 时间范围图标 */
+.card-time-range::before {
+    content: '📅';
+    margin-right: 0.5rem;
+    font-size: 1rem;
+}
+
+/* ============================================
+   优化 8: 更新按钮 - 现代化设计
+   ============================================ */
+
+.card-actions {
+    display: flex;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
+}
+
+.card-actions .btn-secondary {
+    width: 100%;
+    padding: 0.875rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(135deg,
+            #ffffff 0%,
+            var(--gray-50) 100%);
+    color: var(--gray-700);
+    border: 2px solid var(--gray-300);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 按钮光晕效果 */
+.card-actions .btn-secondary::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(157, 122, 84, 0.1);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.card-actions .btn-secondary:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.card-actions .btn-secondary:hover {
+    background: linear-gradient(135deg,
+            var(--primary-50) 0%,
+            #ffffff 100%);
+    border-color: var(--primary-500);
+    color: var(--primary-700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(157, 122, 84, 0.2);
+}
+
+.card-actions .btn-secondary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(157, 122, 84, 0.15);
+}
+
+/* 按钮图标旋转动画 */
+.card-actions .btn-secondary:hover i {
+    animation: rotate-icon 0.6s ease-in-out;
+}
+
+@keyframes rotate-icon {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   优化 9: 加载状态动画 - 更流畅
+   ============================================ */
+
+.status-loading::after {
+    content: '';
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: 8px;
+    border: 2.5px solid transparent;
+    border-top: 2.5px solid currentColor;
+    border-radius: 50%;
+    animation: smooth-spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+@keyframes smooth-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================
+   优化 10: 响应式设计增强
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .data-source-cards {
+        gap: 1.5rem;
+    }
+
+    .data-card {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .data-source-cards {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .card-stats {
+        gap: 1.5rem;
+    }
+
+    .stat-item .value {
+        font-size: 1.75rem;
+    }
+
+    .card-actions {
+        flex-direction: column;
+    }
+}
+
+/* ============================================
+   优化 11: 无数据状态 - 空状态设计
+   ============================================ */
+
+.data-card.no-data {
+    opacity: 0.7;
+    cursor: not-allowed;
+    background: linear-gradient(135deg,
+            var(--gray-50) 0%,
+            #ffffff 100%);
+}
+
+.data-card.no-data:hover {
+    transform: none;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border-color: var(--gray-200);
+}
+
+.data-card.no-data::before,
+.data-card.no-data::after {
+    display: none;
+}
+
+/* 空状态图标 */
+.data-card.no-data .card-header h4::after {
+    content: '📭';
+    margin-left: 0.5rem;
+    opacity: 0.5;
+}
+
+/* ============================================
+   优化 12: 微交互 - 点击涟漪效果
+   ============================================ */
+
+@keyframes ripple {
+    0% {
+        transform: scale(0);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+.data-card.ripple::after {
+    animation: ripple 0.6s ease-out;
+}
+
+/* ============================================
+   优化 13: 深色模式支持 (可选)
+   ============================================ */
+
+@media (prefers-color-scheme: dark) {
+    .data-card {
+        background: linear-gradient(135deg,
+                #1f2937 0%,
+                #111827 100%);
+        border-color: #374151;
+    }
+
+    .card-header h4 {
+        color: #f9fafb;
+    }
+
+    .stat-item .value {
+        color: #f9fafb;
+    }
+
+    .card-time-range {
+        background: linear-gradient(135deg,
+                #374151 0%,
+                rgba(31, 41, 55, 0.5) 100%);
+        border-color: #4b5563;
+        color: #d1d5db;
+    }
+}
+
+/* ============================================
+   优化 14: 打印样式优化
+   ============================================ */
+
+@media print {
+    .data-card {
+        box-shadow: none;
+        border: 1px solid #000;
+        page-break-inside: avoid;
+    }
+
+    .data-card::before,
+    .data-card::after {
+        display: none;
+    }
+
+    .card-actions {
+        display: none;
+    }
+}

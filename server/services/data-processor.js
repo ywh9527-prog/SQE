@@ -48,7 +48,28 @@ class DataProcessorService {
 
         // 时间筛选
         if (timeFilter) {
-          const itemDate = new Date(row.time);
+          if (!row.time) return false;
+          
+          let itemDate;
+          try {
+            // 如果已经是 Date 对象，直接使用
+            if (row.time instanceof Date) {
+              itemDate = row.time;
+            } else {
+              // 如果是字符串，转换为 Date
+              itemDate = new Date(row.time);
+            }
+            
+            // 检查日期是否有效
+            if (isNaN(itemDate.getTime())) {
+              console.warn('Invalid date format:', row.time);
+              return false;
+            }
+          } catch (e) {
+            console.warn('Date parsing error:', e.message, 'for value:', row.time);
+            return false;
+          }
+          
           if (timeFilter.type === 'month' && timeFilter.value) {
             const [year, month] = timeFilter.value.split('-');
             if (itemDate.getFullYear() !== parseInt(year) ||
@@ -73,10 +94,16 @@ class DataProcessorService {
     }
   }
 
-  // 检测文件类型
+  // 检测文件类型（外购/外协）
   detectFileType(data, fileName) {
     // 优先通过表头检测
     const headerType = this.detectByHeader(data);
+    
+    // 调试日志：记录文件类型检测结果
+    const detectedType = headerType || 'purchase';
+    console.log(`[FILE-TYPE] 文件: ${fileName}, 检测类型: ${detectedType}`);
+    
+    return detectedType;
     if (headerType !== FILE_TYPE_CONSTANTS.UNKNOWN) {
       return headerType;
     }
@@ -124,6 +151,7 @@ class DataProcessorService {
       SUPPLIER_INDEX: common.SUPPLIER,
       RESULT_INDEX: specific.RESULT,
       ACTION_INDEX: specific.ACTION,
+      APPEARANCE_RATE_INDEX: specific.APPEARANCE_RATE,
       DEFECT_DETAIL_INDEX: specific.DEFECT_DETAIL,
       APPEARANCE_DEFECT_INDEX: specific.APPEARANCE_DEFECT,
       DIMENSION_DEFECT_INDEX: specific.DIMENSION_DEFECT,
@@ -142,13 +170,13 @@ class DataProcessorService {
   // 过滤并转换数据
   filterAndTransformData(data, indices, supplierFilter, timeFilter) {
     const { TIME_INDEX, RESULT_INDEX, ACTION_INDEX, SUPPLIER_INDEX,
-      DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
+      APPEARANCE_RATE_INDEX, DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
       DIMENSION_DEFECT_INDEX, PERFORMANCE_DEFECT_INDEX } = indices;
 
     // 获取最大索引以进行安全检查
     const maxIndex = Math.max(
       TIME_INDEX, RESULT_INDEX, ACTION_INDEX, SUPPLIER_INDEX,
-      DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
+      APPEARANCE_RATE_INDEX, DEFECT_DETAIL_INDEX, APPEARANCE_DEFECT_INDEX,
       DIMENSION_DEFECT_INDEX, PERFORMANCE_DEFECT_INDEX
     );
 
@@ -245,6 +273,16 @@ class DataProcessorService {
           result: String(row[RESULT_INDEX] || '').toUpperCase().trim(), // 允许空值
           action: String(ACTION_INDEX < row.length ? row[ACTION_INDEX] || '' : '').toUpperCase().trim(),
           supplier: String(row[SUPPLIER_INDEX] || '').trim(),
+          appearanceRate: APPEARANCE_RATE_INDEX >= 0 && APPEARANCE_RATE_INDEX < row.length ? (() => {
+            const val = row[APPEARANCE_RATE_INDEX];
+            if (!val || val === '') return '';
+            const num = parseFloat(val);
+            // 如果是小数(0-1之间),转换为百分比
+            if (!isNaN(num)) {
+              return num < 1 ? (num * 100).toFixed(2) : num.toFixed(2);
+            }
+            return String(val).trim();
+          })() : '',
           defectDetail: DEFECT_DETAIL_INDEX >= 0 && DEFECT_DETAIL_INDEX < row.length ? String(row[DEFECT_DETAIL_INDEX] || '').trim() : '',
           appearanceDefect: APPEARANCE_DEFECT_INDEX >= 0 && APPEARANCE_DEFECT_INDEX < row.length ? String(row[APPEARANCE_DEFECT_INDEX] || '').trim() : '',
           dimensionDefect: DIMENSION_DEFECT_INDEX >= 0 && DIMENSION_DEFECT_INDEX < row.length ? String(row[DIMENSION_DEFECT_INDEX] || '').trim() : '',
@@ -301,7 +339,8 @@ class DataProcessorService {
     const monthlyData = {};
 
     validData.forEach(item => {
-      const monthKey = `${item.time.getFullYear()}-${String(item.time.getMonth() + 1).padStart(2, '0')}`;
+      const itemDate = item.time instanceof Date ? item.time : new Date(item.time);
+      const monthKey = `${itemDate.getFullYear()}-${String(itemDate.getMonth() + 1).padStart(2, '0')}`;
       if (!monthlyData[monthKey]) {
         monthlyData[monthKey] = {
           total: 0,
@@ -363,12 +402,14 @@ class DataProcessorService {
 
     // 筛选本周和上周数据，只比较日期部分
     const currentWeekData = validData.filter(item => {
-      const itemDate = new Date(item.time.getFullYear(), item.time.getMonth(), item.time.getDate());
+      const itemTime = item.time instanceof Date ? item.time : new Date(item.time);
+      const itemDate = new Date(itemTime.getFullYear(), itemTime.getMonth(), itemTime.getDate());
       return itemDate >= currentWeekStartBoundary && itemDate <= currentWeekEndBoundary;
     });
 
     const previousWeekData = validData.filter(item => {
-      const itemDate = new Date(item.time.getFullYear(), item.time.getMonth(), item.time.getDate());
+      const itemTime = item.time instanceof Date ? item.time : new Date(item.time);
+      const itemDate = new Date(itemTime.getFullYear(), itemTime.getMonth(), itemTime.getDate());
       return itemDate >= previousWeekStartBoundary && itemDate <= previousWeekEndBoundary;
     });
 

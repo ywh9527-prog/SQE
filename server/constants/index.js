@@ -13,6 +13,7 @@ const COLUMN_INDICES = {
   [FILE_TYPE_CONSTANTS.EXTERNAL]: {
     RESULT: 17,             // R列
     ACTION: 18,             // S列
+    APPEARANCE_RATE: 10,    // K列 - 外观良率
     DEFECT_DETAIL: 11,      // L列
     APPEARANCE_DEFECT: 12,  // M列
     DIMENSION_DEFECT: 14,   // O列
@@ -21,10 +22,11 @@ const COLUMN_INDICES = {
   [FILE_TYPE_CONSTANTS.PURCHASE]: {
     RESULT: 18,             // S列
     ACTION: 19,             // T列
-    DEFECT_DETAIL: 12,      // M列
-    APPEARANCE_DEFECT: 13,  // N列
-    DIMENSION_DEFECT: 15,   // P列
-    PERFORMANCE_DEFECT: 17  // R列
+    APPEARANCE_RATE: 10,    // K列 - 外观良率
+    DEFECT_DETAIL: 12,      // M列 - 不良描述
+    APPEARANCE_DEFECT: 11,  // L列
+    DIMENSION_DEFECT: 14,   // N列
+    PERFORMANCE_DEFECT: 16  // P列
   }
 };
 

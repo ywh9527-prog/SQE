@@ -8,12 +8,24 @@
     <link rel="stylesheet" href="css/style_v2.css">
     <!-- 模块化 CSS -->
     <link rel="stylesheet" href="css/modules/iqc_v2.css">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/modules/iqc_v2_monthly_fix.css">
+    <link rel="stylesheet" href="css/modules/sheet-selection-debug.css">
+    <!-- IQC 卡片 UI/UX 增强样式 -->
+    <link rel="stylesheet" href="css/modules/iqc_cards_enhanced.css">
+    <!-- 年份选择器样式 -->
+    <link rel="stylesheet" href="css/modules/year_switcher.css">
+    <!-- Toast 提示框样式 -->
+    <link rel="stylesheet" href="css/utils/toast.css">
+    <!-- 进度指示器样式 -->
+    <link rel="stylesheet" href="css/utils/progress.css">
+    <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
 </head>
 
 <body>
+    <!-- 顶部进度条 -->
+    <div id="top-progress-bar" class="top-progress-bar" style="display: none;"></div>
     <div class="app-container">
         <!-- 侧边栏导航 -->
         <aside class="sidebar">
@@ -72,7 +84,10 @@
                 <div id="module-dashboard" class="module-view">
                     <div class="welcome-card">
                         <h3>欢迎回来，Admin</h3>
-                        <p>今天是 2025年11月21日，系统运行正常。</p>
+                        <p>今天是 <span id="current-date"></span>，系统运行正常。</p>
+                        <script>
+                            document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+                        </script>
                     </div>
                     <!-- 仪表盘概览卡片占位 -->
                     <div class="stats-grid">
@@ -99,32 +114,110 @@
                         <h3>IQC 来料检验分析</h3>
                     </div>
 
-                    <!-- 上传区域 -->
-                    <section class="upload-section card">
-                        <div class="section-header">
-                            <h4><i class="ph ph-upload-simple"></i> 上传数据</h4>
-                        </div>
-                        <div class="upload-area">
-                            <form id="uploadForm" enctype="multipart/form-data">
-                                <div class="file-input-wrapper">
-                                    <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" required
-                                        class="file-input">
-                                    <label for="excelFile" class="file-label">
-                                        <i class="ph ph-file-xls"></i>
-                                        <span>点击选择或拖拽 Excel 文件</span>
-                                    </label>
-                                </div>
-
-                                <div id="sheetSelection" class="sheet-selection hidden">
-                                    <div class="loading-spinner"></div>
-                                    <div class="loading-text">正在分析数据...</div>
-                                    <div class="progress-bar">
-                                        <div class="progress-bar-fill"></div>
+                    <!-- 数据源卡片区域 -->
+                    <section class="iqc-data-source-section">
+                        <div class="data-source-cards">
+                            <!-- 外购数据卡片 -->
+                            <div class="data-card" data-type="purchase">
+                                <div class="card-header">
+                                    <h4><i class="ph ph-package"></i> 外购数据</h4>
+                                    <div class="update-status" id="purchase-update-status">
+                                        <span class="status-loading">加载中...</span>
                                     </div>
-                                    <div class="loading-tips">请稍候，正在处理您的Excel文件</div>
                                 </div>
+                                <div class="card-stats">
+                                    <div class="stat-item">
+                                        <span class="label">总数据</span>
+                                        <span class="value" id="purchase-total-count">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">本次新增</span>
+                                        <span class="value" id="purchase-recent-count">-</span>
+                                    </div>
+                                </div>
+                                <div class="card-time-range">
+                                    <span class="time-range-label">数据时间范围：</span>
+                                    <span id="purchase-time-range">-</span>
+                                </div>
+                                <div class="card-year-selector">
+                                    <div class="year-select-group">
+                                        <label class="year-select-label">
+                                            <i class="ph ph-calendar"></i>
+                                            选择年份：
+                                        </label>
+                                        <select id="purchaseYearSelectCompact" class="year-select-compact">
+                                            <option value="">最新数据</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-secondary update-btn" data-type="purchase">
+                                        <i class="ph ph-arrow-clockwise"></i>
+                                        更新数据
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 外协数据卡片 -->
+                            <div class="data-card" data-type="external">
+                                <div class="card-header">
+                                    <h4><i class="ph ph-factory"></i> 外协数据</h4>
+                                    <div class="update-status" id="external-update-status">
+                                        <span class="status-loading">加载中...</span>
+                                    </div>
+                                </div>
+                                <div class="card-stats">
+                                    <div class="stat-item">
+                                        <span class="label">总数据</span>
+                                        <span class="value" id="external-total-count">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">本次新增</span>
+                                        <span class="value" id="external-recent-count">-</span>
+                                    </div>
+                                </div>
+                                <div class="card-time-range">
+                                    <span class="time-range-label">数据时间范围：</span>
+                                    <span id="external-time-range">-</span>
+                                </div>
+                                <div class="card-year-selector">
+                                    <div class="year-select-group">
+                                        <label class="year-select-label">
+                                            <i class="ph ph-calendar"></i>
+                                            选择年份：
+                                        </label>
+                                        <select id="externalYearSelectCompact" class="year-select-compact">
+                                            <option value="">最新数据</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-secondary update-btn" data-type="external">
+                                        <i class="ph ph-arrow-clockwise"></i>
+                                        更新数据
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </section>
+
+                    <!-- 隐藏的上传表单（用于数据更新） -->
+                    <div id="hiddenUploadForm" style="display: none;">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" class="file-input">
+                        </form>
+                    </div>
+
+                    <!-- 工作表选择（保持原有逻辑） -->
+                    <div id="sheetSelection" class="sheet-selection hidden">
+                        <div class="sheet-selection-content">
+                            <h5>请选择数据工作表:</h5>
+                            <div id="sheetTabContainer" class="sheet-tabs"></div>
+                            <div class="sheet-actions">
+                                <button type="button" id="confirmSheetBtn" class="btn-primary">确认分析</button>
+                            </div>
+                        </div>
+                    </div>
 
                     <!-- 供应商搜索区域 -->
                     <section id="supplierSearch" class="supplier-search-section card hidden">
@@ -145,6 +238,14 @@
                         </div>
                     </section>
 
+                    <!-- Loading 状态 -->
+                    <section id="loading" class="loading hidden">
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">正在处理数据，请稍候...</div>
+                        </div>
+                    </section>
+
                     <!-- 错误提示 -->
                     <section id="error" class="error-section hidden">
                         <div class="error-card">
@@ -161,31 +262,31 @@
 
                         <!-- 汇总卡片 -->
                         <div class="summary-stats">
-                            <div class="stat-card-mini">
-                                <div class="label">总批次数</div>
-                                <div class="value" id="totalBatches">-</div>
+                            <div class="iqc-stat-card iqc-stat-card--mini">
+                                <div class="iqc-stat-card__label">总批次数</div>
+                                <div class="iqc-stat-card__value" id="totalBatches">-</div>
                             </div>
-                            <div class="stat-card-mini success">
-                                <div class="label">合格批次数</div>
-                                <div class="value" id="okBatches">-</div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--success">
+                                <div class="iqc-stat-card__label">合格批次数</div>
+                                <div class="iqc-stat-card__value" id="okBatches">-</div>
                             </div>
-                            <div class="stat-card-mini danger">
-                                <div class="label">退货批次数</div>
-                                <div class="value" id="returnBatches">-</div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--danger">
+                                <div class="iqc-stat-card__label">退货批次数</div>
+                                <div class="iqc-stat-card__value" id="returnBatches">-</div>
                             </div>
-                            <div class="stat-card-mini warning">
-                                <div class="label">特采批次数</div>
-                                <div class="value" id="specialBatches">-</div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--warning">
+                                <div class="iqc-stat-card__label">特采批次数</div>
+                                <div class="iqc-stat-card__value" id="specialBatches">-</div>
                             </div>
-                            <div class="stat-card-mini primary">
-                                <div class="label">批次合格率</div>
-                                <div class="value" id="passRate">-%</div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--primary">
+                                <div class="iqc-stat-card__label">批次合格率</div>
+                                <div class="iqc-stat-card__value" id="passRate">-%</div>
                             </div>
                         </div>
 
                         <div class="charts-grid">
                             <!-- 缺陷分布图 -->
-                            <div class="chart-card">
+                            <div class="iqc-chart-card">
                                 <h5>缺陷类型分布</h5>
                                 <div class="chart-wrapper">
                                     <canvas id="defectDistributionChart"></canvas>
@@ -193,7 +294,7 @@
                             </div>
 
                             <!-- 供应商良率排名 -->
-                            <div class="chart-card">
+                            <div class="iqc-chart-card">
                                 <h5>供应商良率排名</h5>
                                 <div class="chart-wrapper">
                                     <canvas id="supplierDefectRateChart"></canvas>
@@ -202,7 +303,7 @@
                         </div>
 
                         <!-- 平均合格率趋势 -->
-                        <div class="chart-card full-width">
+                        <div class="iqc-chart-card iqc-chart-card--full-width">
                             <h5>平均合格率趋势</h5>
                             <div class="chart-wrapper large">
                                 <canvas id="monthlyTrendChart"></canvas>
@@ -233,7 +334,7 @@
                         </div>
 
                         <!-- 周度对比 -->
-                        <div class="comparison-section card">
+                        <div class="iqc-comparison-section card">
                             <div class="section-header">
                                 <h5><i class="ph ph-arrows-left-right"></i> 周度数据对比</h5>
                             </div>
@@ -291,7 +392,7 @@
                         </div>
 
                         <!-- 月度统计详情 -->
-                        <div class="monthly-stats-section card">
+                        <div class="iqc-monthly-stats-section card">
                             <div class="section-header">
                                 <h5>月度统计详情</h5>
                             </div>
@@ -314,8 +415,13 @@
         </main>
     </div>
 
+    <!-- 工具脚本 (最先加载) -->
+    <script src="js/utils/api.js?v=20251124"></script>
+    <script src="js/utils/toast.js"></script>
+    <script src="js/utils/modal.js"></script>
+
     <!-- 核心脚本 -->
-    <script src="js/api_core.js"></script>
+
     <script src="js/ui.js"></script>
     <script src="js/charts.js"></script>
 
