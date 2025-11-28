@@ -276,12 +276,28 @@ class DataProcessorService {
           appearanceRate: APPEARANCE_RATE_INDEX >= 0 && APPEARANCE_RATE_INDEX < row.length ? (() => {
             const val = row[APPEARANCE_RATE_INDEX];
             if (!val || val === '') return '';
-            const num = parseFloat(val);
-            // 如果是小数(0-1之间),转换为百分比
-            if (!isNaN(num)) {
-              return num < 1 ? (num * 100).toFixed(2) : num.toFixed(2);
+            
+            // 处理字符串中的百分号
+            const strVal = String(val).trim();
+            if (strVal.includes('%')) {
+              // 如果已经包含%，直接返回数值部分（去掉%）
+              const numFromPercent = parseFloat(strVal.replace('%', ''));
+              if (!isNaN(numFromPercent)) {
+                return numFromPercent.toFixed(2);
+              }
+              return strVal.replace('%', '');
             }
-            return String(val).trim();
+            
+            const num = parseFloat(val);
+            if (!isNaN(num)) {
+              // 判断是否是Excel百分比格式（0-1之间的小数）
+              if (num <= 1 && num >= 0) {
+                return (num * 100).toFixed(2);
+              } else {
+                return num.toFixed(2);
+              }
+            }
+            return strVal;
           })() : '',
           defectDetail: DEFECT_DETAIL_INDEX >= 0 && DEFECT_DETAIL_INDEX < row.length ? String(row[DEFECT_DETAIL_INDEX] || '').trim() : '',
           appearanceDefect: APPEARANCE_DEFECT_INDEX >= 0 && APPEARANCE_DEFECT_INDEX < row.length ? String(row[APPEARANCE_DEFECT_INDEX] || '').trim() : '',

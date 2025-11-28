@@ -6,27 +6,32 @@ const FILE_TYPE_CONSTANTS = {
 
 // Excel列索引配置
 const COLUMN_INDICES = {
+  // 通用列（外购+外协共用）
   COMMON: {
     TIME: 6,      // 检验日期 (G列)
     SUPPLIER: 2   // 供应商名称 (C列)
   },
+
+  // 外协专用列
   [FILE_TYPE_CONSTANTS.EXTERNAL]: {
-    RESULT: 17,             // R列
-    ACTION: 18,             // S列
-    APPEARANCE_RATE: 10,    // K列 - 外观良率
-    DEFECT_DETAIL: 11,      // L列
-    APPEARANCE_DEFECT: 12,  // M列
-    DIMENSION_DEFECT: 14,   // O列
-    PERFORMANCE_DEFECT: 16  // Q列
+    RESULT: 17,             // 最终判定 (R列)
+    ACTION: 18,             // 处理方式 (S列)
+    APPEARANCE_RATE: 10,    // 外观良率 (K列)
+    DEFECT_DETAIL: 11,      // 缺陷详情 (L列)
+    APPEARANCE_DEFECT: 12,  // 外观缺陷 (M列)
+    DIMENSION_DEFECT: 14,   // 尺寸缺陷 (O列)
+    PERFORMANCE_DEFECT: 16  // 性能缺陷 (Q列)
   },
+
+  // 外购专用列
   [FILE_TYPE_CONSTANTS.PURCHASE]: {
-    RESULT: 18,             // S列
-    ACTION: 19,             // T列
-    APPEARANCE_RATE: 10,    // K列 - 外观良率
-    DEFECT_DETAIL: 12,      // M列 - 不良描述
-    APPEARANCE_DEFECT: 11,  // L列
-    DIMENSION_DEFECT: 14,   // N列
-    PERFORMANCE_DEFECT: 16  // P列
+    RESULT: 18,             // 最终判定 (S列)
+    ACTION: 19,             // 处理方式 (T列)
+    APPEARANCE_RATE: 11,    // 外观良率 (L列)
+    DEFECT_DETAIL: 12,      // 缺陷详情 (M列)
+    APPEARANCE_DEFECT: 13,  // 外观缺陷 (N列)
+    DIMENSION_DEFECT: 15,   // 尺寸缺陷 (P列)
+    PERFORMANCE_DEFECT: 17  // 性能缺陷 (R列)
   }
 };
 
