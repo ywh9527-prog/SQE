@@ -536,41 +536,28 @@ class DataProcessorService {
     const defectTypeCount = {};
 
     for (const item of validData) {
-      if (this.checkStatus(item.result, 'NG')) {
-        // 统计三大类缺陷
-        if (item.appearanceDefect && item.appearanceDefect.trim() !== '' && !this.checkStatus(item.appearanceDefect, 'OK')) {
-          defectTypeCount['外观不良'] = (defectTypeCount['外观不良'] || 0) + 1;
-        }
+      // 统计外观缺陷列中的NG数量
+      if (item.appearanceDefect && this.checkStatus(item.appearanceDefect, 'NG')) {
+        defectTypeCount['外观不良'] = (defectTypeCount['外观不良'] || 0) + 1;
+      }
 
-        if (item.dimensionDefect && item.dimensionDefect.trim() !== '' && !this.checkStatus(item.dimensionDefect, 'OK')) {
-          defectTypeCount['尺寸不良'] = (defectTypeCount['尺寸不良'] || 0) + 1;
-        }
+      // 统计尺寸缺陷列中的NG数量
+      if (item.dimensionDefect && this.checkStatus(item.dimensionDefect, 'NG')) {
+        defectTypeCount['尺寸不良'] = (defectTypeCount['尺寸不良'] || 0) + 1;
+      }
 
-        if (item.performanceDefect && item.performanceDefect.trim() !== '' && !this.checkStatus(item.performanceDefect, 'OK')) {
-          defectTypeCount['性能不良'] = (defectTypeCount['性能不良'] || 0) + 1;
-        }
-
-        // 外协文件：从备注中提取缺陷信息
-        if (!item.appearanceDefect && !item.dimensionDefect && !item.performanceDefect && item.action) {
-          if (item.action.includes('退') || item.action.includes('退货')) {
-            defectTypeCount['退货'] = (defectTypeCount['退货'] || 0) + 1;
-          } else if (item.action.includes('特') || item.action.includes('让步') || item.action.includes('选')) {
-            defectTypeCount['特采/选别'] = (defectTypeCount['特采/选别'] || 0) + 1;
-          } else if (item.action.trim() !== '' && item.action.length < 20) {
-            defectTypeCount[item.action] = (defectTypeCount[item.action] || 0) + 1;
-          }
-        }
+      // 统计性能缺陷列中的NG数量
+      if (item.performanceDefect && this.checkStatus(item.performanceDefect, 'NG')) {
+        defectTypeCount['性能不良'] = (defectTypeCount['性能不良'] || 0) + 1;
       }
     }
 
-    // 获取最常见的缺陷类型前10
-    return Object.entries(defectTypeCount)
-      .sort((a, b) => b[1] - a[1])
-      .slice(0, 10)
-      .map(([defect, count]) => ({
-        defectType: defect,
-        count: count
-      }));
+    // 返回缺陷分布数据
+    return [
+      { defectType: '外观不良', count: defectTypeCount['外观不良'] || 0 },
+      { defectType: '尺寸不良', count: defectTypeCount['尺寸不良'] || 0 },
+      { defectType: '性能不良', count: defectTypeCount['性能不良'] || 0 }
+    ];
   }
 
   // 计算汇总统计

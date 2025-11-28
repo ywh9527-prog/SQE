@@ -309,8 +309,26 @@
                     responsive: true,
                     maintainAspectRatio: true,
                     plugins: {
-                        title: { display: true, text: '缺陷类型分布' },
+                        title: { 
+                            display: true, 
+                            text: '缺陷类型分布',
+                            font: { size: 18, weight: 'bold' },
+                            padding: { top: 10, bottom: 20 }
+                        },
+                        legend: {
+                            display: true,
+                            position: 'bottom',
+                            labels: {
+                                font: { size: 14 },
+                                padding: 15,
+                                usePointStyle: true,
+                                pointStyle: 'circle'
+                            }
+                        },
                         tooltip: {
+                            titleFont: { size: 14 },
+                            bodyFont: { size: 13 },
+                            padding: 12,
                             callbacks: {
                                 label: function (context) {
                                     const label = context.label || '';
@@ -321,7 +339,7 @@
                             }
                         }
                     },
-                    layout: { padding: 20 }
+                    layout: { padding: 25 }
                 },
                 plugins: [{
                     id: 'textLabels',
@@ -337,7 +355,7 @@
 
             // 设置文字样式
             ctx.fillStyle = '#fff';
-            ctx.font = 'bold 12px Arial';
+            ctx.font = 'bold 16px Arial';
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
 
