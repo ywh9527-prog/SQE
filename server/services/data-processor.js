@@ -532,6 +532,10 @@ class DataProcessorService {
   }
 
   // 计算缺陷分布
+  // 硬性要求：只能使用 checkStatus(item.field, 'NG') 检查缺陷，不能修改为其他逻辑
+  // 外协数据：使用"NG"字符串标记缺陷，可以正常统计
+  // 外购数据：使用数字编码(1-9)标记缺陷，不符合NG检查规则，因此显示为空是正常的
+  // 如需外购数据显示缺陷分布，必须在Excel文件中明确标注"NG"字符串
   calculateDefectDistribution(validData) {
     const defectTypeCount = {};
 

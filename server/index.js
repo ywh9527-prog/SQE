@@ -32,6 +32,99 @@ app.use('/api', comparisonRoutes);
 app.use('/api', dataSourceRoutes);
 app.use('/api', supplierSearchRoutes);
 
+// 直接定义认证路由
+app.post('/api/auth/init', async (req, res) => {
+    try {
+        const AuthService = require('./services/authService');
+        const user = await AuthService.createDefaultUser();
+        
+        res.json({
+            success: true,
+            message: '默认用户创建成功',
+            user: {
+                username: user.username,
+                fullName: user.fullName,
+                email: user.email
+            }
+        });
+
+    } catch (error) {
+        const logger = require('./utils/logger');
+        logger.error(`系统初始化错误: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            error: error.message
+        });
+    }
+});
+
+app.post('/api/auth/login', async (req, res) => {
+    try {
+        const AuthService = require('./services/authService');
+        const { username, password } = req.body;
+
+        if (!username || !password) {
+            return res.status(400).json({
+                success: false,
+                error: '用户名和密码不能为空'
+            });
+        }
+
+        const result = await AuthService.login(username, password);
+        res.json(result);
+
+    } catch (error) {
+        const logger = require('./utils/logger');
+        logger.error(`登录接口错误: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            error: '登录失败，请稍后重试'
+        });
+    }
+});
+
+app.get('/api/auth/verify', async (req, res) => {
+    try {
+        const AuthService = require('./services/authService');
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        
+        const result = await AuthService.verifyToken(token);
+        res.json(result);
+
+    } catch (error) {
+        const logger = require('./utils/logger');
+        logger.error(`令牌验证错误: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            error: '令牌验证失败'
+        });
+    }
+});
+
+app.get('/api/auth/me', async (req, res) => {
+    try {
+        const AuthService = require('./services/authService');
+        const token = req.headers.authorization?.replace('Bearer ', '');
+        
+        const verifyResult = await AuthService.verifyToken(token);
+        
+        if (!verifyResult.success) {
+            return res.status(401).json(verifyResult);
+        }
+
+        const result = await AuthService.getUserInfo(verifyResult.user.userId);
+        res.json(result);
+
+    } catch (error) {
+        const logger = require('./utils/logger');
+        logger.error(`获取用户信息错误: ${error.message}`);
+        res.status(500).json({
+            success: false,
+            error: '获取用户信息失败'
+        });
+    }
+});
+
 // 启动服务器
 const startServer = async () => {
   try {
