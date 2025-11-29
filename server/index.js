@@ -24,11 +24,13 @@ const uploadRoutes = require('./routes/upload');
 const supplierRoutes = require('./routes/supplier');
 const comparisonRoutes = require('./routes/comparison');
 const dataSourceRoutes = require('./routes/data-source');
+const supplierSearchRoutes = require('./routes/supplier-search');
 
 app.use('/api', uploadRoutes);
 app.use('/api', supplierRoutes);
 app.use('/api', comparisonRoutes);
 app.use('/api', dataSourceRoutes);
+app.use('/api', supplierSearchRoutes);
 
 // 启动服务器
 const startServer = async () => {
