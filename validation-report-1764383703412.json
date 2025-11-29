@@ -1,0 +1,51 @@
+{
+  "timestamp": "2025-11-29T02:35:03.412Z",
+  "port": 8888,
+  "summary": {
+    "total": 6,
+    "passed": 4,
+    "failed": 2,
+    "successRate": "66.67%"
+  },
+  "details": [
+    {
+      "name": "testServerConnection",
+      "status": "PASSED",
+      "duration": "48ms",
+      "error": null
+    },
+    {
+      "name": "testDataSourceStats",
+      "status": "PASSED",
+      "duration": "13ms",
+      "error": null
+    },
+    {
+      "name": "testAvailableYears",
+      "status": "FAILED",
+      "duration": "N/A",
+      "error": "可用年份接口应返回数组"
+    },
+    {
+      "name": "testHistory",
+      "status": "PASSED",
+      "duration": "7ms",
+      "error": null
+    },
+    {
+      "name": "testSupplierSearchWithCache",
+      "status": "FAILED",
+      "duration": "N/A",
+      "error": "没有可用的数据文件ID"
+    },
+    {
+      "name": "testDuplicateInterfaceRemoved",
+      "status": "PASSED",
+      "duration": "11ms",
+      "error": null
+    }
+  ],
+  "recommendations": [
+    "存在失败的测试，请检查相关功能"
+  ]
+}

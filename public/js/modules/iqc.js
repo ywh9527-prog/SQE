@@ -357,7 +357,9 @@ const TYPE_CONFIG = {
             }
         },
 
-        // 搜索供应商
+        // 🎯 搜索供应商 - 智能选择API路线
+        // 📋 [路线1] 有fileId时：使用filterData（快速，无需上传）
+        // 📋 [路线2] 无fileId时：使用searchSupplier（首次使用，需上传文件）
         async handleSupplierSearch() {
             const name = els.supplierSearchInput.value;
             if (!name) return this.showToast('请输入供应商名称', 'warning');
@@ -366,8 +368,12 @@ const TYPE_CONFIG = {
             try {
                 let data;
                 if (state.fileId) {
+                    // 📋 [API路线1] 使用缓存的fileId进行快速筛选
+                    console.log(`🚀 使用API路线1：筛选供应商 "${name}" (fileId: ${state.fileId})`);
                     data = await window.App.API.filterData({ fileId: state.fileId, supplierName: name });
                 } else {
+                    // 📋 [API路线2] 首次使用，需要重新上传文件
+                    console.log(`📤 使用API路线2：上传文件并筛选供应商 "${name}"`);
                     const formData = new FormData();
                     formData.append('excelFile', state.uploadedFile);
                     formData.append('supplierName', name);

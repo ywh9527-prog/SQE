@@ -28,7 +28,10 @@ console.log('🐱 API.js is loading...');
             return await response.json();
         },
 
-        // 筛选数据 (使用缓存，无需重新上传)
+        // 📋 [API路线1] 筛选数据 - 使用缓存，无需重新上传文件
+        // 🎯 使用场景：已有fileId时的快速筛选（供应商、日期等）
+        // ⚡ 优势：速度快，无需重复上传，节省流量
+        // 📝 参数：{ fileId, supplierName?, timeFilterType?, timeFilterValue?, dataType? }
         async filterData(data) {
             const response = await fetch('/api/filter-data', {
                 method: 'POST',
@@ -44,7 +47,10 @@ console.log('🐱 API.js is loading...');
             return await response.json();
         },
 
-        // 搜索供应商 (旧方法，需要上传文件)
+        // 📋 [API路线2] 搜索供应商 - 首次使用或缓存失效时使用，需要上传文件
+        // 🎯 使用场景：第一次上传文件、清除缓存、更换浏览器时的筛选
+        // ⚠️ 注意：这是备用方案，优先使用filterData（API路线1）
+        // 📝 参数：FormData { excelFile, supplierName?, timeFilterType?, timeFilterValue? }
         async searchSupplier(formData) {
             const response = await fetch('/api/search-supplier', {
                 method: 'POST',

@@ -146,7 +146,10 @@ router.post('/upload', upload.single('excelFile'), async (req, res) => {
   }
 });
 
-// 基于数据库数据的筛选路由
+// 📋 [API路线1] 基于数据库数据的筛选路由 - 快速筛选，无需重新上传
+// 🎯 功能：使用fileId从数据库读取已缓存的数据进行筛选
+// ⚡ 优势：性能高，避免重复文件上传和解析
+// 📝 参数：{ fileId(必需), supplierName?, timeFilterType?, timeFilterValue?, dataType? }
 router.post('/filter-data', express.json(), async (req, res) => {
   const { fileId, supplierName, timeFilterType, timeFilterValue, dataType } = req.body;
 
@@ -228,7 +231,10 @@ router.post('/get-month-details', express.json(), async (req, res) => {
   }
 });
 
-// 供应商搜索路由
+// 📋 [API路线2] 供应商搜索路由 - 首次使用或缓存失效时的备用方案
+// 🎯 功能：需要重新上传文件进行筛选（首次使用、清除缓存、更换浏览器时）
+// ⚠️ 注意：这是备用方案，优先使用/api/filter-data（API路线1）
+// 📝 参数：FormData { excelFile(必需), supplierName?, timeFilterType?, timeFilterValue? }
 router.post('/search-supplier', upload.single('excelFile'), (req, res) => {
   if (!req.file) {
     return res.status(400).send('No file uploaded.');

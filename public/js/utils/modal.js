@@ -1,4 +1,4 @@
-﻿// Modal 妯℃€佹缁勪欢
+// Modal 组件框架
 (function () {
     'use strict';
 
@@ -9,7 +9,8 @@
         }
 
         initOverlay() {
-            // 鍒涘缓閬僵灞?            if (!document.querySelector('.modal-overlay')) {
+            // 创建遮罩层
+            if (!document.querySelector('.modal-overlay')) {
                 this.overlay = document.createElement('div');
                 this.overlay.className = 'modal-overlay';
                 this.overlay.style.cssText = `
@@ -27,7 +28,8 @@
                 `;
                 document.body.appendChild(this.overlay);
 
-                // 鐐瑰嚮閬僵灞傚叧闂?                this.overlay.addEventListener('click', (e) => {
+                // 点击遮罩层关闭
+                this.overlay.addEventListener('click', (e) => {
                     if (e.target === this.overlay) {
                         this.close();
                     }
@@ -39,7 +41,7 @@
 
         create(options = {}) {
             const {
-                title = '鎻愮ず',
+                title = '提示',
                 content = '',
                 width = '500px',
                 showClose = true,
@@ -90,7 +92,7 @@
                         align-items: center;
                         justify-content: center;
                         transition: color 0.2s;
-                    ">脳</button>` : ''}
+                    ">×</button>` : ''}
                 </div>
             `;
 
@@ -141,7 +143,7 @@
         }
 
         show(options) {
-            // 濡傛灉宸叉湁鎵撳紑鐨勬ā鎬佹锛屽厛鍏抽棴
+            // 如果已有打开的模态框，先关闭
             if (this.activeModal) {
                 this.close(true);
             }
@@ -150,19 +152,12 @@
             document.body.appendChild(modalEl);
             this.activeModal = modalEl;
 
-            // 鏄剧ず閬僵
+            // 显示遮罩
             this.overlay.style.display = 'block';
-            // 寮哄埗閲嶇粯
+            // 强制重绘
             this.overlay.offsetHeight;
 
-            // 鍔ㄧ敾鍏ュ満
-            this.overlay.style.opacity = '1';
-            this.activeModal.style.opacity = '1';
-            this.activeModal.style.transform = 'translate(-50%, -50%) scale(1)';
-
-            return modalEl;
-
-            // 鍔ㄧ敾鍏ュ満
+            // 动画入场
             this.overlay.style.opacity = '1';
             this.activeModal.style.opacity = '1';
             this.activeModal.style.transform = 'translate(-50%, -50%) scale(1)';
@@ -184,7 +179,7 @@
                 return;
             }
 
-            // 鍔ㄧ敾绂诲満
+            // 动画离场
             this.overlay.style.opacity = '0';
             modal.style.opacity = '0';
             modal.style.transform = 'translate(-50%, -50%) scale(0.9)';
@@ -198,10 +193,10 @@
             }, 300);
         }
 
-        // 蹇嵎鏂规硶锛氱‘璁ゆ
+        // 快捷方法：确认框
         confirm(message, onConfirm) {
-            return this.show({
-                title: '纭鎿嶄綔',
+            const modalEl = this.show({
+                title: '确认操作',
                 content: message,
                 width: '400px',
                 footer: `
@@ -213,7 +208,7 @@
                         border-radius: 6px;
                         cursor: pointer;
                         font-weight: 500;
-                    ">鍙栨秷</button>
+                    ">取消</button>
                     <button class="btn-confirm" style="
                         padding: 8px 16px;
                         border: none;
@@ -222,16 +217,48 @@
                         border-radius: 6px;
                         cursor: pointer;
                         font-weight: 500;
-                    ">纭</button>
+                    ">确认</button>
+                `
+            });
+
+            // 绑定按钮事件
+            const cancelBtn = modalEl.querySelector('.btn-cancel');
+            const confirmBtn = modalEl.querySelector('.btn-confirm');
+
+            cancelBtn.addEventListener('click', () => this.close());
+            confirmBtn.addEventListener('click', () => {
+                if (onConfirm) onConfirm();
+                this.close();
+            });
+
+            return modalEl;
+        }
+
+        // 快捷方法：提示框
+        alert(message, title = '提示') {
+            return this.show({
+                title: title,
+                content: message,
+                width: '400px',
+                footer: `
+                    <button class="btn-ok" style="
+                        padding: 8px 16px;
+                        border: none;
+                        background: #9d7a54;
+                        color: white;
+                        border-radius: 6px;
+                        cursor: pointer;
+                        font-weight: 500;
+                    ">确定</button>
                 `
             });
         }
     }
 
-    // 鍒涘缓鍏ㄥ眬瀹炰緥
+    // 创建全局实例
     const ModalInstance = new Modal();
 
-    // 鎸傝浇鍒板叏灞€瀵硅薄
+    // 挂载到全局对象
     window.App = window.App || {};
     window.App.Modal = ModalInstance;
 
