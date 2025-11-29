@@ -25,12 +25,14 @@ const supplierRoutes = require('./routes/supplier');
 const comparisonRoutes = require('./routes/comparison');
 const dataSourceRoutes = require('./routes/data-source');
 const supplierSearchRoutes = require('./routes/supplier-search');
+const documentRoutes = require('./routes/documents');
 
 app.use('/api', uploadRoutes);
 app.use('/api', supplierRoutes);
 app.use('/api', comparisonRoutes);
 app.use('/api', dataSourceRoutes);
 app.use('/api', supplierSearchRoutes);
+app.use('/api/documents', documentRoutes);
 
 // 直接定义认证路由
 app.post('/api/auth/init', async (req, res) => {

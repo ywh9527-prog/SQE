@@ -1,10 +1,68 @@
 const express = require('express');
 const fs = require('fs');
+const { sequelize } = require('../database/config');
 const ExcelParserService = require('../services/excel-parser');
 const DataProcessorService = require('../services/data-processor');
 const upload = require('../middleware/upload-config');
+const IQCData = require('../models/IQCData');
 
 const router = express.Router();
+
+// 认证中间件
+const authenticateToken = (req, res, next) => {
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ success: false, error: '未提供认证令牌' });
+  }
+
+  const AuthService = require('../services/authService');
+  AuthService.verifyToken(token)
+    .then(result => {
+      if (!result.success) {
+        return res.status(401).json({ success: false, error: '认证失败' });
+      }
+      req.user = result.user;
+      next();
+    })
+    .catch(error => {
+      console.error('认证失败:', error);
+      res.status(500).json({ success: false, error: '认证服务错误' });
+    });
+};
+
+// 获取供应商列表
+router.get('/', authenticateToken, async (req, res) => {
+  try {
+    // 从IQC数据中获取唯一的供应商列表
+    const suppliers = await IQCData.findAll({
+      attributes: [[sequelize.fn('DISTINCT', sequelize.col('supplier')), 'supplier']],
+      where: {
+        supplier: {
+          [sequelize.Sequelize.Op.ne]: null
+        }
+      },
+      order: [['supplier', 'ASC']]
+    });
+
+    const supplierList = suppliers.map(item => ({
+      id: item.supplier, // 使用供应商名称作为ID
+      name: item.supplier
+    }));
+
+    res.json({
+      success: true,
+      data: supplierList
+    });
+  } catch (error) {
+    console.error('获取供应商列表失败:', error);
+    res.status(500).json({
+      success: false,
+      error: '获取供应商列表失败'
+    });
+  }
+});
 
 // 供应商相关路由
 router.post('/search-supplier', upload.single('excelFile'), (req, res) => {

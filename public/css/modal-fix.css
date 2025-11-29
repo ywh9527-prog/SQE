@@ -1,0 +1,30 @@
+/* 强制模态框样式修复 */
+#uploadModal, #editModal {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    background: #f5f5f5 !important;
+    z-index: 999999 !important;
+}
+
+#uploadModal .modal-content, #editModal .modal-content {
+    background: white !important;
+    border-radius: 12px !important;
+    width: 90% !important;
+    max-width: 600px !important;
+    max-height: 90vh !important;
+    margin: 5vh auto !important;
+    overflow: hidden !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+    position: relative !important;
+    z-index: 1000000 !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+/* 确保模态框内的所有元素都在最上层 */
+#uploadModal *, #editModal * {
+    z-index: inherit !important;
+}

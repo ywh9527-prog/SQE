@@ -63,7 +63,8 @@ class Router {
         });
 
         // 显示目标模块
-        const targetView = document.getElementById(`module-${hash}`);
+        const targetView = document.getElementById(`module-${hash}`) || 
+                           document.getElementById(`module-${hash}s`); // 处理复数形式
         if (targetView) {
             targetView.classList.remove('hidden');
         } else {
@@ -76,7 +77,8 @@ class Router {
         const titleMap = {
             'dashboard': '工作台',
             'iqc': 'IQC 质量分析',
-            'suppliers': '供应商档案',
+            'supplier': '供应商档案',
+            'documents': '供应商资料管理',
             'certificates': '资质证书',
             'performance': '绩效评价'
         };
@@ -88,3 +90,10 @@ class Router {
 // 导出 Router 实例
 window.App = window.App || {};
 window.App.Router = new Router();
+
+// 注册documents模块回调
+window.App.Router.register('documents', () => {
+  if (window.supplierManager) {
+    window.supplierManager.loadDocuments();
+  }
+});

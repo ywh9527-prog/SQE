@@ -18,6 +18,18 @@ const sequelize = new Sequelize({
     }
 });
 
+// 延迟导入模型以避免循环依赖
+let models = {};
+const loadModels = () => {
+    if (Object.keys(models).length === 0) {
+        models.User = require('../models/User');
+        models.SupplierDocument = require('../models/SupplierDocument');
+        models.EmailNotification = require('../models/EmailNotification');
+        models.SystemLog = require('../models/SystemLog');
+    }
+    return models;
+};
+
 // 测试连接函数
 const connectDB = async () => {
     try {
@@ -25,7 +37,8 @@ const connectDB = async () => {
         logger.info('数据库连接成功 (SQLite)');
         logger.info(`数据库路径: ${dbPath}`);
 
-        // 简单同步，避免结构问题
+        // 加载模型并同步
+        loadModels();
         await sequelize.sync();
         logger.info('数据库模型已同步');
 

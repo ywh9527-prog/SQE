@@ -18,6 +18,10 @@
     <link rel="stylesheet" href="css/utils/toast.css">
     <!-- 进度指示器样式 -->
     <link rel="stylesheet" href="css/utils/progress.css">
+    <!-- 供应商资料管理样式 -->
+    <link rel="stylesheet" href="css/modules/documents.css">
+    <!-- 模态框修复样式 -->
+    <link rel="stylesheet" href="css/modal-fix.css">
     <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -43,9 +47,13 @@
                     <i class="ph ph-chart-bar"></i>
                     <span>IQC 质量分析</span>
                 </a>
-                <a href="#suppliers" class="nav-item" data-module="suppliers">
-                    <i class="ph ph-users"></i>
+                <a href="#supplier" class="nav-item" data-module="supplier">
+                    <i class="ph ph-building"></i>
                     <span>供应商档案</span>
+                </a>
+                <a href="#documents" class="nav-item" data-module="documents">
+                    <i class="ph ph-folder-open"></i>
+                    <span>供应商资料管理</span>
                 </a>
                 <a href="#certificates" class="nav-item" data-module="certificates">
                     <i class="ph ph-certificate"></i>
@@ -411,11 +419,250 @@
                 <div id="module-certificates" class="module-view hidden">
                     <h3>资质证书 (开发中)</h3>
                 </div>
+                <div id="module-documents" class="module-view hidden">
+                    <!-- 供应商资料管理模块 -->
+                    <div class="module-header">
+                        <h3>供应商资料管理</h3>
+                        <div class="module-actions">
+                            <button class="btn btn-primary" id="uploadBtn">
+                                <span class="btn-icon">📤</span>
+                                上传资料
+                            </button>
+                            <button class="btn btn-secondary" id="refreshBtn">
+                                <span class="btn-icon">🔄</span>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 筛选区域 -->
+                    <section class="filters-section">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="supplierSelect">供应商</label>
+                                <select id="supplierSelect" class="form-control">
+                                    <option value="">全部供应商</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="statusFilter">状态</label>
+                                <select id="statusFilter" class="form-control">
+                                    <option value="">全部状态</option>
+                                    <option value="active">有效</option>
+                                    <option value="expired">已过期</option>
+                                    <option value="archived">已归档</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <label for="searchInput">搜索</label>
+                                <input type="text" id="searchInput" class="form-control" placeholder="搜索资料名称...">
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 资料类型标签 -->
+                    <section class="document-types">
+                        <div class="type-tabs">
+                            <button class="document-type-tab active" data-type="all">
+                                <span class="tab-icon">📁</span>
+                                <span class="tab-text">全部资料</span>
+                            </button>
+                            <button class="document-type-tab" data-type="quality_agreement">
+                                <span class="tab-icon">📋</span>
+                                <span class="tab-text">质保协议</span>
+                            </button>
+                            <button class="document-type-tab" data-type="environmental_rohs">
+                                <span class="tab-icon">🌱</span>
+                                <span class="tab-text">环保ROHS</span>
+                            </button>
+                            <button class="document-type-tab" data-type="environmental_reach">
+                                <span class="tab-icon">🌱</span>
+                                <span class="tab-text">环保REACH</span>
+                            </button>
+                            <button class="document-type-tab" data-type="environmental_msds">
+                                <span class="tab-icon">🌱</span>
+                                <span class="tab-text">环保MSDS</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- 资料列表 -->
+                    <section class="documents-section">
+                        <div class="section-header">
+                            <h2>资料列表</h2>
+                            <div class="section-actions">
+                                <div class="view-toggle">
+                                    <button class="view-btn active" data-view="grid">
+                                        <span class="view-icon">⊞</span>
+                                    </button>
+                                    <button class="view-btn" data-view="list">
+                                        <span class="view-icon">☰</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="documents-container" id="documentsContainer">
+                            <!-- 资料卡片将在这里动态生成 -->
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">加载中...</div>
+                            </div>
+                        </div>
+
+                        <!-- 分页 -->
+                        <div class="pagination-container" id="paginationContainer">
+                            <!-- 分页按钮将在这里动态生成 -->
+                        </div>
+                    </section>
+                </div>
                 <div id="module-performance" class="module-view hidden">
                     <h3>绩效评价 (开发中)</h3>
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- 上传模态框 -->
+    <div class="modal" id="uploadModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>上传资料</h3>
+                <button class="modal-close" id="closeUploadModal">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="uploadSupplierId">供应商 *</label>
+                            <select id="uploadSupplierId" class="form-control" required>
+                                <option value="">请选择供应商</option>
+                            </select>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="uploadDocumentType">资料类型 *</label>
+                            <select id="uploadDocumentType" class="form-control" required>
+                                <option value="">请选择资料类型</option>
+                                <option value="quality_agreement">质保协议</option>
+                                <option value="environmental_rohs">环保ROHS</option>
+                                <option value="environmental_reach">环保REACH</option>
+                                <option value="environmental_msds">环保MSDS</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="uploadDocumentName">资料名称 *</label>
+                        <input type="text" id="uploadDocumentName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="uploadDocumentNumber">协议编号</label>
+                            <input type="text" id="uploadDocumentNumber" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="uploadExpiryDate">到期日期</label>
+                            <input type="date" id="uploadExpiryDate" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="uploadResponsiblePerson">责任人</label>
+                            <input type="text" id="uploadResponsiblePerson" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="uploadIssuingAuthority">发证机构</label>
+                            <input type="text" id="uploadIssuingAuthority" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="uploadRemarks">备注</label>
+                        <textarea id="uploadRemarks" class="form-control" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>文件上传 *</label>
+                        <div class="file-upload-area" id="uploadDropZone">
+                            <div class="upload-icon">📤</div>
+                            <div class="upload-text">
+                                <p>拖拽文件到此处或点击选择文件</p>
+                                <p class="upload-hint">支持 PDF, DOC, DOCX, XLS, XLSX, JPG, PNG 格式，最大100MB</p>
+                            </div>
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" hidden>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="supplierManager.hideUploadModal()">取消</button>
+                <button type="button" class="btn btn-primary" id="submitUploadBtn">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑模态框 -->
+    <div class="modal" id="editModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑资料</h3>
+                <button class="modal-close" id="closeEditModal">×</button>
+            </div>
+            
+            <div class="modal-body">
+                <form id="editForm">
+                    <input type="hidden" id="editDocumentId">
+                    
+                    <div class="form-group">
+                        <label for="editDocumentName">资料名称 *</label>
+                        <input type="text" id="editDocumentName" class="form-control" required>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editDocumentNumber">协议编号</label>
+                            <input type="text" id="editDocumentNumber" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editExpiryDate">到期日期</label>
+                            <input type="date" id="editExpiryDate" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="editResponsiblePerson">责任人</label>
+                            <input type="text" id="editResponsiblePerson" class="form-control">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="editIssuingAuthority">发证机构</label>
+                            <input type="text" id="editIssuingAuthority" class="form-control">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="editRemarks">备注</label>
+                        <textarea id="editRemarks" class="form-control" rows="3"></textarea>
+                    </div>
+                </form>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" onclick="supplierManager.hideEditModal()">取消</button>
+                <button type="button" class="btn btn-primary" id="submitEditBtn">保存</button>
+            </div>
+        </div>
     </div>
 
     <!-- 工具脚本 (最先加载) -->
@@ -431,6 +678,139 @@
     <!-- 模块脚本 -->
     <script src="js/modules/router.js"></script>
     <script src="js/modules/iqc.js"></script>
+    <script src="js/modules/supplier.js"></script>
+
+    <!-- 供应商资料管理初始化脚本 -->
+    <script>
+        // 页面加载完成后初始化供应商资料管理模块
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查认证状态
+            if (typeof checkAuthentication === 'function') {
+                checkAuthentication();
+            }
+        });
+
+        // 视图切换
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.view-btn')) {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+                
+                const view = e.target.dataset.view;
+                const container = document.getElementById('documentsContainer');
+                if (container) {
+                    container.className = `documents-container view-${view}`;
+                }
+            }
+        });
+
+        // 模态框外部点击关闭
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // 文件上传区域处理 - 延迟绑定确保supplierManager存在
+        function bindUploadEvents() {
+            const dropZone = document.getElementById('uploadDropZone');
+            const fileInput = document.getElementById('fileInput');
+
+            console.log('绑定上传事件，supplierManager存在:', !!window.supplierManager);
+
+            if (dropZone && fileInput) {
+                // 拖拽上传
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => {
+                        dropZone.classList.add('drag-over');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => {
+                        dropZone.classList.remove('drag-over');
+                    });
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const files = e.dataTransfer.files;
+                    console.log('拖拽文件数量:', files.length);
+                    
+                    // 设置到fileInput中
+                    if (fileInput) {
+                        fileInput.files = files;
+                        console.log('已设置到fileInput，文件数量:', fileInput.files.length);
+                    }
+                    
+                    if (files.length > 0 && window.supplierManager) {
+                        window.supplierManager.handleFileUpload(files);
+                    } else {
+                        console.log('supplierManager不存在或无文件');
+                    }
+                });
+
+                // 点击上传
+                dropZone.addEventListener('click', () => {
+                    console.log('点击上传区域');
+                    fileInput.click();
+                });
+
+                // 文件选择事件 - 确保只绑定一次
+                if (!fileInput.hasAttribute('data-listener')) {
+                    fileInput.addEventListener('change', (e) => {
+                        console.log('文件选择事件触发:', e.target.files.length);
+                        console.log('选择的文件:', Array.from(e.target.files).map(f => f.name));
+                        
+                        if (e.target.files.length > 0 && window.supplierManager) {
+                            window.supplierManager.handleFileUpload(e.target.files);
+                        } else {
+                            console.log('没有选择文件或supplierManager不存在');
+                        }
+                    });
+                    fileInput.setAttribute('data-listener', 'true');
+                    console.log('文件选择事件已绑定');
+                } else {
+                    console.log('文件选择事件已存在');
+                }
+            } else {
+                console.log('未找到上传区域元素');
+            }
+        }
+
+        // 防止重复绑定的标志
+        let uploadEventsBound = false;
+
+        function bindUploadEventsOnce() {
+            if (uploadEventsBound) {
+                console.log('上传事件已绑定，跳过重复绑定');
+                return;
+            }
+            
+            console.log('开始绑定上传事件...');
+            bindUploadEvents();
+            uploadEventsBound = true;
+        }
+
+        // 绑定上传事件
+        if (window.supplierManager) {
+            bindUploadEventsOnce();
+        } else {
+            console.log('supplierManager未初始化，延迟绑定事件');
+            setTimeout(bindUploadEventsOnce, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(bindUploadEventsOnce, 500);
+        });
+    </script>
 
     <!-- 主入口脚本 (必须最后加载) -->
     <script src="js/app.js"></script>
