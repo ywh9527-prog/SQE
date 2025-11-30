@@ -75,12 +75,10 @@ class Router {
 
     updateTitle(hash) {
         const titleMap = {
-            'dashboard': '工作台',
+            'dashboard': '仪表盘',
             'iqc': 'IQC 质量分析',
-            'supplier': '供应商档案',
             'documents': '供应商资料管理',
-            'certificates': '资质证书',
-            'performance': '绩效评价'
+            'performance': '月度绩效评价'
         };
         const title = titleMap[hash] || 'SQE 系统';
         document.getElementById('page-title').textContent = title;

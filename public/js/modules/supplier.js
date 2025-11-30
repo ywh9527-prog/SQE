@@ -8,6 +8,9 @@ class SupplierDocumentManager {
     this.currentDocumentType = 'all';
     this.documents = [];
     this.suppliers = [];
+    this.currentView = 'grid'; // 'grid' 或 'list'
+    this.currentSort = 'expiry-asc'; // 默认排序
+    this.selectedDocuments = new Set(); // 选中的文档ID
     this.init();
   }
 
@@ -64,6 +67,22 @@ class SupplierDocumentManager {
     // 状态筛选
     document.getElementById('statusFilter')?.addEventListener('change', () => {
       this.loadDocuments();
+    });
+
+    // 排序选择
+    document.getElementById('sortSelect')?.addEventListener('change', () => {
+      this.loadDocuments();
+    });
+
+    // 视图切换按钮
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.view-btn') || e.target.closest('.view-btn')) {
+        const btn = e.target.matches('.view-btn') ? e.target : e.target.closest('.view-btn');
+        const view = btn.dataset.view;
+        if (view) {
+          this.switchView(view);
+        }
+      }
     });
 
     // 上传按钮
@@ -202,6 +221,94 @@ class SupplierDocumentManager {
   }
 
   /**
+   * 切换视图模式
+   */
+  switchView(view) {
+    if (this.currentView === view) {
+      return;
+    }
+    
+    this.currentView = view;
+    
+    // 更新按钮样式
+    document.querySelectorAll('.view-btn').forEach(btn => {
+      btn.classList.remove('active');
+    });
+    
+    const activeBtn = document.querySelector(`[data-view="${view}"]`);
+    if (activeBtn) {
+      activeBtn.classList.add('active');
+    }
+    
+    // 更新容器样式
+    const container = document.getElementById('documentsContainer');
+    if (container) {
+      container.classList.remove('view-grid', 'view-list');
+      container.classList.add(`view-${view}`);
+    }
+    
+    // 重新渲染资料列表
+    this.renderDocuments();
+  }
+
+  /**
+   * 排序资料列表
+   */
+  sortDocuments() {
+    if (!this.documents || this.documents.length === 0) return;
+    
+    const [field, order] = this.currentSort.split('-');
+    const isAsc = order === 'asc';
+    
+    this.documents.sort((a, b) => {
+      let valueA, valueB;
+      
+      switch (field) {
+        case 'expiry':
+          // 到期时间排序，没有到期时间的放在最后
+          if (!a.expiryDate) return isAsc ? 1 : -1;
+          if (!b.expiryDate) return isAsc ? -1 : 1;
+          valueA = new Date(a.expiryDate);
+          valueB = new Date(b.expiryDate);
+          break;
+          
+        case 'name':
+          // 资料名称排序
+          valueA = a.documentName || '';
+          valueB = b.documentName || '';
+          return isAsc ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+          
+        case 'supplier':
+          // 供应商排序
+          valueA = this.getSupplierName(a.supplierId);
+          valueB = this.getSupplierName(b.supplierId);
+          return isAsc ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+          
+        case 'type':
+          // 资料类型排序
+          valueA = this.getDocumentTypeText(a.documentType);
+          valueB = this.getDocumentTypeText(b.documentType);
+          return isAsc ? valueA.localeCompare(valueB) : valueB.localeCompare(valueA);
+          
+        case 'upload':
+          // 上传时间排序
+          valueA = new Date(a.createdAt || 0);
+          valueB = new Date(b.createdAt || 0);
+          break;
+          
+        default:
+          return 0;
+      }
+      
+      if (field === 'expiry' || field === 'upload') {
+        return isAsc ? valueA - valueB : valueB - valueA;
+      }
+      
+      return 0;
+    });
+  }
+
+  /**
    * 加载资料列表
    */
   async loadDocuments() {
@@ -221,6 +328,12 @@ class SupplierDocumentManager {
         params.append('status', statusFilter);
       }
 
+      const sortSelect = document.getElementById('sortSelect');
+      if (sortSelect) {
+        this.currentSort = sortSelect.value;
+        params.append('sort', this.currentSort);
+      }
+
       const response = await fetch(`/api/documents?${params}`, {
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`
@@ -230,6 +343,10 @@ class SupplierDocumentManager {
       
       if (result.success) {
         this.documents = result.data.documents;
+        // 如果服务器不支持排序，则在前端进行排序
+        if (!result.data.serverSorted) {
+          this.sortDocuments();
+        }
         this.renderDocuments(result.data.pagination);
       }
     } catch (error) {
@@ -269,9 +386,43 @@ class SupplierDocumentManager {
     const warningLevel = this.getWarningLevel(doc);
     const statusClass = this.getStatusClass(doc.status);
     const documentTypeText = this.getDocumentTypeText(doc.documentType);
+    const warningIcon = this.getWarningIcon(warningLevel);
     
+    // 为临期资料添加顶部预警条（仅在网格视图中显示）
+    const alertBar = (warningLevel !== 'normal' && warningLevel !== 'expired' && this.currentView === 'grid') ? `
+      <div class="alert-bar alert-${warningLevel}">
+        <span class="alert-icon">${warningIcon}</span>
+        <span class="alert-text">${this.getStatusText(doc)}</span>
+      </div>
+    ` : '';
+    
+    if (this.currentView === 'list') {
+      return this.createListDocumentCard(doc, warningLevel, statusClass, documentTypeText, warningIcon);
+    } else {
+      return this.createGridDocumentCard(doc, warningLevel, statusClass, documentTypeText, warningIcon, alertBar);
+    }
+  }
+
+  /**
+   * 创建网格视图资料卡片
+   */
+  createGridDocumentCard(doc, warningLevel, statusClass, documentTypeText, warningIcon, alertBar) {
+    const isSelected = this.selectedDocuments.has(doc.id);
     return `
-      <div class="document-card ${statusClass}" data-id="${doc.id}">
+      <div class="document-card ${statusClass} ${warningLevel !== 'normal' ? 'has-warning' : ''} ${isSelected ? 'selected' : ''}" 
+           data-id="${doc.id}">
+        
+        <div class="card-selection">
+          <label class="checkbox-label">
+            <input type="checkbox" 
+                   ${isSelected ? 'checked' : ''} 
+                   onchange="supplierManager.toggleDocumentSelection(${doc.id})">
+            <span class="checkmark"></span>
+          </label>
+        </div>
+        
+        ${alertBar}
+        
         <div class="document-header">
           <div class="document-type">
             <span class="type-icon">${this.getTypeIcon(doc.documentType)}</span>
@@ -283,7 +434,7 @@ class SupplierDocumentManager {
         </div>
         
         <div class="document-content">
-          <h4 class="document-name">${doc.documentName}</h4>
+          <h4 class="document-name" title="${doc.documentName || '无版本号'}">${doc.documentName || '无版本号'}</h4>
           ${doc.documentNumber ? `<div class="document-number">编号: ${doc.documentNumber}</div>` : ''}
           
           <div class="document-meta">
@@ -325,9 +476,98 @@ class SupplierDocumentManager {
   }
 
   /**
+   * 创建列表视图资料卡片
+   */
+  createListDocumentCard(doc, warningLevel, statusClass, documentTypeText, warningIcon) {
+    const isSelected = this.selectedDocuments.has(doc.id);
+    return `
+      <div class="document-card list-card ${statusClass} ${warningLevel !== 'normal' ? 'has-warning' : ''} ${isSelected ? 'selected' : ''}" 
+           data-id="${doc.id}">
+        <div class="list-card-content">
+          <div class="list-card-selection">
+            <label class="checkbox-label">
+              <input type="checkbox" 
+                     ${isSelected ? 'checked' : ''} 
+                     onchange="supplierManager.toggleDocumentSelection(${doc.id})">
+              <span class="checkmark"></span>
+            </label>
+          </div>
+          
+          <div class="list-card-main">
+            <div class="document-type-inline">
+              <span class="type-icon">${this.getTypeIcon(doc.documentType)}</span>
+              <span class="type-text">${documentTypeText}</span>
+            </div>
+            <div class="document-name-inline">
+              <h4 class="document-name" title="${doc.documentName || '无版本号'}">${doc.documentName || '无版本号'}</h4>
+              ${doc.documentNumber ? `<span class="document-number-inline">编号: ${doc.documentNumber}</span>` : ''}
+            </div>
+          </div>
+          
+          <div class="list-card-meta">
+            <div class="meta-inline">
+              <span class="meta-item">
+                <span class="meta-label">供应商:</span>
+                <span class="meta-value">${this.getSupplierName(doc.supplierId)}</span>
+              </span>
+              ${doc.expiryDate ? `
+                <span class="meta-item">
+                  <span class="meta-label">到期:</span>
+                  <span class="meta-value">${this.formatDate(doc.expiryDate)}</span>
+                </span>
+              ` : ''}
+              ${doc.responsiblePerson ? `
+                <span class="meta-item">
+                  <span class="meta-label">责任人:</span>
+                  <span class="meta-value">${doc.responsiblePerson}</span>
+                </span>
+              ` : ''}
+            </div>
+          </div>
+          
+          <div class="list-card-status">
+            <span class="status-badge ${warningLevel}">${this.getStatusText(doc)}</span>
+          </div>
+          
+          <div class="list-card-actions">
+            <button class="btn btn-sm btn-primary" onclick="supplierManager.viewDocument(${doc.id})" title="查看">
+              查看
+            </button>
+            <button class="btn btn-sm btn-success" onclick="supplierManager.downloadDocument(${doc.id})" title="下载">
+              下载
+            </button>
+            <button class="btn btn-sm btn-warning" onclick="supplierManager.editDocument(${doc.id})" title="编辑">
+              编辑
+            </button>
+            <button class="btn btn-sm btn-danger" onclick="supplierManager.deleteDocument(${doc.id})" title="删除">
+              删除
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 获取预警图标
+   */
+  getWarningIcon(warningLevel) {
+    const iconMap = {
+      'critical': '⚠️',
+      'urgent': '⏰️',
+      'warning': '📅',
+      'expired': '❌',
+      'normal': '✅'
+    };
+    return iconMap[warningLevel] || '✅';
+  }
+
+  /**
    * 获取预警级别
    */
   getWarningLevel(doc) {
+    // 永久有效的资料显示为正常状态
+    if (doc.isPermanent) return 'normal';
     if (!doc.expiryDate) return 'normal';
     
     const now = new Date();
@@ -357,15 +597,18 @@ class SupplierDocumentManager {
    * 获取状态文本
    */
   getStatusText(doc) {
-    if (doc.status === 'expired') return '已过期';
     if (doc.status === 'archived') return '已归档';
     
-    const warningLevel = this.getWarningLevel(doc);
-    if (warningLevel === 'critical') return '7天内到期';
-    if (warningLevel === 'urgent') return '15天内到期';
-    if (warningLevel === 'warning') return '30天内到期';
+    // 永久有效的资料显示特殊标识
+    if (doc.isPermanent) return '🌟 永久有效';
     
-    return '正常';
+    const warningLevel = this.getWarningLevel(doc);
+    if (warningLevel === 'expired') return '❌ 已过期';
+    if (warningLevel === 'critical') return '⚠️ 7天内到期';
+    if (warningLevel === 'urgent') return '⏰️ 15天内到期';
+    if (warningLevel === 'warning') return '📅 30天内到期';
+    
+    return '✅ 正常';
   }
 
   /**
@@ -373,10 +616,12 @@ class SupplierDocumentManager {
    */
   getDocumentTypeText(type) {
     const typeMap = {
-      'quality_agreement': '质保协议',
-      'environmental_rohs': '环保ROHS',
-      'environmental_reach': '环保REACH',
-      'environmental_msds': '环保MSDS'
+      'quality_agreement': '质量保证协议',
+      'environmental_rohs': 'ROHS',
+      'environmental_reach': 'REACH',
+      'environmental_msds': 'MSDS',
+      'environmental_hf': 'HF',
+      'csr': 'CSR'
     };
     return typeMap[type] || type;
   }
@@ -389,7 +634,9 @@ class SupplierDocumentManager {
       'quality_agreement': '📋',
       'environmental_rohs': '🌱',
       'environmental_reach': '🌱',
-      'environmental_msds': '🌱'
+      'environmental_msds': '🌱',
+      'environmental_hf': '🌱',
+      'csr': '🤝'
     };
     return iconMap[type] || '📄';
   }
@@ -595,7 +842,7 @@ class SupplierDocumentManager {
 
     // 填充编辑表单
     document.getElementById('editDocumentId').value = id;
-    document.getElementById('editDocumentName').value = document.documentName;
+    document.getElementById('editDocumentName').value = document.documentName || '';
     document.getElementById('editDocumentNumber').value = document.documentNumber || '';
     document.getElementById('editExpiryDate').value = document.expiryDate ? document.expiryDate.split('T')[0] : '';
     document.getElementById('editResponsiblePerson').value = document.responsiblePerson || '';
@@ -644,6 +891,168 @@ class SupplierDocumentManager {
     // 实现资料详情显示逻辑
     console.log('显示资料详情:', document);
   }
+
+  
+
+  /**
+   * 切换文档选择状态
+   */
+  toggleDocumentSelection(docId) {
+    if (this.selectedDocuments.has(docId)) {
+      this.selectedDocuments.delete(docId);
+    } else {
+      this.selectedDocuments.add(docId);
+    }
+    this.updateSelectionUI();
+  }
+
+  /**
+   * 全选/取消全选
+   */
+  toggleSelectAll() {
+    const selectAll = document.getElementById('selectAll');
+    if (selectAll.checked) {
+      // 全选
+      this.documents.forEach(doc => this.selectedDocuments.add(doc.id));
+    } else {
+      // 取消全选
+      this.selectedDocuments.clear();
+    }
+    this.updateSelectionUI();
+  }
+
+  /**
+   * 清除选择
+   */
+  clearSelection() {
+    this.selectedDocuments.clear();
+    this.updateSelectionUI();
+  }
+
+  /**
+   * 更新选择UI
+   */
+  updateSelectionUI() {
+    // 更新全选框状态
+    const selectAll = document.getElementById('selectAll');
+    if (selectAll) {
+      selectAll.checked = this.selectedDocuments.size === this.documents.length && this.documents.length > 0;
+      selectAll.indeterminate = this.selectedDocuments.size > 0 && this.selectedDocuments.size < this.documents.length;
+    }
+
+    // 更新批量操作栏显示
+    const batchActions = document.getElementById('batchActions');
+    if (batchActions) {
+      batchActions.style.display = this.selectedDocuments.size > 0 ? 'flex' : 'none';
+    }
+
+    // 更新选中计数
+    const selectedCount = document.getElementById('selectedCount');
+    if (selectedCount) {
+      selectedCount.textContent = this.selectedDocuments.size;
+    }
+
+    // 更新卡片选择状态
+    this.documents.forEach(doc => {
+      const card = document.querySelector(`[data-id="${doc.id}"]`);
+      if (card) {
+        const checkbox = card.querySelector('input[type="checkbox"]');
+        if (checkbox && checkbox.checked !== this.selectedDocuments.has(doc.id)) {
+          checkbox.checked = this.selectedDocuments.has(doc.id);
+        }
+        
+        if (this.selectedDocuments.has(doc.id)) {
+          card.classList.add('selected');
+        } else {
+          card.classList.remove('selected');
+        }
+      }
+    });
+  }
+
+  /**
+   * 批量下载
+   */
+  async batchDownload() {
+    if (this.selectedDocuments.size === 0) {
+      this.showError('请先选择要下载的资料');
+      return;
+    }
+
+    for (const docId of this.selectedDocuments) {
+      try {
+        await this.downloadDocument(docId);
+        // 添加延迟避免浏览器阻止多个下载
+        await new Promise(resolve => setTimeout(resolve, 500));
+      } catch (error) {
+        console.error(`下载文档 ${docId} 失败:`, error);
+      }
+    }
+    
+    this.showSuccess(`已开始下载 ${this.selectedDocuments.size} 个文件`);
+  }
+
+  /**
+   * 批量编辑
+   */
+  batchEdit() {
+    if (this.selectedDocuments.size === 0) {
+      this.showError('请先选择要编辑的资料');
+      return;
+    }
+    
+    // 这里可以实现批量编辑模态框
+    this.showInfo(`已选择 ${this.selectedDocuments.size} 个资料进行批量编辑`);
+  }
+
+  /**
+   * 批量删除
+   */
+  async batchDelete() {
+    if (this.selectedDocuments.size === 0) {
+      this.showError('请先选择要删除的资料');
+      return;
+    }
+
+    if (!confirm(`确定要删除选中的 ${this.selectedDocuments.size} 个资料吗？此操作不可撤销。`)) {
+      return;
+    }
+
+    let successCount = 0;
+    let failCount = 0;
+
+    for (const docId of this.selectedDocuments) {
+      try {
+        const response = await fetch(`/api/documents/${docId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          }
+        });
+
+        if (response.ok) {
+          successCount++;
+        } else {
+          failCount++;
+        }
+      } catch (error) {
+        console.error(`删除文档 ${docId} 失败:`, error);
+        failCount++;
+      }
+    }
+
+    if (successCount > 0) {
+      this.showSuccess(`成功删除 ${successCount} 个资料`);
+      this.clearSelection();
+      this.loadDocuments();
+    }
+    
+    if (failCount > 0) {
+      this.showError(`${failCount} 个资料删除失败`);
+    }
+  }
+
+  
 
   /**
    * 隐藏上传模态框
@@ -702,6 +1111,35 @@ class SupplierDocumentManager {
   }
 
   /**
+   * 显示信息消息
+   */
+  showInfo(message) {
+    this.showMessage(message, 'info');
+  }
+
+  /**
+   * 切换永久有效日期
+   */
+  togglePermanentDate() {
+    const permanentCheckbox = document.getElementById('uploadPermanent');
+    const expiryDateInput = document.getElementById('uploadExpiryDate');
+    const expiryLabel = expiryDateInput.previousElementSibling;
+    
+    if (permanentCheckbox.checked) {
+      expiryDateInput.disabled = true;
+      expiryDateInput.required = false;
+      expiryDateInput.value = '';
+      expiryLabel.textContent = '到期日期（永久有效）';
+      expiryLabel.style.color = '#999';
+    } else {
+      expiryDateInput.disabled = false;
+      expiryDateInput.required = true;
+      expiryLabel.textContent = '到期日期 *';
+      expiryLabel.style.color = '';
+    }
+  }
+
+  /**
    * 显示消息
    */
   showMessage(message, type) {
@@ -737,24 +1175,32 @@ class SupplierDocumentManager {
     const supplierIdEl = document.getElementById('uploadSupplierId');
     const documentTypeEl = document.getElementById('uploadDocumentType');
     const documentNameEl = document.getElementById('uploadDocumentName');
+    const expiryDateEl = document.getElementById('uploadExpiryDate');
+    const permanentEl = document.getElementById('uploadPermanent');
     
     console.log('表单元素检查:');
     console.log('uploadSupplierId元素:', supplierIdEl);
     console.log('uploadDocumentType元素:', documentTypeEl);
     console.log('uploadDocumentName元素:', documentNameEl);
+    console.log('uploadExpiryDate元素:', expiryDateEl);
+    console.log('uploadPermanent元素:', permanentEl);
     
     const supplierId = supplierIdEl ? supplierIdEl.value : null;
     const documentType = documentTypeEl ? documentTypeEl.value : null;
-    const documentName = documentNameEl ? documentNameEl.value : null;
+    const documentName = documentNameEl ? documentNameEl.value : '';
+    const expiryDate = expiryDateEl ? expiryDateEl.value : null;
+    const isPermanent = permanentEl ? permanentEl.checked : false;
     
     console.log('表单值检查:');
     console.log('supplierId:', supplierId);
     console.log('documentType:', documentType);
     console.log('documentName:', documentName);
+    console.log('expiryDate:', expiryDate);
+    console.log('isPermanent:', isPermanent);
 
-    if (!supplierId || !documentType || !documentName) {
+    if (!supplierId || !documentType || (!expiryDate && !isPermanent)) {
       console.log('必填字段验证失败');
-      this.showError('请填写所有必填字段（供应商、资料类型、资料名称）');
+      this.showError('请填写所有必填字段（供应商、资料类型、到期日期或选择永久有效）');
       return;
     }
 
@@ -766,7 +1212,8 @@ class SupplierDocumentManager {
     formData.append('documentType', documentType);
     formData.append('documentName', documentName);
     formData.append('documentNumber', document.getElementById('uploadDocumentNumber').value);
-    formData.append('expiryDate', document.getElementById('uploadExpiryDate').value);
+    formData.append('expiryDate', isPermanent ? null : document.getElementById('uploadExpiryDate').value);
+    formData.append('isPermanent', isPermanent);
     formData.append('responsiblePerson', document.getElementById('uploadResponsiblePerson').value);
     formData.append('issuingAuthority', document.getElementById('uploadIssuingAuthority').value);
     formData.append('remarks', document.getElementById('uploadRemarks').value);

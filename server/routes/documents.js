@@ -176,45 +176,37 @@ router.post('/', getUserInfo, documentUpload.single('file'), async (req, res) =>
       documentName,
       documentNumber,
       expiryDate,
+      isPermanent,
       responsiblePerson,
       issuingAuthority,
       remarks
     } = req.body;
 
     // 验证必填字段
-    if (!supplierId || !documentType || !documentName) {
+    if (!supplierId || !documentType || (!expiryDate && !isPermanent)) {
       // 删除已上传的文件
       await fs.unlink(req.file.path);
       return res.status(400).json({ success: false, error: '缺少必填字段' });
     }
 
-    // 如果上传新版本，将旧版本设为非当前版本
-    if (req.body.isNewVersion === 'true') {
-      await SupplierDocument.update(
-        { isCurrent: false },
-        {
-          where: {
-            supplierId,
-            documentType,
-            isCurrent: true
-          }
-        }
-      );
-    }
+    // 智能默认值策略：如果用户没有填写版本号，自动生成
+    const finalDocumentName = documentName || `V0_${new Date().toISOString().split('T')[0]}`;
 
     // 创建新资料记录
     const document = await SupplierDocument.create({
       supplierId: parseInt(supplierId),
       documentType,
-      documentName,
+      documentName: finalDocumentName,
       documentNumber,
       filePath: req.file.path,
       fileSize: req.file.size,
-      expiryDate: expiryDate || null,
+      expiryDate: (isPermanent === 'true' || isPermanent === true) ? null : (expiryDate || null),
+      isPermanent: isPermanent === 'true' || isPermanent === true,
       responsiblePerson,
       issuingAuthority,
       remarks,
-      version: parseInt(req.body.version) || 1
+      version: 1,
+      isCurrent: true
     });
 
     res.json({
@@ -230,6 +222,9 @@ router.post('/', getUserInfo, documentUpload.single('file'), async (req, res) =>
     }, req);
   } catch (error) {
     logger.error(`上传资料失败: ${error.message}`);
+    logger.error(`错误详情: ${JSON.stringify(error.errors || error)}`);
+    logger.error(`请求数据: ${JSON.stringify(req.body)}`);
+    logger.error(`文件信息: ${req.file ? JSON.stringify(req.file) : '无文件'}`);
     
     // 删除已上传的文件
     if (req.file) {
@@ -240,7 +235,7 @@ router.post('/', getUserInfo, documentUpload.single('file'), async (req, res) =>
       }
     }
     
-    res.status(500).json({ success: false, error: '上传资料失败' });
+    res.status(500).json({ success: false, error: `上传资料失败: ${error.message}` });
   }
 });
 

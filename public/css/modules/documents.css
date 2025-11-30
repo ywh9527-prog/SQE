@@ -4,6 +4,40 @@
  */
 
 /* ============================================
+   CSS变量定义
+   ============================================ */
+
+:root {
+    /* 背景色 */
+    --background-primary: #ffffff;
+    --background-secondary: #f8fafc;
+    --background-hover: #f1f5f9;
+    
+    /* 文本色 */
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    
+    /* 边框色 */
+    --border-primary: #e2e8f0;
+    
+    /* 状态色 */
+    --success-100: #dcfce7;
+    --success-700: #15803d;
+    --warning-100: #fef3c7;
+    --warning-300: #fbbf24;
+    --warning-500: #f59e0b;
+    --warning-700: #92400e;
+    --error-100: #fee2e2;
+    --error-300: #f87171;
+    --error-500: #ef4444;
+    --error-700: #991b1b;
+    
+    /* 阴影 */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --document-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ============================================
    主布局样式
    ============================================ */
 
@@ -174,8 +208,16 @@
     min-height: 200px;
 }
 
+.documents-container.view-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+}
+
 .documents-container.view-list {
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
 .document-card {
@@ -190,18 +232,124 @@
 
 .document-card:hover {
     border-color: var(--primary-300);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--document-shadow-md);
     transform: translateY(-2px);
 }
 
 .document-card.status-expired {
     border-color: var(--error-500);
-    background: linear-gradient(135deg, var(--background-primary) 0%, rgba(239, 68, 68, 0.05) 100%);
+    background: linear-gradient(135deg, var(--background-primary) 0%, rgba(239, 68, 64, 0.05) 100%);
 }
 
 .document-card.status-archived {
     opacity: 0.7;
     background: var(--background-secondary);
+}
+
+/* 预警条样式 */
+.alert-bar {
+    width: 100%;
+    padding: 10px 16px;
+    margin: -20px -20px 16px -20px;
+    border-radius: 12px 12px 0 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    font-size: 14px;
+    animation: alertPulse 3s ease-in-out infinite;
+    position: relative;
+    overflow: hidden;
+}
+
+.alert-bar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: alertShine 4s ease-in-out infinite;
+}
+
+.alert-critical {
+    background: linear-gradient(135deg, var(--error-500) 0%, #dc2626 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.alert-urgent {
+    background: linear-gradient(135deg, var(--warning-500) 0%, #d97706 100%);
+    color: white;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.alert-warning {
+    background: linear-gradient(135deg, var(--warning-100) 0%, #fef3c7 100%);
+    color: var(--warning-700);
+    border: 1px solid var(--warning-300);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.2);
+}
+
+.alert-icon {
+    font-size: 18px;
+    flex-shrink: 0;
+    animation: alertIconBounce 2s ease-in-out infinite;
+}
+
+.alert-text {
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+@keyframes alertPulse {
+    0%, 100% { 
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    50% { 
+        opacity: 0.85;
+        transform: scaleY(0.98);
+    }
+}
+
+@keyframes alertShine {
+    0% { left: -100%; }
+    50% { left: 100%; }
+    100% { left: 100%; }
+}
+
+@keyframes alertIconBounce {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.document-card.has-warning {
+    border-left: 4px solid var(--warning-500);
+    transform: translateY(-1px);
+    transition: all 0.3s ease;
+}
+
+.document-card.has-warning:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.document-card.has-warning.alert-critical {
+    border-left-color: var(--error-500);
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+}
+
+.document-card.has-warning.alert-urgent {
+    border-left-color: var(--warning-500);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.2);
+}
+
+.document-card.has-warning.alert-warning {
+    border-left-color: var(--warning-300);
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15);
 }
 
 .document-header {
@@ -232,38 +380,50 @@
 }
 
 .status-badge {
-    padding: 4px 8px;
-    border-radius: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 600;
     text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
 }
 
 .status-badge.normal {
-    background: var(--success-100);
+    background: linear-gradient(135deg, var(--success-100) 0%, #bbf7d0 100%);
     color: var(--success-700);
+    border: 1px solid #86efac;
 }
 
 .status-badge.warning {
-    background: var(--warning-100);
-    color: var(--warning-700);
-}
-
-.status-badge.urgent {
-    background: var(--warning-100);
+    background: linear-gradient(135deg, var(--warning-100) 0%, #fef3c7 100%);
     color: var(--warning-700);
     border: 1px solid var(--warning-300);
 }
 
+.status-badge.urgent {
+    background: linear-gradient(135deg, #fed7aa 0%, var(--warning-100) 100%);
+    color: var(--warning-700);
+    border: 1px solid var(--warning-300);
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.2);
+}
+
 .status-badge.critical {
-    background: var(--error-100);
+    background: linear-gradient(135deg, #fecaca 0%, var(--error-100) 100%);
     color: var(--error-700);
     border: 1px solid var(--error-300);
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.2);
 }
 
 .status-badge.expired {
-    background: var(--error-500);
+    background: linear-gradient(135deg, var(--error-500) 0%, #dc2626 100%);
     color: white;
+    border: 1px solid #b91c1c;
+    box-shadow: 0 2px 6px rgba(239, 68, 68, 0.3);
 }
 
 .document-content {
@@ -311,6 +471,119 @@
     display: flex;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+/* 列表视图卡片样式 */
+.list-card {
+    padding: 16px 20px;
+    margin-bottom: 0;
+}
+
+.list-card-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.list-card-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.document-type-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.document-type-inline .type-icon {
+    font-size: 18px;
+}
+
+.document-type-inline .type-text {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.document-name-inline {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 4px;
+}
+
+.document-name-inline .document-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 400px;
+}
+
+.document-number-inline {
+    font-size: 13px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+}
+
+.list-card-meta {
+    flex: 1;
+    max-width: 400px;
+}
+
+.meta-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+}
+
+.meta-inline .meta-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.meta-inline .meta-label {
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.meta-inline .meta-value {
+    color: var(--text-primary);
+    font-weight: 500;
+}
+
+.list-card-status {
+    flex-shrink: 0;
+    margin-right: 16px;
+}
+
+.list-card-actions {
+    flex-shrink: 0;
+    display: flex;
+    gap: 6px;
+}
+
+.list-card-actions .btn {
+    padding: 8px;
+    min-width: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.list-card-actions .btn i {
+    font-size: 14px;
+    margin: 0;
 }
 
 .btn {
@@ -637,6 +910,255 @@
 }
 
 /* ============================================
+   批量操作和选择框样式
+   ============================================ */
+
+.section-actions {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.batch-actions {
+    display: none;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    background: var(--primary-100);
+    border: 1px solid var(--primary-300);
+    border-radius: 8px;
+    animation: slideDown 0.2s ease;
+}
+
+.batch-info {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--primary-700);
+    margin-right: 8px;
+}
+
+.selection-control {
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+    user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+    display: none;
+}
+
+.checkmark {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--border-primary);
+    border-radius: 4px;
+    background: var(--background-primary);
+    position: relative;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.checkbox-label:hover .checkmark {
+    border-color: var(--primary-300);
+    box-shadow: 0 2px 6px rgba(107, 78, 61, 0.2);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark {
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+    box-shadow: 0 2px 8px rgba(107, 78, 61, 0.3);
+    transform: scale(1.05);
+}
+
+.checkbox-label input[type="checkbox"]:checked + .checkmark::after {
+    content: '✓';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    animation: checkmarkPop 0.2s ease;
+}
+
+.checkbox-label input[type="checkbox"]:indeterminate + .checkmark {
+    background: var(--primary-400);
+    border-color: var(--primary-400);
+}
+
+.checkbox-label input[type="checkbox"]:indeterminate + .checkmark::after {
+    content: '−';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+@keyframes checkmarkPop {
+    0% { transform: translate(-50%, -50%) scale(0); }
+    50% { transform: translate(-50%, -50%) scale(1.2); }
+    100% { transform: translate(-50%, -50%) scale(1); }
+}
+
+.card-selection {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    z-index: 10;
+}
+
+.permanent-checkbox {
+    margin-bottom: 8px;
+}
+
+.permanent-checkbox .checkbox-label {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.list-card-selection {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.document-card.selected {
+    border-color: var(--primary-500) !important;
+    border-width: 2px !important;
+    box-shadow: 0 0 0 3px rgba(107, 78, 61, 0.3), 0 4px 12px rgba(107, 78, 61, 0.15) !important;
+    background: linear-gradient(135deg, var(--background-primary) 0%, rgba(107, 78, 61, 0.08) 100%) !important;
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+}
+
+
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================
+   资料预览框样式
+   ============================================ */
+
+.document-preview {
+    position: fixed;
+    background: white;
+    border: 1px solid var(--border-primary);
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    padding: 0;
+    width: 320px;
+    max-width: 90vw;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
+
+.document-preview.visible {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.preview-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--border-primary);
+    background: var(--background-secondary);
+    border-radius: 12px 12px 0 0;
+}
+
+.preview-type-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+.preview-title {
+    flex: 1;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    min-width: 0;
+}
+
+.preview-header .status-badge {
+    font-size: 11px;
+    padding: 4px 8px;
+    flex-shrink: 0;
+}
+
+.preview-content {
+    padding: 16px 20px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.preview-row {
+    display: flex;
+    margin-bottom: 8px;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+.preview-row:last-child {
+    margin-bottom: 0;
+}
+
+.preview-row strong {
+    color: var(--text-secondary);
+    min-width: 70px;
+    flex-shrink: 0;
+    margin-right: 8px;
+}
+
+.preview-actions {
+    display: flex;
+    gap: 8px;
+    padding: 12px 20px;
+    border-top: 1px solid var(--border-primary);
+    background: var(--background-secondary);
+    border-radius: 0 0 12px 12px;
+}
+
+.preview-actions .btn {
+    flex: 1;
+    justify-content: center;
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+/* ============================================
    响应式设计
    ============================================ */
 
@@ -650,6 +1172,10 @@
     }
     
     .documents-container {
+        grid-template-columns: 1fr;
+    }
+    
+    .documents-container.view-grid {
         grid-template-columns: 1fr;
     }
     
@@ -684,6 +1210,68 @@
     .modal-header,
     .modal-footer {
         padding: 16px;
+    }
+    
+    /* 列表视图响应式 */
+    .list-card-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+    
+    .list-card-meta {
+        max-width: 100%;
+    }
+    
+    .meta-inline {
+        gap: 12px;
+    }
+    
+    .list-card-status {
+        margin-right: 0;
+        margin-bottom: 8px;
+    }
+    
+    .document-preview {
+        width: 280px;
+    }
+}
+
+@media (max-width: 480px) {
+    .section-header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+    
+    .header-right {
+        display: flex;
+        gap: 8px;
+    }
+    
+    .btn {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .document-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+    
+    .meta-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .meta-value {
+        text-align: left;
+    }
+    
+    .document-name-inline .document-name {
+        max-width: 250px;
     }
 }
 

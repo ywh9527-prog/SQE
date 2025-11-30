@@ -19,16 +19,16 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
     comment: '供应商ID'
   },
   documentType: {
-    type: DataTypes.ENUM('quality_agreement', 'environmental_rohs', 'environmental_reach', 'environmental_msds'),
+    type: DataTypes.ENUM('quality_agreement', 'environmental_rohs', 'environmental_reach', 'environmental_msds', 'environmental_hf', 'csr'),
     allowNull: false,
     field: 'document_type',
-    comment: '资料类型: quality_agreement(质保协议), environmental_rohs(环保ROHS), environmental_reach(环保REACH), environmental_msds(环保MSDS)'
+    comment: '资料类型: quality_agreement(质量保证协议), environmental_rohs(ROHS), environmental_reach(REACH), environmental_msds(MSDS), environmental_hf(HF), csr(CSR)'
   },
   documentName: {
     type: DataTypes.STRING(255),
     allowNull: false,
     field: 'document_name',
-    comment: '资料名称'
+    comment: '版本号'
   },
   documentNumber: {
     type: DataTypes.STRING(100),
@@ -59,7 +59,14 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
     type: DataTypes.DATE,
     allowNull: true,
     field: 'expiry_date',
-    comment: '到期日期'
+    comment: '到期日期（永久有效时为空）'
+  },
+  isPermanent: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+    field: 'is_permanent',
+    comment: '是否永久有效'
   },
   status: {
     type: DataTypes.ENUM('active', 'expired', 'archived'),
@@ -186,10 +193,10 @@ SupplierDocument.findCurrentBySupplier = function(supplierId, documentType) {
   });
 };
 
-SupplierDocument.findExpiringDocuments = function(days = 30) {
-  const futureDate = new Date();
-  futureDate.setDate(futureDate.getDate() + days);
-  
+SupplierDocument.findExpiringDocuments = function() {
+  const now = new Date();
+  const futureDate = new Date(now.getTime() + (30 * 24 * 60 * 60 * 1000)); // 30天后
+
   return this.findAll({
     where: {
       expiryDate: {

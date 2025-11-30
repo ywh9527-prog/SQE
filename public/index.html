@@ -47,21 +47,13 @@
                     <i class="ph ph-chart-bar"></i>
                     <span>IQC 质量分析</span>
                 </a>
-                <a href="#supplier" class="nav-item" data-module="supplier">
-                    <i class="ph ph-building"></i>
-                    <span>供应商档案</span>
-                </a>
                 <a href="#documents" class="nav-item" data-module="documents">
                     <i class="ph ph-folder-open"></i>
                     <span>供应商资料管理</span>
                 </a>
-                <a href="#certificates" class="nav-item" data-module="certificates">
-                    <i class="ph ph-certificate"></i>
-                    <span>资质证书</span>
-                </a>
                 <a href="#performance" class="nav-item" data-module="performance">
                     <i class="ph ph-trend-up"></i>
-                    <span>绩效评价</span>
+                    <span>月度绩效评价</span>
                 </a>
             </nav>
 
@@ -412,13 +404,7 @@
                     </section>
                 </div>
 
-                <!-- 其他模块占位 -->
-                <div id="module-suppliers" class="module-view hidden">
-                    <h3>供应商档案 (开发中)</h3>
-                </div>
-                <div id="module-certificates" class="module-view hidden">
-                    <h3>资质证书 (开发中)</h3>
-                </div>
+                
                 <div id="module-documents" class="module-view hidden">
                     <!-- 供应商资料管理模块 -->
                     <div class="module-header">
@@ -459,6 +445,21 @@
                                 <label for="searchInput">搜索</label>
                                 <input type="text" id="searchInput" class="form-control" placeholder="搜索资料名称...">
                             </div>
+                            
+                            <div class="filter-group">
+                                <label for="sortSelect">排序</label>
+                                <select id="sortSelect" class="form-control">
+                                    <option value="expiry-asc">到期时间（从近到远）</option>
+                                    <option value="expiry-desc">到期时间（从远到近）</option>
+                                    <option value="name-asc">资料名称（A-Z）</option>
+                                    <option value="name-desc">资料名称（Z-A）</option>
+                                    <option value="supplier-asc">供应商（A-Z）</option>
+                                    <option value="supplier-desc">供应商（Z-A）</option>
+                                    <option value="type-asc">资料类型</option>
+                                    <option value="upload-desc">上传时间（最新）</option>
+                                    <option value="upload-asc">上传时间（最旧）</option>
+                                </select>
+                            </div>
                         </div>
                     </section>
 
@@ -471,19 +472,27 @@
                             </button>
                             <button class="document-type-tab" data-type="quality_agreement">
                                 <span class="tab-icon">📋</span>
-                                <span class="tab-text">质保协议</span>
+                                <span class="tab-text">质量保证协议</span>
                             </button>
                             <button class="document-type-tab" data-type="environmental_rohs">
                                 <span class="tab-icon">🌱</span>
-                                <span class="tab-text">环保ROHS</span>
+                                <span class="tab-text">ROHS</span>
                             </button>
                             <button class="document-type-tab" data-type="environmental_reach">
                                 <span class="tab-icon">🌱</span>
-                                <span class="tab-text">环保REACH</span>
+                                <span class="tab-text">REACH</span>
                             </button>
                             <button class="document-type-tab" data-type="environmental_msds">
                                 <span class="tab-icon">🌱</span>
-                                <span class="tab-text">环保MSDS</span>
+                                <span class="tab-text">MSDS</span>
+                            </button>
+                            <button class="document-type-tab" data-type="environmental_hf">
+                                <span class="tab-icon">🌱</span>
+                                <span class="tab-text">HF</span>
+                            </button>
+                            <button class="document-type-tab" data-type="csr">
+                                <span class="tab-icon">🤝</span>
+                                <span class="tab-text">CSR</span>
                             </button>
                         </div>
                     </section>
@@ -493,6 +502,21 @@
                         <div class="section-header">
                             <h2>资料列表</h2>
                             <div class="section-actions">
+                                <div class="batch-actions" id="batchActions" style="display: none;">
+                                    <span class="batch-info">已选择 <span id="selectedCount">0</span> 项</span>
+                                    <button class="btn btn-sm btn-primary" onclick="supplierManager.batchDownload()">
+                                        批量下载
+                                    </button>
+                                    <button class="btn btn-sm btn-warning" onclick="supplierManager.batchEdit()">
+                                        批量编辑
+                                    </button>
+                                    <button class="btn btn-sm btn-danger" onclick="supplierManager.batchDelete()">
+                                        批量删除
+                                    </button>
+                                    <button class="btn btn-sm btn-secondary" onclick="supplierManager.clearSelection()">
+                                        取消选择
+                                    </button>
+                                </div>
                                 <div class="view-toggle">
                                     <button class="view-btn active" data-view="grid">
                                         <span class="view-icon">⊞</span>
@@ -500,6 +524,13 @@
                                     <button class="view-btn" data-view="list">
                                         <span class="view-icon">☰</span>
                                     </button>
+                                </div>
+                                <div class="selection-control">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="selectAll" onchange="supplierManager.toggleSelectAll()">
+                                        <span class="checkmark"></span>
+                                        全选
+                                    </label>
                                 </div>
                             </div>
                         </div>
@@ -547,17 +578,19 @@
                             <label for="uploadDocumentType">资料类型 *</label>
                             <select id="uploadDocumentType" class="form-control" required>
                                 <option value="">请选择资料类型</option>
-                                <option value="quality_agreement">质保协议</option>
-                                <option value="environmental_rohs">环保ROHS</option>
-                                <option value="environmental_reach">环保REACH</option>
-                                <option value="environmental_msds">环保MSDS</option>
+                                <option value="quality_agreement">质量保证协议</option>
+                                <option value="environmental_rohs">ROHS</option>
+                                <option value="environmental_reach">REACH</option>
+                                <option value="environmental_msds">MSDS</option>
+                                <option value="environmental_hf">HF</option>
+                                <option value="csr">CSR</option>
                             </select>
                         </div>
                     </div>
                     
                     <div class="form-group">
-                        <label for="uploadDocumentName">资料名称 *</label>
-                        <input type="text" id="uploadDocumentName" class="form-control" required>
+                        <label for="uploadDocumentName">版本号</label>
+                        <input type="text" id="uploadDocumentName" class="form-control" placeholder="如：V1.0, 2024版等（可选，不填将自动生成）">
                     </div>
                     
                     <div class="form-row">
@@ -567,8 +600,15 @@
                         </div>
                         
                         <div class="form-group">
-                            <label for="uploadExpiryDate">到期日期</label>
-                            <input type="date" id="uploadExpiryDate" class="form-control">
+                            <div class="permanent-checkbox">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="uploadPermanent" onchange="supplierManager.togglePermanentDate()">
+                                    <span class="checkmark"></span>
+                                    永久有效
+                                </label>
+                            </div>
+                            <label for="uploadExpiryDate">到期日期 *</label>
+                            <input type="date" id="uploadExpiryDate" class="form-control" required>
                         </div>
                     </div>
                     
