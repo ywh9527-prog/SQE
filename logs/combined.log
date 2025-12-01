@@ -2984,3 +2984,275 @@
 2025-11-30 03:08:32 [INFO]: 数据库连接成功 (SQLite)
 2025-11-30 03:08:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
 2025-11-30 03:08:32 [INFO]: 数据库模型已同步
+2025-12-01 17:13:28 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:13:28 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:13:28 [INFO]: 数据库模型已同步
+2025-12-01 17:13:34 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:13:38 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:13:38 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:13:38 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:13:51 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:13:51 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:13:51 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:13:53 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:13:58 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:13:59 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:16:16 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:16:16 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:16:16 [INFO]: 数据库模型已同步
+2025-12-01 17:16:21 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:24:17 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:24:17 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:24:17 [INFO]: 数据库模型已同步
+2025-12-01 17:24:27 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:24:27 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:24:27 [INFO]: 数据库模型已同步
+2025-12-01 17:24:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:24:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:24:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:24:40 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:28:01 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:28:01 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:28:01 [INFO]: 数据库模型已同步
+2025-12-01 17:28:04 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:29:09 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:29:09 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:29:09 [INFO]: 数据库模型已同步
+2025-12-01 17:29:33 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:29:33 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:29:33 [INFO]: 数据库模型已同步
+2025-12-01 17:29:36 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:32:18 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:32:18 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:32:18 [INFO]: 数据库模型已同步
+2025-12-01 17:32:20 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:33:38 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:33:38 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:33:38 [INFO]: 数据库模型已同步
+2025-12-01 17:34:33 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:34:54 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:34:54 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:34:54 [INFO]: 数据库模型已同步
+2025-12-01 17:34:57 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:34:57 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:34:57 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:34:58 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:36:54 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:36:54 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:36:54 [INFO]: 数据库模型已同步
+2025-12-01 17:36:57 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:36:57 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:36:57 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:36:58 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:36:59 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:37:13 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:13 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:13 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:13 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581833048_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581833048_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:14 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:14 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:14 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:14 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581834611_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581834611_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:15 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:15 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:15 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:15 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581835180_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581835180_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:19 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:19 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:19 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:19 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581839661_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581839661_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:19 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:19 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:19 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:19 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581839813_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581839813_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:19 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:19 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:19 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:19 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581839964_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581839964_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:20 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:20 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:20 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:20 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581840106_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581840106_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:20 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:20 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:20 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:20 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581840261_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581840261_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:20 [ERROR]: 上传资料失败: SQLITE_ERROR: table supplier_documents has no column named is_permanent
+2025-12-01 17:37:20 [ERROR]: 错误详情: {"name":"SequelizeDatabaseError","parent":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"original":{"errno":1,"code":"SQLITE_ERROR","sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);"},"sql":"INSERT INTO `supplier_documents` (`id`,`supplier_id`,`document_type`,`document_name`,`document_number`,`file_path`,`file_size`,`upload_date`,`expiry_date`,`is_permanent`,`status`,`responsible_person`,`issuing_authority`,`remarks`,`version`,`is_current`,`created_at`,`updated_at`) VALUES (NULL,$1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17);","parameters":{}}
+2025-12-01 17:37:20 [ERROR]: 请求数据: {"supplierId":"4","documentType":"environmental_msds","documentName":"","documentNumber":"","expiryDate":"null","isPermanent":"true","responsiblePerson":"","issuingAuthority":"","remarks":""}
+2025-12-01 17:37:20 [ERROR]: 文件信息: {"fieldname":"file","originalname":"ä¾åºåA_è´¨ä¿åè®®_2024.pdf","encoding":"7bit","mimetype":"application/pdf","destination":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents","filename":"1764581840403_供应商A_质保协议_2024.pdf","path":"D:\\AI\\IFLOW-SQE-Data-Analysis-Assistant-refactored\\uploads\\documents\\1764581840403_供应商A_质保协议_2024.pdf","size":596}
+2025-12-01 17:37:55 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:37:55 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:37:56 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
+2025-12-01 17:38:28 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:38:28 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:38:28 [INFO]: 数据库模型已同步
+2025-12-01 17:38:54 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:38:54 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\sqe_database.sqlite
+2025-12-01 17:38:54 [INFO]: 数据库模型已同步
+2025-12-01 17:38:56 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:38:56 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:38:56 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:44:48 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:44:48 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:44:48 [INFO]: 数据库模型已同步
+2025-12-01 17:44:50 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:44:50 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:44:50 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:45:54 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:45:54 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:45:54 [INFO]: 数据库模型已同步
+2025-12-01 17:45:59 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:45:59 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:45:59 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:48:57 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:48:57 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:48:57 [INFO]: 数据库模型已同步
+2025-12-01 17:49:19 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:49:19 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:49:19 [INFO]: 数据库模型已同步
+2025-12-01 17:49:27 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:49:27 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:49:27 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:53:18 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:53:18 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:53:18 [INFO]: 数据库模型已同步
+2025-12-01 17:53:52 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:53:52 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:53:52 [INFO]: 数据库模型已同步
+2025-12-01 17:53:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:53:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:53:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 17:56:36 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 17:56:36 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 17:56:36 [INFO]: 数据库模型已同步
+2025-12-01 18:01:49 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:01:49 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:01:49 [INFO]: 数据库模型已同步
+2025-12-01 18:02:24 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:02:24 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:02:24 [INFO]: 数据库模型已同步
+2025-12-01 18:06:23 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:06:23 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:06:23 [INFO]: 数据库模型已同步
+2025-12-01 18:21:11 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:21:11 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:21:12 [INFO]: 数据库模型已同步
+2025-12-01 18:23:27 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:23:27 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:23:27 [INFO]: 数据库模型已同步
+2025-12-01 18:24:01 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:24:01 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:24:01 [INFO]: 数据库模型已同步
+2025-12-01 18:26:55 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 18:26:55 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 18:26:55 [INFO]: 数据库模型已同步
+2025-12-01 20:44:19 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 20:44:19 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 20:44:19 [INFO]: 数据库模型已同步
+2025-12-01 20:46:21 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 20:46:21 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 20:46:21 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 21:08:53 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 21:08:53 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 21:08:53 [INFO]: 数据库模型已同步
+2025-12-01 21:08:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 21:08:56 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 21:08:56 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 23:18:25 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 23:18:25 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 23:18:25 [INFO]: 数据库模型已同步
+2025-12-01 23:18:30 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 23:18:31 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 23:18:31 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 23:57:09 [INFO]: 数据库连接成功 (SQLite)
+2025-12-01 23:57:09 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-01 23:57:09 [INFO]: 数据库模型已同步
+2025-12-01 23:57:26 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 23:57:26 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-01 23:57:26 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 00:24:32 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 00:24:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 00:24:32 [INFO]: 数据库模型已同步
+2025-12-02 00:50:47 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 00:50:47 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 00:50:47 [INFO]: 数据库模型已同步
+2025-12-02 00:51:46 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 00:51:46 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 00:51:46 [INFO]: 数据库模型已同步
+2025-12-02 00:52:08 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 00:52:08 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 00:52:08 [INFO]: 数据库模型已同步
+2025-12-02 00:52:30 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 00:52:30 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 00:52:30 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 00:56:01 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 00:56:01 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 00:56:01 [INFO]: 数据库模型已同步
+2025-12-02 00:58:14 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 00:58:14 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 00:58:14 [INFO]: 数据库模型已同步
+2025-12-02 01:00:04 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:00:04 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:00:04 [INFO]: 数据库模型已同步
+2025-12-02 01:03:38 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:03:38 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:03:38 [INFO]: 数据库模型已同步
+2025-12-02 01:06:09 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:06:09 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:06:09 [INFO]: 数据库模型已同步
+2025-12-02 01:09:42 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:09:42 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:09:42 [INFO]: 数据库模型已同步
+2025-12-02 01:11:43 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:11:43 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:11:43 [INFO]: 数据库模型已同步
+2025-12-02 01:13:56 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:13:56 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:13:56 [INFO]: 数据库模型已同步
+2025-12-02 01:14:50 [ERROR]: 令牌验证错误: jwt malformed
+2025-12-02 01:15:31 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:15:31 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:15:31 [INFO]: 数据库模型已同步
+2025-12-02 01:21:17 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:21:17 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:21:17 [INFO]: 数据库模型已同步
+2025-12-02 01:29:02 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:29:02 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:29:02 [INFO]: 数据库模型已同步
+2025-12-02 01:32:34 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:32:34 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:32:34 [INFO]: 数据库模型已同步
+2025-12-02 01:33:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 01:33:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 01:33:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 01:35:08 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:35:08 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:35:08 [INFO]: 数据库模型已同步
+2025-12-02 01:37:02 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:37:02 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:37:02 [INFO]: 数据库模型已同步
+2025-12-02 01:39:21 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:39:21 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:39:21 [INFO]: 数据库模型已同步
+2025-12-02 01:41:22 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:41:22 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:41:22 [INFO]: 数据库模型已同步
+2025-12-02 01:42:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 01:42:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 01:42:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 01:43:23 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:43:23 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:43:23 [INFO]: 数据库模型已同步
+2025-12-02 01:45:49 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:45:49 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:45:49 [INFO]: 数据库模型已同步
+2025-12-02 01:46:41 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:46:41 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:46:41 [INFO]: 数据库模型已同步
+2025-12-02 01:47:00 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:47:00 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:47:00 [INFO]: 数据库模型已同步
+2025-12-02 01:48:50 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 01:48:50 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 01:48:50 [INFO]: 数据库模型已同步

@@ -8,6 +8,8 @@ class SupplierDocumentManager {
     this.currentDocumentType = 'all';
     this.documents = [];
     this.suppliers = [];
+    this.documentsSummary = []; // 供应商资料汇总数据
+    this.viewMode = 'table'; // 'table' 或 'cards' - 默认表格视图
     this.currentView = 'grid'; // 'grid' 或 'list'
     this.currentSort = 'expiry-asc'; // 默认排序
     this.selectedDocuments = new Set(); // 选中的文档ID
@@ -235,6 +237,9 @@ class SupplierDocumentManager {
     
     this.currentView = view;
     
+    // 映射grid->table, list->cards
+    this.viewMode = view === 'grid' ? 'table' : 'cards';
+    
     // 更新按钮样式
     document.querySelectorAll('.view-btn').forEach(btn => {
       btn.classList.remove('active');
@@ -314,17 +319,12 @@ class SupplierDocumentManager {
   }
 
   /**
-   * 加载资料列表（表格视图）
+   * 加载资料列表
    * 
    * ⚠️ 关键方法: 供应商资料管理页面的数据加载入口
    * 🔗 调用API: GET /api/suppliers/documents-summary
-   * 📊 返回数据: 供应商资料汇总表格数据
-   * 
-   * 调试经验:
-   * 1. 如果没有看到"开始加载供应商资料汇总数据"，说明路由没有触发
-   * 2. 如果看到404错误，检查后端路由顺序（documents-summary必须在/:id之前）
-   * 3. 如果看到认证错误，检查localStorage中的authToken
-   * 4. 服务器没有请求日志说明路由匹配失败
+   * 📊 返回数据: 供应商资料汇总数据
+   * 🎨 显示模式: 支持表格和卡片两种显示方式
    */
   async loadDocuments() {
     try {
@@ -339,8 +339,6 @@ class SupplierDocumentManager {
         return;
       }
       
-      console.log('🔑 使用认证token:', token.substring(0, 20) + '...');
-      
       const response = await fetch('/api/suppliers/documents-summary', {
         method: 'GET',
         headers: {
@@ -349,40 +347,36 @@ class SupplierDocumentManager {
         }
       });
 
-      console.log('🌐 API响应状态:', response.status, response.statusText);
-      
       if (!response.ok) {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
       const result = await response.json();
-      console.log('📥 收到供应商资料汇总响应:', result);
       
       if (result.success) {
-        console.log(`✅ 成功获取 ${result.data.length} 个供应商的资料汇总`);
         this.documentsSummary = result.data;
-        this.renderDocumentsTable();
+        
+        // 根据当前显示模式渲染
+        if (this.viewMode === 'table') {
+          this.renderDocumentsTable();
+        } else {
+          this.renderDocumentsCards();
+        }
       } else {
-        console.error('❌ API返回失败:', result.error);
         this.showError(result.error || '加载资料列表失败');
       }
     } catch (error) {
       console.error('❌ 加载资料列表失败:', error);
-      console.error('错误详情:', error.message, error.stack);
       this.showError(`加载资料列表失败: ${error.message}`);
     } finally {
-      // 确保隐藏加载状态
       this.hideLoading();
     }
   }
 
   /**
-   * 渲染资料表格
-   * 创建时间: 2025-12-01
-   * 功能: 渲染按供应商分组的资料表格，直观显示所有供应商的资料状态
-   * 来由: 用户要求更直观的资料展示方式，能够看到所有供应商的资料状态
+   * 渲染资料列表
    */
-  renderDocumentsTable() {
+  renderDocuments() {
     const container = document.getElementById('documentsContainer');
     if (!container) return;
 
@@ -397,41 +391,206 @@ class SupplierDocumentManager {
       return;
     }
 
-    console.log(`🏗️ 渲染 ${this.documentsSummary.length} 个供应商的资料表格`);
+    // 根据当前显示模式渲染
+    if (this.viewMode === 'table') {
+      this.renderDocumentsTable();
+    } else {
+      this.renderDocumentsCards();
+    }
+  }
 
-    // 创建表格HTML
-    const tableHtml = `
-      <div class="documents-table-container">
-        <div class="table-header">
-          <h3>供应商资料汇总表</h3>
-          <div class="table-stats">
+  /**
+   * 渲染资料表格
+   * 功能: 渲染按供应商分组的资料表格，直观显示所有供应商的资料状态
+   */
+  renderDocumentsTable() {
+    const container = document.getElementById('documentsContainer');
+    if (!container) return;
+
+    console.log(`🏗️ 开始渲染表格，供应商数量: ${this.documentsSummary.length}`);
+    console.log(`🏗️ 当前视图模式: ${this.viewMode}`);
+    console.log(`🏗️ 容器类名: ${container.className}`);
+    console.log(`🏗️ 容器计算样式: ${window.getComputedStyle(container).display}`);
+
+    // 完全清空容器
+    container.innerHTML = '';
+    
+    // 创建新的表格容器
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'supplier-table-wrapper';
+    tableContainer.style.cssText = `
+      width: 100%;
+      padding: 20px;
+      background: var(--background-primary);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      display: block !important;
+      position: static !important;
+      grid-column: 1 / -1 !important;
+      grid-row: auto !important;
+    `;
+
+    // 创建表格头部
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'table-header';
+    headerDiv.innerHTML = `
+      <h3 style="margin: 0 0 16px 0; color: var(--text-primary); font-size: 18px; font-weight: 600;">
+        供应商资料汇总表
+      </h3>
+      <div style="color: var(--text-secondary); font-size: 14px;">
+        总供应商: ${this.documentsSummary.length} 家
+      </div>
+    `;
+
+    // 创建表格包装器
+    const tableWrapper = document.createElement('div');
+    tableWrapper.style.cssText = `
+      overflow-x: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border-primary);
+      background: white;
+    `;
+
+    // 创建表格
+    const table = document.createElement('table');
+    table.className = 'supplier-data-table';
+    table.style.cssText = `
+      width: 100%;
+      min-width: 900px;
+      border-collapse: collapse;
+      font-size: 14px;
+    `;
+
+    // 创建表头
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr style="background: var(--background-secondary);">
+        <th style="padding: 12px 16px; text-align: left; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap;">供应商</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 120px;">质保协议</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 120px;">ROHS</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 120px;">REACH</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 120px;">MSDS</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 120px;">HF</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 120px;">CSR</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600; color: var(--text-primary); white-space: nowrap; min-width: 100px;">状态</th>
+      </tr>
+    `;
+
+    // 创建表体
+    const tbody = document.createElement('tbody');
+    tbody.innerHTML = this.documentsSummary.map(supplier => this.createSupplierTableRow(supplier)).join('');
+
+    // 组装表格
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableWrapper.appendChild(table);
+    
+    // 组装完整容器
+    tableContainer.appendChild(headerDiv);
+    tableContainer.appendChild(tableWrapper);
+    container.appendChild(tableContainer);
+    
+    // 强制覆盖父容器的grid样式
+    container.style.cssText = `
+      display: block !important;
+      position: static !important;
+      width: 100% !important;
+      height: auto !important;
+      grid-template-columns: unset !important;
+      grid-template-rows: unset !important;
+      gap: unset !important;
+    `;
+    
+    console.log(`🏗️ 表格容器添加完成，强制覆盖grid样式`);
+    console.log(`🏗️ 最终容器样式: ${window.getComputedStyle(container).display}`);
+  }
+
+  /**
+   * 渲染资料卡片
+   * 功能: 以卡片形式展示供应商资料，更直观的视觉效果
+   */
+  renderDocumentsCards() {
+    const container = document.getElementById('documentsContainer');
+    if (!container) return;
+
+    console.log(`🏗️ 渲染 ${this.documentsSummary.length} 个供应商的资料卡片`);
+
+    // 创建卡片HTML
+    const cardsHtml = `
+      <div class="documents-cards-container">
+        <div class="cards-header">
+          <h3>供应商资料卡片</h3>
+          <div class="cards-stats">
             总供应商: ${this.documentsSummary.length} 家
           </div>
         </div>
-        <div class="table-wrapper">
-          <table class="documents-table">
-            <thead>
-              <tr>
-                <th>供应商</th>
-                <th>质保协议</th>
-                <th>ROHS</th>
-                <th>REACH</th>
-                <th>MSDS</th>
-                <th>HF</th>
-                <th>CSR</th>
-                <th>状态</th>
-              </tr>
-            </thead>
-            <tbody>
-              ${this.documentsSummary.map(supplier => this.createSupplierTableRow(supplier)).join('')}
-            </tbody>
-          </table>
+        <div class="cards-grid">
+          ${this.documentsSummary.map(supplier => this.createSupplierCard(supplier)).join('')}
         </div>
       </div>
     `;
 
-    container.innerHTML = tableHtml;
+    container.innerHTML = cardsHtml;
   }
+
+  /**
+   * 创建供应商卡片
+   */
+  createSupplierCard(supplier) {
+    const documentTypes = [
+      { key: 'quality_agreement', name: '质保协议', icon: '📄' },
+      { key: 'environmental_rohs', name: 'ROHS', icon: '🌿' },
+      { key: 'environmental_reach', name: 'REACH', icon: '🔬' },
+      { key: 'environmental_msds', name: 'MSDS', icon: '⚠️' },
+      { key: 'environmental_hf', name: 'HF', icon: '🧪' },
+      { key: 'csr', name: 'CSR', icon: '🤝' }
+    ];
+
+    // 创建资料状态项
+    const documentItems = documentTypes.map(type => {
+      const doc = supplier.documents[type.key];
+      if (!doc || !doc.hasDocument) {
+        return `
+          <div class="doc-item missing">
+            <span class="doc-icon">${type.icon}</span>
+            <span class="doc-name">${type.name}</span>
+            <span class="doc-status">缺失</span>
+          </div>
+        `;
+      }
+
+      const statusClass = this.getDocumentStatusClass(doc.expiryDate, doc.status);
+      const expiryText = doc.expiryDate ? this.formatExpiryDate(doc.expiryDate) : '永久有效';
+
+      return `
+        <div class="doc-item ${statusClass}">
+          <span class="doc-icon">${type.icon}</span>
+          <span class="doc-name">${type.name}</span>
+          <span class="doc-expiry">${expiryText}</span>
+        </div>
+      `;
+    }).join('');
+
+    // 计算整体状态
+    const overallStatus = this.calculateOverallStatus(supplier.documents);
+    const statusClass = this.getOverallStatusClass(overallStatus);
+
+    return `
+      <div class="supplier-card">
+        <div class="card-header">
+          <h4 class="supplier-name">${supplier.supplierName}</h4>
+          <div class="overall-status ${statusClass}">${overallStatus}</div>
+        </div>
+        <div class="card-body">
+          <div class="documents-list">
+            ${documentItems}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  
 
   /**
    * 创建供应商表格行
@@ -446,30 +605,49 @@ class SupplierDocumentManager {
       { key: 'csr', name: 'CSR' }
     ];
 
-    // 创建资料状态单元格
-    const documentCells = documentTypes.map(type => {
+    // 创建行
+    const tr = document.createElement('tr');
+    tr.style.cssText = 'border-bottom: 1px solid var(--border-primary); transition: background-color 0.2s ease;';
+    
+    // 供应商名称单元格
+    const nameCell = document.createElement('td');
+    nameCell.style.cssText = 'padding: 12px 16px; font-weight: 600; color: var(--text-primary); min-width: 150px;';
+    nameCell.textContent = supplier.supplierName;
+    tr.appendChild(nameCell);
+
+    // 资料状态单元格
+    documentTypes.forEach(type => {
       const doc = supplier.documents[type.key];
-      if (!doc || !doc.hasDocument) {
-        return '<td class="status-missing">-</td>';
-      }
-
-      const statusClass = this.getDocumentStatusClass(doc.expiryDate, doc.status);
-      const expiryText = doc.expiryDate ? this.formatExpiryDate(doc.expiryDate) : '永久有效';
+      const cell = document.createElement('td');
       
-      return `<td class="${statusClass}" title="${type.name}: ${expiryText}">${expiryText}</td>`;
-    }).join('');
+      if (!doc || !doc.hasDocument) {
+        cell.style.cssText = 'padding: 12px 16px; text-align: center; color: var(--text-secondary); font-style: italic;';
+        cell.textContent = '-';
+        cell.className = 'status-missing';
+      } else {
+        const statusClass = this.getDocumentStatusClass(doc.expiryDate, doc.status);
+        const expiryText = doc.expiryDate ? this.formatExpiryDate(doc.expiryDate) : '永久有效';
+        
+        cell.style.cssText = 'padding: 12px 16px; text-align: center; font-size: 14px;';
+        cell.textContent = expiryText;
+        cell.className = statusClass;
+        cell.title = `${type.name}: ${expiryText}`;
+      }
+      
+      tr.appendChild(cell);
+    });
 
-    // 计算整体状态
+    // 整体状态单元格
+    const statusCell = document.createElement('td');
     const overallStatus = this.calculateOverallStatus(supplier.documents);
     const statusClass = this.getOverallStatusClass(overallStatus);
+    
+    statusCell.style.cssText = 'padding: 12px 16px; text-align: center; font-weight: 600;';
+    statusCell.textContent = overallStatus;
+    statusCell.className = statusClass;
+    tr.appendChild(statusCell);
 
-    return `
-      <tr>
-        <td class="supplier-name">${supplier.supplierName}</td>
-        ${documentCells}
-        <td class="${statusClass}">${overallStatus}</td>
-      </tr>
-    `;
+    return tr.outerHTML;
   }
 
   /**
@@ -530,12 +708,19 @@ class SupplierDocumentManager {
 
   /**
    * 计算距离到期天数
+   * 修复: 使用本地时间开始点计算，避免时区问题
    */
   calculateDaysUntilExpiry(expiryDate) {
     if (!expiryDate) return null;
+    
     const now = new Date();
     const expiry = new Date(expiryDate);
-    const diffTime = expiry - now;
+    
+    // 使用本地时间的开始和结束来计算天数，避免时区问题
+    const nowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const expiryStart = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate());
+    
+    const diffTime = expiryStart - nowStart;
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 

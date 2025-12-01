@@ -202,10 +202,9 @@
    ============================================ */
 
 .documents-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 20px;
     min-height: 200px;
+    width: 100%;
+    max-width: none; /* 确保没有最大宽度限制 */
 }
 
 .documents-container.view-grid {
@@ -214,10 +213,67 @@
     gap: 20px;
 }
 
+/* 强制表格在所有视图模式下正常显示 - 使用最高优先级 */
+.documents-container.view-grid .documents-table-container,
+.documents-container.view-list .documents-table-container,
+body .documents-container.view-grid .documents-table-container,
+body .documents-container.view-list .documents-table-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 24px !important;
+    background: var(--background-primary) !important;
+    border-radius: 12px !important;
+    box-shadow: var(--shadow-sm) !important;
+}
+
+.documents-container.view-grid .table-wrapper,
+.documents-container.view-list .table-wrapper,
+body .documents-container.view-grid .table-wrapper,
+body .documents-container.view-list .table-wrapper {
+    overflow-x: auto !important;
+    border-radius: 8px !important;
+    border: 1px solid var(--border-primary) !important;
+    width: 100vw !important;
+    margin-left: calc(-50vw + 50%) !important;
+    padding-left: calc(50vw - 50%) !important;
+    padding-right: calc(50vw - 50%) !important;
+}
+
+/* 确保表格本身在grid/list视图中正常显示 */
+.documents-container.view-grid .documents-table,
+.documents-container.view-list .documents-table,
+body .documents-container.view-grid .documents-table,
+body .documents-container.view-list .documents-table {
+    width: 100% !important;
+    min-width: 900px !important;
+    border-collapse: collapse !important;
+}
+
+/* 重置容器本身的grid/flex样式，但只影响表格容器 */
+.documents-container.view-grid > :not(.documents-table-container),
+.documents-container.view-list > :not(.documents-table-container) {
+    /* 保持原有的grid/flex样式用于卡片 */
+}
+
 .documents-container.view-list {
     display: flex;
     flex-direction: column;
     gap: 12px;
+}
+
+/* 表格视图时覆盖flex样式 */
+.documents-container.view-list .documents-table-container {
+    display: block !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.documents-container.view-list .table-wrapper {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
 }
 
 .document-card {
@@ -1166,6 +1222,147 @@
     padding: 8px 12px;
 }
 
+
+
+/* ============================================
+   卡片视图样式
+   ============================================ */
+
+.documents-cards-container {
+  background: var(--background-primary);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.cards-header {
+  margin-bottom: 24px;
+}
+
+.cards-header h3 {
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 20px;
+}
+
+.supplier-card {
+  background: var(--background-secondary);
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid var(--border-primary);
+  transition: all 0.2s ease;
+}
+
+.supplier-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--primary-300);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-primary);
+}
+
+.card-header .supplier-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.4;
+}
+
+.overall-status {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.card-body {
+  padding: 0;
+}
+
+.documents-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.doc-item:hover {
+  background: var(--background-hover);
+}
+
+.doc-icon {
+  font-size: 16px;
+  width: 20px;
+  text-align: center;
+}
+
+.doc-name {
+  flex: 1;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.doc-expiry {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.doc-status {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.doc-item.missing {
+  opacity: 0.6;
+}
+
+.doc-item.missing .doc-name {
+  color: var(--text-secondary);
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .supplier-card {
+    padding: 16px;
+  }
+  
+  .card-header {
+    flex-direction: column;
+    gap: 8px;
+    align-items: flex-start;
+  }
+}
+
 /* ============================================
    表格视图样式
    ============================================ */
@@ -1175,6 +1372,9 @@
     border-radius: 12px;
     padding: 24px;
     box-shadow: var(--shadow-sm);
+    width: 100%;
+    max-width: none; /* 移除最大宽度限制 */
+    overflow: hidden; /* 防止内容溢出 */
 }
 
 .table-header {
@@ -1198,37 +1398,47 @@
 }
 
 .table-wrapper {
-    overflow-x: auto;
-    border-radius: 8px;
-    border: 1px solid var(--border-primary);
+  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-primary);
+  width: 100vw; /* 强制使用视口宽度 */
+  margin-left: calc(-50vw + 50%); /* 居中偏移 */
+  padding-left: calc(50vw - 50%); /* 补偿偏移 */
+  padding-right: calc(50vw - 50%); /* 补偿偏移 */
 }
 
 .documents-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
+  width: 100%;
+  min-width: 900px; /* 确保表格有最小宽度 */
+  border-collapse: collapse;
+  font-size: 14px;
 }
 
 .documents-table th {
-    background: var(--background-secondary);
-    color: var(--text-primary);
-    font-weight: 600;
-    text-align: left;
-    padding: 12px 16px;
-    border-bottom: 2px solid var(--border-primary);
-    white-space: nowrap;
+  background: var(--background-secondary);
+  color: var(--text-primary);
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  border-bottom: 2px solid var(--border-primary);
+  white-space: nowrap;
+  min-width: 100px; /* 确保每列有最小宽度 */
 }
 
 .documents-table td {
-    padding: 12px 16px;
-    border-bottom: 1px solid var(--border-primary);
-    vertical-align: middle;
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-primary);
+  vertical-align: middle;
+  min-width: 100px; /* 确保每列有最小宽度 */
+  max-width: 200px; /* 防止内容过长 */
+  word-wrap: break-word;
 }
 
 .supplier-name {
     font-weight: 600;
     color: var(--text-primary);
-    min-width: 120px;
+    min-width: 150px;
+    width: 150px; /* 固定供应商名称列宽 */
 }
 
 /* 资料状态样式 */
@@ -1273,15 +1483,69 @@
     color: var(--primary-600);
 }
 
+/* 表格列宽优化 */
+.documents-table th:nth-child(1), /* 供应商 */
+.documents-table td:nth-child(1) {
+    width: 150px;
+    min-width: 150px;
+}
+
+.documents-table th:nth-child(2), /* 质保协议 */
+.documents-table th:nth-child(3), /* ROHS */
+.documents-table th:nth-child(4), /* REACH */
+.documents-table th:nth-child(5), /* MSDS */
+.documents-table th:nth-child(6), /* HF */
+.documents-table th:nth-child(7), /* CSR */
+.documents-table td:nth-child(2),
+.documents-table td:nth-child(3),
+.documents-table td:nth-child(4),
+.documents-table td:nth-child(5),
+.documents-table td:nth-child(6),
+.documents-table td:nth-child(7) {
+    width: 120px;
+    min-width: 120px;
+    text-align: center;
+}
+
+.documents-table th:nth-child(8), /* 状态 */
+.documents-table td:nth-child(8) {
+    width: 100px;
+    min-width: 100px;
+    text-align: center;
+}
+
 /* 响应式表格 */
 @media (max-width: 1200px) {
     .documents-table {
         font-size: 13px;
+        min-width: 800px;
     }
     
     .documents-table th,
     .documents-table td {
-        padding: 8px 12px;
+        padding: 8px 10px;
+    }
+    
+    .documents-table th:nth-child(1),
+    .documents-table td:nth-child(1) {
+        width: 120px;
+        min-width: 120px;
+    }
+    
+    .documents-table th:nth-child(2),
+    .documents-table th:nth-child(3),
+    .documents-table th:nth-child(4),
+    .documents-table th:nth-child(5),
+    .documents-table th:nth-child(6),
+    .documents-table th:nth-child(7),
+    .documents-table td:nth-child(2),
+    .documents-table td:nth-child(3),
+    .documents-table td:nth-child(4),
+    .documents-table td:nth-child(5),
+    .documents-table td:nth-child(6),
+    .documents-table td:nth-child(7) {
+        width: 100px;
+        min-width: 100px;
     }
 }
 
