@@ -22,21 +22,54 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
 // 路由
 // 添加时间: 2025-12-01
 // 说明: 新增suppliers路由以解决前端404错误
+console.log('📦 开始加载路由模块...');
 const uploadRoutes = require('./routes/upload');
+console.log('✅ uploadRoutes 加载完成');
 const supplierRoutes = require('./routes/supplier');
+console.log('✅ supplierRoutes 加载完成');
 const suppliersRoutes = require('./routes/suppliers'); // 新增供应商管理API
+console.log('✅ suppliersRoutes 加载完成');
 const comparisonRoutes = require('./routes/comparison');
+console.log('✅ comparisonRoutes 加载完成');
 const dataSourceRoutes = require('./routes/data-source');
+console.log('✅ dataSourceRoutes 加载完成');
 const supplierSearchRoutes = require('./routes/supplier-search');
+console.log('✅ supplierSearchRoutes 加载完成');
 const documentRoutes = require('./routes/documents');
+console.log('✅ documentRoutes 加载完成');
 
+console.log('🔧 开始注册API路由...');
 app.use('/api', uploadRoutes);
+console.log('✅ /api/* 路由已注册 (upload)');
 app.use('/api', supplierRoutes);
+console.log('✅ /api/* 路由已注册 (supplier)');
 app.use('/api/suppliers', suppliersRoutes); // 注册供应商管理路由
+console.log('✅ /api/suppliers/* 路由已注册 (suppliers)');
+
+// 立即测试路由是否正确注册
+console.log('🧪 测试suppliers路由层...');
+console.log('🧪 suppliersRoutes stack length:', suppliersRoutes.stack ? suppliersRoutes.stack.length : 'undefined');
+if (suppliersRoutes.stack) {
+  suppliersRoutes.stack.forEach((layer, index) => {
+    console.log(`🧪 路由 ${index}: ${layer.route?.path || layer.regexp || 'middleware'} - ${layer.route?.methods || 'N/A'}`);
+  });
+}
 app.use('/api', comparisonRoutes);
+console.log('✅ /api/* 路由已注册 (comparison)');
 app.use('/api', dataSourceRoutes);
+console.log('✅ /api/* 路由已注册 (data-source)');
 app.use('/api', supplierSearchRoutes);
+console.log('✅ /api/* 路由已注册 (supplier-search)');
 app.use('/api/documents', documentRoutes);
+console.log('✅ /api/documents/* 路由已注册 (documents)');
+
+console.log('🎉 所有API路由注册完成');
+
+// 添加路由调试中间件
+app.use((req, res, next) => {
+  console.log(`🌐 ${new Date().toISOString()} - ${req.method} ${req.path}`);
+  next();
+});
 
 // 直接定义认证路由
 app.post('/api/auth/init', async (req, res) => {

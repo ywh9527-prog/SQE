@@ -96,9 +96,9 @@ class SupplierDocumentManager {
       this.submitUpload();
     });
 
-    // 刷新按钮 - 从IQC数据导入供应商
+    // 刷新按钮 - 导入供应商和刷新资料列表
     document.getElementById('refreshBtn')?.addEventListener('click', () => {
-      this.importSuppliersFromIQC();
+      this.refreshData();
     });
 
     // 提交编辑按钮
@@ -314,74 +314,242 @@ class SupplierDocumentManager {
   }
 
   /**
-   * 加载资料列表
+   * 加载资料列表（表格视图）
+   * 
+   * ⚠️ 关键方法: 供应商资料管理页面的数据加载入口
+   * 🔗 调用API: GET /api/suppliers/documents-summary
+   * 📊 返回数据: 供应商资料汇总表格数据
+   * 
+   * 调试经验:
+   * 1. 如果没有看到"开始加载供应商资料汇总数据"，说明路由没有触发
+   * 2. 如果看到404错误，检查后端路由顺序（documents-summary必须在/:id之前）
+   * 3. 如果看到认证错误，检查localStorage中的authToken
+   * 4. 服务器没有请求日志说明路由匹配失败
    */
   async loadDocuments() {
     try {
-      const params = new URLSearchParams();
+      this.showLoading();
+      console.log('📊 开始加载供应商资料汇总数据...');
       
-      if (this.currentSupplier) {
-        params.append('supplierId', this.currentSupplier);
+      // 检查认证token
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        console.error('❌ 没有找到认证token');
+        this.showError('请先登录');
+        return;
       }
       
-      if (this.currentDocumentType && this.currentDocumentType !== 'all') {
-        params.append('documentType', this.currentDocumentType);
-      }
-
-      const statusFilter = document.getElementById('statusFilter')?.value;
-      if (statusFilter) {
-        params.append('status', statusFilter);
-      }
-
-      const sortSelect = document.getElementById('sortSelect');
-      if (sortSelect) {
-        this.currentSort = sortSelect.value;
-        params.append('sort', this.currentSort);
-      }
-
-      const response = await fetch(`/api/documents?${params}`, {
+      console.log('🔑 使用认证token:', token.substring(0, 20) + '...');
+      
+      const response = await fetch('/api/suppliers/documents-summary', {
+        method: 'GET',
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
         }
       });
+
+      console.log('🌐 API响应状态:', response.status, response.statusText);
+      
+      if (!response.ok) {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
+
       const result = await response.json();
+      console.log('📥 收到供应商资料汇总响应:', result);
       
       if (result.success) {
-        this.documents = result.data.documents;
-        // 如果服务器不支持排序，则在前端进行排序
-        if (!result.data.serverSorted) {
-          this.sortDocuments();
-        }
-        this.renderDocuments(result.data.pagination);
+        console.log(`✅ 成功获取 ${result.data.length} 个供应商的资料汇总`);
+        this.documentsSummary = result.data;
+        this.renderDocumentsTable();
+      } else {
+        console.error('❌ API返回失败:', result.error);
+        this.showError(result.error || '加载资料列表失败');
       }
     } catch (error) {
-      console.error('加载资料列表失败:', error);
-      this.showError('加载资料列表失败');
+      console.error('❌ 加载资料列表失败:', error);
+      console.error('错误详情:', error.message, error.stack);
+      this.showError(`加载资料列表失败: ${error.message}`);
+    } finally {
+      // 确保隐藏加载状态
+      this.hideLoading();
     }
   }
 
   /**
-   * 渲染资料列表
+   * 渲染资料表格
+   * 创建时间: 2025-12-01
+   * 功能: 渲染按供应商分组的资料表格，直观显示所有供应商的资料状态
+   * 来由: 用户要求更直观的资料展示方式，能够看到所有供应商的资料状态
    */
-  renderDocuments(pagination) {
+  renderDocumentsTable() {
     const container = document.getElementById('documentsContainer');
     if (!container) return;
 
-    if (this.documents.length === 0) {
+    if (!this.documentsSummary || this.documentsSummary.length === 0) {
       container.innerHTML = `
         <div class="empty-state">
-          <div class="empty-icon">📁</div>
-          <div class="empty-text">暂无资料</div>
+          <div class="empty-icon">📊</div>
+          <div class="empty-text">暂无供应商资料数据</div>
+          <div class="empty-hint">请先上传资料或点击刷新按钮导入供应商</div>
         </div>
       `;
       return;
     }
 
-    const html = this.documents.map(doc => this.createDocumentCard(doc)).join('');
-    container.innerHTML = html;
+    console.log(`🏗️ 渲染 ${this.documentsSummary.length} 个供应商的资料表格`);
 
-    // 渲染分页
-    this.renderPagination(pagination);
+    // 创建表格HTML
+    const tableHtml = `
+      <div class="documents-table-container">
+        <div class="table-header">
+          <h3>供应商资料汇总表</h3>
+          <div class="table-stats">
+            总供应商: ${this.documentsSummary.length} 家
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="documents-table">
+            <thead>
+              <tr>
+                <th>供应商</th>
+                <th>质保协议</th>
+                <th>ROHS</th>
+                <th>REACH</th>
+                <th>MSDS</th>
+                <th>HF</th>
+                <th>CSR</th>
+                <th>状态</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${this.documentsSummary.map(supplier => this.createSupplierTableRow(supplier)).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = tableHtml;
+  }
+
+  /**
+   * 创建供应商表格行
+   */
+  createSupplierTableRow(supplier) {
+    const documentTypes = [
+      { key: 'quality_agreement', name: '质保协议' },
+      { key: 'environmental_rohs', name: 'ROHS' },
+      { key: 'environmental_reach', name: 'REACH' },
+      { key: 'environmental_msds', name: 'MSDS' },
+      { key: 'environmental_hf', name: 'HF' },
+      { key: 'csr', name: 'CSR' }
+    ];
+
+    // 创建资料状态单元格
+    const documentCells = documentTypes.map(type => {
+      const doc = supplier.documents[type.key];
+      if (!doc || !doc.hasDocument) {
+        return '<td class="status-missing">-</td>';
+      }
+
+      const statusClass = this.getDocumentStatusClass(doc.expiryDate, doc.status);
+      const expiryText = doc.expiryDate ? this.formatExpiryDate(doc.expiryDate) : '永久有效';
+      
+      return `<td class="${statusClass}" title="${type.name}: ${expiryText}">${expiryText}</td>`;
+    }).join('');
+
+    // 计算整体状态
+    const overallStatus = this.calculateOverallStatus(supplier.documents);
+    const statusClass = this.getOverallStatusClass(overallStatus);
+
+    return `
+      <tr>
+        <td class="supplier-name">${supplier.supplierName}</td>
+        ${documentCells}
+        <td class="${statusClass}">${overallStatus}</td>
+      </tr>
+    `;
+  }
+
+  /**
+   * 获取资料状态样式类
+   */
+  getDocumentStatusClass(expiryDate, status) {
+    if (status === 'expired') return 'status-expired';
+    if (status === 'archived') return 'status-archived';
+    
+    if (!expiryDate) return 'status-permanent';
+    
+    const daysUntilExpiry = this.calculateDaysUntilExpiry(expiryDate);
+    if (daysUntilExpiry < 0) return 'status-expired';
+    if (daysUntilExpiry <= 7) return 'status-critical';
+    if (daysUntilExpiry <= 30) return 'status-warning';
+    return 'status-normal';
+  }
+
+  /**
+   * 计算整体状态
+   */
+  calculateOverallStatus(documents) {
+    const documentTypes = Object.keys(documents);
+    const hasExpired = documentTypes.some(type => 
+      documents[type].status === 'expired' || 
+      (documents[type].expiryDate && this.calculateDaysUntilExpiry(documents[type].expiryDate) < 0)
+    );
+    
+    const hasCritical = documentTypes.some(type => {
+      const doc = documents[type];
+      return doc.hasDocument && doc.expiryDate && 
+             this.calculateDaysUntilExpiry(doc.expiryDate) <= 7 && 
+             this.calculateDaysUntilExpiry(doc.expiryDate) >= 0;
+    });
+    
+    const hasWarning = documentTypes.some(type => {
+      const doc = documents[type];
+      return doc.hasDocument && doc.expiryDate && 
+             this.calculateDaysUntilExpiry(doc.expiryDate) <= 30 && 
+             this.calculateDaysUntilExpiry(doc.expiryDate) > 7;
+    });
+    
+    if (hasExpired) return '❌ 已过期';
+    if (hasCritical) return '🔴 即将到期';
+    if (hasWarning) return '🟡 需要关注';
+    return '✅ 正常';
+  }
+
+  /**
+   * 获取整体状态样式类
+   */
+  getOverallStatusClass(status) {
+    if (status.includes('已过期')) return 'status-expired';
+    if (status.includes('即将到期')) return 'status-critical';
+    if (status.includes('需要关注')) return 'status-warning';
+    return 'status-normal';
+  }
+
+  /**
+   * 计算距离到期天数
+   */
+  calculateDaysUntilExpiry(expiryDate) {
+    if (!expiryDate) return null;
+    const now = new Date();
+    const expiry = new Date(expiryDate);
+    const diffTime = expiry - now;
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * 格式化到期日期
+   */
+  formatExpiryDate(expiryDate) {
+    if (!expiryDate) return '永久有效';
+    const date = new Date(expiryDate);
+    return date.toLocaleDateString('zh-CN', { 
+      year: 'numeric', 
+      month: '2-digit', 
+      day: '2-digit' 
+    });
   }
 
   /**
@@ -1122,7 +1290,35 @@ class SupplierDocumentManager {
    * 显示信息消息
    */
   showInfo(message) {
+    console.log(`ℹ️ INFO: ${message}`);
     this.showMessage(message, 'info');
+  }
+
+  /**
+   * 显示加载状态
+   * 创建时间: 2025-12-01
+   * 功能: 显示加载中的状态提示
+   * 来由: 解决加载资料列表时缺少加载状态显示的问题
+   */
+  showLoading() {
+    const container = document.getElementById('documentsContainer');
+    if (!container) return;
+    
+    container.innerHTML = `
+      <div class="loading-state">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">正在加载资料数据...</div>
+      </div>
+    `;
+  }
+
+  /**
+   * 隐藏加载状态
+   */
+  hideLoading() {
+    // 这个方法在渲染新内容时会被自动调用
+    // 主要用于确保加载状态的清理
+    console.log('🔄 隐藏加载状态');
   }
 
   /**
@@ -1151,13 +1347,18 @@ class SupplierDocumentManager {
    * 显示消息
    */
   showMessage(message, type) {
+    console.log(`🔔 尝试显示Toast: ${type} - ${message}`);
+    
     // 使用系统Toast组件显示消息
     if (window.showToast) {
+      console.log('✅ 使用 window.showToast');
       window.showToast(message, type);
     } else if (window.App && window.App.Toast) {
+      console.log('✅ 使用 window.App.Toast');
       window.App.Toast.show(message, type);
     } else {
       // 降级方案：使用alert
+      console.log('⚠️ Toast不可用，使用alert');
       console.log(`${type}: ${message}`);
       alert(message);
     }
@@ -1275,17 +1476,21 @@ class SupplierDocumentManager {
   }
 
   /**
-   * 从IQC数据导入供应商
+   * 刷新功能 - 导入供应商和刷新资料列表
    * 创建时间: 2025-12-01
-   * 功能: 点击刷新按钮时，自动从IQC检验数据中提取供应商信息并导入到suppliers表
-   * 来由: 解决供应商资料管理页面没有供应商数据显示的问题，提供便捷的数据导入功能
+   * 功能: 点击刷新按钮时，先从IQC数据导入供应商，然后刷新资料列表
+   * 来由: 提供完整的数据刷新功能，确保供应商和资料数据都是最新的
    */
-  async importSuppliersFromIQC() {
+  async refreshData() {
     try {
-      // 显示加载状态
-      this.showInfo('正在从IQC数据导入供应商...');
+      console.log('🔄 开始刷新数据...');
       
-      const response = await fetch('/api/suppliers/import-from-iqc', {
+      // 显示加载状态
+      this.showInfo('正在刷新数据...');
+      
+      // 1. 从IQC数据导入供应商
+      console.log('📤 发送供应商导入请求...');
+      const supplierResponse = await fetch('/api/suppliers/import-from-iqc', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
@@ -1293,22 +1498,43 @@ class SupplierDocumentManager {
         }
       });
 
-      const result = await response.json();
+      const supplierResult = await supplierResponse.json();
+      console.log('📥 供应商导入响应:', supplierResult);
       
-      if (result.success) {
-        this.showSuccess(`成功导入 ${result.importedCount} 个供应商`);
+      if (supplierResult.success) {
+        console.log(`✅ 供应商导入成功，导入数量: ${supplierResult.importedCount}`);
+        
+        if (supplierResult.importedCount > 0) {
+          console.log('🎉 显示供应商导入成功提示');
+          this.showSuccess(`成功导入 ${supplierResult.importedCount} 个供应商`);
+          
+          // 等待一下再显示完成信息
+          setTimeout(() => {
+            console.log('📋 显示数据刷新完成提示');
+            this.showInfo('数据刷新完成');
+          }, 2000);
+        } else {
+          console.log('ℹ️ 没有新供应商导入，显示资料刷新提示');
+          setTimeout(() => {
+            this.showInfo('资料列表已刷新');
+          }, 1000);
+        }
         
         // 重新加载供应商列表
+        console.log('🔄 重新加载供应商列表...');
         await this.loadSuppliers();
-        
-        // 重新加载资料列表
-        this.loadDocuments();
       } else {
-        this.showError(result.error || '导入供应商失败');
+        console.warn('❌ 导入供应商失败:', supplierResult.error);
+        this.showError(supplierResult.error || '导入供应商失败');
       }
+      
+      // 2. 刷新资料列表（无论供应商导入是否成功都要执行）
+      console.log('🔄 重新加载资料列表...');
+      this.loadDocuments();
+      
     } catch (error) {
-      console.error('导入供应商失败:', error);
-      this.showError('导入供应商失败，请稍后重试');
+      console.error('❌ 刷新数据失败:', error);
+      this.showError('刷新数据失败，请稍后重试');
     }
   }
 
