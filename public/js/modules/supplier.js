@@ -96,6 +96,11 @@ class SupplierDocumentManager {
       this.submitUpload();
     });
 
+    // 刷新按钮 - 从IQC数据导入供应商
+    document.getElementById('refreshBtn')?.addEventListener('click', () => {
+      this.importSuppliersFromIQC();
+    });
+
     // 提交编辑按钮
     document.getElementById('submitEditBtn')?.addEventListener('click', () => {
       this.submitEdit();
@@ -675,6 +680,8 @@ class SupplierDocumentManager {
     console.log('搜索:', query);
   }
 
+  
+
   /**
    * 显示上传模态框
    */
@@ -691,7 +698,7 @@ class SupplierDocumentManager {
       
       console.log('显示上传模态框');
       
-      // 强制设置样式
+      // 强制设置样式 - 使用半透明背景，可以看到背后的内容
       modal.style.cssText = `
         display: block !important;
         position: fixed !important;
@@ -699,7 +706,8 @@ class SupplierDocumentManager {
         left: 0 !important;
         width: 100% !important;
         height: 100% !important;
-        background: #f5f5f5 !important;
+        background: rgba(0, 0, 0, 0.5) !important;
+        backdrop-filter: blur(4px) !important;
         z-index: 99999 !important;
       `;
       
@@ -714,7 +722,7 @@ class SupplierDocumentManager {
           max-height: 90vh !important;
           margin: 5vh auto !important;
           overflow: hidden !important;
-          box-shadow: var(--shadow-lg) !important;
+          box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
           position: relative !important;
           z-index: 100000 !important;
         `;
@@ -1143,8 +1151,16 @@ class SupplierDocumentManager {
    * 显示消息
    */
   showMessage(message, type) {
-    // 实现消息显示逻辑
-    console.log(`${type}: ${message}`);
+    // 使用系统Toast组件显示消息
+    if (window.showToast) {
+      window.showToast(message, type);
+    } else if (window.App && window.App.Toast) {
+      window.App.Toast.show(message, type);
+    } else {
+      // 降级方案：使用alert
+      console.log(`${type}: ${message}`);
+      alert(message);
+    }
   }
 
   /**
@@ -1198,9 +1214,19 @@ class SupplierDocumentManager {
     console.log('expiryDate:', expiryDate);
     console.log('isPermanent:', isPermanent);
 
-    if (!supplierId || !documentType || (!expiryDate && !isPermanent)) {
-      console.log('必填字段验证失败');
-      this.showError('请填写所有必填字段（供应商、资料类型、到期日期或选择永久有效）');
+    // 逐个验证必填项，提供具体的错误提示
+    if (!supplierId) {
+      this.showError('请选择供应商');
+      return;
+    }
+    
+    if (!documentType) {
+      this.showError('请选择资料类型');
+      return;
+    }
+    
+    if (!expiryDate && !isPermanent) {
+      this.showError('请选择到期日期或勾选"永久有效"');
       return;
     }
 
@@ -1245,6 +1271,44 @@ class SupplierDocumentManager {
     } catch (error) {
       console.error('上传失败:', error);
       this.showError('上传失败');
+    }
+  }
+
+  /**
+   * 从IQC数据导入供应商
+   * 创建时间: 2025-12-01
+   * 功能: 点击刷新按钮时，自动从IQC检验数据中提取供应商信息并导入到suppliers表
+   * 来由: 解决供应商资料管理页面没有供应商数据显示的问题，提供便捷的数据导入功能
+   */
+  async importSuppliersFromIQC() {
+    try {
+      // 显示加载状态
+      this.showInfo('正在从IQC数据导入供应商...');
+      
+      const response = await fetch('/api/suppliers/import-from-iqc', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const result = await response.json();
+      
+      if (result.success) {
+        this.showSuccess(`成功导入 ${result.importedCount} 个供应商`);
+        
+        // 重新加载供应商列表
+        await this.loadSuppliers();
+        
+        // 重新加载资料列表
+        this.loadDocuments();
+      } else {
+        this.showError(result.error || '导入供应商失败');
+      }
+    } catch (error) {
+      console.error('导入供应商失败:', error);
+      this.showError('导入供应商失败，请稍后重试');
     }
   }
 

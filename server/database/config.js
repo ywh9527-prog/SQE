@@ -3,9 +3,8 @@ const path = require('path');
 const logger = require('../utils/logger');
 
 // 确定数据库文件路径
-// 在开发环境中，存储在项目根目录
-// 在生产环境(Electron)中，可能需要存储在用户数据目录
-const dbPath = process.env.DB_PATH || path.join(__dirname, '../../sqe_database.sqlite');
+// 统一存储在server/data目录
+const dbPath = process.env.DB_PATH || path.join(__dirname, '../data/sqe_database.sqlite');
 
 // 初始化 Sequelize 实例
 const sequelize = new Sequelize({
@@ -36,6 +35,9 @@ const connectDB = async () => {
         await sequelize.authenticate();
         logger.info('数据库连接成功 (SQLite)');
         logger.info(`数据库路径: ${dbPath}`);
+        
+        // 在控制台也输出数据库路径
+        console.log(`🗄️ 数据库连接成功，使用路径: ${dbPath}`);
 
         // 加载模型并同步
         loadModels();

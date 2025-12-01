@@ -20,8 +20,11 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
 }));
 
 // 路由
+// 添加时间: 2025-12-01
+// 说明: 新增suppliers路由以解决前端404错误
 const uploadRoutes = require('./routes/upload');
 const supplierRoutes = require('./routes/supplier');
+const suppliersRoutes = require('./routes/suppliers'); // 新增供应商管理API
 const comparisonRoutes = require('./routes/comparison');
 const dataSourceRoutes = require('./routes/data-source');
 const supplierSearchRoutes = require('./routes/supplier-search');
@@ -29,6 +32,7 @@ const documentRoutes = require('./routes/documents');
 
 app.use('/api', uploadRoutes);
 app.use('/api', supplierRoutes);
+app.use('/api/suppliers', suppliersRoutes); // 注册供应商管理路由
 app.use('/api', comparisonRoutes);
 app.use('/api', dataSourceRoutes);
 app.use('/api', supplierSearchRoutes);

@@ -757,7 +757,8 @@
     left: 0 !important;
     width: 100% !important;
     height: 100% !important;
-    background: #f5f5f5 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
     z-index: 99999 !important;
     animation: fadeIn 0.2s ease;
 }
@@ -765,6 +766,11 @@
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
 }
 
 .modal-content {
@@ -775,11 +781,13 @@
     max-height: 90vh !important;
     margin: 5vh auto !important;
     overflow: hidden !important;
-    box-shadow: var(--shadow-lg) !important;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
     animation: slideUp 0.3s ease;
     position: relative !important;
     z-index: 100000 !important;
 }
+
+
 
 @keyframes slideUp {
     from {
