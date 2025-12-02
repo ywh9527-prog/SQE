@@ -410,6 +410,39 @@
                     <div class="module-header">
                         <h3>供应商资料管理</h3>
                         <div class="module-actions">
+                            <div class="view-mode-toggle" style="
+                                display: flex;
+                                background: var(--background-secondary);
+                                border-radius: 8px;
+                                padding: 4px;
+                                margin-right: 12px;
+                            ">
+                                <button class="view-mode-btn active" data-mode="grouped" style="
+                                    background: var(--primary-500);
+                                    color: white;
+                                    border: none;
+                                    padding: 8px 16px;
+                                    border-radius: 6px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                ">
+                                    📊 状态分组
+                                </button>
+                                <button class="view-mode-btn" data-mode="simple" style="
+                                    background: transparent;
+                                    color: var(--text-secondary);
+                                    border: none;
+                                    padding: 8px 16px;
+                                    border-radius: 6px;
+                                    cursor: pointer;
+                                    font-size: 14px;
+                                    font-weight: 500;
+                                    margin-left: 4px;
+                                ">
+                                    📋 简单表格
+                                </button>
+                            </div>
                             <button class="btn btn-primary" id="uploadBtn">
                                 <span class="btn-icon">📤</span>
                                 上传资料
@@ -463,39 +496,7 @@
                         </div>
                     </section>
 
-                    <!-- 资料类型标签 -->
-                    <section class="document-types">
-                        <div class="type-tabs">
-                            <button class="document-type-tab active" data-type="all">
-                                <span class="tab-icon">📁</span>
-                                <span class="tab-text">全部资料</span>
-                            </button>
-                            <button class="document-type-tab" data-type="quality_agreement">
-                                <span class="tab-icon">📋</span>
-                                <span class="tab-text">质量保证协议</span>
-                            </button>
-                            <button class="document-type-tab" data-type="environmental_rohs">
-                                <span class="tab-icon">🌱</span>
-                                <span class="tab-text">ROHS</span>
-                            </button>
-                            <button class="document-type-tab" data-type="environmental_reach">
-                                <span class="tab-icon">🌱</span>
-                                <span class="tab-text">REACH</span>
-                            </button>
-                            <button class="document-type-tab" data-type="environmental_msds">
-                                <span class="tab-icon">🌱</span>
-                                <span class="tab-text">MSDS</span>
-                            </button>
-                            <button class="document-type-tab" data-type="environmental_hf">
-                                <span class="tab-icon">🌱</span>
-                                <span class="tab-text">HF</span>
-                            </button>
-                            <button class="document-type-tab" data-type="csr">
-                                <span class="tab-icon">🤝</span>
-                                <span class="tab-text">CSR</span>
-                            </button>
-                        </div>
-                    </section>
+                    <!-- 资料类型标签已移除 - 改用状态分组展示，信息更直观 -->
 
                     <!-- 资料列表 -->
                     <section class="documents-section">
@@ -517,14 +518,7 @@
                                         取消选择
                                     </button>
                                 </div>
-                                <div class="view-toggle">
-                                    <button class="view-btn active" data-view="grid">
-                                        <span class="view-icon">⊞</span>
-                                    </button>
-                                    <button class="view-btn" data-view="list">
-                                        <span class="view-icon">☰</span>
-                                    </button>
-                                </div>
+                                <!-- 视图切换已移除 - 统一使用内嵌展开模式 -->
                                 <div class="selection-control">
                                     <label class="checkbox-label">
                                         <input type="checkbox" id="selectAll" onchange="supplierManager.toggleSelectAll()">

@@ -5,7 +5,6 @@
 class SupplierDocumentManager {
   constructor() {
     this.currentSupplier = null;
-    this.currentDocumentType = 'all';
     this.documents = [];
     this.suppliers = [];
     this.documentsSummary = []; // 供应商资料汇总数据
@@ -13,6 +12,16 @@ class SupplierDocumentManager {
     this.currentView = 'grid'; // 'grid' 或 'list'
     this.currentSort = 'expiry-asc'; // 默认排序
     this.selectedDocuments = new Set(); // 选中的文档ID
+    
+    // 新增：状态分组相关属性
+    this.displayMode = 'grouped'; // 'grouped' 或 'simple' - 显示模式
+    this.currentSupplierId = null; // 当前查看的供应商ID
+    this.statusGroups = {
+      urgent: { title: '🚨 需要立即处理', expanded: true, suppliers: [] },
+      warning: { title: '⚠️ 即将到期', expanded: false, suppliers: [] },
+      normal: { title: '✅ 状态正常', expanded: false, suppliers: [] }
+    };
+    
     this.init();
   }
 
@@ -50,16 +59,7 @@ class SupplierDocumentManager {
       this.loadDocuments();
     });
 
-    // 资料类型切换
-    document.addEventListener('click', (e) => {
-      if (e.target.matches('.document-type-tab') || e.target.closest('.document-type-tab')) {
-        const tab = e.target.matches('.document-type-tab') ? e.target : e.target.closest('.document-type-tab');
-        const type = tab.dataset.type;
-        if (type) {
-          this.switchDocumentType(type);
-        }
-      }
-    });
+    // 资料类型切换已移除 - 改用状态分组展示
 
     // 搜索功能
     document.getElementById('searchInput')?.addEventListener('input', (e) => {
@@ -83,6 +83,17 @@ class SupplierDocumentManager {
         const view = btn.dataset.view;
         if (view) {
           this.switchView(view);
+        }
+      }
+    });
+
+    // 显示模式切换按钮
+    document.addEventListener('click', (e) => {
+      if (e.target.matches('.view-mode-btn') || e.target.closest('.view-mode-btn')) {
+        const btn = e.target.matches('.view-mode-btn') ? e.target : e.target.closest('.view-mode-btn');
+        const mode = btn.dataset.mode;
+        if (mode) {
+          this.switchDisplayMode(mode);
         }
       }
     });
@@ -200,32 +211,7 @@ class SupplierDocumentManager {
     }
   }
 
-  /**
-   * 切换资料类型
-   */
-  switchDocumentType(type) {
-    // 防止重复切换相同类型
-    if (this.currentDocumentType === type) {
-      return;
-    }
-    
-    this.currentDocumentType = type;
-    
-    // 更新标签样式
-    document.querySelectorAll('.document-type-tab').forEach(tab => {
-      tab.classList.remove('active');
-    });
-    
-    const activeTab = document.querySelector(`[data-type="${type}"]`);
-    if (activeTab) {
-      activeTab.classList.add('active');
-    }
-    
-    // 延迟加载以提升响应速度
-    requestAnimationFrame(() => {
-      this.loadDocuments();
-    });
-  }
+  // switchDocumentType方法已移除 - 改用状态分组展示
 
   /**
    * 切换视图模式
@@ -255,6 +241,34 @@ class SupplierDocumentManager {
     if (container) {
       container.classList.remove('view-grid', 'view-list');
       container.classList.add(`view-${view}`);
+    }
+    
+    // 重新渲染资料列表
+    this.renderDocuments();
+  }
+
+  /**
+   * 切换显示模式
+   */
+  switchDisplayMode(mode) {
+    if (this.displayMode === mode) {
+      return;
+    }
+    
+    this.displayMode = mode;
+    
+    // 更新按钮样式
+    document.querySelectorAll('.view-mode-btn').forEach(btn => {
+      btn.classList.remove('active');
+      btn.style.background = 'transparent';
+      btn.style.color = 'var(--text-secondary)';
+    });
+    
+    const activeBtn = document.querySelector(`[data-mode="${mode}"]`);
+    if (activeBtn) {
+      activeBtn.classList.add('active');
+      activeBtn.style.background = 'var(--primary-500)';
+      activeBtn.style.color = 'white';
     }
     
     // 重新渲染资料列表
@@ -392,11 +406,545 @@ class SupplierDocumentManager {
     }
 
     // 根据当前显示模式渲染
-    if (this.viewMode === 'table') {
-      this.renderDocumentsTable();
+    if (this.displayMode === 'detail') {
+      // 详情模式已经通过showSupplierDetail单独处理
+      return;
+    } else if (this.displayMode === 'grouped') {
+      this.renderStatusGroupedTable();
     } else {
-      this.renderDocumentsCards();
+      this.renderDocumentsTable();
     }
+  }
+
+  /**
+   * 计算供应商整体状态
+   */
+  calculateSupplierStatus(supplier) {
+    const documents = supplier.documents || {};
+    const documentTypes = Object.keys(documents);
+    
+    let hasExpired = false;
+    let hasCritical = false;
+    let hasWarning = false;
+    
+    documentTypes.forEach(type => {
+      const doc = documents[type];
+      if (!doc || !doc.hasDocument) return;
+      
+      if (doc.status === 'expired') {
+        hasExpired = true;
+      } else if (doc.expiryDate) {
+        const daysUntilExpiry = this.calculateDaysUntilExpiry(doc.expiryDate);
+        if (daysUntilExpiry < 0) {
+          hasExpired = true;
+        } else if (daysUntilExpiry <= 7) {
+          hasCritical = true;
+        } else if (daysUntilExpiry <= 30) {
+          hasWarning = true;
+        }
+      }
+    });
+    
+    if (hasExpired) return 'urgent';
+    if (hasCritical) return 'urgent';
+    if (hasWarning) return 'warning';
+    return 'normal';
+  }
+
+  /**
+   * 按状态分组供应商
+   */
+  groupSuppliersByStatus(suppliers) {
+    // 重置分组
+    this.statusGroups.urgent.suppliers = [];
+    this.statusGroups.warning.suppliers = [];
+    this.statusGroups.normal.suppliers = [];
+    
+    suppliers.forEach(supplier => {
+      const status = this.calculateSupplierStatus(supplier);
+      this.statusGroups[status].suppliers.push(supplier);
+    });
+    
+    return this.statusGroups;
+  }
+
+  /**
+   * 渲染状态分组表格
+   */
+  renderStatusGroupedTable() {
+    const container = document.getElementById('documentsContainer');
+    if (!container) return;
+
+    console.log(`🏗️ 开始渲染状态分组表格，供应商数量: ${this.documentsSummary.length}`);
+
+    // 分组数据
+    const groupedData = this.groupSuppliersByStatus(this.documentsSummary);
+    
+    // 清空容器
+    container.innerHTML = '';
+    
+    // 创建分组容器
+    const groupedContainer = document.createElement('div');
+    groupedContainer.className = 'status-grouped-container';
+    groupedContainer.style.cssText = `
+      width: 100%;
+      background: var(--background-primary);
+      border-radius: 12px;
+      padding: 20px;
+    `;
+
+    // 渲染每个状态分组
+    Object.values(groupedData).forEach(group => {
+      if (group.suppliers.length === 0) return;
+      
+      const groupElement = this.createStatusGroupElement(group);
+      groupedContainer.appendChild(groupElement);
+    });
+
+    container.appendChild(groupedContainer);
+  }
+
+  /**
+   * 创建状态分组元素
+   */
+  createStatusGroupElement(group) {
+    const groupDiv = document.createElement('div');
+    groupDiv.className = `status-group status-${group.name}`;
+    groupDiv.style.cssText = `
+      margin-bottom: 20px;
+      border: 1px solid var(--border-primary);
+      border-radius: 8px;
+      overflow: hidden;
+    `;
+
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'group-header';
+    headerDiv.style.cssText = `
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 20px;
+      background: ${group.name === 'urgent' ? 'var(--error-100)' : group.name === 'warning' ? 'var(--warning-100)' : 'var(--success-100)'};
+      cursor: pointer;
+      user-select: none;
+    `;
+    
+    headerDiv.innerHTML = `
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <h3 style="margin: 0; color: var(--text-primary); font-size: 16px; font-weight: 600;">
+          ${group.title}
+        </h3>
+        <span style="background: white; padding: 4px 8px; border-radius: 12px; font-size: 12px; color: var(--text-secondary);">
+          ${group.suppliers.length}家
+        </span>
+      </div>
+      <button class="toggle-group-btn" style="
+        background: transparent;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        padding: 4px 8px;
+        border-radius: 4px;
+        transition: transform 0.2s ease;
+        transform: ${group.expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+      ">
+        ▼
+      </button>
+    `;
+
+    // 点击展开/收起
+    headerDiv.addEventListener('click', () => {
+      group.expanded = !group.expanded;
+      this.renderStatusGroupedTable(); // 重新渲染
+    });
+
+    groupDiv.appendChild(headerDiv);
+
+    // 如果展开，显示供应商表格
+    if (group.expanded) {
+      const tableContainer = this.createGroupTableContainer(group.suppliers);
+      groupDiv.appendChild(tableContainer);
+    }
+
+    return groupDiv;
+  }
+
+  /**
+   * 创建分组表格容器
+   */
+  createGroupTableContainer(suppliers) {
+    const tableContainer = document.createElement('div');
+    tableContainer.className = 'group-table-container';
+    tableContainer.style.cssText = `
+      padding: 0 20px 20px 20px;
+    `;
+
+    const table = document.createElement('table');
+    table.className = 'supplier-group-table';
+    table.style.cssText = `
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    `;
+
+    // 表头
+    const thead = document.createElement('thead');
+    thead.innerHTML = `
+      <tr style="background: var(--background-secondary);">
+        <th style="padding: 12px 16px; text-align: left; border-bottom: 2px solid var(--border-primary); font-weight: 600;">
+          <input type="checkbox" id="selectAll-${Date.now()}" style="margin-right: 8px;">
+          供应商名称
+        </th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">联系人</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">质保协议</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">ROHS</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">REACH</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">MSDS</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">HF</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">CSR</th>
+        <th style="padding: 12px 16px; text-align: center; border-bottom: 2px solid var(--border-primary); font-weight: 600;">操作</th>
+      </tr>
+    `;
+
+    // 表体
+    const tbody = document.createElement('tbody');
+    tbody.innerHTML = suppliers.map(supplier => this.createGroupedSupplierRow(supplier)).join('');
+
+    table.appendChild(thead);
+    table.appendChild(tbody);
+    tableContainer.appendChild(table);
+
+    return tableContainer;
+  }
+
+  /**
+   * 创建分组中的供应商行 - 支持内嵌展开
+   */
+  createGroupedSupplierRow(supplier) {
+    const status = this.calculateSupplierStatus(supplier);
+    const stats = this.calculateSupplierStats(supplier);
+    const statusClass = status === 'urgent' ? 'status-expired' : status === 'warning' ? 'status-warning' : 'status-normal';
+    const statusText = status === 'urgent' ? '🔴 紧急' : status === 'warning' ? '🟡 警告' : '🟢 正常';
+    const supplierId = supplier.supplierId;
+    
+    // 生成唯一ID
+    const expandId = `supplier-expand-${supplierId}`;
+    const toggleId = `supplier-toggle-${supplierId}`;
+
+    let rowHtml = `
+      <tr style="border-bottom: 1px solid var(--border-primary); transition: background-color 0.2s ease;">
+        <!-- 第1列: 复选框 + 供应商名称 -->
+        <td style="padding: 12px 16px; font-weight: 600; color: var(--text-primary);">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <!-- 展开/收起图标 -->
+            <span id="${toggleId}" style="
+              font-size: 12px;
+              transition: transform 0.2s ease;
+              color: var(--text-secondary);
+              cursor: pointer;
+            " onclick="supplierManager.toggleSupplierExpand('${supplierId}')">▶</span>
+            
+            <!-- 复选框 -->
+            <input type="checkbox" data-supplier-id="${supplierId}" onclick="event.stopPropagation()">
+            
+            <!-- 供应商名称 -->
+            <span style="cursor: pointer;" onclick="supplierManager.toggleSupplierExpand('${supplierId}')">
+              🏢 ${supplier.supplierName}
+            </span>
+          </div>
+        </td>
+        
+        <!-- 第2列: 联系人 -->
+        <td style="padding: 12px 16px; text-align: center; color: var(--text-secondary);">
+          ${supplier.contactPerson || '-'}
+        </td>
+        
+        <!-- 第3列: 质保协议 -->
+        <td style="padding: 12px 16px; text-align: center;">
+          ${this.renderDocumentStatusCell(supplier.documents, 'quality_agreement')}
+        </td>
+        
+        <!-- 第4列: ROHS -->
+        <td style="padding: 12px 16px; text-align: center;">
+          ${this.renderDocumentStatusCell(supplier.documents, 'environmental_rohs')}
+        </td>
+        
+        <!-- 第5列: REACH -->
+        <td style="padding: 12px 16px; text-align: center;">
+          ${this.renderDocumentStatusCell(supplier.documents, 'environmental_reach')}
+        </td>
+        
+        <!-- 第6列: MSDS -->
+        <td style="padding: 12px 16px; text-align: center;">
+          ${this.renderDocumentStatusCell(supplier.documents, 'environmental_msds')}
+        </td>
+        
+        <!-- 第7列: HF -->
+        <td style="padding: 12px 16px; text-align: center;">
+          ${this.renderDocumentStatusCell(supplier.documents, 'environmental_hf')}
+        </td>
+        
+        <!-- 第8列: CSR -->
+        <td style="padding: 12px 16px; text-align: center;">
+          ${this.renderDocumentStatusCell(supplier.documents, 'csr')}
+        </td>
+        
+        <!-- 第9列: 状态和操作 -->
+        <td style="padding: 12px 16px; text-align: center;">
+          <div style="display: flex; flex-direction: column; gap: 8px; align-items: center;">
+            <!-- 状态标签 -->
+            <span class="status-badge ${statusClass}" style="
+              padding: 4px 8px;
+              border-radius: 12px;
+              font-size: 12px;
+              font-weight: 600;
+            ">${statusText}</span>
+            
+            <!-- 快速操作 -->
+            <div class="quick-actions" style="display: flex; gap: 4px;">
+              <button class="btn btn-sm btn-primary" onclick="supplierManager.quickUpload('${supplierId}')" title="快速上传" style="padding: 4px 6px; font-size: 12px;">
+                📤
+              </button>
+              <button class="btn btn-sm btn-secondary" onclick="supplierManager.quickEmail('${supplierId}')" title="邮件通知" style="padding: 4px 6px; font-size: 12px;">
+                📧
+              </button>
+              <button class="btn btn-sm btn-secondary" onclick="supplierManager.quickExport('${supplierId}')" title="导出报告" style="padding: 4px 6px; font-size: 12px;">
+                📊
+              </button>
+            </div>
+          </div>
+        </td>
+      </tr>
+      
+      <!-- 展开的详细内容行 -->
+      <tr id="${expandId}-row" style="display: none;">
+        <td colspan="9" style="padding: 0; background: var(--background-secondary);">
+          <div id="${expandId}" class="supplier-detail-content" style="
+            padding: 20px;
+            border-top: 1px solid var(--border-primary);
+          ">
+            ${this.renderEmbeddedSupplierDetail(supplier)}
+          </div>
+        </td>
+      </tr>
+    `;
+
+    return rowHtml;
+  }
+
+  /**
+   * 渲染文档状态单元格
+   */
+  renderDocumentStatusCell(documents, docType) {
+    const doc = documents[docType];
+    if (!doc || !doc.hasDocument) {
+      return `<span style="color: var(--text-secondary); font-style: italic;">-</span>`;
+    }
+    
+    const statusClass = this.getDocumentStatusClass(doc.expiryDate, doc.status);
+    const expiryText = doc.expiryDate ? this.formatExpiryDate(doc.expiryDate) : '永久有效';
+    
+    return `<span class="status-indicator ${statusClass}" style="
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    " title="${this.getDocumentTypeName(docType)}: ${expiryText}">${expiryText}</span>`;
+  }
+
+  /**
+   * 获取文档类型名称
+   */
+  getDocumentTypeName(docType) {
+    const typeNames = {
+      'quality_agreement': '质量保证协议',
+      'environmental_rohs': 'ROHS',
+      'environmental_reach': 'REACH', 
+      'environmental_msds': 'MSDS',
+      'environmental_hf': 'HF',
+      'csr': 'CSR'
+    };
+    return typeNames[docType] || docType;
+  }
+
+  /**
+   * 切换供应商展开状态
+   */
+  toggleSupplierExpand(supplierId) {
+    const expandId = `supplier-expand-${supplierId}`;
+    const toggleId = `supplier-toggle-${supplierId}`;
+    const expandRow = document.getElementById(`${expandId}-row`);
+    const expandElement = document.getElementById(expandId);
+    const toggleElement = document.getElementById(toggleId);
+    
+    if (expandRow.style.display === 'none' || !expandRow.style.display) {
+      expandRow.style.display = 'table-row';
+      toggleElement.style.transform = 'rotate(90deg)';
+      toggleElement.textContent = '▼';
+    } else {
+      expandRow.style.display = 'none';
+      toggleElement.style.transform = 'rotate(0deg)';
+      toggleElement.textContent = '▶';
+    }
+  }
+
+  /**
+   * 渲染内嵌的供应商详情
+   */
+  renderEmbeddedSupplierDetail(supplier) {
+    const documents = supplier.documents || {};
+    
+    return `
+      <div style="padding: 20px;">
+        <!-- 层级管理区域 -->
+        <div class="hierarchical-management" style="display: grid; gap: 16px;">
+          
+          <!-- 供应商级资料 -->
+          <div class="hierarchy-level">
+            <div class="level-header" style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding: 12px 16px;
+              background: white;
+              border: 1px solid var(--border-primary);
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 600;
+              color: var(--text-primary);
+            " onclick="this.parentElement.classList.toggle('expanded')">
+              📁 供应商级资料
+              <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary);">点击展开 ▶</span>
+            </div>
+            <div class="level-content" style="
+              display: none;
+              margin-top: 8px;
+              padding: 16px;
+              background: white;
+              border: 1px solid var(--border-primary);
+              border-radius: 8px;
+            ">
+              ${this.renderSupplierLevelTable(documents)}
+            </div>
+          </div>
+
+          <!-- 物料管理 -->
+          <div class="hierarchy-level">
+            <div class="level-header" style="
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              padding: 12px 16px;
+              background: white;
+              border: 1px solid var(--border-primary);
+              border-radius: 8px;
+              cursor: pointer;
+              font-weight: 600;
+              color: var(--text-primary);
+            " onclick="this.parentElement.classList.toggle('expanded')">
+              🏭 物料管理
+              <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary);">点击展开 ▶</span>
+            </div>
+            <div class="level-content" style="
+              display: none;
+              margin-top: 8px;
+              padding: 16px;
+              background: white;
+              border: 1px solid var(--border-primary);
+              border-radius: 8px;
+            ">
+              ${this.renderMaterialLevelTable(documents)}
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 渲染供应商级文档表格
+   */
+  renderSupplierLevelTable(documents) {
+    const supplierDocs = [
+      { key: 'quality_agreement', name: '质量保证协议', icon: '📄' },
+      { key: 'csr', name: 'CSR报告', icon: '🤝' }
+    ];
+
+    return `
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: var(--background-secondary);">
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档类型</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档名称</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">到期日期</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">状态</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${supplierDocs.map(docType => this.renderDocumentRow(docType, documents[docType.key])).join('')}
+        </tbody>
+      </table>
+    `;
+  }
+
+  /**
+   * 渲染物料级文档表格
+   */
+  renderMaterialLevelTable(documents) {
+    const materialDocs = [
+      { key: 'environmental_rohs', name: 'ROHS', icon: '🌱' },
+      { key: 'environmental_reach', name: 'REACH', icon: '🔬' },
+      { key: 'environmental_msds', name: 'MSDS', icon: '⚠️' },
+      { key: 'environmental_hf', name: 'HF', icon: '🧪' }
+    ];
+
+    return `
+      <table style="width: 100%; border-collapse: collapse;">
+        <thead>
+          <tr style="background: var(--background-secondary);">
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档类型</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档名称</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">到期日期</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">状态</th>
+            <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">操作</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${materialDocs.map(docType => this.renderDocumentRow(docType, documents[docType.key])).join('')}
+        </tbody>
+      </table>
+      
+      <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-primary); display: flex; gap: 8px;">
+        <button class="btn btn-primary btn-sm" onclick="supplierManager.addMaterial()">
+          + 添加物料
+        </button>
+        <button class="btn btn-secondary btn-sm" onclick="supplierManager.addComponent()">
+          + 添加具体构成
+        </button>
+      </div>
+    `;
+  }
+
+  /**
+   * 快速操作方法
+   */
+  quickUpload(supplierId) {
+    console.log('快速上传:', supplierId);
+    this.showToast('快速上传功能开发中...', 'info');
+  }
+
+  quickEmail(supplierId) {
+    console.log('快速邮件:', supplierId);
+    this.showToast('邮件通知功能开发中...', 'info');
+  }
+
+  quickExport(supplierId) {
+    console.log('快速导出:', supplierId);
+    this.showToast('报告导出功能开发中...', 'info');
   }
 
   /**
@@ -722,6 +1270,407 @@ class SupplierDocumentManager {
     
     const diffTime = expiryStart - nowStart;
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }
+
+  /**
+   * 显示供应商详情视图
+   */
+  showSupplierDetail(supplierId) {
+    this.currentSupplierId = supplierId;
+    this.displayMode = 'detail';
+    
+    const supplier = this.documentsSummary.find(s => s.supplierId === supplierId);
+    if (!supplier) {
+      this.showError('未找到供应商信息');
+      return;
+    }
+    
+    this.renderSupplierDetailView(supplier);
+  }
+
+  /**
+   * 返回总览视图
+   */
+  backToOverview() {
+    this.currentSupplierId = null;
+    this.displayMode = 'grouped';
+    this.loadDocuments();
+  }
+
+  /**
+   * 渲染供应商详情视图
+   */
+  renderSupplierDetailView(supplier) {
+    const container = document.getElementById('documentsContainer');
+    if (!container) return;
+
+    console.log(`🏗️ 渲染供应商详情: ${supplier.supplierName}`);
+
+    // 计算统计信息
+    const stats = this.calculateSupplierStats(supplier);
+    const overallStatus = this.calculateSupplierStatus(supplier);
+    const statusClass = overallStatus === 'urgent' ? 'status-expired' : overallStatus === 'warning' ? 'status-warning' : 'status-normal';
+    const statusText = overallStatus === 'urgent' ? '🔴 需要关注' : overallStatus === 'warning' ? '🟡 需要关注' : '🟢 状态正常';
+
+    const detailHtml = `
+      <div class="supplier-detail-view">
+        <!-- 返回按钮和标题 -->
+        <div class="detail-header" style="
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding: 16px 20px;
+          background: var(--background-secondary);
+          border-radius: 8px;
+        ">
+          <button class="btn btn-secondary" onclick="supplierManager.backToOverview()" style="
+            display: flex;
+            align-items: center;
+            gap: 8px;
+          ">
+            ← 返回总览
+          </button>
+          <h2 style="margin: 0; color: var(--text-primary); font-size: 20px; font-weight: 600;">
+            🏢 ${supplier.supplierName} - 详细资料管理
+          </h2>
+          <div style="width: 100px;"></div>
+        </div>
+
+        <!-- 供应商概览卡片 -->
+        <div class="supplier-overview-card" style="
+          background: white;
+          border: 1px solid var(--border-primary);
+          border-radius: 12px;
+          padding: 24px;
+          margin-bottom: 20px;
+          box-shadow: var(--shadow-sm);
+        ">
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px;">
+            <div>
+              <h3 style="margin: 0 0 12px 0; color: var(--text-primary); font-size: 18px;">
+                供应商概览
+              </h3>
+              <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+                <div style="color: var(--text-secondary); font-size: 14px;">
+                  <span style="color: var(--text-primary); font-weight: 600;">联系人:</span> 
+                  ${supplier.contactPerson || '未设置'}
+                </div>
+                <div style="color: var(--text-secondary); font-size: 14px;">
+                  <span style="color: var(--text-primary); font-weight: 600;">邮箱:</span> 
+                  ${supplier.contactEmail || '未设置'}
+                </div>
+                <div style="color: var(--text-secondary); font-size: 14px;">
+                  <span style="color: var(--text-primary); font-weight: 600;">电话:</span> 
+                  ${supplier.contactPhone || '未设置'}
+                </div>
+              </div>
+            </div>
+            <div class="status-badge ${statusClass}" style="
+              padding: 8px 16px;
+              border-radius: 20px;
+              font-size: 14px;
+              font-weight: 600;
+            ">
+              📊 整体状态: ${statusText}
+            </div>
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 20px;">
+            <div style="text-align: center; padding: 16px; background: var(--background-secondary); border-radius: 8px;">
+              <div style="font-size: 24px; font-weight: 600; color: var(--text-primary); margin-bottom: 4px;">
+                ${stats.totalDocs}
+              </div>
+              <div style="font-size: 14px; color: var(--text-secondary);">文档总数</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: var(--error-100); border-radius: 8px;">
+              <div style="font-size: 24px; font-weight: 600; color: var(--error-700); margin-bottom: 4px;">
+                ${stats.expiredDocs}
+              </div>
+              <div style="font-size: 14px; color: var(--text-secondary);">已过期</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: var(--warning-100); border-radius: 8px;">
+              <div style="font-size: 24px; font-weight: 600; color: var(--warning-700); margin-bottom: 4px;">
+                ${stats.expiringDocs}
+              </div>
+              <div style="font-size: 14px; color: var(--text-secondary);">即将到期</div>
+            </div>
+            <div style="text-align: center; padding: 16px; background: var(--success-100); border-radius: 8px;">
+              <div style="font-size: 24px; font-weight: 600; color: var(--success-700); margin-bottom: 4px;">
+                ${stats.normalDocs}
+              </div>
+              <div style="font-size: 14px; color: var(--text-secondary);">状态正常</div>
+            </div>
+          </div>
+
+          <div style="display: flex; gap: 12px;">
+            <button class="btn btn-primary" onclick="supplierManager.uploadDocument()">
+              📤 上传文档
+            </button>
+            <button class="btn btn-secondary" onclick="supplierManager.sendEmailNotification()">
+              📧 邮件通知
+            </button>
+            <button class="btn btn-secondary" onclick="supplierManager.exportReport()">
+              📊 导出报告
+            </button>
+          </div>
+        </div>
+
+        <!-- 层级管理区域 -->
+        <div class="hierarchical-management">
+          ${this.renderHierarchicalDocuments(supplier)}
+        </div>
+      </div>
+    `;
+
+    container.innerHTML = detailHtml;
+  }
+
+  /**
+   * 计算供应商统计信息
+   */
+  calculateSupplierStats(supplier) {
+    const documents = supplier.documents || {};
+    const documentTypes = Object.keys(documents);
+    
+    let totalDocs = 0;
+    let expiredDocs = 0;
+    let expiringDocs = 0;
+    let normalDocs = 0;
+    
+    documentTypes.forEach(type => {
+      const doc = documents[type];
+      if (doc && doc.hasDocument) {
+        totalDocs++;
+        
+        if (doc.status === 'expired') {
+          expiredDocs++;
+        } else if (doc.expiryDate) {
+          const daysUntilExpiry = this.calculateDaysUntilExpiry(doc.expiryDate);
+          if (daysUntilExpiry < 0) {
+            expiredDocs++;
+          } else if (daysUntilExpiry <= 30) {
+            expiringDocs++;
+          } else {
+            normalDocs++;
+          }
+        } else {
+          normalDocs++;
+        }
+      }
+    });
+    
+    return { totalDocs, expiredDocs, expiringDocs, normalDocs };
+  }
+
+  /**
+   * 渲染层级文档管理
+   */
+  renderHierarchicalDocuments(supplier) {
+    const documents = supplier.documents || {};
+    
+    // 供应商级文档
+    const supplierDocs = [
+      { key: 'quality_agreement', name: '质量保证协议', icon: '📄' },
+      { key: 'csr', name: 'CSR报告', icon: '🤝' }
+    ];
+
+    // 物料级文档 (模拟数据，后续从数据库获取)
+    const materialDocs = [
+      { key: 'environmental_rohs', name: 'ROHS', icon: '🌱' },
+      { key: 'environmental_reach', name: 'REACH', icon: '🔬' },
+      { key: 'environmental_msds', name: 'MSDS', icon: '⚠️' },
+      { key: 'environmental_hf', name: 'HF', icon: '🧪' }
+    ];
+
+    let html = `
+      <!-- 供应商级资料 -->
+      <div class="hierarchy-level" style="margin-bottom: 20px;">
+        <div class="level-header" style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 16px;
+          background: var(--background-secondary);
+          border-radius: 8px 8px 0 0;
+          cursor: pointer;
+          font-weight: 600;
+          color: var(--text-primary);
+        " onclick="this.parentElement.classList.toggle('expanded')">
+          📁 供应商级资料
+          <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary);">点击展开</span>
+        </div>
+        <div class="level-content" style="
+          display: none;
+          border: 1px solid var(--border-primary);
+          border-top: none;
+          border-radius: 0 0 8px 8px;
+          padding: 16px;
+          background: white;
+        ">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: var(--background-secondary);">
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档类型</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档名称</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">到期日期</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">状态</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${supplierDocs.map(docType => this.renderDocumentRow(docType, documents[docType.key])).join('')}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- 物料级管理 -->
+      <div class="hierarchy-level">
+        <div class="level-header" style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 12px 16px;
+          background: var(--background-secondary);
+          border-radius: 8px 8px 0 0;
+          cursor: pointer;
+          font-weight: 600;
+          color: var(--text-primary);
+        " onclick="this.parentElement.classList.toggle('expanded')">
+          🏭 物料管理
+          <span style="margin-left: auto; font-size: 12px; color: var(--text-secondary);">点击展开</span>
+        </div>
+        <div class="level-content" style="
+          display: none;
+          border: 1px solid var(--border-primary);
+          border-top: none;
+          border-radius: 0 0 8px 8px;
+          padding: 16px;
+          background: white;
+        ">
+          <table style="width: 100%; border-collapse: collapse;">
+            <thead>
+              <tr style="background: var(--background-secondary);">
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档类型</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">文档名称</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">到期日期</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">状态</th>
+                <th style="padding: 8px 12px; text-align: left; font-weight: 600; font-size: 14px;">操作</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${materialDocs.map(docType => this.renderDocumentRow(docType, documents[docType.key])).join('')}
+            </tbody>
+          </table>
+          
+          <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-primary);">
+            <button class="btn btn-primary" onclick="supplierManager.addMaterial()">
+              + 添加物料
+            </button>
+            <button class="btn btn-secondary" onclick="supplierManager.addComponent()">
+              + 添加具体构成
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+
+    return html;
+  }
+
+  /**
+   * 渲染文档行
+   */
+  renderDocumentRow(docType, doc) {
+    if (!doc || !doc.hasDocument) {
+      return `
+        <tr style="border-bottom: 1px solid var(--border-primary);">
+          <td style="padding: 12px; color: var(--text-secondary);">
+            ${docType.icon} ${docType.name}
+          </td>
+          <td style="padding: 12px; color: var(--text-secondary); font-style: italic;">
+            暂无文档
+          </td>
+          <td style="padding: 12px; color: var(--text-secondary);">-</td>
+          <td style="padding: 12px;">
+            <span style="color: var(--text-secondary); font-style: italic;">缺失</span>
+          </td>
+          <td style="padding: 12px;">
+            <button class="btn btn-sm btn-primary" onclick="supplierManager.uploadDocument('${docType.key}')">
+              上传
+            </button>
+          </td>
+        </tr>
+      `;
+    }
+
+    const statusClass = this.getDocumentStatusClass(doc.expiryDate, doc.status);
+    const expiryText = doc.expiryDate ? this.formatExpiryDate(doc.expiryDate) : '永久有效';
+    const statusText = this.getStatusText(doc);
+
+    return `
+      <tr style="border-bottom: 1px solid var(--border-primary);">
+        <td style="padding: 12px; color: var(--text-primary); font-weight: 500;">
+          ${docType.icon} ${docType.name}
+        </td>
+        <td style="padding: 12px; color: var(--text-primary);">
+          ${doc.documentName || '-'}
+        </td>
+        <td style="padding: 12px; color: var(--text-primary);">
+          ${expiryText}
+        </td>
+        <td style="padding: 12px;">
+          <span class="status-badge ${statusClass}" style="
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+          ">
+            ${statusText}
+          </span>
+        </td>
+        <td style="padding: 12px;">
+          <button class="btn btn-sm btn-success" onclick="supplierManager.downloadDocument(${doc.id})" style="margin-right: 4px;">
+            下载
+          </button>
+          <button class="btn btn-sm btn-warning" onclick="supplierManager.editDocument(${doc.id})" style="margin-right: 4px;">
+            编辑
+          </button>
+          <button class="btn btn-sm btn-primary" onclick="supplierManager.uploadDocument('${docType.key}')">
+            更新
+          </button>
+        </td>
+      </tr>
+    `;
+  }
+
+  /**
+   * 占位方法 - 后续实现
+   */
+  uploadDocument(docType) {
+    console.log('上传文档:', docType);
+    this.showUploadModal();
+  }
+
+  sendEmailNotification() {
+    console.log('发送邮件通知');
+    this.showToast('邮件通知功能开发中...', 'info');
+  }
+
+  exportReport() {
+    console.log('导出报告');
+    this.showToast('报告导出功能开发中...', 'info');
+  }
+
+  addMaterial() {
+    console.log('添加物料');
+    this.showToast('物料管理功能开发中...', 'info');
+  }
+
+  addComponent() {
+    console.log('添加具体构成');
+    this.showToast('构成管理功能开发中...', 'info');
   }
 
   /**
