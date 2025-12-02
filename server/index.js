@@ -19,15 +19,15 @@ app.use(express.static(path.join(__dirname, '..', 'public'), {
   }
 }));
 
-// 路由
-// 添加时间: 2025-12-01
-// 说明: 新增suppliers路由以解决前端404错误
+// 路由加载
 console.log('📦 开始加载路由模块...');
+
+// 旧路由 (保留兼容性)
 const uploadRoutes = require('./routes/upload');
 console.log('✅ uploadRoutes 加载完成');
 const supplierRoutes = require('./routes/supplier');
 console.log('✅ supplierRoutes 加载完成');
-const suppliersRoutes = require('./routes/suppliers'); // 新增供应商管理API
+const suppliersRoutes = require('./routes/suppliers');
 console.log('✅ suppliersRoutes 加载完成');
 const comparisonRoutes = require('./routes/comparison');
 console.log('✅ comparisonRoutes 加载完成');
@@ -38,22 +38,24 @@ console.log('✅ supplierSearchRoutes 加载完成');
 const documentRoutes = require('./routes/documents');
 console.log('✅ documentRoutes 加载完成');
 
+// v3.0 新增路由
+const suppliersTreeRoutes = require('./routes/suppliers-tree');
+console.log('✅ suppliersTreeRoutes 加载完成');
+const materialsRoutes = require('./routes/materials');
+console.log('✅ materialsRoutes 加载完成');
+const documentsUploadRoutes = require('./routes/documents-upload');
+console.log('✅ documentsUploadRoutes 加载完成');
+
+// 路由注册
 console.log('🔧 开始注册API路由...');
+
+// 旧路由注册
 app.use('/api', uploadRoutes);
 console.log('✅ /api/* 路由已注册 (upload)');
 app.use('/api', supplierRoutes);
 console.log('✅ /api/* 路由已注册 (supplier)');
-app.use('/api/suppliers', suppliersRoutes); // 注册供应商管理路由
+app.use('/api/suppliers', suppliersRoutes);
 console.log('✅ /api/suppliers/* 路由已注册 (suppliers)');
-
-// 立即测试路由是否正确注册
-console.log('🧪 测试suppliers路由层...');
-console.log('🧪 suppliersRoutes stack length:', suppliersRoutes.stack ? suppliersRoutes.stack.length : 'undefined');
-if (suppliersRoutes.stack) {
-  suppliersRoutes.stack.forEach((layer, index) => {
-    console.log(`🧪 路由 ${index}: ${layer.route?.path || layer.regexp || 'middleware'} - ${layer.route?.methods || 'N/A'}`);
-  });
-}
 app.use('/api', comparisonRoutes);
 console.log('✅ /api/* 路由已注册 (comparison)');
 app.use('/api', dataSourceRoutes);
@@ -62,6 +64,14 @@ app.use('/api', supplierSearchRoutes);
 console.log('✅ /api/* 路由已注册 (supplier-search)');
 app.use('/api/documents', documentRoutes);
 console.log('✅ /api/documents/* 路由已注册 (documents)');
+
+// v3.0 新路由注册
+app.use('/api/suppliers', suppliersTreeRoutes);
+console.log('✅ /api/suppliers/tree 路由已注册 (suppliers-tree)');
+app.use('/api/materials', materialsRoutes);
+console.log('✅ /api/materials/* 路由已注册 (materials)');
+app.use('/api/documents', documentsUploadRoutes);
+console.log('✅ /api/documents/upload 路由已注册 (documents-upload)');
 
 console.log('🎉 所有API路由注册完成');
 
@@ -73,95 +83,95 @@ app.use((req, res, next) => {
 
 // 直接定义认证路由
 app.post('/api/auth/init', async (req, res) => {
-    try {
-        const AuthService = require('./services/authService');
-        const user = await AuthService.createDefaultUser();
-        
-        res.json({
-            success: true,
-            message: '默认用户创建成功',
-            user: {
-                username: user.username,
-                fullName: user.fullName,
-                email: user.email
-            }
-        });
+  try {
+    const AuthService = require('./services/authService');
+    const user = await AuthService.createDefaultUser();
 
-    } catch (error) {
-        const logger = require('./utils/logger');
-        logger.error(`系统初始化错误: ${error.message}`);
-        res.status(500).json({
-            success: false,
-            error: error.message
-        });
-    }
+    res.json({
+      success: true,
+      message: '默认用户创建成功',
+      user: {
+        username: user.username,
+        fullName: user.fullName,
+        email: user.email
+      }
+    });
+
+  } catch (error) {
+    const logger = require('./utils/logger');
+    logger.error(`系统初始化错误: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: error.message
+    });
+  }
 });
 
 app.post('/api/auth/login', async (req, res) => {
-    try {
-        const AuthService = require('./services/authService');
-        const { username, password } = req.body;
+  try {
+    const AuthService = require('./services/authService');
+    const { username, password } = req.body;
 
-        if (!username || !password) {
-            return res.status(400).json({
-                success: false,
-                error: '用户名和密码不能为空'
-            });
-        }
-
-        const result = await AuthService.login(username, password);
-        res.json(result);
-
-    } catch (error) {
-        const logger = require('./utils/logger');
-        logger.error(`登录接口错误: ${error.message}`);
-        res.status(500).json({
-            success: false,
-            error: '登录失败，请稍后重试'
-        });
+    if (!username || !password) {
+      return res.status(400).json({
+        success: false,
+        error: '用户名和密码不能为空'
+      });
     }
+
+    const result = await AuthService.login(username, password);
+    res.json(result);
+
+  } catch (error) {
+    const logger = require('./utils/logger');
+    logger.error(`登录接口错误: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: '登录失败，请稍后重试'
+    });
+  }
 });
 
 app.get('/api/auth/verify', async (req, res) => {
-    try {
-        const AuthService = require('./services/authService');
-        const token = req.headers.authorization?.replace('Bearer ', '');
-        
-        const result = await AuthService.verifyToken(token);
-        res.json(result);
+  try {
+    const AuthService = require('./services/authService');
+    const token = req.headers.authorization?.replace('Bearer ', '');
 
-    } catch (error) {
-        const logger = require('./utils/logger');
-        logger.error(`令牌验证错误: ${error.message}`);
-        res.status(500).json({
-            success: false,
-            error: '令牌验证失败'
-        });
-    }
+    const result = await AuthService.verifyToken(token);
+    res.json(result);
+
+  } catch (error) {
+    const logger = require('./utils/logger');
+    logger.error(`令牌验证错误: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: '令牌验证失败'
+    });
+  }
 });
 
 app.get('/api/auth/me', async (req, res) => {
-    try {
-        const AuthService = require('./services/authService');
-        const token = req.headers.authorization?.replace('Bearer ', '');
-        
-        const verifyResult = await AuthService.verifyToken(token);
-        
-        if (!verifyResult.success) {
-            return res.status(401).json(verifyResult);
-        }
+  try {
+    const AuthService = require('./services/authService');
+    const token = req.headers.authorization?.replace('Bearer ', '');
 
-        const result = await AuthService.getUserInfo(verifyResult.user.userId);
-        res.json(result);
+    const verifyResult = await AuthService.verifyToken(token);
 
-    } catch (error) {
-        const logger = require('./utils/logger');
-        logger.error(`获取用户信息错误: ${error.message}`);
-        res.status(500).json({
-            success: false,
-            error: '获取用户信息失败'
-        });
+    if (!verifyResult.success) {
+      return res.status(401).json(verifyResult);
     }
+
+    const result = await AuthService.getUserInfo(verifyResult.user.userId);
+    res.json(result);
+
+  } catch (error) {
+    const logger = require('./utils/logger');
+    logger.error(`获取用户信息错误: ${error.message}`);
+    res.status(500).json({
+      success: false,
+      error: '获取用户信息失败'
+    });
+  }
 });
 
 // 启动服务器
