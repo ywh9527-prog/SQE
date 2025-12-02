@@ -63,8 +63,8 @@ class Router {
         });
 
         // 显示目标模块
-        const targetView = document.getElementById(`module-${hash}`) || 
-                           document.getElementById(`module-${hash}s`); // 处理复数形式
+        const targetView = document.getElementById(`module-${hash}`) ||
+            document.getElementById(`module-${hash}s`); // 处理复数形式
         if (targetView) {
             targetView.classList.remove('hidden');
         } else {
@@ -88,10 +88,3 @@ class Router {
 // 导出 Router 实例
 window.App = window.App || {};
 window.App.Router = new Router();
-
-// 注册documents模块回调
-window.App.Router.register('documents', () => {
-  if (window.supplierManager) {
-    window.supplierManager.loadDocuments();
-  }
-});
