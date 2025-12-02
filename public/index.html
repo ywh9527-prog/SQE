@@ -20,6 +20,8 @@
     <link rel="stylesheet" href="css/utils/progress.css">
     <!-- 供应商资料管理样式 -->
     <link rel="stylesheet" href="css/modules/documents.css">
+    <!-- 供应商树形视图样式 v3.0 -->
+    <link rel="stylesheet" href="css/modules/supplier-tree.css">
     <!-- 模态框修复样式 -->
     <link rel="stylesheet" href="css/modal-fix.css">
     <script src="js/chart.min.js"></script>
@@ -404,7 +406,7 @@
                     </section>
                 </div>
 
-                
+
                 <div id="module-documents" class="module-view hidden">
                     <!-- 供应商资料管理模块 -->
                     <div class="module-header">
@@ -463,7 +465,7 @@
                                     <option value="">全部供应商</option>
                                 </select>
                             </div>
-                            
+
                             <div class="filter-group">
                                 <label for="statusFilter">状态</label>
                                 <select id="statusFilter" class="form-control">
@@ -473,12 +475,12 @@
                                     <option value="archived">已归档</option>
                                 </select>
                             </div>
-                            
+
                             <div class="filter-group">
                                 <label for="searchInput">搜索</label>
                                 <input type="text" id="searchInput" class="form-control" placeholder="搜索资料名称...">
                             </div>
-                            
+
                             <div class="filter-group">
                                 <label for="sortSelect">排序</label>
                                 <select id="sortSelect" class="form-control">
@@ -521,14 +523,15 @@
                                 <!-- 视图切换已移除 - 统一使用内嵌展开模式 -->
                                 <div class="selection-control">
                                     <label class="checkbox-label">
-                                        <input type="checkbox" id="selectAll" onchange="supplierManager.toggleSelectAll()">
+                                        <input type="checkbox" id="selectAll"
+                                            onchange="supplierManager.toggleSelectAll()">
                                         <span class="checkmark"></span>
                                         全选
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div class="documents-container" id="documentsContainer">
                             <!-- 资料卡片将在这里动态生成 -->
                             <div class="loading-state">
@@ -557,7 +560,7 @@
                 <h3>上传资料</h3>
                 <button class="modal-close" id="closeUploadModal">×</button>
             </div>
-            
+
             <div class="modal-body">
                 <form id="uploadForm">
                     <div class="form-row">
@@ -567,7 +570,7 @@
                                 <option value="">请选择供应商</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="uploadDocumentType">资料类型 *</label>
                             <select id="uploadDocumentType" class="form-control" required>
@@ -581,22 +584,24 @@
                             </select>
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="uploadDocumentName">版本号</label>
-                        <input type="text" id="uploadDocumentName" class="form-control" placeholder="如：V1.0, 2024版等（可选，不填将自动生成）">
+                        <input type="text" id="uploadDocumentName" class="form-control"
+                            placeholder="如：V1.0, 2024版等（可选，不填将自动生成）">
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="uploadDocumentNumber">协议编号</label>
                             <input type="text" id="uploadDocumentNumber" class="form-control">
                         </div>
-                        
+
                         <div class="form-group">
                             <div class="permanent-checkbox">
                                 <label class="checkbox-label">
-                                    <input type="checkbox" id="uploadPermanent" onchange="supplierManager.togglePermanentDate()">
+                                    <input type="checkbox" id="uploadPermanent"
+                                        onchange="supplierManager.togglePermanentDate()">
                                     <span class="checkmark"></span>
                                     永久有效
                                 </label>
@@ -605,24 +610,24 @@
                             <input type="date" id="uploadExpiryDate" class="form-control" required>
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="uploadResponsiblePerson">责任人</label>
                             <input type="text" id="uploadResponsiblePerson" class="form-control">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="uploadIssuingAuthority">发证机构</label>
                             <input type="text" id="uploadIssuingAuthority" class="form-control">
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="uploadRemarks">备注</label>
                         <textarea id="uploadRemarks" class="form-control" rows="3"></textarea>
                     </div>
-                    
+
                     <div class="form-group">
                         <label>文件上传 *</label>
                         <div class="file-upload-area" id="uploadDropZone">
@@ -631,12 +636,13 @@
                                 <p>拖拽文件到此处或点击选择文件</p>
                                 <p class="upload-hint">支持 PDF, DOC, DOCX, XLS, XLSX, JPG, PNG 格式，最大100MB</p>
                             </div>
-                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png" hidden>
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
+                                hidden>
                         </div>
                     </div>
                 </form>
             </div>
-            
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="supplierManager.hideUploadModal()">取消</button>
                 <button type="button" class="btn btn-primary" id="submitUploadBtn">上传</button>
@@ -651,47 +657,47 @@
                 <h3>编辑资料</h3>
                 <button class="modal-close" id="closeEditModal">×</button>
             </div>
-            
+
             <div class="modal-body">
                 <form id="editForm">
                     <input type="hidden" id="editDocumentId">
-                    
+
                     <div class="form-group">
                         <label for="editDocumentName">资料名称 *</label>
                         <input type="text" id="editDocumentName" class="form-control" required>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="editDocumentNumber">协议编号</label>
                             <input type="text" id="editDocumentNumber" class="form-control">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="editExpiryDate">到期日期</label>
                             <input type="date" id="editExpiryDate" class="form-control">
                         </div>
                     </div>
-                    
+
                     <div class="form-row">
                         <div class="form-group">
                             <label for="editResponsiblePerson">责任人</label>
                             <input type="text" id="editResponsiblePerson" class="form-control">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="editIssuingAuthority">发证机构</label>
                             <input type="text" id="editIssuingAuthority" class="form-control">
                         </div>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="editRemarks">备注</label>
                         <textarea id="editRemarks" class="form-control" rows="3"></textarea>
                     </div>
                 </form>
             </div>
-            
+
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" onclick="supplierManager.hideEditModal()">取消</button>
                 <button type="button" class="btn btn-primary" id="submitEditBtn">保存</button>
@@ -729,7 +735,7 @@
             if (e.target.matches('.view-btn')) {
                 document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
                 e.target.classList.add('active');
-                
+
                 const view = e.target.dataset.view;
                 const container = document.getElementById('documentsContainer');
                 if (container) {
@@ -777,13 +783,13 @@
                     e.preventDefault();
                     const files = e.dataTransfer.files;
                     console.log('拖拽文件数量:', files.length);
-                    
+
                     // 设置到fileInput中
                     if (fileInput) {
                         fileInput.files = files;
                         console.log('已设置到fileInput，文件数量:', fileInput.files.length);
                     }
-                    
+
                     if (files.length > 0 && window.supplierManager) {
                         window.supplierManager.handleFileUpload(files);
                     } else {
@@ -802,7 +808,7 @@
                     fileInput.addEventListener('change', (e) => {
                         console.log('文件选择事件触发:', e.target.files.length);
                         console.log('选择的文件:', Array.from(e.target.files).map(f => f.name));
-                        
+
                         if (e.target.files.length > 0 && window.supplierManager) {
                             window.supplierManager.handleFileUpload(e.target.files);
                         } else {
@@ -827,7 +833,7 @@
                 console.log('上传事件已绑定，跳过重复绑定');
                 return;
             }
-            
+
             console.log('开始绑定上传事件...');
             bindUploadEvents();
             uploadEventsBound = true;
