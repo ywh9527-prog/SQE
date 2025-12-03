@@ -698,16 +698,19 @@ class SupplierDocumentManager {
     `;
 
     // 通用资料
+    html += `
+      <div class="details-section">
+        <div class="section-header">
+          <h4>📋 通用资料</h4>
+          <button class="upload-btn" data-type="common" data-supplier-id="${supplierId}" title="上传通用资料">
+            📤 上传
+          </button>
+        </div>
+    `;
+
     if (details.commonDocuments && details.commonDocuments.length > 0) {
       html += `
-        <div class="details-section">
-          <div class="section-header">
-            <h4>📋 通用资料</h4>
-            <button class="upload-btn" data-type="common" data-supplier-id="${supplierId}" title="上传通用资料">
-              📤 上传
-            </button>
-          </div>
-          <ul class="document-list">
+        <ul class="document-list">
       `;
 
       details.commonDocuments.forEach(doc => {
@@ -731,10 +734,21 @@ class SupplierDocumentManager {
       });
 
       html += `
-          </ul>
+        </ul>
+      `;
+    } else {
+      // 没有通用资料时显示提示
+      html += `
+        <div class="no-documents-hint">
+          <span class="hint-icon">📭</span>
+          <span class="hint-text">暂无通用资料，点击上方"上传"按钮添加</span>
         </div>
       `;
     }
+
+    html += `
+      </div>
+    `;
 
     // 物料资料
     if (details.materials && details.materials.length > 0) {

@@ -420,6 +420,30 @@
   color: #1e40af;
 }
 
+/* 无资料提示样式 */
+.no-documents-hint {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px;
+  background-color: #f8fafc;
+  border: 1px dashed #d1d5db;
+  border-radius: 6px;
+  color: #6b7280;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.hint-icon {
+  font-size: 24px;
+  opacity: 0.7;
+}
+
+.hint-text {
+  font-style: italic;
+}
+
 /* 响应式设计 */
 @media (max-width: 768px) {
   .modal-content {
@@ -454,6 +478,13 @@
   .upload-btn {
     flex: 1;
   }
+
+  .no-documents-hint {
+    flex-direction: column;
+    text-align: center;
+    gap: 8px;
+  }
+}
 
   .supplier-controls {
     flex-direction: column;
