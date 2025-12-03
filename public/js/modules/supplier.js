@@ -144,6 +144,14 @@ class SupplierDocumentManager {
   bindEvents() {
     console.log('🔗 绑定事件监听器...');
 
+    // 同步供应商按钮
+    const importBtn = document.getElementById('importBtn');
+    if (importBtn) {
+      importBtn.addEventListener('click', () => {
+        this.syncSuppliersFromIQC();
+      });
+    }
+
     // 刷新按钮
     const refreshBtn = document.getElementById('refreshBtn');
     if (refreshBtn) {
@@ -1751,6 +1759,47 @@ ${certType}：
     } catch (error) {
       console.error('上传失败:', error);
       this.showError(error.message || '上传失败，请重试');
+    } finally {
+      this.hideLoading();
+    }
+  }
+
+  /**
+   * 从IQC同步供应商数据
+   */
+  async syncSuppliersFromIQC() {
+    try {
+      this.showLoading('正在同步供应商数据...');
+      
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/suppliers/sync-from-iqc', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        const { newSuppliers, updatedSuppliers, totalSuppliers } = data.data;
+        
+        if (newSuppliers.length > 0) {
+          this.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.join(', ')}`);
+        } else {
+          this.showSuccess('同步完成！没有发现新供应商');
+        }
+        
+        // 刷新供应商列表
+        await this.refresh(false);
+        
+      } else {
+        throw new Error(data.message || '同步失败');
+      }
+    } catch (error) {
+      console.error('同步供应商失败:', error);
+      this.showError(error.message || '同步供应商失败，请重试');
     } finally {
       this.hideLoading();
     }

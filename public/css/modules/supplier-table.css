@@ -2,6 +2,30 @@
  * 供应商资料管理 - 表格视图样式 v3.1
  */
 
+/* 成功按钮样式 */
+.btn-success {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-success:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
 /* ==================== 容器 ==================== */
 .supplier-table-container {
     width: 100%;

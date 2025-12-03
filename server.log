@@ -1,0 +1,32 @@
+📦 开始加载路由模块...
+✅ uploadRoutes 加载完成
+✅ supplierRoutes 加载完成
+📦 正在加载 suppliers.js 路由文件...
+✅ suppliers.js 路由文件加载完成
+✅ suppliersRoutes 加载完成
+✅ comparisonRoutes 加载完成
+✅ dataSourceRoutes 加载完成
+✅ supplierSearchRoutes 加载完成
+✅ documentRoutes 加载完成
+✅ suppliersTreeRoutes 加载完成
+✅ materialsRoutes 加载完成
+✅ documentsUploadRoutes 加载完成
+✅ suppliersSummaryRoutes 加载完成
+🔧 开始注册API路由...
+✅ /api/* 路由已注册 (upload)
+✅ /api/* 路由已注册 (supplier)
+✅ /api/* 路由已注册 (comparison)
+✅ /api/* 路由已注册 (data-source)
+✅ /api/* 路由已注册 (supplier-search)
+✅ /api/documents/* 路由已注册 (documents)
+✅ /api/suppliers/tree 路由已注册 (suppliers-tree)
+✅ /api/suppliers/summary 路由已注册 (suppliers-summary)
+✅ /api/suppliers/* 路由已注册 (suppliers，包含 /:id)
+✅ /api/materials/* 路由已注册 (materials)
+✅ /api/documents/upload 路由已注册 (documents-upload)
+🎉 所有API路由注册完成
+[32minfo[39m: 数据库连接成功 (SQLite) {"timestamp":"2025-12-03 01:23:19"}
+[32minfo[39m: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite {"timestamp":"2025-12-03 01:23:19"}
+🗄️ 数据库连接成功，使用路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+[32minfo[39m: 数据库模型已同步 {"timestamp":"2025-12-03 01:23:19"}
+数据库已同步

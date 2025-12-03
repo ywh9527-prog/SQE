@@ -95,7 +95,7 @@ router.post('/', async (req, res) => {
                     { replacements: [materialId] }
                 );
                 
-                if (verifyResult.count !== 1) {
+                if (verifyResult[0].count !== 1) {
                     throw new Error('插入验证失败：记录不存在');
                 }
                 

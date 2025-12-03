@@ -3292,3 +3292,268 @@
 2025-12-02 20:01:35 [INFO]: 数据库连接成功 (SQLite)
 2025-12-02 20:01:35 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
 2025-12-02 20:01:35 [INFO]: 数据库模型已同步
+2025-12-02 21:28:26 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 21:28:26 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 21:28:26 [INFO]: 数据库模型已同步
+2025-12-02 21:28:31 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 21:28:31 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 21:28:31 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 21:55:31 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 21:55:31 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 21:55:31 [INFO]: 数据库模型已同步
+2025-12-02 21:55:34 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 21:55:34 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 21:55:34 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 22:18:47 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 22:18:47 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 22:18:47 [INFO]: 数据库模型已同步
+2025-12-02 22:18:49 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 22:18:49 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 22:18:49 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 22:40:05 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 22:40:05 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 22:40:05 [INFO]: 数据库模型已同步
+2025-12-02 22:54:42 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 22:54:42 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 22:54:42 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-02 23:20:32 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 23:20:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 23:20:32 [INFO]: 数据库模型已同步
+2025-12-02 23:54:11 [INFO]: 数据库连接成功 (SQLite)
+2025-12-02 23:54:11 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-02 23:54:11 [INFO]: 数据库模型已同步
+2025-12-03 00:30:47 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:30:47 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:30:47 [INFO]: 数据库模型已同步
+2025-12-03 00:35:21 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:35:21 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:35:21 [INFO]: 数据库模型已同步
+2025-12-03 00:38:18 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:38:18 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:38:18 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:39:27 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:39:27 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:39:27 [INFO]: 数据库模型已同步
+2025-12-03 00:41:33 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:41:33 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:41:33 [INFO]: 数据库模型已同步
+2025-12-03 00:44:08 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:44:08 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:44:08 [INFO]: 数据库模型已同步
+2025-12-03 00:47:13 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:47:13 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:47:13 [INFO]: 数据库模型已同步
+2025-12-03 00:51:50 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:51:50 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:51:50 [INFO]: 数据库模型已同步
+2025-12-03 00:52:27 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:52:27 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:52:27 [INFO]: 数据库模型已同步
+2025-12-03 00:54:29 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:54:29 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:54:29 [INFO]: 数据库模型已同步
+2025-12-03 00:56:05 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 00:56:05 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 00:56:05 [INFO]: 数据库模型已同步
+2025-12-03 00:57:38 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:57:38 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:57:38 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:57:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:57:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 00:57:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:00:06 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:00:06 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:00:06 [INFO]: 数据库模型已同步
+2025-12-03 01:05:16 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:05:16 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:05:16 [INFO]: 数据库模型已同步
+2025-12-03 01:05:33 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:05:33 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:05:33 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:05:45 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:05:45 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:05:45 [INFO]: 数据库模型已同步
+2025-12-03 01:07:24 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:07:24 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:07:24 [INFO]: 数据库模型已同步
+2025-12-03 01:08:10 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:08:10 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:08:10 [INFO]: 数据库模型已同步
+2025-12-03 01:11:31 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:11:31 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:11:31 [INFO]: 数据库模型已同步
+2025-12-03 01:14:47 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:14:47 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:14:47 [INFO]: 数据库模型已同步
+2025-12-03 01:17:05 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:17:05 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:17:05 [INFO]: 数据库模型已同步
+2025-12-03 01:18:50 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:18:50 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:18:50 [INFO]: 数据库模型已同步
+2025-12-03 01:20:08 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:20:08 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:20:08 [INFO]: 数据库模型已同步
+2025-12-03 01:20:10 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:20:10 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:20:10 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 01:21:52 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:21:52 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:21:52 [INFO]: 数据库模型已同步
+2025-12-03 01:22:36 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:22:36 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:22:36 [INFO]: 数据库模型已同步
+2025-12-03 01:23:19 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 01:23:19 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 01:23:19 [INFO]: 数据库模型已同步
+2025-12-03 10:39:23 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 10:39:23 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 10:39:23 [INFO]: 数据库模型已同步
+2025-12-03 10:41:53 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 10:41:53 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 10:41:53 [INFO]: 数据库模型已同步
+2025-12-03 10:55:45 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 10:55:46 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 10:55:46 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 10:59:47 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 10:59:47 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 10:59:47 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 11:02:53 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 11:02:53 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 11:02:53 [INFO]: 数据库模型已同步
+2025-12-03 11:05:41 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 11:05:41 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 11:05:41 [INFO]: 数据库模型已同步
+2025-12-03 11:10:04 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 11:10:04 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 11:10:04 [INFO]: 数据库模型已同步
+2025-12-03 11:13:58 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 11:13:58 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 11:13:58 [INFO]: 数据库模型已同步
+2025-12-03 11:16:07 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 11:16:07 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 11:16:07 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 12:49:38 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 12:49:38 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 12:49:38 [INFO]: 数据库模型已同步
+2025-12-03 13:42:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 13:42:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 13:42:40 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 13:43:41 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 13:43:41 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 13:43:41 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:03:19 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 14:03:19 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 14:03:19 [INFO]: 数据库模型已同步
+2025-12-03 14:16:23 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:16:23 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:16:24 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:17:02 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 14:17:02 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 14:17:02 [INFO]: 数据库模型已同步
+2025-12-03 14:17:05 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:17:05 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:17:05 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:32:56 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 14:32:56 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 14:32:56 [INFO]: 数据库模型已同步
+2025-12-03 14:32:59 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:32:59 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:32:59 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:35:58 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 14:35:58 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 14:35:58 [INFO]: 数据库模型已同步
+2025-12-03 14:36:37 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:36:37 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:36:37 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:48:06 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 14:48:06 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 14:48:06 [INFO]: 数据库模型已同步
+2025-12-03 14:48:25 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 14:48:25 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 14:48:25 [INFO]: 数据库模型已同步
+2025-12-03 14:48:44 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:48:44 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 14:48:44 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 15:07:10 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:07:10 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:07:10 [INFO]: 数据库模型已同步
+2025-12-03 15:11:25 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:11:25 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:11:25 [INFO]: 数据库模型已同步
+2025-12-03 15:16:23 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:16:23 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:16:23 [INFO]: 数据库模型已同步
+2025-12-03 15:22:10 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:22:10 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:22:10 [INFO]: 数据库模型已同步
+2025-12-03 15:26:11 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:26:11 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:26:11 [INFO]: 数据库模型已同步
+2025-12-03 15:30:07 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:30:07 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:30:07 [INFO]: 数据库模型已同步
+2025-12-03 15:37:04 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:37:04 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:37:04 [INFO]: 数据库模型已同步
+2025-12-03 15:45:25 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:45:25 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:45:25 [INFO]: 数据库模型已同步
+2025-12-03 15:50:35 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:50:35 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:50:35 [INFO]: 数据库模型已同步
+2025-12-03 15:53:04 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:53:04 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:53:04 [INFO]: 数据库模型已同步
+2025-12-03 15:57:59 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 15:57:59 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 15:57:59 [INFO]: 数据库模型已同步
+2025-12-03 15:58:15 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 15:58:21 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 15:58:23 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:09:51 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:09:51 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:09:51 [INFO]: 数据库模型已同步
+2025-12-03 16:10:45 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:10:45 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:10:45 [INFO]: 数据库模型已同步
+2025-12-03 16:12:36 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:12:39 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:13:53 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:15:17 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:19:30 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:19:30 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:19:30 [INFO]: 数据库模型已同步
+2025-12-03 16:23:46 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:23:46 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:23:46 [INFO]: 数据库模型已同步
+2025-12-03 16:26:37 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:26:37 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:26:37 [INFO]: 数据库模型已同步
+2025-12-03 16:40:24 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:40:24 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:40:24 [INFO]: 数据库模型已同步
+2025-12-03 16:46:32 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:46:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:46:32 [INFO]: 数据库模型已同步
+2025-12-03 16:52:38 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 16:52:38 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 16:52:38 [INFO]: 数据库模型已同步
+2025-12-03 17:00:19 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 17:00:19 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 17:00:19 [INFO]: 数据库模型已同步
+2025-12-03 17:10:41 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 17:10:41 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 17:10:41 [INFO]: 数据库模型已同步
+2025-12-03 17:21:34 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 17:21:34 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 17:21:34 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 17:29:21 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 17:29:21 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 17:29:21 [INFO]: 数据库模型已同步
+2025-12-03 17:34:37 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 17:34:37 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 17:34:37 [INFO]: 数据库模型已同步
+2025-12-03 17:58:45 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 17:58:45 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 17:58:45 [INFO]: 数据库模型已同步

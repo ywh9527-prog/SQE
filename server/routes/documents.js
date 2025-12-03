@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const path = require('path');
 const fs = require('fs').promises;
+const { sequelize } = require('../database/config');
 const SupplierDocument = require('../models/SupplierDocument');
 const EmailNotification = require('../models/EmailNotification');
 const SystemLog = require('../models/SystemLog');
@@ -287,20 +288,30 @@ router.delete('/:id', getUserInfo, async (req, res) => {
   try {
     const { id } = req.params;
 
-    const document = await SupplierDocument.findByPk(id);
-    if (!document) {
+    // 使用原生SQL查询文档信息
+    const [documents] = await sequelize.query(
+      'SELECT * FROM supplier_documents WHERE id = ?',
+      { replacements: [id] }
+    );
+
+    if (documents.length === 0) {
       return res.status(404).json({ success: false, error: '资料不存在' });
     }
 
+    const document = documents[0];
+
     // 删除文件
     try {
-      await fs.unlink(document.filePath);
+      await fs.unlink(document.file_path);
     } catch (fileError) {
       logger.warn(`删除文件失败: ${fileError.message}`);
     }
 
     // 删除数据库记录
-    await document.destroy();
+    await sequelize.query(
+      'DELETE FROM supplier_documents WHERE id = ?',
+      { replacements: [id] }
+    );
 
     res.json({
       success: true,
@@ -308,7 +319,7 @@ router.delete('/:id', getUserInfo, async (req, res) => {
     });
 
     await logAction(req.user.userId, 'DELETE', 'document', parseInt(id), {
-      documentName: document.documentName
+      documentName: document.document_name
     }, req);
   } catch (error) {
     logger.error(`删除资料失败: ${error.message}`);

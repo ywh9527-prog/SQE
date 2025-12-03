@@ -48,6 +48,12 @@ console.log('✅ documentsUploadRoutes 加载完成');
 const suppliersSummaryRoutes = require('./routes/suppliers-summary');
 console.log('✅ suppliersSummaryRoutes 加载完成');
 
+// 供应商同步路由
+const suppliersSyncRoutes = require('./routes/suppliers-sync');
+console.log('✅ suppliersSyncRoutes 加载完成');
+
+
+
 // 路由注册
 console.log('🔧 开始注册API路由...');
 
@@ -81,6 +87,10 @@ app.use('/api/materials', materialsRoutes);
 console.log('✅ /api/materials/* 路由已注册 (materials)');
 app.use('/api/documents', documentsUploadRoutes);
 console.log('✅ /api/documents/upload 路由已注册 (documents-upload)');
+
+// 供应商同步路由注册
+app.use('/api/suppliers', suppliersSyncRoutes);
+console.log('✅ /api/suppliers/sync-from-iqc 路由已注册 (suppliers-sync)');
 
 console.log('🎉 所有API路由注册完成');
 

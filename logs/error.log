@@ -68,3 +68,10 @@
 2025-12-01 17:37:55 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
 2025-12-01 17:37:56 [ERROR]: 获取资料列表失败: SQLITE_ERROR: no such column: is_permanent
 2025-12-02 01:14:50 [ERROR]: 令牌验证错误: jwt malformed
+2025-12-03 15:58:15 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 15:58:21 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 15:58:23 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:12:36 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:12:39 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:13:53 [ERROR]: 删除资料失败: sequelize is not defined
+2025-12-03 16:15:17 [ERROR]: 删除资料失败: sequelize is not defined
