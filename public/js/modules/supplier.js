@@ -9,6 +9,29 @@
  */
 
 class SupplierDocumentManager {
+  /**
+   * 格式化日期显示（只显示年-月-日）
+   */
+  formatDate(dateString) {
+    if (!dateString || dateString === '永久' || dateString === '永久有效') {
+      return dateString;
+    }
+    
+    try {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    } catch (error) {
+      console.warn('日期格式化失败:', dateString, error);
+      return dateString;
+    }
+  }
+
+  /**
+   * 初始化模块
+   */
   constructor() {
     // 数据存储
     this.suppliers = [];  // 供应商汇总数据
@@ -202,6 +225,32 @@ class SupplierDocumentManager {
           this.deleteMaterial(supplierId, materialId, materialName);
           return;
         }
+
+        // 批量邮件按钮
+        const batchEmailBtn = e.target.closest('.batch-email-btn');
+        if (batchEmailBtn) {
+          console.log('📧 点击批量邮件按钮', batchEmailBtn.dataset);
+          e.preventDefault();
+          const type = batchEmailBtn.dataset.type || 'common';
+          const supplierId = parseInt(batchEmailBtn.dataset.supplierId);
+          const materialId = batchEmailBtn.dataset.materialId ? parseInt(batchEmailBtn.dataset.materialId) : null;
+          const materialName = batchEmailBtn.dataset.materialName || null;
+          console.log('📧 调用批量邮件功能:', { type, supplierId, materialId, materialName });
+          this.generateBatchEmail(type, supplierId, materialId, materialName);
+          return;
+        }
+
+        // 单个邮件按钮
+        const singleEmailBtn = e.target.closest('.single-email-btn');
+        if (singleEmailBtn) {
+          console.log('📧 点击单个邮件按钮', singleEmailBtn.dataset);
+          e.preventDefault();
+          const documentId = parseInt(singleEmailBtn.dataset.documentId);
+          const supplierId = parseInt(singleEmailBtn.dataset.supplierId);
+          console.log('📧 调用单个邮件功能:', { documentId, supplierId });
+          this.generateSingleEmail(documentId, supplierId);
+          return;
+        }
       });
     } else {
       console.error('❌ 找不到容器元素 #documentsContainer');
@@ -260,6 +309,24 @@ class SupplierDocumentManager {
       // 新增物料模态框提交按钮
       if (e.target.closest('.add-material-submit-btn')) {
         await this.submitAddMaterial();
+        return;
+      }
+
+      // 邮件预览模态框关闭按钮
+      if (e.target.closest('.email-modal-close')) {
+        this.hideEmailModal();
+        return;
+      }
+
+      // 邮件预览模态框取消按钮
+      if (e.target.closest('.email-modal-cancel-btn')) {
+        this.hideEmailModal();
+        return;
+      }
+
+      // 邮件复制按钮
+      if (e.target.closest('.email-copy-btn')) {
+        await this.copyEmailContent();
         return;
       }
     });
@@ -624,7 +691,7 @@ class SupplierDocumentManager {
     const msds = supplier.commonDocuments['environmental_msds'];
     const msdsHtml = msds ? `
       <div class="doc-cell">
-        <div class="doc-date">${msds.expiryDate || '永久'}</div>
+        <div class="doc-date">${this.formatDate(msds.expiryDate)}</div>
         <div class="doc-status ${msds.status}">${this.getStatusIcon(msds.status)} ${msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
@@ -633,7 +700,7 @@ class SupplierDocumentManager {
     const qa = supplier.commonDocuments['quality_agreement'];
     const qaHtml = qa ? `
       <div class="doc-cell">
-        <div class="doc-date">${qa.expiryDate || '永久'}</div>
+        <div class="doc-date">${this.formatDate(qa.expiryDate)}</div>
         <div class="doc-status ${qa.status}">${this.getStatusIcon(qa.status)} ${qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
@@ -702,9 +769,14 @@ class SupplierDocumentManager {
       <div class="details-section">
         <div class="section-header">
           <h4>📋 通用资料</h4>
-          <button class="upload-btn" data-type="common" data-supplier-id="${supplierId}" title="上传通用资料">
-            📤 上传
-          </button>
+          <div class="section-actions">
+            <button class="email-btn batch-email-btn" data-type="common" data-supplier-id="${supplierId}" title="批量邮件通知">
+              📧 批量邮件
+            </button>
+            <button class="upload-btn" data-type="common" data-supplier-id="${supplierId}" title="上传通用资料">
+              📤 上传
+            </button>
+          </div>
         </div>
     `;
 
@@ -720,12 +792,15 @@ class SupplierDocumentManager {
             <span class="doc-type">${this.getDocumentTypeText(doc.documentType)}</span>
             <span class="doc-name">${doc.documentName}</span>
             <span class="doc-expiry">
-              ${doc.isPermanent ? '永久有效' : `到期: ${doc.expiryDate}`}
+              ${doc.isPermanent ? '永久有效' : `到期: ${this.formatDate(doc.expiryDate)}`}
             </span>
             ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
               <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
             ` : ''}
             <div class="doc-actions">
+              <button class="action-btn email-btn single-email-btn" data-document-id="${doc.id}" data-supplier-id="${supplierId}" title="发送邮件">
+                📧
+              </button>
               <button class="action-btn edit-btn" data-document-id="${doc.id}" title="编辑">✏️</button>
               <button class="action-btn delete-btn" data-document-id="${doc.id}" title="删除">🗑️</button>
             </div>
@@ -758,6 +833,9 @@ class SupplierDocumentManager {
             <div class="section-header">
               <h4>🏭 物料: ${material.materialName}</h4>
               <div class="section-actions">
+                <button class="email-btn batch-email-btn" data-type="material" data-supplier-id="${supplierId}" data-material-id="${material.materialId}" data-material-name="${material.materialName}" title="批量邮件通知">
+                  📧 批量邮件
+                </button>
                 <button class="upload-btn" data-type="material" data-supplier-id="${supplierId}" data-material-id="${material.materialId}" title="上传物料资料">
                   📤 上传资料
                 </button>
@@ -777,12 +855,15 @@ class SupplierDocumentManager {
                 <span class="doc-type">${this.getDocumentTypeText(doc.documentType)} (${doc.componentName})</span>
                 <span class="doc-name">${doc.documentName}</span>
                 <span class="doc-expiry">
-                  ${doc.isPermanent ? '永久有效' : `到期: ${doc.expiryDate}`}
+                  ${doc.isPermanent ? '永久有效' : `到期: ${this.formatDate(doc.expiryDate)}`}
                 </span>
                 ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
                   <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
                 ` : ''}
                 <div class="doc-actions">
+                  <button class="action-btn email-btn single-email-btn" data-document-id="${doc.id}" data-supplier-id="${supplierId}" title="发送邮件">
+                    📧
+                  </button>
                   <button class="action-btn edit-btn" data-document-id="${doc.id}" title="编辑">✏️</button>
                   <button class="action-btn delete-btn" data-document-id="${doc.id}" title="删除">🗑️</button>
                 </div>
@@ -890,7 +971,7 @@ class SupplierDocumentManager {
     }, 3000);
   }
 
-  /**
+    /**
    * 显示错误消息
    */
   showError(message) {
@@ -929,6 +1010,338 @@ class SupplierDocumentManager {
       toast.style.opacity = '0';
       toast.style.transform = 'translateX(100%)';
     }, 5000);
+  }
+
+  /**
+   * 单个邮件模板
+   */
+  getEmailTemplate() {
+    return `尊敬的{供应商名称}您好，
+
+感谢贵司一直以来对我司供应链工作的大力支持！
+
+我们通过供应商资料管理系统监测到，贵司提供的{物料名称}{具体构成名称}的{证书类型}将于{到期日期}到期（剩余{剩余天数}）。
+
+【更新建议】
+• 请在证书到期前完成更新并提交最新版本至我司质量部门
+• 如需延期请提前提供书面说明和预计完成时间
+
+再次感谢贵司的理解与配合，期待我们继续携手共进！
+
+此致
+敬礼
+
+{SQE工程师联系方式}
+质量部 | 供应商质量管理
+
+---
+此邮件由供应商资料管理系统自动发送，请勿直接回复。如已处理，请忽略本提醒。`;
+  }
+
+  /**
+   * 获取证书类型中文名称
+   */
+  getCertificateTypeText(documentType) {
+    const map = {
+      quality_agreement: '质量保证协议',
+      environmental_msds: 'MSDS',
+      iso_certification: 'ISO认证',
+      environmental_rohs: 'ROHS',
+      environmental_reach: 'REACH',
+      environmental_hf: 'HF',
+      csr: 'CSR',
+      other: '其他证书'
+    };
+    return map[documentType] || documentType;
+  }
+
+  /**
+   * 替换邮件模板变量
+   */
+  replaceEmailVariables(template, variables) {
+    let result = template;
+    
+    for (const [key, value] of Object.entries(variables)) {
+      const regex = new RegExp(`\\{${key}\\}`, 'g');
+      result = result.replace(regex, value || '');
+    }
+    
+    return result;
+  }
+
+  /**
+   * 生成单个邮件
+   */
+  async generateSingleEmail(documentId, supplierId) {
+    try {
+      console.log('📧 生成单个邮件:', { documentId, supplierId });
+      
+      // 获取供应商信息
+      const supplier = this.suppliers.find(s => s.supplierId === supplierId);
+      if (!supplier) {
+        this.showError('供应商信息不存在');
+        return;
+      }
+      
+      // 获取供应商详情
+      const details = await this.loadDetails(supplierId);
+      if (!details) {
+        this.showError('无法获取供应商详情');
+        return;
+      }
+      
+      // 查找目标文档
+      let targetDoc = null;
+      
+      // 在通用资料中查找
+      if (details.commonDocuments) {
+        targetDoc = details.commonDocuments.find(doc => doc.id === documentId);
+      }
+      
+      // 在物料资料中查找
+      if (!targetDoc && details.materials) {
+        for (const material of details.materials) {
+          if (material.documents) {
+            targetDoc = material.documents.find(doc => doc.id === documentId);
+            if (targetDoc) {
+              // 添加物料信息到文档对象
+              targetDoc.materialName = material.materialName;
+              break;
+            }
+          }
+        }
+      }
+      
+      if (!targetDoc) {
+        this.showError('文档信息不存在');
+        return;
+      }
+      
+      // 准备邮件变量
+      const variables = {
+        供应商名称: supplier.supplierName,
+        物料名称: targetDoc.materialName || '',
+        具体构成名称: targetDoc.componentName || '',
+        证书类型: this.getCertificateTypeText(targetDoc.documentType),
+        到期日期: targetDoc.isPermanent ? '永久有效' : this.formatDate(targetDoc.expiryDate),
+        剩余天数: targetDoc.isPermanent ? '永久有效' : `${targetDoc.daysUntilExpiry}天`,
+        SQE工程师联系方式: 'SQE团队' // 可以从配置中获取
+      };
+      
+      // 生成邮件内容
+      const template = this.getEmailTemplate();
+      const emailContent = this.replaceEmailVariables(template, variables);
+      
+      // 生成邮件主题
+      const urgency = targetDoc.daysUntilExpiry < 0 ? '【已过期】' : targetDoc.daysUntilExpiry <= 7 ? '【紧急】' : '【提醒】';
+      const subject = `${urgency}${this.getCertificateTypeText(targetDoc.documentType)}到期提醒 - ${supplier.supplierName}`;
+      
+      // 显示邮件预览模态框
+      this.showEmailModal(subject, emailContent);
+      
+    } catch (error) {
+      console.error('生成单个邮件失败:', error);
+      this.showError('生成邮件失败');
+    }
+  }
+
+  /**
+   * 生成批量邮件
+   */
+  async generateBatchEmail(type, supplierId, materialId = null, materialName = null) {
+    try {
+      console.log('📧 生成批量邮件:', { type, supplierId, materialId, materialName });
+      
+      // 获取供应商信息
+      const supplier = this.suppliers.find(s => s.supplierId === supplierId);
+      if (!supplier) {
+        this.showError('供应商信息不存在');
+        return;
+      }
+      
+      // 获取供应商详情
+      const details = await this.loadDetails(supplierId);
+      if (!details) {
+        this.showError('无法获取供应商详情');
+        return;
+      }
+      
+      let documentsToNotify = [];
+      
+      if (type === 'common') {
+        // 通用资料批量邮件
+        if (details.commonDocuments) {
+          documentsToNotify = details.commonDocuments.filter(doc => 
+            !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
+          );
+        }
+      } else if (type === 'material' && materialId) {
+        // 物料资料批量邮件
+        const material = details.materials.find(m => m.materialId === materialId);
+        if (material && material.documents) {
+          documentsToNotify = material.documents.filter(doc => 
+            !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
+          );
+        }
+      }
+      
+      if (documentsToNotify.length === 0) {
+        this.showSuccess('没有需要发送邮件的资料');
+        return;
+      }
+      
+      // 按证书类型分组
+      const groupedDocs = {};
+      documentsToNotify.forEach(doc => {
+        const certType = this.getCertificateTypeText(doc.documentType);
+        if (!groupedDocs[certType]) {
+          groupedDocs[certType] = [];
+        }
+        groupedDocs[certType].push(doc);
+      });
+      
+      // 生成汇总邮件内容
+      let emailContent = `尊敬的${supplier.supplierName}您好，
+
+感谢贵司一直以来对我司供应链工作的大力支持！
+
+我们通过供应商资料管理系统监测到，贵司有以下证书即将到期或已过期，需要及时更新处理：
+
+【证书到期监测清单】
+`;
+      
+      // 添加各种证书信息
+      for (const [certType, docs] of Object.entries(groupedDocs)) {
+        emailContent += `
+${certType}：
+`;
+        docs.forEach(doc => {
+          const materialInfo = doc.materialName ? `（物料：${doc.materialName}${doc.componentName ? ` - ${doc.componentName}` : ''}）` : '';
+          const status = doc.daysUntilExpiry < 0 ? `已过期${Math.abs(doc.daysUntilExpiry)}天` : `剩余${doc.daysUntilExpiry}天`;
+          const urgency = doc.daysUntilExpiry < 0 ? '🔴' : doc.daysUntilExpiry <= 7 ? '🟡' : '🟢';
+          emailContent += `${urgency} ${doc.documentName}${materialInfo}
+   到期日期：${this.formatDate(doc.expiryDate)}
+   状态：${status}
+`;
+        });
+      }
+      
+      emailContent += `
+【更新建议】
+• 请在证书到期前完成更新并提交最新版本至我司质量部门
+• 如需延期请提前提供书面说明和预计完成时间
+
+感谢贵司的积极配合，让我们共同维护供应链的质量稳定！
+
+如有任何问题或需要协助，请随时联系我们。
+
+此致
+敬礼
+
+{SQE工程师联系方式}
+质量部 | 供应商质量管理
+
+---
+此邮件由供应商资料管理系统自动发送，请勿直接回复。如已处理，请忽略本提醒。`;
+      
+      // 生成邮件主题
+      const hasExpired = documentsToNotify.some(doc => doc.daysUntilExpiry < 0);
+      const hasUrgent = documentsToNotify.some(doc => doc.daysUntilExpiry <= 7 && doc.daysUntilExpiry >= 0);
+      const urgency = hasExpired ? '【已过期】' : hasUrgent ? '【紧急】' : '【提醒】';
+      const subject = `${urgency}证书到期汇总提醒 - ${supplier.supplierName}（共${documentsToNotify.length}个证书）`;
+      
+      // 显示邮件预览模态框
+      this.showEmailModal(subject, emailContent);
+      
+    } catch (error) {
+      console.error('生成批量邮件失败:', error);
+      this.showError('生成批量邮件失败');
+    }
+  }
+
+  /**
+   * 显示邮件预览模态框
+   */
+  showEmailModal(subject, content) {
+    const modal = document.getElementById('emailPreviewModal');
+    const subjectInput = document.getElementById('emailSubject');
+    const contentTextarea = document.getElementById('emailContent');
+    
+    if (modal && subjectInput && contentTextarea) {
+      subjectInput.value = subject;
+      contentTextarea.value = content;
+      
+      // 显示模态框
+      modal.style.setProperty('display', 'flex', 'important');
+      modal.style.setProperty('z-index', '9999', 'important');
+      modal.style.setProperty('position', 'fixed', 'important');
+      modal.style.setProperty('top', '0', 'important');
+      modal.style.setProperty('left', '0', 'important');
+      modal.style.setProperty('width', '100%', 'important');
+      modal.style.setProperty('height', '100%', 'important');
+      modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
+      modal.style.setProperty('align-items', 'center', 'important');
+      modal.style.setProperty('justify-content', 'center', 'important');
+      
+      console.log('✅ 邮件预览模态框已显示');
+    } else {
+      console.error('❌ 找不到邮件预览模态框元素');
+      this.showError('邮件预览模态框加载失败');
+    }
+  }
+
+  /**
+   * 隐藏邮件预览模态框
+   */
+  hideEmailModal() {
+    const modal = document.getElementById('emailPreviewModal');
+    if (modal) {
+      modal.style.display = 'none';
+      console.log('✅ 邮件预览模态框已隐藏');
+    }
+  }
+
+  /**
+   * 复制邮件内容到剪贴板
+   */
+  async copyEmailContent() {
+    const contentTextarea = document.getElementById('emailContent');
+    if (contentTextarea) {
+      try {
+        await this.copyToClipboard(contentTextarea.value);
+        this.showSuccess('邮件内容已复制到剪贴板');
+        this.hideEmailModal();
+      } catch (error) {
+        console.error('复制邮件内容失败:', error);
+        this.showError('复制失败');
+      }
+    }
+  }
+
+  /**
+   * 复制内容到剪贴板
+   */
+  async copyToClipboard(text) {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+      } else {
+        // 兼容旧版浏览器
+        const textArea = document.createElement("textarea");
+        textArea.value = text;
+        textArea.style.position = "fixed";
+        textArea.style.left = "-999999px";
+        textArea.style.top = "-999999px";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand('copy');
+        textArea.remove();
+      }
+    } catch (error) {
+      console.error('复制到剪贴板失败:', error);
+      throw new Error('复制失败');
+    }
   }
 
   /**

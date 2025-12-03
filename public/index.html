@@ -858,6 +858,30 @@
         </div>
     </div>
 
+    <!-- 邮件预览模态框 -->
+    <div id="emailPreviewModal" class="modal" style="display: none;">
+        <div class="modal-content email-modal-content">
+            <div class="modal-header">
+                <h3>邮件预览</h3>
+                <button class="modal-close email-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="email-subject">
+                    <label>邮件主题</label>
+                    <input type="text" id="emailSubject" readonly>
+                </div>
+                <div class="email-content">
+                    <label>邮件内容</label>
+                    <textarea id="emailContent" rows="15" readonly></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary email-modal-cancel-btn">关闭</button>
+                <button type="button" class="btn btn-primary email-copy-btn">📋 复制到剪贴板</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>

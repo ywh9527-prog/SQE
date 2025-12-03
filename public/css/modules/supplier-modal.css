@@ -257,6 +257,89 @@
   background-color: #dc2626;
 }
 
+/* 邮件按钮样式 */
+.email-btn {
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.email-btn:hover {
+  background-color: #2563eb;
+}
+
+.batch-email-btn {
+  background-color: #8b5cf6;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 8px;
+}
+
+.batch-email-btn:hover {
+  background-color: #7c3aed;
+}
+
+/* 邮件预览模态框样式 */
+.email-modal-content {
+  max-width: 800px;
+  width: 90%;
+}
+
+.email-subject {
+  margin-bottom: 20px;
+}
+
+.email-subject label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.email-subject input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  background-color: #f9fafb;
+}
+
+.email-content {
+  margin-bottom: 20px;
+}
+
+.email-content label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 500;
+  color: #374151;
+}
+
+.email-content textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  font-family: 'Microsoft YaHei', Arial, sans-serif;
+  resize: vertical;
+  background-color: #f9fafb;
+  white-space: pre-wrap;
+}
+
 /* 新增物料按钮样式 */
 .add-material-btn {
   width: 100%;
