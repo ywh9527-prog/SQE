@@ -24,6 +24,8 @@
     <link rel="stylesheet" href="css/modules/supplier-tree.css">
     <!-- 供应商表格视图样式 v3.1 -->
     <link rel="stylesheet" href="css/modules/supplier-table.css">
+    <!-- 供应商模态框样式 -->
+    <link rel="stylesheet" href="css/modules/supplier-modal.css">
     <!-- 模态框修复样式 -->
     <link rel="stylesheet" href="css/modal-fix.css">
     <script src="js/chart.min.js"></script>
@@ -555,157 +557,9 @@
         </main>
     </div>
 
-    <!-- 上传模态框 -->
-    <div class="modal" id="uploadModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>上传资料</h3>
-                <button class="modal-close" id="closeUploadModal">×</button>
-            </div>
+    
 
-            <div class="modal-body">
-                <form id="uploadForm">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="uploadSupplierId">供应商 *</label>
-                            <select id="uploadSupplierId" class="form-control" required>
-                                <option value="">请选择供应商</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="uploadDocumentType">资料类型 *</label>
-                            <select id="uploadDocumentType" class="form-control" required>
-                                <option value="">请选择资料类型</option>
-                                <option value="quality_agreement">质量保证协议</option>
-                                <option value="environmental_rohs">ROHS</option>
-                                <option value="environmental_reach">REACH</option>
-                                <option value="environmental_msds">MSDS</option>
-                                <option value="environmental_hf">HF</option>
-                                <option value="csr">CSR</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="uploadDocumentName">版本号</label>
-                        <input type="text" id="uploadDocumentName" class="form-control"
-                            placeholder="如：V1.0, 2024版等（可选，不填将自动生成）">
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="uploadDocumentNumber">协议编号</label>
-                            <input type="text" id="uploadDocumentNumber" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <div class="permanent-checkbox">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="uploadPermanent"
-                                        onchange="supplierManager.togglePermanentDate()">
-                                    <span class="checkmark"></span>
-                                    永久有效
-                                </label>
-                            </div>
-                            <label for="uploadExpiryDate">到期日期 *</label>
-                            <input type="date" id="uploadExpiryDate" class="form-control" required>
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="uploadResponsiblePerson">责任人</label>
-                            <input type="text" id="uploadResponsiblePerson" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="uploadIssuingAuthority">发证机构</label>
-                            <input type="text" id="uploadIssuingAuthority" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="uploadRemarks">备注</label>
-                        <textarea id="uploadRemarks" class="form-control" rows="3"></textarea>
-                    </div>
-
-                    <div class="form-group">
-                        <label>文件上传 *</label>
-                        <div class="file-upload-area" id="uploadDropZone">
-                            <div class="upload-icon">📤</div>
-                            <div class="upload-text">
-                                <p>拖拽文件到此处或点击选择文件</p>
-                                <p class="upload-hint">支持 PDF, DOC, DOCX, XLS, XLSX, JPG, PNG 格式，最大100MB</p>
-                            </div>
-                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png"
-                                hidden>
-                        </div>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="supplierManager.hideUploadModal()">取消</button>
-                <button type="button" class="btn btn-primary" id="submitUploadBtn">上传</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- 编辑模态框 -->
-    <div class="modal" id="editModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>编辑资料</h3>
-                <button class="modal-close" id="closeEditModal">×</button>
-            </div>
-
-            <div class="modal-body">
-                <form id="editForm">
-                    <input type="hidden" id="editDocumentId">
-
-                    <div class="form-group">
-                        <label for="editDocumentName">资料名称 *</label>
-                        <input type="text" id="editDocumentName" class="form-control" required>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editDocumentNumber">协议编号</label>
-                            <input type="text" id="editDocumentNumber" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editExpiryDate">到期日期</label>
-                            <input type="date" id="editExpiryDate" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="editResponsiblePerson">责任人</label>
-                            <input type="text" id="editResponsiblePerson" class="form-control">
-                        </div>
-
-                        <div class="form-group">
-                            <label for="editIssuingAuthority">发证机构</label>
-                            <input type="text" id="editIssuingAuthority" class="form-control">
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="editRemarks">备注</label>
-                        <textarea id="editRemarks" class="form-control" rows="3"></textarea>
-                    </div>
-                </form>
-            </div>
-
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" onclick="supplierManager.hideEditModal()">取消</button>
-                <button type="button" class="btn btn-primary" id="submitEditBtn">保存</button>
-            </div>
-        </div>
-    </div>
+    
 
     <!-- 工具脚本 (最先加载) -->
     <script src="js/utils/api.js?v=20251124"></script>
@@ -856,6 +710,154 @@
 
     <!-- 主入口脚本 (必须最后加载) -->
     <script src="js/app.js"></script>
+<!-- 上传模态框 -->
+    <div id="uploadModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="uploadModalTitle">上传资料</h3>
+                <button class="modal-close upload-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm">
+                    <!-- 供应商信息 -->
+                    <div class="form-group">
+                        <label>供应商</label>
+                        <input type="text" id="uploadSupplierName" readonly>
+                    </div>
+
+                    <!-- 物料信息 (仅物料资料上传时显示) -->
+                    <div class="form-group" id="materialGroup" style="display: none;">
+                        <label>物料</label>
+                        <input type="text" id="uploadMaterialName" readonly>
+                    </div>
+
+                    <!-- 资料类型 -->
+                    <div class="form-group">
+                        <label>资料类型</label>
+                        <select id="documentType" required>
+                            <option value="">请选择</option>
+                            <option value="quality_agreement">质量保证协议</option>
+                            <option value="environmental_msds">MSDS</option>
+                            <option value="iso_certification">ISO认证</option>
+                            <option value="environmental_rohs">ROHS</option>
+                            <option value="environmental_reach">REACH</option>
+                            <option value="environmental_hf">HF</option>
+                            <option value="csr">CSR</option>
+                            <option value="other">其他</option>
+                        </select>
+                    </div>
+
+                    <!-- 构成名称 (仅物料资料上传时显示) -->
+                    <div class="form-group" id="componentGroup" style="display: none;">
+                        <label>构成名称</label>
+                        <input type="text" id="componentName" placeholder="请输入构成名称">
+                    </div>
+
+                    <!-- 文件上传区域 -->
+                    <div class="form-group">
+                        <label>选择文件</label>
+                        <div class="upload-drop-zone" id="uploadDropZone">
+                            <div class="upload-icon">📁</div>
+                            <p>拖拽文件到此处或点击选择</p>
+                            <input type="file" id="fileInput" accept=".pdf,.xlsx,.xls,.doc,.docx" style="display: none;">
+                        </div>
+                        <div id="filePreview" class="file-preview" style="display: none;">
+                            <span class="file-name"></span>
+                            <button type="button" class="remove-file" onclick="supplierManager.removeSelectedFile()">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- 到期日期 -->
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isPermanent" onchange="supplierManager.togglePermanentDate()">
+                            永久有效
+                        </label>
+                        <input type="date" id="expiryDate" class="expiry-date">
+                    </div>
+
+                    <!-- 备注 -->
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="documentRemark" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary upload-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary upload-submit-btn">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑模态框 -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑资料</h3>
+                <button class="modal-close edit-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <!-- 资料名称 -->
+                    <div class="form-group">
+                        <label>资料名称</label>
+                        <input type="text" id="editDocumentName" required>
+                    </div>
+
+                    <!-- 到期日期 -->
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="editIsPermanent" onchange="supplierManager.toggleEditPermanentDate()">
+                            永久有效
+                        </label>
+                        <input type="date" id="editExpiryDate" class="expiry-date">
+                    </div>
+
+                    <!-- 备注 -->
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="editDocumentRemark" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary edit-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary edit-submit-btn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增物料模态框 -->
+    <div id="addMaterialModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新增物料</h3>
+                <button class="modal-close add-material-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addMaterialForm">
+                    <div class="form-group">
+                        <label>物料名称</label>
+                        <input type="text" id="newMaterialName" required placeholder="请输入物料名称">
+                    </div>
+                    <div class="form-group">
+                        <label>物料编码</label>
+                        <input type="text" id="newMaterialCode" placeholder="请输入物料编码（可选）">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="newMaterialRemark" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary add-material-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary add-material-submit-btn">添加</button>
+            </div>
+        </div>
+    </div>
+
 </body>
 
 </html>
