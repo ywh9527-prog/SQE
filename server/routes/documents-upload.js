@@ -15,38 +15,28 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const { sequelize } = require('../database/config');
+const LocalFileSyncService = require('../services/local-file-sync-service');
 
-// 配置文件上传
+// 创建本地文件同步服务实例
+const localFileSyncService = new LocalFileSyncService();
+
+// 配置文件上传（临时存储，后续会移动到正确位置）
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-        const { supplierId, level, materialId, componentId } = req.body;
-
-        // 根据层级构建文件路径
-        let uploadPath = path.join(__dirname, '../../uploads');
-
-        if (supplierId) {
-            uploadPath = path.join(uploadPath, `supplier_${supplierId}`);
+        const tempPath = path.join(__dirname, '../../uploads/temp');
+        
+        // 确保临时目录存在
+        if (!fs.existsSync(tempPath)) {
+            fs.mkdirSync(tempPath, { recursive: true });
         }
-
-        if (level === 'component' && materialId && componentId) {
-            uploadPath = path.join(uploadPath, `material_${materialId}`, `component_${componentId}`);
-        } else if (level === 'material' && materialId) {
-            uploadPath = path.join(uploadPath, `material_${materialId}`);
-        }
-
-        // 确保目录存在
-        if (!fs.existsSync(uploadPath)) {
-            fs.mkdirSync(uploadPath, { recursive: true });
-        }
-
-        cb(null, uploadPath);
+        
+        cb(null, tempPath);
     },
     filename: function (req, file, cb) {
-        // 生成唯一文件名: 时间戳_原始文件名
+        // 生成临时文件名
         const timestamp = Date.now();
         const ext = path.extname(file.originalname);
-        const basename = path.basename(file.originalname, ext);
-        const filename = `${basename}_${timestamp}${ext}`;
+        const filename = `temp_${timestamp}_${Math.random().toString(36).substr(2, 9)}${ext}`;
         cb(null, filename);
     }
 });
@@ -214,13 +204,91 @@ router.post('/upload', upload.single('file'), async (req, res) => {
                 'UPDATE supplier_documents SET is_current = 0 WHERE id = ?',
                 { replacements: [existing[0].id] }
             );
+            
+            // 将旧文件移动到备份目录
+            const oldDocument = existing[0];
+            if (oldDocument.file_path) {
+                try {
+                    await localFileSyncService.syncDelete({
+                        id: oldDocument.id,
+                        filePath: oldDocument.file_path,
+                        documentType: oldDocument.document_type,
+                        supplierId: oldDocument.supplier_id,
+                        materialId: oldDocument.material_id
+                    });
+                    console.log(`✅ 旧版本文件已备份: ${oldDocument.file_path}`);
+                } catch (backupError) {
+                    console.error(`⚠️ 旧版本文件备份失败:`, backupError);
+                    // 不阻止新文件上传，只记录错误
+                }
+            }
+            
             version = existing[0].version + 1;
         }
 
+        // 获取供应商信息用于文件同步
+        const [supplierData] = await sequelize.query(
+            'SELECT name FROM suppliers WHERE id = ?',
+            { replacements: [supplierId] }
+        );
+        
+        let supplierName = `供应商${supplierId}`;
+        if (supplierData.length > 0) {
+            supplierName = supplierData[0].name;
+        }
+
+        // 获取物料信息（如果是物料资料）
+        let materialName = '';
+        if (materialId) {
+            const [materialData] = await sequelize.query(
+                'SELECT material_name FROM materials WHERE id = ?',
+                { replacements: [materialId] }
+            );
+            if (materialData.length > 0) {
+                materialName = materialData[0].material_name;
+            }
+        }
+
+        // 转换文档类型为中文
+        const documentTypeMap = {
+            'quality_agreement': '质量协议',
+            'environmental_msds': 'MSDS安全数据表',
+            'iso_certification': 'ISO认证',
+            'csr': 'CSR报告',
+            'other': '其他证书',
+            'environmental_rohs': 'ROHS认证',
+            'environmental_reach': 'REACH合规声明',
+            'environmental_hf': 'HF认证'
+        };
+        const documentTypeChinese = documentTypeMap[documentType] || documentType;
+
+        // 使用LocalFileSyncService同步文件到正确位置
+        const syncResult = await localFileSyncService.syncUpload({
+            tempFilePath: req.file.path,
+            originalname: req.file.originalname,
+            size: req.file.size
+        }, {
+            id: supplierId,
+            supplierName: supplierName
+        }, materialName ? {
+            id: materialId,
+            materialName: materialName
+        } : null, documentTypeChinese, componentId || '', version);
+
         // 插入新资料记录
-        const filePath = req.file.path.replace(/\\/g, '/'); // 统一使用正斜杠
+        const filePath = syncResult.finalPath.replace(/\\/g, '/'); // 统一使用正斜杠
         const fileSize = req.file.size;
         const isPermanentBool = isPermanent === 'true' || isPermanent === true ? 1 : 0;
+
+        console.log(`📊 准备插入数据库记录:`, {
+            supplierId,
+            level,
+            documentType,
+            documentName,
+            filePath,
+            fileSize,
+            version
+        });
 
         const result = await sequelize.query(
             `INSERT INTO supplier_documents (
@@ -257,7 +325,14 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         const changes = result[1]?.changes || 0;
         const documentId = result[1]?.lastID || null;
         
+        console.log(`📊 数据库插入结果:`, {
+            changes,
+            documentId,
+            result: result
+        });
+        
         if (changes !== 1 || !documentId) {
+            console.error(`❌ 插入失败: changes=${changes}, documentId=${documentId}`);
             throw new Error(`插入失败: changes=${changes}, documentId=${documentId}`);
         }
 
@@ -456,6 +531,79 @@ router.get('/expired', async (req, res) => {
         res.status(500).json({
             success: false,
             error: '查询已过期资料失败',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * DELETE /api/documents/:documentId
+ * 删除资料（同步到本地文件系统）
+ */
+router.delete('/:documentId', async (req, res) => {
+    try {
+        console.log(`🗑️ DELETE /api/documents/delete/:documentId 被调用，documentId: ${req.params.documentId}`);
+        const { documentId } = req.params;
+
+        if (!documentId) {
+            return res.status(400).json({
+                success: false,
+                error: '缺少文档ID',
+                message: 'documentId 为必填项'
+            });
+        }
+
+        // 获取文档信息
+        const [documents] = await sequelize.query(
+            'SELECT * FROM supplier_documents WHERE id = ?',
+            { replacements: [documentId] }
+        );
+
+        if (documents.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: '文档不存在',
+                message: '未找到指定的文档'
+            });
+        }
+
+        const document = documents[0];
+
+        // 使用LocalFileSyncService同步删除（移动到备份）
+        console.log(`🗑️ 开始删除同步，文档信息:`, {
+            id: document.id,
+            filePath: document.file_path,
+            documentType: document.document_type,
+            supplierId: document.supplier_id,
+            materialId: document.material_id
+        });
+
+        await localFileSyncService.syncDelete({
+            id: document.id,
+            filePath: document.file_path,
+            documentType: document.document_type,
+            supplierId: document.supplier_id,
+            materialId: document.material_id
+        });
+
+        console.log('✅ 删除同步完成');
+
+        // 删除数据库记录
+        await sequelize.query(
+            'DELETE FROM supplier_documents WHERE id = ?',
+            { replacements: [documentId] }
+        );
+
+        res.json({
+            success: true,
+            message: '资料删除成功'
+        });
+
+    } catch (error) {
+        console.error('删除资料失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '删除资料失败',
             message: error.message
         });
     }

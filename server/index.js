@@ -48,8 +48,7 @@ console.log('✅ documentsUploadRoutes 加载完成');
 const suppliersSummaryRoutes = require('./routes/suppliers-summary');
 console.log('✅ suppliersSummaryRoutes 加载完成');
 
-// 供应商同步路由
-const suppliersSyncRoutes = require('./routes/suppliers-sync');
+
 console.log('✅ suppliersSyncRoutes 加载完成');
 
 
@@ -70,8 +69,8 @@ app.use('/api', dataSourceRoutes);
 console.log('✅ /api/* 路由已注册 (data-source)');
 app.use('/api', supplierSearchRoutes);
 console.log('✅ /api/* 路由已注册 (supplier-search)');
-app.use('/api/documents', documentRoutes);
-console.log('✅ /api/documents/* 路由已注册 (documents)');
+app.use('/api/documents', documentsUploadRoutes);
+console.log('✅ /api/documents/upload 路由已注册 (documents-upload)');
 
 // v3.0 新路由注册 (必须在 suppliersRoutes 之前，避免 /tree 被当作 /:id)
 app.use('/api/suppliers', suppliersTreeRoutes);
@@ -79,18 +78,15 @@ console.log('✅ /api/suppliers/tree 路由已注册 (suppliers-tree)');
 app.use('/api/suppliers', suppliersSummaryRoutes);
 console.log('✅ /api/suppliers/summary 路由已注册 (suppliers-summary)');
 
+
 // 旧的 suppliers 路由 (包含 /:id 参数路由，必须放在后面)
 app.use('/api/suppliers', suppliersRoutes);
 console.log('✅ /api/suppliers/* 路由已注册 (suppliers，包含 /:id)');
 
 app.use('/api/materials', materialsRoutes);
 console.log('✅ /api/materials/* 路由已注册 (materials)');
-app.use('/api/documents', documentsUploadRoutes);
-console.log('✅ /api/documents/upload 路由已注册 (documents-upload)');
-
-// 供应商同步路由注册
-app.use('/api/suppliers', suppliersSyncRoutes);
-console.log('✅ /api/suppliers/sync-from-iqc 路由已注册 (suppliers-sync)');
+app.use('/api/documents', documentRoutes);
+console.log('✅ /api/documents/* 路由已注册 (documents)');
 
 console.log('🎉 所有API路由注册完成');
 

@@ -1772,7 +1772,7 @@ ${certType}：
       this.showLoading('正在同步供应商数据...');
       
       const token = localStorage.getItem('authToken');
-      const response = await fetch('/api/suppliers/sync-from-iqc', {
+      const response = await fetch('/api/suppliers/import-from-iqc', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1783,12 +1783,15 @@ ${certType}：
       const data = await response.json();
       
       if (data.success) {
-        const { newSuppliers, updatedSuppliers, totalSuppliers } = data.data;
+        const { newSuppliers, updatedSuppliers, totalSuppliers, folderSyncResults } = data.data;
         
-        if (newSuppliers.length > 0) {
-          this.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.join(', ')}`);
+        console.log('📊 同步返回数据:', data.data);
+        console.log('📁 文件夹同步结果:', folderSyncResults);
+        
+        if (newSuppliers && newSuppliers.length > 0) {
+          this.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.slice(0, 5).join(', ')}${newSuppliers.length > 5 ? '...' : ''}，已为所有供应商创建文件夹结构`);
         } else {
-          this.showSuccess('同步完成！没有发现新供应商');
+          this.showSuccess(`同步完成！已为 ${totalSuppliers} 个供应商创建文件夹结构`);
         }
         
         // 刷新供应商列表

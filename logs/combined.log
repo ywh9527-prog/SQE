@@ -3557,3 +3557,75 @@
 2025-12-03 17:58:45 [INFO]: 数据库连接成功 (SQLite)
 2025-12-03 17:58:45 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
 2025-12-03 17:58:45 [INFO]: 数据库模型已同步
+2025-12-03 19:26:44 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 19:26:44 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 19:26:44 [INFO]: 数据库模型已同步
+2025-12-03 20:24:52 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 20:24:52 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 20:24:52 [INFO]: 数据库模型已同步
+2025-12-03 20:24:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 20:24:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 20:24:55 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 20:26:30 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 20:26:31 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 20:30:25 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 20:30:25 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 20:30:25 [INFO]: 数据库模型已同步
+2025-12-03 20:41:33 [ERROR]: 令牌验证错误: jwt malformed
+2025-12-03 20:57:26 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 20:57:26 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 20:57:26 [INFO]: 数据库模型已同步
+2025-12-03 20:58:49 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 20:58:56 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 21:23:07 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 21:23:47 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 21:23:47 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 21:23:47 [INFO]: 数据库模型已同步
+2025-12-03 22:12:36 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 22:12:36 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 22:12:36 [INFO]: 数据库模型已同步
+2025-12-03 22:32:07 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 22:32:09 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 22:35:47 [ERROR]: 文件上传同步失败: The "path" argument must be of type string or an instance of Buffer or URL. Received undefined
+2025-12-03 22:35:58 [ERROR]: 文件删除同步失败: Cannot read properties of undefined (reading 'filePath')
+2025-12-03 22:36:31 [ERROR]: 文件上传同步失败: dest already exists.
+2025-12-03 22:52:31 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 22:52:51 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 22:52:51 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 22:52:51 [INFO]: 数据库模型已同步
+2025-12-03 22:53:04 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 22:54:16 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 22:54:50 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 22:54:50 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 22:54:50 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-03 22:55:01 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2025-12-03 22:55:16 [INFO]: 数据库连接成功 (SQLite)
+2025-12-03 22:55:16 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-03 22:55:16 [INFO]: 数据库模型已同步
+2025-12-04 01:38:51 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 01:38:51 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 01:38:51 [INFO]: 数据库模型已同步
+2025-12-04 01:38:53 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-04 01:38:54 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-04 01:38:54 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-04 01:46:37 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 01:46:37 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 01:46:37 [INFO]: 数据库模型已同步
+2025-12-04 01:46:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-04 01:46:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-04 01:46:39 [INFO]: 周度统计: 本周(2025-11-28~2025-12-04) 数据量=0, 上周(2025-11-21~2025-11-27) 数据量=0
+2025-12-04 01:52:26 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 01:52:26 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 01:52:26 [INFO]: 数据库模型已同步
+2025-12-04 01:59:32 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 01:59:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 01:59:32 [INFO]: 数据库模型已同步
+2025-12-04 02:07:32 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 02:07:32 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 02:07:32 [INFO]: 数据库模型已同步
+2025-12-04 02:10:56 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 02:10:56 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 02:10:56 [INFO]: 数据库模型已同步
+2025-12-04 02:13:02 [INFO]: 数据库连接成功 (SQLite)
+2025-12-04 02:13:02 [INFO]: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-04 02:13:02 [INFO]: 数据库模型已同步

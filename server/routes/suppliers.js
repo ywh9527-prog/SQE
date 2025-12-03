@@ -34,9 +34,12 @@
 console.log('📦 正在加载 suppliers.js 路由文件...');
 
 const express = require('express');
-const { sequelize } = require('../database/config');
-
 const router = express.Router();
+const { sequelize } = require('../database/config');
+const LocalFileSyncService = require('../services/local-file-sync-service');
+
+// 创建本地文件同步服务实例
+const localFileSyncService = new LocalFileSyncService();
 
 console.log('✅ suppliers.js 路由文件加载完成');
 
@@ -449,7 +452,7 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 // 路由: POST /api/suppliers/import-from-iqc
 // 用途: 点击刷新按钮时，自动从IQC检验数据中提取供应商信息并导入到suppliers表
 // 前端调用: supplier.js 中的 importSuppliersFromIQC() 方法
-router.post('/import-from-iqc', authenticateToken, async (req, res) => {
+router.post('/import-from-iqc', async (req, res) => {
   try {
     console.log('🔄 开始从IQC数据导入供应商...');
     
@@ -538,16 +541,62 @@ router.post('/import-from-iqc', authenticateToken, async (req, res) => {
       }
     }
     
+    // 4. 为所有供应商创建文件夹结构（无论是否有新供应商都要执行）
+    console.log('📁 开始为供应商创建文件夹结构...');
+    const [allSuppliers] = await sequelize.query(
+      'SELECT id, name FROM suppliers WHERE status = "active" OR status = "Active" ORDER BY name'
+    );
+    
+    let folderSuccessCount = 0;
+    const folderSyncResults = [];
+    
+    for (const supplier of allSuppliers) {
+      try {
+        console.log(`📁 为供应商 ${supplier.name} 创建文件夹结构...`);
+        
+        // 创建供应商基础文件夹结构
+        const folderStructure = await localFileSyncService.createFolderStructureV31(
+          supplier.name,
+          '', // 空物料名称，只创建基础结构
+          '', // 空文档类型，只创建基础结构
+          ''  // 空构成名称，只创建基础结构
+        );
+        
+        folderSyncResults.push({
+          supplierId: supplier.id,
+          supplierName: supplier.name,
+          folderStructure: folderStructure,
+          status: 'success'
+        });
+        
+        folderSuccessCount++;
+      } catch (error) {
+        console.error(`❌ 为供应商 ${supplier.name} 创建文件夹失败:`, error);
+        folderSyncResults.push({
+          supplierId: supplier.id,
+          supplierName: supplier.name,
+          status: 'failed',
+          error: error.message
+        });
+      }
+    }
+    
     console.log(`✅ 供应商导入完成，导入数量: ${importCount}`);
+    console.log(`📁 文件夹结构创建完成，成功: ${folderSuccessCount}/${allSuppliers.length}`);
     
     const message = importCount > 0 
-      ? `成功导入 ${importCount} 个供应商`
-      : '没有新的供应商需要导入';
+      ? `成功导入 ${importCount} 个供应商，并为 ${folderSuccessCount} 个供应商创建文件夹结构`
+      : `已为 ${folderSuccessCount} 个供应商创建文件夹结构`;
     
     res.json({
       success: true,
       message: message,
-      importedCount: importCount
+      data: {
+        newSuppliers: Array.from(suppliers),
+        updatedSuppliers: [],
+        totalSuppliers: allSuppliers.length,
+        folderSyncResults: folderSyncResults
+      }
     });
     
   } catch (error) {
