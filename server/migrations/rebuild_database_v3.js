@@ -5,8 +5,8 @@
  * 
  * 主要变更:
  * 1. 删除所有现有测试数据
- * 2. 重建表结构,支持三级层级 (供应商 → 物料 → 具体构成)
- * 3. MSDS归为供应商级资料
+ * 2. 重建表结构,支持三层架构 (供应商 → 物料 → 资料(构成备注))
+ * 3. MSDS归为通用资料
  * 4. 支持用户自定义物料和构成名称
  * 
  * 执行方式: node server/migrations/rebuild_database_v3.js
@@ -167,7 +167,7 @@ async function rebuildDatabase() {
     `);
         console.log('  ✅ 插入5个示例构成');
 
-        // 4.4 插入供应商级资料 (质量保证协议、MSDS)
+        // 4.4 插入通用资料 (质量保证协议、MSDS)
         await sequelize.query(`
       INSERT INTO supplier_documents 
         (supplier_id, level, document_type, document_name, file_path, file_size, expiry_date, is_permanent)
@@ -176,9 +176,9 @@ async function rebuildDatabase() {
         (1, 'supplier', 'environmental_msds', 'MSDS报告 V2.0', '/uploads/supplier_1/msds_v2.pdf', 512000, '2026-06-30', 0),
         (2, 'supplier', 'quality_agreement', '质量保证协议 V1.0', '/uploads/supplier_2/quality_agreement_v1.pdf', 1024000, '2025-09-15', 0)
     `);
-        console.log('  ✅ 插入3个供应商级资料');
+        console.log('  ✅ 插入3个通用资料');
 
-        // 4.5 插入具体构成级资料 (ROHS、REACH、HF)
+        // 4.5 插入物料资料 (ROHS、REACH、HF)
         await sequelize.query(`
       INSERT INTO supplier_documents 
         (supplier_id, level, material_id, component_id, document_type, document_name, file_path, file_size, expiry_date, is_permanent)
@@ -190,7 +190,7 @@ async function rebuildDatabase() {
         (1, 'component', 2, 3, 'environmental_rohs', 'ROHS V2.0', '/uploads/supplier_1/material_2/component_3/rohs_v2.pdf', 256000, '2025-10-15', 0),
         (1, 'component', 2, 3, 'environmental_reach', 'REACH V1.5', '/uploads/supplier_1/material_2/component_3/reach_v1.5.pdf', 256000, '2025-11-30', 0)
     `);
-        console.log('  ✅ 插入6个具体构成级资料');
+        console.log('  ✅ 插入6个物料资料');
 
         console.log('\n✅ 数据库重构完成！\n');
 

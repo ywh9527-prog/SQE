@@ -2,7 +2,7 @@
  * 资料上传 API 路由
  * 
  * 功能:
- * 1. 上传资料 (支持三级层级: supplier/material/component)
+ * 1. 上传资料 (支持三层架构: supplier/material/component-作为备注)
  * 2. 查询即将过期的资料
  * 3. 查询已过期的资料
  * 4. 更新资料信息
@@ -71,7 +71,7 @@ const upload = multer({
 
 /**
  * POST /api/documents/upload
- * 上传资料 (支持三级层级)
+ * 上传资料 (支持三层架构)
  * 
  * Body (multipart/form-data):
  * - supplierId: 供应商ID (必填)
@@ -123,39 +123,68 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         }
 
         // 验证层级相关字段
-        if ((level === 'material' || level === 'component') && !materialId) {
+        if (level === 'component' && !materialId) {
             return res.status(400).json({
                 success: false,
                 error: '缺少必填字段',
-                message: 'level为material或component时，materialId为必填项'
+                message: '物料资料上传时，materialId为必填项'
             });
         }
 
-        if (level === 'component' && !componentId) {
-            return res.status(400).json({
-                success: false,
-                error: '缺少必填字段',
-                message: 'level为component时，componentId为必填项'
-            });
-        }
+        // 注意：componentId不再是必填项，构成信息现在作为备注处理
 
-        // 验证供应商级资料类型
+        // 验证通用资料类型
         const supplierLevelTypes = ['quality_agreement', 'environmental_msds', 'iso_certification', 'csr', 'other'];
         const componentLevelTypes = ['environmental_rohs', 'environmental_reach', 'environmental_hf'];
 
         if (level === 'supplier' && !supplierLevelTypes.includes(documentType)) {
+            const docTypeMap = {
+                'environmental_rohs': 'ROHS认证',
+                'environmental_reach': 'REACH合规声明',
+                'environmental_hf': 'HF认证',
+                'environmental_msds': 'MSDS安全数据表'
+            };
+            
+            const suggestedType = docTypeMap[documentType];
+            const documentTypeChinese = suggestedType || documentType;
+            let message = `请选择正确的资料类型`;
+            
+            if (suggestedType) {
+                message += `。"${documentTypeChinese}"属于物料资料类型，请上传到物料的对应构成部分`;
+            } else {
+                message += `。通用资料类型包括: 质量保证协议、MSDS安全数据表、ISO认证、CSR报告、其他证书`;
+            }
+            
             return res.status(400).json({
                 success: false,
-                error: '资料类型错误',
-                message: `供应商级资料类型应为: ${supplierLevelTypes.join(', ')}`
+                error: '资料类型不匹配',
+                message: message
             });
         }
 
         if (level === 'component' && !componentLevelTypes.includes(documentType)) {
+            const supplierTypeMap = {
+                'quality_agreement': '质量保证协议',
+                'environmental_msds': 'MSDS安全数据表',
+                'iso_certification': 'ISO认证',
+                'csr': 'CSR报告',
+                'other': '其他证书'
+            };
+            
+            const suggestedType = supplierTypeMap[documentType];
+            const documentTypeChinese = suggestedType || documentType;
+            let message = `请选择正确的资料类型`;
+            
+            if (suggestedType) {
+                message += `。"${documentTypeChinese}"属于通用资料类型，请上传到供应商的通用资料部分`;
+            } else {
+                message += `。物料资料类型包括: ROHS认证、REACH合规声明、HF认证`;
+            }
+            
             return res.status(400).json({
                 success: false,
-                error: '资料类型错误',
-                message: `具体构成级资料类型应为: ${componentLevelTypes.join(', ')}`
+                error: '资料类型不匹配',
+                message: message
             });
         }
 
@@ -170,9 +199,10 @@ router.post('/upload', upload.single('file'), async (req, res) => {
     `;
         let existingParams = [supplierId, documentType, level];
 
-        if (level === 'component') {
-            existingQuery += ' AND component_id = ?';
-            existingParams.push(componentId);
+        // 对于物料资料，按物料ID检查重复
+        if (level === 'component' && materialId) {
+            existingQuery += ' AND material_id = ?';
+            existingParams.push(materialId);
         }
 
         const [existing] = await sequelize.query(existingQuery, { replacements: existingParams });
@@ -192,7 +222,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         const fileSize = req.file.size;
         const isPermanentBool = isPermanent === 'true' || isPermanent === true ? 1 : 0;
 
-        const [result] = await sequelize.query(
+        const result = await sequelize.query(
             `INSERT INTO supplier_documents (
         supplier_id, level, material_id, component_id,
         document_type, document_name, document_number,
@@ -223,7 +253,13 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             }
         );
 
-        const documentId = result;
+        // 验证插入结果并获取文档ID
+        const changes = result[1]?.changes || 0;
+        const documentId = result[1]?.lastID || null;
+        
+        if (changes !== 1 || !documentId) {
+            throw new Error(`插入失败: changes=${changes}, documentId=${documentId}`);
+        }
 
         // 查询完整的资料信息
         const [documents] = await sequelize.query(

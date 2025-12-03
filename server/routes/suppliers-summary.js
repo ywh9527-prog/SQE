@@ -108,7 +108,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
                 supplier.materialCount++;
             }
 
-            // 处理通用资料 (供应商级)
+            // 处理通用资料
             if (row.document_level === 'supplier' && row.document_id) {
                 const docType = row.document_type;
 
@@ -230,25 +230,23 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
                 s.name as supplier_name,
                 m.id as material_id,
                 m.material_name,
-                mc.id as component_id,
-                mc.component_name,
                 sd.id as document_id,
                 sd.level as document_level,
                 sd.document_type,
                 sd.document_name,
                 sd.expiry_date,
                 sd.is_permanent,
-                sd.status as document_status
+                sd.status as document_status,
+                sd.remarks
             FROM suppliers s
             LEFT JOIN materials m ON s.id = m.supplier_id AND m.status = 'Active'
-            LEFT JOIN material_components mc ON m.id = mc.material_id AND mc.status = 'Active'
             LEFT JOIN supplier_documents sd ON 
                 ((sd.supplier_id = s.id AND sd.level = 'supplier') OR
-                 (sd.component_id = mc.id AND sd.level = 'component'))
+                 (sd.material_id = m.id AND sd.level = 'component'))
                 AND sd.status = 'active' 
                 AND sd.is_current = 1
             WHERE s.id = :supplierId
-            ORDER BY m.id, sd.document_type, mc.component_name
+            ORDER BY m.id, sd.document_type
         `, {
             replacements: { supplierId: id }
         });
@@ -325,11 +323,20 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
                         }
                     }
 
+                    // 从备注中提取构成信息
+                    let componentName = '';
+                    if (row.remarks) {
+                        const componentMatch = row.remarks.match(/构成:\s*(.+?)(?:\(|$)/);
+                        if (componentMatch) {
+                            componentName = componentMatch[1].trim();
+                        }
+                    }
+
                     materialsMap[row.material_id].documents.push({
                         documentId: row.document_id,
                         documentType: row.document_type,
                         documentName: row.document_name,
-                        componentName: row.component_name,
+                        componentName: componentName,
                         expiryDate: row.expiry_date,
                         daysUntilExpiry: daysUntilExpiry,
                         isPermanent: row.is_permanent === 1,

@@ -371,8 +371,13 @@ class SupplierDocumentManager {
     
     await this.loadSummary();
     
-    // 如果有展开的供应商，重新加载它们的详情
-    if (expandedSuppliers.size > 0) {
+    // 重新加载供应商详情
+    if (supplierId) {
+      // 如果指定了supplierId，确保重新加载该供应商的详情
+      console.log('🔄 重新加载指定供应商详情:', supplierId);
+      await this.loadDetails(supplierId);
+    } else if (expandedSuppliers.size > 0) {
+      // 否则重新加载所有展开的供应商详情
       console.log('🔄 重新加载展开的供应商详情:', Array.from(expandedSuppliers));
       for (const sid of expandedSuppliers) {
         await this.loadDetails(sid);
@@ -691,8 +696,8 @@ class SupplierDocumentManager {
     const msds = supplier.commonDocuments['environmental_msds'];
     const msdsHtml = msds ? `
       <div class="doc-cell">
-        <div class="doc-date">${this.formatDate(msds.expiryDate)}</div>
-        <div class="doc-status ${msds.status}">${this.getStatusIcon(msds.status)} ${msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
+        <div class="doc-date">${msds.isPermanent ? '永久有效' : this.formatDate(msds.expiryDate)}</div>
+        <div class="doc-status ${msds.status}">${this.getStatusIcon(msds.status)} ${msds.isPermanent ? '' : msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
 
@@ -700,8 +705,8 @@ class SupplierDocumentManager {
     const qa = supplier.commonDocuments['quality_agreement'];
     const qaHtml = qa ? `
       <div class="doc-cell">
-        <div class="doc-date">${this.formatDate(qa.expiryDate)}</div>
-        <div class="doc-status ${qa.status}">${this.getStatusIcon(qa.status)} ${qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
+        <div class="doc-date">${qa.isPermanent ? '永久有效' : this.formatDate(qa.expiryDate)}</div>
+        <div class="doc-status ${qa.status}">${this.getStatusIcon(qa.status)} ${qa.isPermanent ? '' : qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
 
@@ -861,11 +866,11 @@ class SupplierDocumentManager {
                   <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
                 ` : ''}
                 <div class="doc-actions">
-                  <button class="action-btn email-btn single-email-btn" data-document-id="${doc.id}" data-supplier-id="${supplierId}" title="发送邮件">
+                  <button class="action-btn email-btn single-email-btn" data-document-id="${doc.documentId}" data-supplier-id="${supplierId}" title="发送邮件">
                     📧
                   </button>
-                  <button class="action-btn edit-btn" data-document-id="${doc.id}" title="编辑">✏️</button>
-                  <button class="action-btn delete-btn" data-document-id="${doc.id}" title="删除">🗑️</button>
+                  <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
+                  <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
                 </div>
               </li>
             `;
@@ -1102,7 +1107,7 @@ class SupplierDocumentManager {
       if (!targetDoc && details.materials) {
         for (const material of details.materials) {
           if (material.documents) {
-            targetDoc = material.documents.find(doc => doc.id === documentId);
+            targetDoc = material.documents.find(doc => doc.documentId === documentId);
             if (targetDoc) {
               // 添加物料信息到文档对象
               targetDoc.materialName = material.materialName;
@@ -1356,6 +1361,9 @@ ${certType}：
       this.showError('模态框加载失败');
       return;
     }
+
+    // 重置表单到干净状态（但不清空预设字段）
+    this.resetUploadFormWithoutPresets();
     
     const title = document.getElementById('uploadModalTitle');
     const materialGroup = document.getElementById('materialGroup');
@@ -1399,9 +1407,6 @@ ${certType}：
     // 存储上传上下文
     this.uploadContext = { type, supplierId, materialId };
     
-    // 重置表单
-    this.resetUploadForm();
-    
     // 显示模态框 - 使用!important覆盖内联样式
     modal.style.setProperty('display', 'flex', 'important');
     modal.style.setProperty('z-index', '9999', 'important');
@@ -1423,8 +1428,8 @@ ${certType}：
       height: modal.offsetHeight
     });
     
-    // 绑定文件上传事件
-    this.bindFileUploadEvents();
+    // 不再在这里绑定文件上传事件，使用index.html中的全局事件处理
+    // 避免重复绑定导致的双弹窗问题
     
     // 检查页面是否有其他遮挡元素
     console.log('🔍 检查页面遮挡元素:');
@@ -1453,10 +1458,41 @@ ${certType}：
     modal.style.setProperty('display', 'none', 'important');
     this.uploadContext = null;
     this.selectedFile = null;
+    
+    // 重置表单（完全重置，清空所有字段）
+    this.resetUploadForm();
+    
+    // 隐藏文件预览
+    const filePreview = document.getElementById('filePreview');
+    if (filePreview) {
+      filePreview.style.display = 'none';
+    }
+    
+    // 清空文件输入
+    const fileInput = document.getElementById('fileInput');
+    if (fileInput) {
+      fileInput.value = '';
+    }
   }
 
   /**
-   * 重置上传表单
+   * 重置上传表单（不清空预设字段）
+   */
+  resetUploadFormWithoutPresets() {
+    document.getElementById('documentType').value = '';
+    document.getElementById('componentName').value = '';
+    document.getElementById('expiryDate').value = '';
+    document.getElementById('isPermanent').checked = false;
+    document.getElementById('documentRemark').value = '';
+    document.getElementById('expiryDate').disabled = false;
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    this.selectedFile = null;
+    // 注意：不清空 uploadSupplierName 和 uploadMaterialName（预设字段）
+  }
+
+  /**
+   * 重置上传表单（完全重置）
    */
   resetUploadForm() {
     document.getElementById('documentType').value = '';
@@ -1468,6 +1504,15 @@ ${certType}：
     document.getElementById('filePreview').style.display = 'none';
     document.getElementById('fileInput').value = '';
     this.selectedFile = null;
+    // 清空所有字段，包括预设字段
+    const supplierNameInput = document.getElementById('uploadSupplierName');
+    if (supplierNameInput) {
+      supplierNameInput.value = '';
+    }
+    const materialNameInput = document.getElementById('uploadMaterialName');
+    if (materialNameInput) {
+      materialNameInput.value = '';
+    }
   }
 
   /**
@@ -1477,13 +1522,22 @@ ${certType}：
     const dropZone = document.getElementById('uploadDropZone');
     const fileInput = document.getElementById('fileInput');
 
+    // 先移除可能存在的旧事件监听器
+    dropZone.onclick = null;
+    dropZone.ondragover = null;
+    dropZone.ondragleave = null;
+    dropZone.ondrop = null;
+    fileInput.onchange = null;
+
     // 点击上传区域
     dropZone.onclick = () => {
+      console.log('📁 点击上传区域，触发文件选择');
       fileInput.click();
     };
 
     // 文件选择
     fileInput.onchange = (e) => {
+      console.log('📁 文件选择事件触发，文件数量:', e.target.files.length);
       if (e.target.files.length > 0) {
         this.handleFileUpload(e.target.files);
       }
@@ -1508,15 +1562,24 @@ ${certType}：
         this.handleFileUpload(e.dataTransfer.files);
       }
     };
+
+    console.log('✅ 文件上传事件绑定完成');
   }
 
   /**
    * 处理文件上传
    */
   handleFileUpload(files) {
-    if (files.length === 0) return;
+    console.log('📁 处理文件上传，文件数量:', files.length);
+    
+    if (files.length === 0) {
+      console.log('❌ 没有文件');
+      return;
+    }
 
     const file = files[0];
+    console.log('📁 选择的文件:', file.name, '大小:', file.size);
+    
     const allowedTypes = ['.pdf', '.xlsx', '.xls', '.doc', '.docx'];
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
@@ -1532,12 +1595,16 @@ ${certType}：
     }
 
     this.selectedFile = file;
+    console.log('✅ 文件已保存到 selectedFile:', this.selectedFile.name);
     
     // 显示文件预览
     const filePreview = document.getElementById('filePreview');
     const fileName = filePreview.querySelector('.file-name');
-    fileName.textContent = file.name;
-    filePreview.style.display = 'flex';
+    if (fileName) {
+      fileName.textContent = file.name;
+      filePreview.style.display = 'flex';
+      console.log('✅ 文件预览已显示');
+    }
   }
 
   /**
@@ -1565,25 +1632,58 @@ ${certType}：
   }
 
   /**
-   * 提交上传
+   * 提交上传（列表直接上传版本）
    */
   async submitUpload() {
+    console.log('📤 开始提交上传，uploadContext:', this.uploadContext);
+    
+    // 基础验证
+    if (!this.uploadContext || !this.uploadContext.supplierId) {
+      this.showError('上传上下文缺失，请重新选择上传位置');
+      return;
+    }
+
     if (!this.selectedFile) {
       this.showError('请选择要上传的文件');
       return;
     }
 
+    // 获取表单数据
     const documentType = document.getElementById('documentType').value;
-    if (!documentType) {
-      this.showError('请选择资料类型');
-      return;
-    }
-
     const isPermanent = document.getElementById('isPermanent').checked;
     const expiryDate = document.getElementById('expiryDate').value;
+    const remark = document.getElementById('documentRemark').value;
+    const supplierName = document.getElementById('uploadSupplierName').value;
 
+    // 验证必填字段（适配列表上传场景）
+    const validationErrors = [];
+
+    // 1. 资料类型是必填的
+    if (!documentType) {
+      validationErrors.push('请选择资料类型');
+    }
+
+    // 2. 到期日期验证（如果不是永久有效）
     if (!isPermanent && !expiryDate) {
-      this.showError('请设置到期日期或选择永久有效');
+      validationErrors.push('请设置到期日期或选择永久有效');
+    }
+
+    // 3. 物料资料需要构成名称
+    if (this.uploadContext.type === 'material') {
+      const componentName = document.getElementById('componentName').value;
+      if (!componentName || componentName.trim() === '') {
+        validationErrors.push('物料资料上传必须填写构成名称');
+      }
+    }
+
+    // 4. 供应商名称验证（预设字段，但还是要检查）
+    if (!supplierName || supplierName.trim() === '') {
+      validationErrors.push('供应商信息缺失');
+    }
+
+    // 如果有验证错误，显示并退出
+    if (validationErrors.length > 0) {
+      this.showError(validationErrors[0]); // 只显示第一个错误
       return;
     }
 
@@ -1593,13 +1693,34 @@ ${certType}：
     formData.append('supplierId', this.uploadContext.supplierId);
     formData.append('documentType', documentType);
     formData.append('isPermanent', isPermanent);
-    formData.append('remark', document.getElementById('documentRemark').value);
+    formData.append('remarks', remark);
 
+    // 添加资料层级 (通用资料是supplier，物料资料是component)
+    const level = this.uploadContext.type === 'common' ? 'supplier' : 'component';
+    formData.append('level', level);
+
+    // 添加资料名称（使用文件名作为默认名称）
+    const documentName = this.selectedFile.name;
+    formData.append('documentName', documentName);
+
+    // 添加物料相关字段
     if (this.uploadContext.type === 'material') {
       formData.append('materialId', this.uploadContext.materialId);
-      formData.append('componentName', document.getElementById('componentName').value);
+      
+      // 构成信息现在作为备注处理
+      const componentName = document.getElementById('componentName').value.trim();
+      if (componentName) {
+        // 将构成信息添加到备注中
+        const enhancedRemark = remark ? `${remark} (构成: ${componentName})` : `构成: ${componentName}`;
+        formData.set('remarks', enhancedRemark);
+        
+        // 也可以选择将构成信息添加到文档名称中
+        // const enhancedDocumentName = `${documentName} (${componentName})`;
+        // formData.set('documentName', enhancedDocumentName);
+      }
     }
 
+    // 添加到期日期（如果不是永久有效）
     if (!isPermanent) {
       formData.append('expiryDate', expiryDate);
     }
@@ -1623,7 +1744,9 @@ ${certType}：
         this.hideUploadModal();
         await this.refresh(false, this.uploadContext?.supplierId); // 只刷新相关供应商
       } else {
-        throw new Error(data.error || '上传失败');
+        // 优先显示详细的message字段，如果没有则显示error字段
+        const errorMessage = data.message || data.error || '上传失败';
+        throw new Error(errorMessage);
       }
     } catch (error) {
       console.error('上传失败:', error);

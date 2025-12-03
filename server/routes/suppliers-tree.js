@@ -5,7 +5,7 @@
  * 1. 获取供应商树形数据 (供应商 → 物料 → 具体构成 → 资料)
  * 2. 新增物料
  * 3. 新增具体构成
- * 4. 上传资料 (支持三级层级)
+ * 4. 上传资料 (支持三层架构)
  * 5. 获取即将过期资料
  */
 
@@ -127,7 +127,7 @@ router.get('/tree', async (req, res) => {
 
             const supplier = supplierMap[supplierId];
 
-            // 供应商级资料
+            // 通用资料
             if (row.document_level === 'supplier' && row.document_id && shouldIncludeDocuments) {
                 const exists = supplier.supplierDocuments.find(d => d.id === row.document_id);
                 if (!exists) {
@@ -203,7 +203,7 @@ router.get('/tree', async (req, res) => {
 
                     const component = material.components[componentId];
 
-                    // 具体构成级资料
+                    // 物料资料
                     if (row.document_level === 'component' && row.document_id && shouldIncludeDocuments) {
                         const exists = component.documents.find(d => d.id === row.document_id);
                         if (!exists) {

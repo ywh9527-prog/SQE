@@ -6,14 +6,14 @@ const { sequelize } = require('../database/config');
  * 用于管理供应商质量相关资质资料
  * 
  * 核心改进:
- * 1. 支持三级层级: 供应商级 → 物料级 → 具体构成级
- * 2. MSDS归为供应商级资料
- * 3. ROHS/REACH/HF归为具体构成级资料
+ * 1. 支持三层架构: 供应商→物料→资料(构成作为备注)
+ * 2. MSDS归为通用资料
+ * 3. ROHS/REACH/HF归为物料资料(构成作为备注)
  * 
  * 层级说明:
- * - supplier: 供应商级资料 (质量保证协议、MSDS、ISO认证等)
- * - material: 物料级资料 (暂未使用,预留)
- * - component: 具体构成级资料 (ROHS、REACH、HF等)
+ * - supplier: 通用资料 (质量保证协议、MSDS、ISO认证等)
+ * - material: 物料资料 (ROHS、REACH、HF等，构成信息作为备注)
+ * - component: 具体构成 (作为资料备注，不作为独立层级)
  */
 const SupplierDocument = sequelize.define('SupplierDocument', {
   id: {
@@ -32,7 +32,7 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
     type: DataTypes.ENUM('supplier', 'material', 'component'),
     allowNull: false,
     defaultValue: 'supplier',
-    comment: '资料层级: supplier(供应商级), material(物料级), component(具体构成级)'
+    comment: '资料层级: supplier(通用资料), material(物料资料), component(具体构成-作为备注)'
   },
   materialId: {
     type: DataTypes.INTEGER,
@@ -48,13 +48,13 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
   },
   documentType: {
     type: DataTypes.ENUM(
-      'quality_agreement',      // 质量保证协议 (供应商级)
-      'environmental_msds',     // MSDS (供应商级) ⭐ 修改
-      'iso_certification',      // ISO认证 (供应商级)
-      'environmental_rohs',     // ROHS (具体构成级)
-      'environmental_reach',    // REACH (具体构成级)
-      'environmental_hf',       // HF (具体构成级)
-      'csr',                    // CSR (供应商级)
+      'quality_agreement',      // 质量保证协议 (通用资料)
+      'environmental_msds',     // MSDS (通用资料) ⭐ 修改
+      'iso_certification',      // ISO认证 (通用资料)
+      'environmental_rohs',     // ROHS (物料资料)
+      'environmental_reach',    // REACH (物料资料)
+      'environmental_hf',       // HF (物料资料)
+      'csr',                    // CSR (通用资料)
       'other'                   // 其他
     ),
     allowNull: false,
@@ -183,7 +183,7 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
       fields: ['status']
     },
     {
-      // 供应商级资料: 同一供应商下同类型资料只能有一个当前版本
+      // 通用资料: 同一供应商下同类型资料只能有一个当前版本
       unique: true,
       fields: ['supplier_id', 'document_type', 'is_current'],
       where: {
@@ -194,7 +194,7 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
       name: 'unique_supplier_document'
     },
     {
-      // 具体构成级资料: 同一构成下同类型资料只能有一个当前版本
+      // 物料资料: 同一物料下同类型资料只能有一个当前版本
       unique: true,
       fields: ['component_id', 'document_type', 'is_current'],
       where: {
@@ -205,7 +205,7 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
       name: 'unique_component_document'
     }
   ],
-  comment: '供应商资料表 (支持三级层级)'
+  comment: '供应商资料表 (支持三层架构: 供应商→物料→资料(构成备注))'
 });
 
 /**
@@ -267,7 +267,7 @@ SupplierDocument.prototype.getDaysUntilExpiry = function () {
  * 类方法
  */
 
-// 查询供应商级资料
+    // 查询通用资料
 SupplierDocument.findSupplierDocuments = function (supplierId, options = {}) {
   return this.findAll({
     where: {
@@ -281,7 +281,7 @@ SupplierDocument.findSupplierDocuments = function (supplierId, options = {}) {
   });
 };
 
-// 查询具体构成级资料
+    // 查询物料资料
 SupplierDocument.findComponentDocuments = function (componentId, options = {}) {
   return this.findAll({
     where: {

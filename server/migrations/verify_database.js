@@ -1,6 +1,6 @@
 /**
  * 数据库结构验证脚本
- * 用于验证三级层级数据是否正确
+ * 用于验证三层架构数据是否正确
  */
 
 const { sequelize } = require('../database/config');
@@ -48,7 +48,7 @@ async function verifyDatabase() {
                 };
             }
 
-            // 供应商级资料
+            // 通用资料
             if (row.level === 'supplier' && row.document_id) {
                 const exists = supplierMap[supplierId].supplierDocs.find(d => d.id === row.document_id);
                 if (!exists) {
@@ -82,7 +82,7 @@ async function verifyDatabase() {
                         };
                     }
 
-                    // 具体构成级资料
+                    // 物料资料
                     if (row.level === 'component' && row.document_id) {
                         const exists = supplierMap[supplierId].materials[materialId].components[componentId].documents.find(d => d.id === row.document_id);
                         if (!exists) {
@@ -106,7 +106,7 @@ async function verifyDatabase() {
 
             // 供应商级资料
             if (supplier.supplierDocs.length > 0) {
-                console.log(`├── 📄 供应商级资料 (${supplier.supplierDocs.length}份)`);
+                console.log(`├── 📄 通用资料 (${supplier.supplierDocs.length}份)`);
                 supplier.supplierDocs.forEach((doc, index) => {
                     const isLast = index === supplier.supplierDocs.length - 1 && Object.keys(supplier.materials).length === 0;
                     const prefix = isLast ? '└──' : '├──';
