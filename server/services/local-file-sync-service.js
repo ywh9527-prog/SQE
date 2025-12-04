@@ -33,9 +33,10 @@ class LocalFileSyncService {
       // 通用资料命名格式：{供应商名称}_{证书类型}_v{版本号}_{日期}.{扩展名}
       return `${supplierName}_${documentType}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
     } else {
-      // 物料资料命名格式：{供应商名称}_{物料名称}_{证书类型}_v{版本号}_{日期}.{扩展名}
-      // 构成信息通过文件夹结构体现，文件名中不再包含构成名称
-      return `${supplierName}_${materialName}_${documentType}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
+      // 物料资料命名格式：{供应商名称}_{物料名称}_{证书类型}_{构成名称}_v{版本号}_{日期}.{扩展名}
+      // 构成信息在证书类型之后，版本号之前
+      const componentNameClean = componentName ? componentName.replace(/[^\w\u4e00-\u9fa5]/g, '_') : '未知构成';
+      return `${supplierName}_${materialName}_${documentType}_${componentNameClean}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
     }
   }
 
@@ -244,8 +245,46 @@ class LocalFileSyncService {
       console.log(`📂 备份路径: ${backupPath}`);
       
       await fs.ensureDir(path.dirname(backupPath));
-      await fs.move(fileInfo.filePath, backupPath);
-      console.log(`✅ 文件已移动到备份目录`);
+      
+      // 尝试移动文件，如果失败则尝试复制后删除
+      try {
+        // 先检查文件是否存在
+        if (await fs.pathExists(fileInfo.filePath)) {
+          await fs.move(fileInfo.filePath, backupPath);
+          console.log(`✅ 文件已移动到备份目录`);
+        } else {
+          console.log(`⚠️ 源文件不存在: ${fileInfo.filePath}`);
+        }
+      } catch (moveError) {
+        console.log(`⚠️ 移动失败，尝试复制后删除: ${moveError.message}`);
+        try {
+          // 如果移动失败，可能是文件被占用，尝试复制后删除
+          if (await fs.pathExists(fileInfo.filePath)) {
+            await fs.copy(fileInfo.filePath, backupPath);
+            console.log(`✅ 文件已复制到备份目录`);
+            
+            // 多次尝试删除原文件
+            const deleteAttempts = [1000, 2000, 3000]; // 1秒、2秒、3秒后尝试
+            deleteAttempts.forEach((delay, index) => {
+              setTimeout(async () => {
+                try {
+                  if (await fs.pathExists(fileInfo.filePath)) {
+                    await fs.remove(fileInfo.filePath);
+                    console.log(`✅ 原文件已删除 (第${index + 1}次尝试)`);
+                  }
+                } catch (deleteError) {
+                  console.log(`⚠️ 原文件删除失败 (第${index + 1}次尝试): ${deleteError.message}`);
+                  if (index === deleteAttempts.length - 1) {
+                    console.log(`❌ 所有删除尝试都失败了，文件可能仍被占用: ${fileInfo.filePath}`);
+                  }
+                }
+              }, delay);
+            });
+          }
+        } catch (copyError) {
+          console.log(`❌ 复制也失败了: ${copyError.message}`);
+        }
+      }
       
       // 3. 记录中文备份日志
       await this.logBackupOperation(fileInfo, backupPath);

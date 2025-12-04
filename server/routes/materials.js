@@ -358,6 +358,40 @@ router.delete('/:materialId', async (req, res) => {
         const transaction = await sequelize.transaction();
 
         try {
+            // 0. 备份该物料的所有文件
+            const LocalFileSyncService = require('../services/local-file-sync-service');
+            const localFileSyncService = new LocalFileSyncService();
+            
+            // 获取该物料的所有文档进行备份
+            const [materialDocs] = await sequelize.query(
+                `SELECT id, file_path, document_type FROM supplier_documents 
+                 WHERE material_id = ? AND status = 'active' AND is_current = 1`,
+                { replacements: [materialId], transaction }
+            );
+            
+            console.log(`📦 开始备份物料 ${materialId} 的 ${materialDocs.length} 个文件...`);
+            
+            for (const doc of materialDocs) {
+                if (doc.file_path) {
+                    try {
+                        // 添加延迟确保文件释放
+                        await new Promise(resolve => setTimeout(resolve, 200));
+                        
+                        await localFileSyncService.syncDelete({
+                            id: doc.id,
+                            filePath: doc.file_path,
+                            documentType: doc.document_type,
+                            supplierId: supplierId,
+                            materialId: materialId
+                        });
+                        console.log(`✅ 已备份文件: ${doc.file_path}`);
+                    } catch (backupError) {
+                        console.error(`⚠️ 备份文件失败: ${doc.file_path}`, backupError);
+                        // 不阻止删除操作，只记录错误
+                    }
+                }
+            }
+
             // 1. 永久删除该物料所有构成的文档
             const deletedDocs = await sequelize.query(
                 `DELETE FROM supplier_documents 

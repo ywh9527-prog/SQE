@@ -73,7 +73,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
             LEFT JOIN material_components mc ON m.id = mc.material_id AND mc.status = 'Active'
             LEFT JOIN supplier_documents sd ON 
                 ((sd.supplier_id = s.id AND sd.level = 'supplier') OR
-                 (sd.component_id = mc.id AND sd.level = 'component'))
+                 (sd.material_id = m.id AND sd.level = 'component'))
                 AND sd.status = 'active' 
                 AND sd.is_current = 1
             ${whereClause}

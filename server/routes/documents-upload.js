@@ -178,53 +178,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             });
         }
 
-        // 检查是否已存在相同类型的当前版本资料
-        let existingQuery = `
-      SELECT id, version FROM supplier_documents 
-      WHERE supplier_id = ? 
-        AND document_type = ? 
-        AND level = ?
-        AND is_current = 1 
-        AND status = 'active'
-    `;
-        let existingParams = [supplierId, documentType, level];
-
-        // 对于物料资料，按物料ID检查重复
-        if (level === 'component' && materialId) {
-            existingQuery += ' AND material_id = ?';
-            existingParams.push(materialId);
-        }
-
-        const [existing] = await sequelize.query(existingQuery, { replacements: existingParams });
-
+        // 简化版本逻辑：每次上传都作为新文档，不做版本检查和替换
         let version = 1;
-        if (existing.length > 0) {
-            // 将旧版本标记为非当前版本
-            await sequelize.query(
-                'UPDATE supplier_documents SET is_current = 0 WHERE id = ?',
-                { replacements: [existing[0].id] }
-            );
-            
-            // 将旧文件移动到备份目录
-            const oldDocument = existing[0];
-            if (oldDocument.file_path) {
-                try {
-                    await localFileSyncService.syncDelete({
-                        id: oldDocument.id,
-                        filePath: oldDocument.file_path,
-                        documentType: oldDocument.document_type,
-                        supplierId: oldDocument.supplier_id,
-                        materialId: oldDocument.material_id
-                    });
-                    console.log(`✅ 旧版本文件已备份: ${oldDocument.file_path}`);
-                } catch (backupError) {
-                    console.error(`⚠️ 旧版本文件备份失败:`, backupError);
-                    // 不阻止新文件上传，只记录错误
-                }
-            }
-            
-            version = existing[0].version + 1;
-        }
 
         // 获取供应商信息用于文件同步
         const [supplierData] = await sequelize.query(
@@ -239,6 +194,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
         // 获取物料信息（如果是物料资料）
         let materialName = '';
+        console.log(`🔍 检查物料信息: materialId=${materialId}`);
         if (materialId) {
             const [materialData] = await sequelize.query(
                 'SELECT material_name FROM materials WHERE id = ?',
@@ -246,7 +202,12 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             );
             if (materialData.length > 0) {
                 materialName = materialData[0].material_name;
+                console.log(`✅ 获取到物料名: ${materialName}`);
+            } else {
+                console.log(`❌ 未找到物料ID ${materialId} 对应的物料`);
             }
+        } else {
+            console.log(`⚠️ materialId为空`);
         }
 
         // 转换文档类型为中文
@@ -262,6 +223,19 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         };
         const documentTypeChinese = documentTypeMap[documentType] || documentType;
 
+        // 从remarks中提取构成信息用于文件命名
+        let componentName = '';
+        console.log(`🔍 检查构成信息: remarks=${remarks}, level=${level}`);
+        if (remarks && level === 'component') {
+            const componentMatch = remarks.match(/构成:\s*(.+?)(?:\(|$)/);
+            if (componentMatch) {
+                componentName = componentMatch[1].trim();
+                console.log(`✅ 从备注中提取构成信息: ${componentName}`);
+            } else {
+                console.log(`❌ 备注中没有找到构成信息: ${remarks}`);
+            }
+        }
+
         // 使用LocalFileSyncService同步文件到正确位置
         const syncResult = await localFileSyncService.syncUpload({
             tempFilePath: req.file.path,
@@ -273,7 +247,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         }, materialName ? {
             id: materialId,
             materialName: materialName
-        } : null, documentTypeChinese, componentId || '', version);
+        } : null, documentTypeChinese, { componentName: componentName }, version);
 
         // 插入新资料记录
         const filePath = syncResult.finalPath.replace(/\\/g, '/'); // 统一使用正斜杠
