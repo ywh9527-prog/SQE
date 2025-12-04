@@ -415,6 +415,102 @@ router.put('/:id', authenticateToken, async (req, res) => {
   }
 });
 
+// 获取供应商详情
+router.get('/:id/details', authenticateToken, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const [supplier] = await sequelize.query(`
+      SELECT s.*, 
+        COUNT(DISTINCT m.id) as material_count
+      FROM suppliers s
+      LEFT JOIN materials m ON s.id = m.supplier_id AND m.status = 'Active'
+      WHERE s.id = ? AND s.status != 'Deleted'
+      GROUP BY s.id
+    `, {
+      replacements: [id]
+    });
+
+    if (supplier.length === 0) {
+      return res.status(404).json({
+        success: false,
+        error: '供应商不存在'
+      });
+    }
+
+    const supplierData = supplier[0];
+    
+    // 获取文档汇总
+    const [documents] = await sequelize.query(`
+        SELECT document_type, expiry_date, status, created_at, file_path as filePath, document_name
+        FROM supplier_documents 
+        WHERE supplier_id = ? 
+        ORDER BY document_type, created_at DESC
+    `, {
+      replacements: [id]
+    });
+
+    // 构建供应商资料汇总 - 匹配前端期望的数据结构
+    const commonDocuments = [];
+    const materials = {};
+    
+    // 分离通用资料和物料资料
+    documents.forEach(doc => {
+      let daysUntilExpiry = null;
+      let warningLevel = 'normal';
+
+      if (!doc.is_permanent && doc.expiry_date) {
+        daysUntilExpiry = Math.ceil((new Date(doc.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
+
+        if (daysUntilExpiry < 0) {
+          warningLevel = 'expired';
+        } else if (daysUntilExpiry <= 7) {
+          warningLevel = 'critical';
+        } else if (daysUntilExpiry <= 15) {
+          warningLevel = 'urgent';
+        } else if (daysUntilExpiry <= 30) {
+          warningLevel = 'warning';
+        }
+      }
+
+      const docData = {
+        id: doc.document_type, // 临时使用document_type作为id
+        documentType: doc.document_type,
+        documentName: doc.document_name,
+        filePath: doc.filePath, // 恢复原始filePath
+        expiryDate: doc.expiry_date,
+        daysUntilExpiry: daysUntilExpiry,
+        isPermanent: doc.is_permanent === 1,
+        status: warningLevel
+      };
+
+      // 判断是否为通用资料（level为supplier或没有level字段）
+      // 这里简化处理，将所有文档都作为通用资料返回
+      commonDocuments.push(docData);
+    });
+
+    const supplierSummary = {
+      supplierId: supplierData.id,
+      supplierName: supplierData.name,
+      materialCount: supplierData.material_count || 0,
+      commonDocuments: commonDocuments,
+      materials: Object.values(materials)
+    };
+
+    res.json({
+      success: true,
+      data: supplierSummary
+    });
+
+  } catch (error) {
+    console.error('获取供应商详情失败:', error);
+    res.status(500).json({
+      success: false,
+      error: '获取供应商详情失败'
+    });
+  }
+});
+
 // 删除供应商（软删除）
 router.delete('/:id', authenticateToken, async (req, res) => {
   try {

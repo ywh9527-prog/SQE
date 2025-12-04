@@ -110,11 +110,6 @@ class SupplierDocumentManager {
    * 加载单个供应商的详细资料
    */
   async loadDetails(supplierId) {
-    // 检查缓存
-    if (this.detailsCache[supplierId]) {
-      return this.detailsCache[supplierId];
-    }
-
     try {
       console.log(`📋 加载供应商 ${supplierId} 的详细资料...`);
 
@@ -127,6 +122,28 @@ class SupplierDocumentManager {
       const data = await response.json();
 
       if (data.success) {
+        // 强制给文档添加filePath
+        if (data.data && data.data.commonDocuments) {
+          data.data.commonDocuments.forEach(doc => {
+            if (!doc.filePath) {
+              doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/通用资料';
+            }
+          });
+        }
+        
+        // 给物料资料也添加filePath
+        if (data.data && data.data.materials) {
+          data.data.materials.forEach(material => {
+            if (material.documents) {
+              material.documents.forEach(doc => {
+                if (!doc.filePath) {
+                  doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/物料资料';
+                }
+              });
+            }
+          });
+        }
+        
         this.detailsCache[supplierId] = data.data;
         return data.data;
       } else {
@@ -218,6 +235,16 @@ class SupplierDocumentManager {
           const documentId = parseInt(deleteBtn.dataset.documentId);
           console.log('🗑️ 调用删除功能:', documentId);
           this.deleteDocument(documentId);
+          return;
+        }
+
+        // 打开文件夹按钮
+        const folderBtn = e.target.closest('.folder-btn');
+        if (folderBtn) {
+          console.log('📁 点击打开文件夹按钮', folderBtn.dataset);
+          e.preventDefault();
+          const filePath = folderBtn.dataset.filePath;
+          await this.openLocalFolder(filePath);
           return;
         }
 
@@ -816,6 +843,11 @@ class SupplierDocumentManager {
               </button>
               <button class="action-btn edit-btn" data-document-id="${doc.id}" title="编辑">✏️</button>
               <button class="action-btn delete-btn" data-document-id="${doc.id}" title="删除">🗑️</button>
+              ${doc.filePath ? `
+                <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
+                  📁
+                </button>
+              ` : ''}
             </div>
           </li>
         `;
@@ -879,6 +911,11 @@ class SupplierDocumentManager {
                   </button>
                   <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
                   <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
+                  ${doc.filePath ? `
+                    <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
+                      📁
+                    </button>
+                  ` : '<!-- 无文件路径 -->'}
                 </div>
               </li>
             `;
@@ -2013,6 +2050,41 @@ ${certType}：
   }
 
   /**
+   * 打开本地文件夹
+   */
+  async openLocalFolder(filePath) {
+    try {
+      if (!filePath) {
+        this.showError('文件路径不存在');
+        return;
+      }
+      
+      console.log('📂 打开本地文件夹:', filePath);
+      
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/system/open-folder', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ filePath })
+      });
+      
+      const data = await response.json();
+      
+      if (data.success) {
+        console.log('✅ 文件夹已打开');
+      } else {
+        this.showError(`打开文件夹失败: ${data.error}`);
+      }
+    } catch (error) {
+      console.error('打开文件夹失败:', error);
+      this.showError('打开文件夹失败，请检查文件是否存在');
+    }
+  }
+
+  /**
    * 显示新增物料模态框
    */
   showAddMaterialModal(supplierId) {
@@ -2409,3 +2481,4 @@ if (typeof window !== 'undefined') {
     initializeModule();
   }
 }
+
