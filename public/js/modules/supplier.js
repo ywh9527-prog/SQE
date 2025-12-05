@@ -703,7 +703,7 @@ class SupplierDocumentManager {
     const msdsHtml = msds ? `
       <div class="doc-cell">
         <div class="doc-date">${msds.isPermanent ? '永久有效' : this.formatDate(msds.expiryDate)}</div>
-        <div class="doc-status ${msds.status}">${this.getStatusIcon(msds.status)} ${msds.isPermanent ? '' : msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
+        <div class="doc-status ${msds.status}">${window.supplierServices.getStatusIcon(msds.status)} ${msds.isPermanent ? '' : msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
 
@@ -712,7 +712,7 @@ class SupplierDocumentManager {
     const qaHtml = qa ? `
       <div class="doc-cell">
         <div class="doc-date">${qa.isPermanent ? '永久有效' : this.formatDate(qa.expiryDate)}</div>
-        <div class="doc-status ${qa.status}">${this.getStatusIcon(qa.status)} ${qa.isPermanent ? '' : qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
+        <div class="doc-status ${qa.status}">${window.supplierServices.getStatusIcon(qa.status)} ${qa.isPermanent ? '' : qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
 
@@ -749,7 +749,7 @@ class SupplierDocumentManager {
 
     return `
       <div class="doc-cell ${stat.worstStatus}">
-        ${this.getStatusIcon(stat.worstStatus)} ${stat.count}份
+        ${window.supplierServices.getStatusIcon(stat.worstStatus)} ${stat.count}份
       </div>
     `;
   }
@@ -799,8 +799,8 @@ class SupplierDocumentManager {
       details.commonDocuments.forEach(doc => {
         html += `
           <li class="document-item ${doc.status}">
-            <span class="doc-icon">${this.getStatusIcon(doc.status)}</span>
-            <span class="doc-type">${this.getDocumentTypeText(doc.documentType)}</span>
+            <span class="doc-icon">${window.supplierServices.getStatusIcon(doc.status)}</span>
+            <span class="doc-type">${window.supplierServices.getDocumentTypeText(doc.documentType)}</span>
             <span class="doc-name">${doc.documentName}</span>
             <span class="doc-expiry">
               ${doc.isPermanent ? '永久有效' : `到期: ${this.formatDate(doc.expiryDate)}`}
@@ -867,8 +867,8 @@ class SupplierDocumentManager {
           material.documents.forEach(doc => {
             html += `
               <li class="document-item ${doc.status}">
-                <span class="doc-icon">${this.getStatusIcon(doc.status)}</span>
-                <span class="doc-type">${this.getDocumentTypeText(doc.documentType)} (${doc.componentName})</span>
+                <span class="doc-icon">${window.supplierServices.getStatusIcon(doc.status)}</span>
+                <span class="doc-type">${window.supplierServices.getDocumentTypeText(doc.documentType)} (${doc.componentName})</span>
                 <span class="doc-name">${doc.documentName}</span>
                 <span class="doc-expiry">
                   ${doc.isPermanent ? '永久有效' : `到期: ${this.formatDate(doc.expiryDate)}`}
@@ -923,34 +923,11 @@ class SupplierDocumentManager {
   /**
    * 工具函数: 获取状态图标
    */
-  getStatusIcon(status) {
-    const map = {
-      normal: '🟢',
-      warning: '🟡',
-      urgent: '🔴',
-      critical: '🔴',
-      expired: '❌'
-    };
-    return map[status] || '⚪';
-  }
-
+  
   /**
    * 工具函数: 获取资料类型文本
    */
-  getDocumentTypeText(type) {
-    const map = {
-      quality_agreement: '质量保证协议',
-      environmental_msds: 'MSDS',
-      iso_certification: 'ISO认证',
-      environmental_rohs: 'ROHS',
-      environmental_reach: 'REACH',
-      environmental_hf: 'HF',
-      csr: 'CSR',
-      other: '其他'
-    };
-    return map[type] || type;
-  }
-
+  
   /**
    * 显示成功消息
    */
@@ -1730,16 +1707,16 @@ ${certType}：
    * 显示加载状态
    */
   showLoading(message = '加载中...') {
-    // TODO: 实现加载提示
-    console.log('🔄', message);
+    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
+    return window.supplierUIUtils.showLoading(true, message);
   }
 
   /**
    * 隐藏加载状态
    */
   hideLoading() {
-    // TODO: 隐藏加载提示
-    console.log('✅ 加载完成');
+    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
+    return window.supplierUIUtils.showLoading(false);
   }
 
   /**

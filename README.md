@@ -902,4 +902,43 @@ fields: ['supplier_id', 'document_type', 'document_name', 'is_current'],
 
 ---
 
+## **Phase 2.5 重构进展 - 第8、9步**
+
+### **2025-12-06 重构记录**
+
+#### **第8步：迁移 getStatusIcon() - 状态图标映射器**
+**功能说明**：
+- 将文本状态（如 'normal', 'warning'）转换为直观的 Emoji 图标
+- 映射规则：🟢 normal, 🟡 warning, 🔴 urgent/critical, ❌ expired, ⚪ 其他
+- 提供统一的视觉标准，优化用户体验
+
+**重构操作**：
+- ✅ 方法已存在于 supplier-services.js (第192-201行)
+- ✅ 更新主文件中所有调用点：`this.getStatusIcon()` → `window.supplierServices.getStatusIcon()`
+- ✅ 删除主文件中的重复方法定义
+
+#### **第9步：迁移 getDocumentTypeText() - 文档类型翻译器**
+**功能说明**：
+- 将英文文档类型代码转换为用户友好的中文名称
+- 映射规则：quality_agreement→质量保证协议, environmental_msds→MSDS, etc.
+- 统一命名标准，确保界面一致性
+
+**重构操作**：
+- ✅ 方法已存在于 supplier-services.js (第56行)
+- ✅ 更新主文件中所有调用点：`this.getDocumentTypeText()` → `window.supplierServices.getDocumentTypeText()`
+- ✅ 删除主文件中的重复方法定义
+
+#### **测试结果**
+- ✅ 供应商详情展开/收起正常
+- ✅ 状态图标显示正确
+- ✅ 文档类型中文显示正确
+- ✅ 所有其他功能正常
+
+#### **架构优化效果**
+- **服务层**：+2个工具方法 (总计12个方法)
+- **控制层**：-2个方法，进一步精简
+- **依赖关系**：更清晰的层级调用
+
+---
+
 *本文档将持续更新，记录每个开发步骤、解决方案和重构进展*
