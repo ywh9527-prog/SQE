@@ -83,6 +83,82 @@ class SupplierServices {
     return map[status] || status;
   }
 
+  // ==================== 邮件相关方法 ====================
+
+  /**
+   * 获取邮件模板
+   * @return {string} 邮件模板内容
+   */
+  getEmailTemplate() {
+    return `尊敬的{供应商名称}您好，
+
+感谢贵司一直以来对我司供应链工作的大力支持！
+
+我们通过供应商资料管理系统监测到，贵司提供的{物料名称}{具体构成名称}的{证书类型}将于{到期日期}到期（剩余{剩余天数}）。
+
+【更新建议】
+• 请在证书到期前完成更新并提交最新版本至我司质量部门
+• 如需延期请提前提供书面说明和预计完成时间
+
+再次感谢贵司的理解与配合，期待我们继续携手共进！
+
+此致
+敬礼
+
+{SQE工程师联系方式}
+质量部 | 供应商质量管理
+
+---
+此邮件由供应商资料管理系统自动发送，请勿直接回复。如已处理，请忽略本提醒。`;
+  }
+
+  /**
+   * 替换邮件模板变量
+   * @param {string} template - 邮件模板
+   * @param {Object} variables - 变量对象
+   * @return {string} 替换后的邮件内容
+   */
+  replaceEmailVariables(template, variables) {
+    let result = template;
+
+    for (const [key, value] of Object.entries(variables)) {
+      const regex = new RegExp(`\\{${key}\\}`, 'g');
+      result = result.replace(regex, value || '');
+    }
+
+    return result;
+  }
+
+  // ==================== 数据验证方法 ====================
+
+  /**
+   * 检查供应商状态
+   * @param {Object} supplier - 供应商数据
+   * @param {string} status - 状态筛选
+   * @return {boolean} 是否符合状态
+   */
+  checkSupplierStatus(supplier, status) {
+    // 检查通用资料状态
+    const commonDocs = supplier.commonDocuments;
+    for (const docType in commonDocs) {
+      const doc = commonDocs[docType];
+      if (doc && doc.status === status) {
+        return true;
+      }
+    }
+
+    // 检查物料资料状态
+    const materialDocs = supplier.materialDocuments;
+    for (const docType in materialDocs) {
+      const stat = materialDocs[docType];
+      if (stat.count > 0 && stat.worstStatus === status) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
 }
 
 // 创建全局服务实例
