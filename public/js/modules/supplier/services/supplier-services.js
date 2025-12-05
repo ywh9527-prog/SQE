@@ -159,6 +159,29 @@ class SupplierServices {
     return false;
   }
 
+  /**
+   * 检查文档问题
+   * @param {Object} supplier - 供应商数据
+   * @param {string} issue - 问题筛选
+   * @return {boolean} 是否符合问题条件
+   */
+  checkDocumentIssue(supplier, issue) {
+    switch (issue) {
+      case 'missing_msds':
+        return !supplier.commonDocuments['environmental_msds'];
+      case 'missing_qa':
+        return !supplier.commonDocuments['quality_agreement'];
+      case 'missing_rohs':
+        return supplier.materialDocuments.rohs.count === 0;
+      case 'missing_reach':
+        return supplier.materialDocuments.reach.count === 0;
+      case 'missing_hf':
+        return supplier.materialDocuments.hf.count === 0;
+      default:
+        return false;
+    }
+  }
+
 }
 
 // 创建全局服务实例

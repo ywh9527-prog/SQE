@@ -571,20 +571,8 @@ class SupplierDocumentManager {
    * 检查资料问题
    */
   checkDocumentIssue(supplier, issue) {
-    switch (issue) {
-      case 'missing_msds':
-        return !supplier.commonDocuments['environmental_msds'];
-      case 'missing_qa':
-        return !supplier.commonDocuments['quality_agreement'];
-      case 'missing_rohs':
-        return supplier.materialDocuments.rohs.count === 0;
-      case 'missing_reach':
-        return supplier.materialDocuments.reach.count === 0;
-      case 'missing_hf':
-        return supplier.materialDocuments.hf.count === 0;
-      default:
-        return false;
-    }
+    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
+    return window.supplierServices.checkDocumentIssue(supplier, issue);
   }
 
   /**
@@ -967,82 +955,16 @@ class SupplierDocumentManager {
    * 显示成功消息
    */
   showSuccess(message) {
-    console.log('✅', message);
-    
-    // 创建或更新成功提示
-    let toast = document.getElementById('successToast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'successToast';
-      toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #10b981;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        font-size: 14px;
-        max-width: 300px;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-      `;
-      document.body.appendChild(toast);
-    }
-    
-    toast.textContent = message;
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateX(0)';
-    
-    // 3秒后自动隐藏
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100%)';
-    }, 3000);
+    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
+    return window.supplierUIUtils.showSuccess(message);
   }
 
     /**
    * 显示错误消息
    */
   showError(message) {
-    console.error('❌', message);
-    
-    // 创建或更新错误提示
-    let toast = document.getElementById('errorToast');
-    if (!toast) {
-      toast = document.createElement('div');
-      toast.id = 'errorToast';
-      toast.style.cssText = `
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background-color: #ef4444;
-        color: white;
-        padding: 12px 20px;
-        border-radius: 6px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        z-index: 10000;
-        font-size: 14px;
-        max-width: 300px;
-        opacity: 0;
-        transform: translateX(100%);
-        transition: all 0.3s ease;
-      `;
-      document.body.appendChild(toast);
-    }
-    
-    toast.textContent = message;
-    toast.style.opacity = '1';
-    toast.style.transform = 'translateX(0)';
-    
-    // 5秒后自动隐藏
-    setTimeout(() => {
-      toast.style.opacity = '0';
-      toast.style.transform = 'translateX(100%)';
-    }, 5000);
+    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
+    return window.supplierUIUtils.showError(message);
   }
 
   /**
