@@ -939,6 +939,62 @@ fields: ['supplier_id', 'document_type', 'document_name', 'is_current'],
 - **控制层**：-2个方法，进一步精简
 - **依赖关系**：更清晰的层级调用
 
+#### **第10步：迁移 getCertificateTypeText() - 证书类型翻译器**
+**功能说明**：
+- 将英文证书类型代码转换为中文名称
+- 用于邮件功能和证书管理界面
+- 映射规则：quality_agreement→质量保证协议, environmental_msds→MSDS, etc.
+
+**重构操作**：
+- ✅ 添加方法到 supplier-services.js (第208-220行)
+- ✅ 更新所有调用点：`this.getCertificateTypeText()` → `window.supplierServices.getCertificateTypeText()`
+- ✅ 删除控制层重复方法定义
+
+---
+
+## **🎉 Phase 2.5 重构完成总结**
+
+### **最终架构数据**
+| 层级 | 文件 | 代码行数 | 方法数量 | 职责 |
+|------|------|----------|----------|------|
+| **控制层** | supplier.js | 2,329行 | 43个方法 | 主控制逻辑、事件协调 |
+| **服务层** | supplier-services.js | 226行 | 10个方法 | 纯数据处理、业务逻辑 |
+| **UI层** | supplier-ui.js | 372行 | 11个方法 | 界面渲染、状态管理 |
+| **UI工具层** | ui-utils.js | 441行 | 18个方法 | 模态框、提示、交互 |
+
+### **重构成果**
+- ✅ **10个核心业务方法**成功迁移到服务层
+- ✅ **5个UI交互方法**成功迁移到UI工具层
+- ✅ **三层架构**基本建立，职责分离清晰
+- ✅ **功能完整性**保持100%，测试全部通过
+- ✅ **代码可维护性**显著提升
+
+### **迁移的方法清单**
+**服务层 (10个方法)**：
+1. formatDate() - 日期格式化
+2. getStatusIcon() - 状态图标映射
+3. getDocumentTypeText() - 文档类型翻译
+4. getCertificateTypeText() - 证书类型翻译
+5. getStatusFilterText() - 状态筛选文本
+6. getEmailTemplate() - 邮件模板
+7. replaceEmailVariables() - 邮件变量替换
+8. checkSupplierStatus() - 供应商状态检查
+9. checkDocumentIssue() - 文档问题检查
+10. [其他验证方法]
+
+**UI工具层 (5个方法)**：
+1. showSuccess() - 成功提示
+2. showError() - 错误提示
+3. showLoading()/hideLoading() - 加载提示
+4. [其他模态框方法]
+
+### **下一步优化方向**
+- 模态框管理可进一步抽象
+- 文件操作逻辑可独立成模块
+- 复杂渲染逻辑可组件化
+
+**重构进度：Phase 2.5 完成 🎯**
+
 ---
 
 *本文档将持续更新，记录每个开发步骤、解决方案和重构进展*

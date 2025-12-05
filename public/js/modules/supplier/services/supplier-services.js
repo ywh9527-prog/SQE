@@ -200,9 +200,28 @@ class SupplierServices {
     return map[status] || '⚪';
   }
 
+  /**
+   * 获取证书类型文本
+   * @param {string} documentType - 证书类型代码
+   * @return {string} 证书类型的中文描述
+   */
+  getCertificateTypeText(documentType) {
+    const map = {
+      quality_agreement: '质量保证协议',
+      environmental_msds: 'MSDS',
+      iso_certification: 'ISO认证',
+      environmental_rohs: 'ROHS',
+      environmental_reach: 'REACH',
+      environmental_hf: 'HF',
+      csr: 'CSR',
+      other: '其他证书'
+    };
+    return map[documentType] || documentType;
+  }
+
 }
 
 // 创建全局服务实例
 window.supplierServices = new SupplierServices();
 
-console.log('✅ SupplierServices 服务层已加载 (Phase 2.1 - formatDate, getStatusIcon, getDocumentTypeText, getStatusFilterText)');
+console.log('✅ SupplierServices 服务层已加载 (Phase 2.5 - formatDate, getStatusIcon, getDocumentTypeText, getCertificateTypeText, getStatusFilterText)');

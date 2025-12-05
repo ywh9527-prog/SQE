@@ -955,20 +955,7 @@ class SupplierDocumentManager {
   /**
    * 获取证书类型中文名称
    */
-  getCertificateTypeText(documentType) {
-    const map = {
-      quality_agreement: '质量保证协议',
-      environmental_msds: 'MSDS',
-      iso_certification: 'ISO认证',
-      environmental_rohs: 'ROHS',
-      environmental_reach: 'REACH',
-      environmental_hf: 'HF',
-      csr: 'CSR',
-      other: '其他证书'
-    };
-    return map[documentType] || documentType;
-  }
-
+  
   /**
    * 替换邮件模板变量
    */
@@ -1030,7 +1017,7 @@ class SupplierDocumentManager {
         供应商名称: supplier.supplierName,
         物料名称: targetDoc.materialName || '',
         具体构成名称: targetDoc.componentName || '',
-        证书类型: this.getCertificateTypeText(targetDoc.documentType),
+        证书类型: window.supplierServices.getCertificateTypeText(targetDoc.documentType),
         到期日期: targetDoc.isPermanent ? '永久有效' : this.formatDate(targetDoc.expiryDate),
         剩余天数: targetDoc.isPermanent ? '永久有效' : `${targetDoc.daysUntilExpiry}天`,
         SQE工程师联系方式: 'SQE团队' // 可以从配置中获取
@@ -1042,7 +1029,7 @@ class SupplierDocumentManager {
       
       // 生成邮件主题
       const urgency = targetDoc.daysUntilExpiry < 0 ? '【已过期】' : targetDoc.daysUntilExpiry <= 7 ? '【紧急】' : '【提醒】';
-      const subject = `${urgency}${this.getCertificateTypeText(targetDoc.documentType)}到期提醒 - ${supplier.supplierName}`;
+      const subject = `${urgency}${window.supplierServices.getCertificateTypeText(targetDoc.documentType)}到期提醒 - ${supplier.supplierName}`;
       
       // 显示邮件预览模态框
       this.showEmailModal(subject, emailContent);
@@ -1101,7 +1088,7 @@ class SupplierDocumentManager {
       // 按证书类型分组
       const groupedDocs = {};
       documentsToNotify.forEach(doc => {
-        const certType = this.getCertificateTypeText(doc.documentType);
+        const certType = window.supplierServices.getCertificateTypeText(doc.documentType);
         if (!groupedDocs[certType]) {
           groupedDocs[certType] = [];
         }
