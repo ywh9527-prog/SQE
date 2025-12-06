@@ -15,6 +15,23 @@ class SupplierUIUtils {
     if (!window.supplierServices) {
       throw new Error('SupplierUIUtils 依赖 SupplierServices，请确保加载顺序正确');
     }
+
+    // 数据缓存（从控制层同步）
+    this.suppliers = [];
+    this.detailsCache = {};
+    this.uploadContext = null;
+    this.selectedFile = null;
+  }
+
+  /**
+   * 从控制层同步数据
+   */
+  syncDataFromControl() {
+    if (window.supplierManager) {
+      this.suppliers = window.supplierManager.suppliers || [];
+      this.detailsCache = window.supplierManager.detailsCache || {};
+      console.log('✅ UI工具层数据同步完成');
+    }
   }
 
   /**
@@ -271,23 +288,99 @@ class SupplierUIUtils {
   showUploadModal(type, supplierId, materialId = null) {
     console.log('📤 UI工具层显示上传模态框:', { type, supplierId, materialId });
 
-    // 保守方案：直接调用控制层的showUploadModal
-    // 这样既更新了调用点，又保证了功能完整
-    if (window.supplierManager && window.supplierManager.showUploadModal) {
-      window.supplierManager.showUploadModal(type, supplierId, materialId);
-    } else {
-      console.error('❌ 无法访问控制层的showUploadModal方法');
+    // 同步最新数据
+    this.syncDataFromControl();
+
+    const modal = document.getElementById('uploadModal');
+    if (!modal) {
+      console.error('❌ 找不到uploadModal元素');
       this.showError('模态框加载失败');
+      return;
     }
+
+    // 重置表单到干净状态（但不清空预设字段）
+    this.resetUploadFormWithoutPresets();
+
+    const title = document.getElementById('uploadModalTitle');
+    const materialGroup = document.getElementById('materialGroup');
+    const componentGroup = document.getElementById('componentGroup');
+
+    // 获取供应商信息
+    const supplier = this.suppliers.find(s => s.supplierId === supplierId);
+    if (!supplier) {
+      this.showError('供应商信息不存在');
+      return;
+    }
+
+    // 设置基本信息
+    const supplierNameInput = document.getElementById('uploadSupplierName');
+    if (supplierNameInput) {
+      supplierNameInput.value = supplier.supplierName;
+    }
+
+    if (type === 'common') {
+      if (title) title.textContent = '上传通用资料';
+      if (materialGroup) materialGroup.style.display = 'none';
+      if (componentGroup) componentGroup.style.display = 'none';
+    } else if (type === 'material') {
+      if (title) title.textContent = '上传物料资料';
+      if (materialGroup) materialGroup.style.display = 'block';
+      if (componentGroup) componentGroup.style.display = 'block';
+
+      // 获取物料信息
+      const details = this.detailsCache[supplierId];
+      if (details && details.materials) {
+        const material = details.materials.find(m => m.materialId === materialId);
+        if (material) {
+          const materialNameInput = document.getElementById('uploadMaterialName');
+          if (materialNameInput) {
+            materialNameInput.value = material.materialName;
+          }
+        }
+      }
+    }
+
+    // 存储上传上下文
+    this.uploadContext = { type, supplierId, materialId };
+
+    // 显示模态框 - 使用!important覆盖内联样式
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('z-index', '9999', 'important');
+    modal.style.setProperty('position', 'fixed', 'important');
+    modal.style.setProperty('top', '0', 'important');
+    modal.style.setProperty('left', '0', 'important');
+    modal.style.setProperty('width', '100%', 'important');
+    modal.style.setProperty('height', '100%', 'important');
+    modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
+    modal.style.setProperty('align-items', 'center', 'important');
+    modal.style.setProperty('justify-content', 'center', 'important');
+    console.log('✅ 上传模态框已显示（UI工具层）');
   }
 
   /**
    * 隐藏上传模态框
    */
   hideUploadModal() {
-    const modal = document.getElementById('supplier-upload-modal');
+    const modal = document.getElementById('uploadModal');
     if (modal) {
       modal.style.display = 'none';
+    }
+    this.uploadContext = null;
+    this.selectedFile = null;
+
+    // 重置表单（完全重置）
+    this.resetUploadForm();
+
+    // 隐藏文件预览
+    const filePreview = document.getElementById('filePreview');
+    if (filePreview) {
+      filePreview.style.display = 'none';
+    }
+
+    // 同步数据回控制层（保持一致性）
+    if (window.supplierManager) {
+      window.supplierManager.uploadContext = this.uploadContext;
+      window.supplierManager.selectedFile = this.selectedFile;
     }
   }
 
@@ -381,6 +474,40 @@ class SupplierUIUtils {
       this.showSuccess(`物料 "${materialName}" 添加成功`);
       form.reset();
     }, 1000);
+  }
+
+  /**
+   * 重置上传表单（不清空预设字段）
+   */
+  resetUploadFormWithoutPresets() {
+    document.getElementById('documentType').value = '';
+    document.getElementById('componentName').value = '';
+    document.getElementById('expiryDate').value = '';
+    document.getElementById('isPermanent').checked = false;
+    document.getElementById('documentRemark').value = '';
+    document.getElementById('expiryDate').disabled = false;
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    this.selectedFile = null;
+    // 注意：不清空 uploadSupplierName 和 uploadMaterialName（预设字段）
+  }
+
+  /**
+   * 重置上传表单（完全重置）
+   */
+  resetUploadForm() {
+    document.getElementById('documentType').value = '';
+    document.getElementById('componentName').value = '';
+    document.getElementById('expiryDate').value = '';
+    document.getElementById('isPermanent').checked = false;
+    document.getElementById('documentRemark').value = '';
+    document.getElementById('expiryDate').disabled = false;
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('fileInput').value = '';
+    this.selectedFile = null;
+    // 清空所有字段，包括预设字段
+    document.getElementById('uploadSupplierName').value = '';
+    document.getElementById('uploadMaterialName').value = '';
   }
 
 }
