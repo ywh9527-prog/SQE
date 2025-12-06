@@ -1302,7 +1302,37 @@ syncDataFromControl() {
 
 **提交记录：** `bf30151` - fix: 修复邮件模态框显示问题
 
-**重构进度：Phase 3.0 第7批完成 🎯**
+#### **🔧 第8批：新增物料功能适配器清理与修复**
+
+**工作时间：** 2025-12-06 09:28
+
+**清理方法：**
+- `showAddMaterialModal` - 新增物料模态框显示适配器
+- `hideAddMaterialModal` - 新增物料模态框隐藏适配器
+
+**遇到的问题：**
+1. **模态框ID不匹配**：UI工具层创建了新的`supplier-add-material-modal`，但HTML中已存在`addMaterialModal`
+2. **按钮样式丢失**：新模态框缺少原有CSS样式
+3. **提交失败**：`submitAddMaterial`中`this.addMaterialContext.supplierId`为undefined
+4. **数据上下文丢失**：删除适配器后缺少supplierId传递机制
+
+**解决方案：**
+- 修改UI工具层使用HTML中已存在的`addMaterialModal`
+- 在UI工具层将supplierId存储到模态框dataset中
+- 修改控制层从模态框dataset获取supplierId
+- 移除对已删除的addMaterialContext的依赖
+
+**测试结果：**
+✅ 新增物料模态框显示正常（保持原有样式）
+✅ 模态框关闭和取消按钮正常工作
+✅ 新增物料提交功能正常工作
+✅ 数据刷新和状态同步正常
+
+**提交记录：**
+- `8b0652e` - fix: 修复新增物料模态框显示和提交问题
+- `a6af53d` - fix: 修复新增物料提交时supplierId获取问题
+
+**重构进度：Phase 3.0 第8批完成 🎯**
 
 ---
 
