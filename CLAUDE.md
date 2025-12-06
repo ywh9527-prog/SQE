@@ -213,6 +213,32 @@ estart-dev.ps1"`
     *   **重构阈值**: 当一个文件超过一定行数（如 500 行）或包含超过 2 个不同业务模块的逻辑时，强制触发重构拆分。
     *   **收益**: 降低耦合度，确保修改一个模块的功能绝不影响另一个模块的稳定性。
 
+### 8. 🌐 全局命名空间管理原则 (Global Namespace Management)
+*   **核心原则**: 避免全局对象命名冲突，建立清晰的模块边界。
+*   **通用实践**:
+    *   **命名规范**:
+        *   模块级工具对象: `window.{moduleName}Utils` (如: `window.supplierUIUtils`)
+        *   模块级服务对象: `window.{moduleName}Services` (如: `window.supplierServices`)
+        *   严禁使用通用名称: 避免使用 `window.utils`、`window.uiUtils`、`window.helper` 等模糊命名
+    *   **依赖检查**: 在构造函数中检查必要依赖，明确报错信息
+        ```javascript
+        constructor() {
+          if (!window.supplierServices) {
+            throw new Error('SupplierUIUtils 依赖 SupplierServices，请确保加载顺序正确');
+          }
+        }
+        ```
+    *   **HTML加载顺序**: 按依赖关系从底层到上层依次加载
+        ```html
+        <!-- 1. 服务层 (最底层，无依赖) -->
+        <script src="modules/supplier/services/supplier-services.js"></script>
+        <!-- 2. UI工具层 (依赖服务层) -->
+        <script src="modules/supplier/ui/ui-utils.js"></script>
+        <!-- 3. 控制层 (依赖前两层) -->
+        <script src="modules/supplier.js"></script>
+        ```
+    *   **收益**: 避免命名冲突，明确模块边界，提供清晰的错误信息，确保模块间正确的加载顺序。
+
 ## 🚨 代码编辑铁律（Code Editing Best Practices for Antigravity）
 
 **⚠️⚠️⚠️ 强制要求 ⚠️⚠️⚠️**
