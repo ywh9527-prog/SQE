@@ -333,13 +333,13 @@ class SupplierDocumentManager {
 
       // 邮件预览模态框关闭按钮
       if (e.target.closest('.email-modal-close')) {
-        this.hideEmailModal();
+        window.supplierUIUtils.hideEmailModal();
         return;
       }
 
       // 邮件预览模态框取消按钮
       if (e.target.closest('.email-modal-cancel-btn')) {
-        this.hideEmailModal();
+        window.supplierUIUtils.hideEmailModal();
         return;
       }
 
@@ -980,7 +980,7 @@ class SupplierDocumentManager {
       const subject = `${urgency}${window.supplierServices.getCertificateTypeText(targetDoc.documentType)}到期提醒 - ${supplier.supplierName}`;
       
       // 显示邮件预览模态框
-      this.showEmailModal(subject, emailContent);
+      window.supplierUIUtils.showEmailModal(subject, emailContent);
       
     } catch (error) {
       console.error('生成单个邮件失败:', error);
@@ -1094,53 +1094,11 @@ ${certType}：
       const subject = `${urgency}证书到期汇总提醒 - ${supplier.supplierName}（共${documentsToNotify.length}个证书）`;
       
       // 显示邮件预览模态框
-      this.showEmailModal(subject, emailContent);
+      window.supplierUIUtils.showEmailModal(subject, emailContent);
       
     } catch (error) {
       console.error('生成批量邮件失败:', error);
       window.supplierUIUtils.showError('生成批量邮件失败');
-    }
-  }
-
-  /**
-   * 显示邮件预览模态框
-   */
-  showEmailModal(subject, content) {
-    const modal = document.getElementById('emailPreviewModal');
-    const subjectInput = document.getElementById('emailSubject');
-    const contentTextarea = document.getElementById('emailContent');
-    
-    if (modal && subjectInput && contentTextarea) {
-      subjectInput.value = subject;
-      contentTextarea.value = content;
-      
-      // 显示模态框
-      modal.style.setProperty('display', 'flex', 'important');
-      modal.style.setProperty('z-index', '9999', 'important');
-      modal.style.setProperty('position', 'fixed', 'important');
-      modal.style.setProperty('top', '0', 'important');
-      modal.style.setProperty('left', '0', 'important');
-      modal.style.setProperty('width', '100%', 'important');
-      modal.style.setProperty('height', '100%', 'important');
-      modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-      modal.style.setProperty('align-items', 'center', 'important');
-      modal.style.setProperty('justify-content', 'center', 'important');
-      
-      console.log('✅ 邮件预览模态框已显示');
-    } else {
-      console.error('❌ 找不到邮件预览模态框元素');
-      window.supplierUIUtils.showError('邮件预览模态框加载失败');
-    }
-  }
-
-  /**
-   * 隐藏邮件预览模态框
-   */
-  hideEmailModal() {
-    const modal = document.getElementById('emailPreviewModal');
-    if (modal) {
-      modal.style.display = 'none';
-      console.log('✅ 邮件预览模态框已隐藏');
     }
   }
 
@@ -1153,7 +1111,7 @@ ${certType}：
       try {
         await this.copyToClipboard(contentTextarea.value);
         window.supplierUIUtils.showSuccess('邮件内容已复制到剪贴板');
-        this.hideEmailModal();
+        window.supplierUIUtils.hideEmailModal();
       } catch (error) {
         console.error('复制邮件内容失败:', error);
         window.supplierUIUtils.showError('复制失败');

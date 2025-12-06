@@ -210,72 +210,42 @@ class SupplierUIUtils {
   showEmailModal(subject, content) {
     console.log('📧 显示邮件模态框:', { subject });
 
-    // 创建或更新邮件模态框
-    let modal = document.getElementById('supplier-email-modal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'supplier-email-modal';
-      modal.className = 'supplier-modal';
-      modal.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        max-width: 600px;
-        width: 90vw;
-        max-height: 80vh;
-        overflow-y: auto;
-        display: none;
-      `;
+    // 使用HTML中已存在的邮件预览模态框
+    const modal = document.getElementById('emailPreviewModal');
+    const subjectInput = document.getElementById('emailSubject');
+    const contentTextarea = document.getElementById('emailContent');
 
-      modal.innerHTML = `
-        <div class="modal-header">
-          <h3>📧 邮件预览</h3>
-          <button class="modal-close-btn" onclick="window.supplierUIUtils.hideEmailModal()">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="email-subject">
-            <strong>主题:</strong> ${subject}
-          </div>
-          <div class="email-content">
-            <strong>内容:</strong>
-            <pre style="
-              background: #f8f9fa;
-              padding: 15px;
-              border-radius: 6px;
-              overflow-x: auto;
-              white-space: pre-wrap;
-              font-family: inherit;
-              margin-top: 10px;
-            ">${content}</pre>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="window.supplierUIUtils.hideEmailModal()">关闭</button>
-        </div>
-      `;
+    if (modal && subjectInput && contentTextarea) {
+      subjectInput.value = subject;
+      contentTextarea.value = content;
 
-      document.body.appendChild(modal);
+      // 显示模态框
+      modal.style.setProperty('display', 'flex', 'important');
+      modal.style.setProperty('z-index', '9999', 'important');
+      modal.style.setProperty('position', 'fixed', 'important');
+      modal.style.setProperty('top', '0', 'important');
+      modal.style.setProperty('left', '0', 'important');
+      modal.style.setProperty('width', '100%', 'important');
+      modal.style.setProperty('height', '100%', 'important');
+      modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
+      modal.style.setProperty('align-items', 'center', 'important');
+      modal.style.setProperty('justify-content', 'center', 'important');
+
+      console.log('✅ 邮件预览模态框已显示');
     } else {
-      // 更新现有模态框内容
-      modal.querySelector('.email-subject').innerHTML = `<strong>主题:</strong> ${subject}`;
-      modal.querySelector('.email-content pre').textContent = content;
+      console.error('❌ 找不到邮件预览模态框元素');
+      this.showError('邮件预览模态框加载失败');
     }
-
-    modal.style.display = 'block';
   }
 
   /**
    * 隐藏邮件模态框
    */
   hideEmailModal() {
-    const modal = document.getElementById('supplier-email-modal');
+    const modal = document.getElementById('emailPreviewModal');
     if (modal) {
       modal.style.display = 'none';
+      console.log('✅ 邮件预览模态框已隐藏');
     }
   }
 
