@@ -369,6 +369,9 @@ class SupplierUIUtils {
       return;
     }
 
+    // 存储supplierId到模态框的dataset中，供后续使用
+    modal.dataset.supplierId = supplierId;
+
     // 重置表单
     const nameInput = document.getElementById('newMaterialName');
     const codeInput = document.getElementById('newMaterialCode');

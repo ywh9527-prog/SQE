@@ -1845,6 +1845,15 @@ ${certType}：
       return;
     }
 
+    // 从模态框dataset中获取supplierId
+    const modal = document.getElementById('addMaterialModal');
+    const supplierId = modal?.dataset?.supplierId;
+    if (!supplierId) {
+      console.error('❌ 无法获取供应商ID');
+      window.supplierUIUtils.showError('供应商信息丢失，请重新操作');
+      return;
+    }
+
     try {
       this.showLoading('添加中...');
 
@@ -1856,7 +1865,7 @@ ${certType}：
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          supplierId: this.addMaterialContext.supplierId,
+          supplierId: parseInt(supplierId),
           materialName,
           materialCode: document.getElementById('newMaterialCode').value.trim(),
           description: document.getElementById('newMaterialRemark').value.trim()
@@ -1876,7 +1885,7 @@ ${certType}：
         console.log('✅ 前端判断：创建成功');
         window.supplierUIUtils.showSuccess('物料添加成功');
         window.supplierUIUtils.hideAddMaterialModal();
-        await this.refresh(false, this.addMaterialContext?.supplierId); // 只刷新相关供应商
+        await this.refresh(false, parseInt(supplierId)); // 只刷新相关供应商
       } else {
         console.log('❌ 前端判断：创建失败', { 
           responseOk: response.ok, 
