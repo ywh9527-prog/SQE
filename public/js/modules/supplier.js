@@ -54,7 +54,7 @@ class SupplierDocumentManager {
       console.log('✅ 供应商资料管理模块初始化完成');
     } catch (error) {
       console.error('❌ 初始化失败:', error);
-      this.showError('模块初始化失败，请刷新页面重试');
+      window.supplierUIUtils.showError('模块初始化失败，请刷新页面重试');
     }
   }
 
@@ -85,7 +85,7 @@ class SupplierDocumentManager {
       }
     } catch (error) {
       console.error('❌ 加载汇总数据失败:', error);
-      this.showError('加载数据失败，请刷新页面重试');
+      window.supplierUIUtils.showError('加载数据失败，请刷新页面重试');
       this.suppliers = [];
     }
   }
@@ -406,7 +406,7 @@ class SupplierDocumentManager {
     this.render();
     
     if (showMessage) {
-      this.showSuccess('数据已刷新');
+      window.supplierUIUtils.showSuccess('数据已刷新');
     }
   }
 
@@ -887,19 +887,11 @@ class SupplierDocumentManager {
   /**
    * 显示成功消息
    */
-  showSuccess(message) {
-    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
-    return window.supplierUIUtils.showSuccess(message);
-  }
-
+  
     /**
    * 显示错误消息
    */
-  showError(message) {
-    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
-    return window.supplierUIUtils.showError(message);
-  }
-
+  
   /**
    * 单个邮件模板
    */
@@ -930,14 +922,14 @@ class SupplierDocumentManager {
       // 获取供应商信息
       const supplier = this.suppliers.find(s => s.supplierId === supplierId);
       if (!supplier) {
-        this.showError('供应商信息不存在');
+        window.supplierUIUtils.showError('供应商信息不存在');
         return;
       }
       
       // 获取供应商详情
       const details = await this.loadDetails(supplierId);
       if (!details) {
-        this.showError('无法获取供应商详情');
+        window.supplierUIUtils.showError('无法获取供应商详情');
         return;
       }
       
@@ -964,7 +956,7 @@ class SupplierDocumentManager {
       }
       
       if (!targetDoc) {
-        this.showError('文档信息不存在');
+        window.supplierUIUtils.showError('文档信息不存在');
         return;
       }
       
@@ -992,7 +984,7 @@ class SupplierDocumentManager {
       
     } catch (error) {
       console.error('生成单个邮件失败:', error);
-      this.showError('生成邮件失败');
+      window.supplierUIUtils.showError('生成邮件失败');
     }
   }
 
@@ -1006,14 +998,14 @@ class SupplierDocumentManager {
       // 获取供应商信息
       const supplier = this.suppliers.find(s => s.supplierId === supplierId);
       if (!supplier) {
-        this.showError('供应商信息不存在');
+        window.supplierUIUtils.showError('供应商信息不存在');
         return;
       }
       
       // 获取供应商详情
       const details = await this.loadDetails(supplierId);
       if (!details) {
-        this.showError('无法获取供应商详情');
+        window.supplierUIUtils.showError('无法获取供应商详情');
         return;
       }
       
@@ -1037,7 +1029,7 @@ class SupplierDocumentManager {
       }
       
       if (documentsToNotify.length === 0) {
-        this.showSuccess('没有需要发送邮件的资料');
+        window.supplierUIUtils.showSuccess('没有需要发送邮件的资料');
         return;
       }
       
@@ -1106,7 +1098,7 @@ ${certType}：
       
     } catch (error) {
       console.error('生成批量邮件失败:', error);
-      this.showError('生成批量邮件失败');
+      window.supplierUIUtils.showError('生成批量邮件失败');
     }
   }
 
@@ -1137,7 +1129,7 @@ ${certType}：
       console.log('✅ 邮件预览模态框已显示');
     } else {
       console.error('❌ 找不到邮件预览模态框元素');
-      this.showError('邮件预览模态框加载失败');
+      window.supplierUIUtils.showError('邮件预览模态框加载失败');
     }
   }
 
@@ -1160,11 +1152,11 @@ ${certType}：
     if (contentTextarea) {
       try {
         await this.copyToClipboard(contentTextarea.value);
-        this.showSuccess('邮件内容已复制到剪贴板');
+        window.supplierUIUtils.showSuccess('邮件内容已复制到剪贴板');
         this.hideEmailModal();
       } catch (error) {
         console.error('复制邮件内容失败:', error);
-        this.showError('复制失败');
+        window.supplierUIUtils.showError('复制失败');
       }
     }
   }
@@ -1204,7 +1196,7 @@ ${certType}：
     const modal = document.getElementById('uploadModal');
     if (!modal) {
       console.error('❌ 找不到uploadModal元素');
-      this.showError('模态框加载失败');
+      window.supplierUIUtils.showError('模态框加载失败');
       return;
     }
 
@@ -1218,7 +1210,7 @@ ${certType}：
     // 获取供应商信息
     const supplier = this.suppliers.find(s => s.supplierId === supplierId);
     if (!supplier) {
-      this.showError('供应商信息不存在');
+      window.supplierUIUtils.showError('供应商信息不存在');
       return;
     }
 
@@ -1430,13 +1422,13 @@ ${certType}：
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
     if (!allowedTypes.includes(fileExtension)) {
-      this.showError('不支持的文件格式，请上传PDF、Excel或Word文档');
+      window.supplierUIUtils.showError('不支持的文件格式，请上传PDF、Excel或Word文档');
       return;
     }
 
     // 检查文件大小（10MB限制）
     if (file.size > 10 * 1024 * 1024) {
-      this.showError('文件大小不能超过10MB');
+      window.supplierUIUtils.showError('文件大小不能超过10MB');
       return;
     }
 
@@ -1485,12 +1477,12 @@ ${certType}：
     
     // 基础验证
     if (!this.uploadContext || !this.uploadContext.supplierId) {
-      this.showError('上传上下文缺失，请重新选择上传位置');
+      window.supplierUIUtils.showError('上传上下文缺失，请重新选择上传位置');
       return;
     }
 
     if (!this.selectedFile) {
-      this.showError('请选择要上传的文件');
+      window.supplierUIUtils.showError('请选择要上传的文件');
       return;
     }
 
@@ -1529,7 +1521,7 @@ ${certType}：
 
     // 如果有验证错误，显示并退出
     if (validationErrors.length > 0) {
-      this.showError(validationErrors[0]); // 只显示第一个错误
+      window.supplierUIUtils.showError(validationErrors[0]); // 只显示第一个错误
       return;
     }
 
@@ -1586,7 +1578,7 @@ ${certType}：
       const data = await response.json();
 
       if (data.success) {
-        this.showSuccess('文件上传成功');
+        window.supplierUIUtils.showSuccess('文件上传成功');
         this.hideUploadModal();
         await this.refresh(false, this.uploadContext?.supplierId); // 只刷新相关供应商
       } else {
@@ -1596,7 +1588,7 @@ ${certType}：
       }
     } catch (error) {
       console.error('上传失败:', error);
-      this.showError(error.message || '上传失败，请重试');
+      window.supplierUIUtils.showError(error.message || '上传失败，请重试');
     } finally {
       this.hideLoading();
     }
@@ -1627,9 +1619,9 @@ ${certType}：
         console.log('📁 文件夹同步结果:', folderSyncResults);
         
         if (newSuppliers && newSuppliers.length > 0) {
-          this.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.slice(0, 5).join(', ')}${newSuppliers.length > 5 ? '...' : ''}，已为所有供应商创建文件夹结构`);
+          window.supplierUIUtils.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.slice(0, 5).join(', ')}${newSuppliers.length > 5 ? '...' : ''}，已为所有供应商创建文件夹结构`);
         } else {
-          this.showSuccess(`同步完成！已为 ${totalSuppliers} 个供应商创建文件夹结构`);
+          window.supplierUIUtils.showSuccess(`同步完成！已为 ${totalSuppliers} 个供应商创建文件夹结构`);
         }
         
         // 刷新供应商列表
@@ -1640,7 +1632,7 @@ ${certType}：
       }
     } catch (error) {
       console.error('同步供应商失败:', error);
-      this.showError(error.message || '同步供应商失败，请重试');
+      window.supplierUIUtils.showError(error.message || '同步供应商失败，请重试');
     } finally {
       this.hideLoading();
     }
@@ -1673,7 +1665,7 @@ ${certType}：
       const modal = document.getElementById('editModal');
       if (!modal) {
         console.error('❌ 找不到editModal元素');
-        this.showError('编辑模态框加载失败');
+        window.supplierUIUtils.showError('编辑模态框加载失败');
         return;
       }
       
@@ -1728,7 +1720,7 @@ ${certType}：
       console.log('✅ 编辑表单填充完成');
     } catch (error) {
       console.error('❌ 获取文档信息失败:', error);
-      this.showError(error.message || '获取文档信息失败');
+      window.supplierUIUtils.showError(error.message || '获取文档信息失败');
       
       // 隐藏模态框
       const modal = document.getElementById('editModal');
@@ -1767,7 +1759,7 @@ ${certType}：
   async submitEdit() {
     const documentName = document.getElementById('editDocumentName').value.trim();
     if (!documentName) {
-      this.showError('请输入资料名称');
+      window.supplierUIUtils.showError('请输入资料名称');
       return;
     }
 
@@ -1775,7 +1767,7 @@ ${certType}：
     const expiryDate = document.getElementById('editExpiryDate').value;
 
     if (!isPermanent && !expiryDate) {
-      this.showError('请设置到期日期或选择永久有效');
+      window.supplierUIUtils.showError('请设置到期日期或选择永久有效');
       return;
     }
 
@@ -1800,7 +1792,7 @@ ${certType}：
       const data = await response.json();
 
       if (data.success) {
-        this.showSuccess('资料信息已更新');
+        window.supplierUIUtils.showSuccess('资料信息已更新');
         this.hideEditModal();
         await this.refresh(false, this.editContext?.documentId ? null : null); // 编辑操作需要重新加载详情
       } else {
@@ -1808,7 +1800,7 @@ ${certType}：
       }
     } catch (error) {
       console.error('更新失败:', error);
-      this.showError(error.message || '更新失败，请重试');
+      window.supplierUIUtils.showError(error.message || '更新失败，请重试');
     } finally {
       this.hideLoading();
     }
@@ -1836,7 +1828,7 @@ ${certType}：
       const data = await response.json();
 
       if (data.success) {
-        this.showSuccess('资料已删除');
+        window.supplierUIUtils.showSuccess('资料已删除');
         // 删除文档后，清空所有缓存确保数据一致性
         await this.refresh(false);
       } else {
@@ -1844,7 +1836,7 @@ ${certType}：
       }
     } catch (error) {
       console.error('删除失败:', error);
-      this.showError(error.message || '删除失败，请重试');
+      window.supplierUIUtils.showError(error.message || '删除失败，请重试');
     } finally {
       this.hideLoading();
     }
@@ -1856,7 +1848,7 @@ ${certType}：
   async openLocalFolder(filePath) {
     try {
       if (!filePath) {
-        this.showError('文件路径不存在');
+        window.supplierUIUtils.showError('文件路径不存在');
         return;
       }
       
@@ -1877,11 +1869,11 @@ ${certType}：
       if (data.success) {
         console.log('✅ 文件夹已打开');
       } else {
-        this.showError(`打开文件夹失败: ${data.error}`);
+        window.supplierUIUtils.showError(`打开文件夹失败: ${data.error}`);
       }
     } catch (error) {
       console.error('打开文件夹失败:', error);
-      this.showError('打开文件夹失败，请检查文件是否存在');
+      window.supplierUIUtils.showError('打开文件夹失败，请检查文件是否存在');
     }
   }
 
@@ -1894,7 +1886,7 @@ ${certType}：
     const modal = document.getElementById('addMaterialModal');
     if (!modal) {
       console.error('❌ 找不到addMaterialModal元素');
-      this.showError('新增物料模态框加载失败');
+      window.supplierUIUtils.showError('新增物料模态框加载失败');
       return;
     }
     
@@ -1937,7 +1929,7 @@ ${certType}：
   async submitAddMaterial() {
     const materialName = document.getElementById('newMaterialName').value.trim();
     if (!materialName) {
-      this.showError('请输入物料名称');
+      window.supplierUIUtils.showError('请输入物料名称');
       return;
     }
 
@@ -1970,7 +1962,7 @@ ${certType}：
       // 检查HTTP状态码和响应数据
       if (response.ok && data.success) {
         console.log('✅ 前端判断：创建成功');
-        this.showSuccess('物料添加成功');
+        window.supplierUIUtils.showSuccess('物料添加成功');
         this.hideAddMaterialModal();
         await this.refresh(false, this.addMaterialContext?.supplierId); // 只刷新相关供应商
       } else {
@@ -1995,7 +1987,7 @@ ${certType}：
         errorMessage = '服务器响应格式错误，请检查服务器日志';
       }
       
-      this.showError(errorMessage);
+      window.supplierUIUtils.showError(errorMessage);
     } finally {
       this.hideLoading();
     }
@@ -2026,14 +2018,14 @@ ${certType}：
       console.log('📄 删除物料响应:', data);
 
       if (data.success) {
-        this.showSuccess('物料已删除');
+        window.supplierUIUtils.showSuccess('物料已删除');
         await this.refresh(false, supplierId); // 只刷新相关供应商
       } else {
         throw new Error(data.error || '删除失败');
       }
     } catch (error) {
       console.error('删除物料失败:', error);
-      this.showError(error.message || '删除失败，请重试');
+      window.supplierUIUtils.showError(error.message || '删除失败，请重试');
     } finally {
       this.hideLoading();
     }

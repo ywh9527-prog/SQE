@@ -3695,3 +3695,9 @@
 2025-12-06 11:29:29 [INFO]: 数据库连接成功 (SQLite)
 2025-12-06 11:29:29 [INFO]: 数据库路径: D:\AI\SQE-Data-Analysis-Assistant-refactored\Claude-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
 2025-12-06 11:29:29 [INFO]: 数据库模型已同步
+2025-12-06 11:30:33 [INFO]: 数据库连接成功 (SQLite)
+2025-12-06 11:30:33 [INFO]: 数据库路径: D:\AI\SQE-Data-Analysis-Assistant-refactored\Claude-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-06 11:30:33 [INFO]: 数据库模型已同步
+2025-12-06 12:05:25 [INFO]: 数据库连接成功 (SQLite)
+2025-12-06 12:05:25 [INFO]: 数据库路径: D:\AI\SQE-Data-Analysis-Assistant-refactored\Claude-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
+2025-12-06 12:05:25 [INFO]: 数据库模型已同步
