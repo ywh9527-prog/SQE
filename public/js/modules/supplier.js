@@ -279,13 +279,13 @@ class SupplierDocumentManager {
     document.addEventListener('click', async (e) => {
       // 上传模态框关闭按钮
       if (e.target.closest('.upload-modal-close')) {
-        this.hideUploadModal();
+        window.supplierUIUtils.hideUploadModal();
         return;
       }
 
       // 上传模态框取消按钮
       if (e.target.closest('.upload-cancel-btn')) {
-        this.hideUploadModal();
+        window.supplierUIUtils.hideUploadModal();
         return;
       }
 
@@ -1122,132 +1122,6 @@ ${certType}：
   }
 
   /**
-   * 显示上传模态框
-   */
-  showUploadModal(type, supplierId, materialId = null) {
-    console.log('📤 显示上传模态框:', { type, supplierId, materialId });
-    
-    const modal = document.getElementById('uploadModal');
-    if (!modal) {
-      console.error('❌ 找不到uploadModal元素');
-      window.supplierUIUtils.showError('模态框加载失败');
-      return;
-    }
-
-    // 重置表单到干净状态（但不清空预设字段）
-    this.resetUploadFormWithoutPresets();
-    
-    const title = document.getElementById('uploadModalTitle');
-    const materialGroup = document.getElementById('materialGroup');
-    const componentGroup = document.getElementById('componentGroup');
-    
-    // 获取供应商信息
-    const supplier = this.suppliers.find(s => s.supplierId === supplierId);
-    if (!supplier) {
-      window.supplierUIUtils.showError('供应商信息不存在');
-      return;
-    }
-
-    // 设置基本信息
-    const supplierNameInput = document.getElementById('uploadSupplierName');
-    if (supplierNameInput) {
-      supplierNameInput.value = supplier.supplierName;
-    }
-    
-    if (type === 'common') {
-      if (title) title.textContent = '上传通用资料';
-      if (materialGroup) materialGroup.style.display = 'none';
-      if (componentGroup) componentGroup.style.display = 'none';
-    } else if (type === 'material') {
-      if (title) title.textContent = '上传物料资料';
-      if (materialGroup) materialGroup.style.display = 'block';
-      if (componentGroup) componentGroup.style.display = 'block';
-      
-      // 获取物料信息
-      const details = this.detailsCache[supplierId];
-      if (details && details.materials) {
-        const material = details.materials.find(m => m.materialId === materialId);
-        if (material) {
-          const materialNameInput = document.getElementById('uploadMaterialName');
-          if (materialNameInput) {
-            materialNameInput.value = material.materialName;
-          }
-        }
-      }
-    }
-
-    // 存储上传上下文
-    this.uploadContext = { type, supplierId, materialId };
-    
-    // 显示模态框 - 使用!important覆盖内联样式
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('z-index', '9999', 'important');
-    modal.style.setProperty('position', 'fixed', 'important');
-    modal.style.setProperty('top', '0', 'important');
-    modal.style.setProperty('left', '0', 'important');
-    modal.style.setProperty('width', '100%', 'important');
-    modal.style.setProperty('height', '100%', 'important');
-    modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-    modal.style.setProperty('align-items', 'center', 'important');
-    modal.style.setProperty('justify-content', 'center', 'important');
-    console.log('✅ 上传模态框已显示（使用!important）');
-    console.log('🔍 模态框样式检查:', {
-      display: modal.style.display,
-      zIndex: modal.style.zIndex,
-      position: modal.style.position,
-      visible: modal.offsetParent !== null,
-      width: modal.offsetWidth,
-      height: modal.offsetHeight
-    });
-    
-    // 不再在这里绑定文件上传事件，使用index.html中的全局事件处理
-    // 避免重复绑定导致的双弹窗问题
-    
-    // 检查页面是否有其他遮挡元素
-    console.log('🔍 检查页面遮挡元素:');
-    const allModals = document.querySelectorAll('.modal');
-    console.log('- 所有模态框:', allModals.length, allModals);
-    
-    const highZElements = [];
-    document.querySelectorAll('*').forEach(el => {
-      const zIndex = window.getComputedStyle(el).zIndex;
-      if (zIndex && zIndex !== 'auto' && parseInt(zIndex) > 1000) {
-        highZElements.push({
-          element: el.tagName + (el.className ? '.' + el.className : ''),
-          zIndex: zIndex,
-          display: window.getComputedStyle(el).display
-        });
-      }
-    });
-    console.log('- 高层级元素:', highZElements);
-  }
-
-  /**
-   * 隐藏上传模态框
-   */
-  hideUploadModal() {
-    const modal = document.getElementById('uploadModal');
-    modal.style.setProperty('display', 'none', 'important');
-    this.uploadContext = null;
-    this.selectedFile = null;
-    
-    // 重置表单（完全重置，清空所有字段）
-    this.resetUploadForm();
-    
-    // 隐藏文件预览
-    const filePreview = document.getElementById('filePreview');
-    if (filePreview) {
-      filePreview.style.display = 'none';
-    }
-    
-    // 清空文件输入
-    const fileInput = document.getElementById('fileInput');
-    if (fileInput) {
-      fileInput.value = '';
-    }
-  }
-
-  /**
    * 重置上传表单（不清空预设字段）
    */
   resetUploadFormWithoutPresets() {
@@ -1366,8 +1240,9 @@ ${certType}：
       return;
     }
 
-    this.selectedFile = file;
-    console.log('✅ 文件已保存到 selectedFile:', this.selectedFile.name);
+    // 存储文件到UI工具层
+    window.supplierUIUtils.selectedFile = file;
+    console.log('✅ 文件已保存到 UI工具层 selectedFile:', file.name);
     
     // 显示文件预览
     const filePreview = document.getElementById('filePreview');
@@ -1383,7 +1258,8 @@ ${certType}：
    * 移除选中的文件
    */
   removeSelectedFile() {
-    this.selectedFile = null;
+    // 清空UI工具层的selectedFile
+    window.supplierUIUtils.selectedFile = null;
     document.getElementById('filePreview').style.display = 'none';
     document.getElementById('fileInput').value = '';
   }
@@ -1417,7 +1293,9 @@ ${certType}：
       return;
     }
 
-    if (!this.selectedFile) {
+    // 从UI工具层获取selectedFile
+    const selectedFile = window.supplierUIUtils.selectedFile;
+    if (!selectedFile) {
       window.supplierUIUtils.showError('请选择要上传的文件');
       return;
     }
@@ -1463,7 +1341,7 @@ ${certType}：
 
     // 构建表单数据
     const formData = new FormData();
-    formData.append('file', this.selectedFile);
+    formData.append('file', selectedFile);
     formData.append('supplierId', uploadContext.supplierId);
     formData.append('documentType', documentType);
     formData.append('isPermanent', isPermanent);
@@ -1474,7 +1352,7 @@ ${certType}：
     formData.append('level', level);
 
     // 添加资料名称（使用文件名作为默认名称）
-    const documentName = this.selectedFile.name;
+    const documentName = selectedFile.name;
     formData.append('documentName', documentName);
 
     // 添加物料相关字段
@@ -1515,7 +1393,7 @@ ${certType}：
 
       if (data.success) {
         window.supplierUIUtils.showSuccess('文件上传成功');
-        this.hideUploadModal();
+        window.supplierUIUtils.hideUploadModal();
         await this.refresh(false, uploadContext?.supplierId); // 只刷新相关供应商
       } else {
         // 优先显示详细的message字段，如果没有则显示error字段
