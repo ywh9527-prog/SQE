@@ -499,8 +499,8 @@ class SupplierDocumentManager {
       <div class="supplier-summary">
         共找到 <span class="highlight">${filteredSuppliers.length}</span> 个供应商 
         ${this.searchKeyword ? `（搜索："${this.searchKeyword}"）` : ''}
-        ${this.statusFilter ? `（状态：${this.getStatusFilterText(this.statusFilter)}）` : ''}
-        ${this.documentFilter ? `（资料：${this.getDocumentFilterText(this.documentFilter)}）` : ''}
+        ${this.statusFilter ? `（状态：${window.supplierServices.getStatusFilterText(this.statusFilter)}）` : ''}
+        ${this.documentFilter ? `（资料：${window.supplierServices.getDocumentFilterText(this.documentFilter)}）` : ''}
       </div>
     `;
 
@@ -643,31 +643,11 @@ class SupplierDocumentManager {
   /**
    * 获取状态筛选文本
    */
-  getStatusFilterText(status) {
-    const map = {
-      normal: '🟢 正常',
-      warning: '🟡 即将到期',
-      urgent: '🔴 紧急',
-      critical: '🔴 严重',
-      expired: '❌ 已过期'
-    };
-    return map[status] || status;
-  }
-
+  
   /**
    * 获取资料筛选文本
    */
-  getDocumentFilterText(filter) {
-    const map = {
-      missing_msds: '缺失MSDS',
-      missing_qa: '缺失质量协议',
-      missing_rohs: '缺失ROHS',
-      missing_reach: '缺失REACH',
-      missing_hf: '缺失HF'
-    };
-    return map[filter] || filter;
-  }
-
+  
   /**
    * 渲染供应商行
    */

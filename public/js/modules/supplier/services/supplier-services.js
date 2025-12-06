@@ -83,6 +83,22 @@ class SupplierServices {
     return map[status] || status;
   }
 
+  /**
+   * 获取文档筛选文本
+   * @param {string} filter - 文档筛选代码
+   * @return {string} 文档筛选的显示文本
+   */
+  getDocumentFilterText(filter) {
+    const map = {
+      missing_msds: '缺失MSDS',
+      missing_qa: '缺失质量协议',
+      missing_rohs: '缺失ROHS',
+      missing_reach: '缺失REACH',
+      missing_hf: '缺失HF'
+    };
+    return map[filter] || filter;
+  }
+
   // ==================== 邮件相关方法 ====================
 
   /**
@@ -224,4 +240,4 @@ class SupplierServices {
 // 创建全局服务实例
 window.supplierServices = new SupplierServices();
 
-console.log('✅ SupplierServices 服务层已加载 (Phase 2.5 - formatDate, getStatusIcon, getDocumentTypeText, getCertificateTypeText, getStatusFilterText)');
+console.log('✅ SupplierServices 服务层已加载 (Phase 2.5 - formatDate, getStatusIcon, getDocumentTypeText, getCertificateTypeText, getStatusFilterText, getDocumentFilterText)');
