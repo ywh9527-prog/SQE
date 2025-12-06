@@ -889,30 +889,6 @@ class SupplierDocumentManager {
    */
   
     /**
-   * 显示错误消息
-   */
-  
-  /**
-   * 单个邮件模板
-   */
-  getEmailTemplate() {
-    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
-    return window.supplierServices.getEmailTemplate();
-  }
-
-  /**
-   * 获取证书类型中文名称
-   */
-  
-  /**
-   * 替换邮件模板变量
-   */
-  replaceEmailVariables(template, variables) {
-    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
-    return window.supplierServices.replaceEmailVariables(template, variables);
-  }
-
-  /**
    * 生成单个邮件
    */
   async generateSingleEmail(documentId, supplierId) {
@@ -972,8 +948,8 @@ class SupplierDocumentManager {
       };
       
       // 生成邮件内容
-      const template = this.getEmailTemplate();
-      const emailContent = this.replaceEmailVariables(template, variables);
+      const template = window.supplierServices.getEmailTemplate();
+      const emailContent = window.supplierServices.replaceEmailVariables(template, variables);
       
       // 生成邮件主题
       const urgency = targetDoc.daysUntilExpiry < 0 ? '【已过期】' : targetDoc.daysUntilExpiry <= 7 ? '【紧急】' : '【提醒】';
@@ -1431,10 +1407,12 @@ ${certType}：
    * 提交上传（列表直接上传版本）
    */
   async submitUpload() {
-    console.log('📤 开始提交上传，uploadContext:', this.uploadContext);
-    
+    // 从UI工具层获取uploadContext
+    const uploadContext = window.supplierUIUtils.uploadContext;
+    console.log('📤 开始提交上传，uploadContext:', uploadContext);
+
     // 基础验证
-    if (!this.uploadContext || !this.uploadContext.supplierId) {
+    if (!uploadContext || !uploadContext.supplierId) {
       window.supplierUIUtils.showError('上传上下文缺失，请重新选择上传位置');
       return;
     }
@@ -1465,7 +1443,7 @@ ${certType}：
     }
 
     // 3. 物料资料需要构成名称
-    if (this.uploadContext.type === 'material') {
+    if (uploadContext.type === 'material') {
       const componentName = document.getElementById('componentName').value;
       if (!componentName || componentName.trim() === '') {
         validationErrors.push('物料资料上传必须填写构成名称');
@@ -1486,13 +1464,13 @@ ${certType}：
     // 构建表单数据
     const formData = new FormData();
     formData.append('file', this.selectedFile);
-    formData.append('supplierId', this.uploadContext.supplierId);
+    formData.append('supplierId', uploadContext.supplierId);
     formData.append('documentType', documentType);
     formData.append('isPermanent', isPermanent);
     formData.append('remarks', remark);
 
     // 添加资料层级 (通用资料是supplier，物料资料是component)
-    const level = this.uploadContext.type === 'common' ? 'supplier' : 'component';
+    const level = uploadContext.type === 'common' ? 'supplier' : 'component';
     formData.append('level', level);
 
     // 添加资料名称（使用文件名作为默认名称）
@@ -1500,8 +1478,8 @@ ${certType}：
     formData.append('documentName', documentName);
 
     // 添加物料相关字段
-    if (this.uploadContext.type === 'material') {
-      formData.append('materialId', this.uploadContext.materialId);
+    if (uploadContext.type === 'material') {
+      formData.append('materialId', uploadContext.materialId);
       
       // 构成信息现在作为备注处理
       const componentName = document.getElementById('componentName').value.trim();
@@ -1522,7 +1500,7 @@ ${certType}：
     }
 
     try {
-      this.showLoading('上传中...');
+      window.supplierUIUtils.showLoading(true, '上传中...');
 
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/documents/upload', {
@@ -1538,7 +1516,7 @@ ${certType}：
       if (data.success) {
         window.supplierUIUtils.showSuccess('文件上传成功');
         this.hideUploadModal();
-        await this.refresh(false, this.uploadContext?.supplierId); // 只刷新相关供应商
+        await this.refresh(false, uploadContext?.supplierId); // 只刷新相关供应商
       } else {
         // 优先显示详细的message字段，如果没有则显示error字段
         const errorMessage = data.message || data.error || '上传失败';
@@ -1548,7 +1526,7 @@ ${certType}：
       console.error('上传失败:', error);
       window.supplierUIUtils.showError(error.message || '上传失败，请重试');
     } finally {
-      this.hideLoading();
+      window.supplierUIUtils.hideLoading();
     }
   }
 
@@ -1557,7 +1535,7 @@ ${certType}：
    */
   async syncSuppliersFromIQC() {
     try {
-      this.showLoading('正在同步供应商数据...');
+      window.supplierUIUtils.showLoading(true, '正在同步供应商数据...');
       
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/suppliers/import-from-iqc', {
@@ -1592,26 +1570,11 @@ ${certType}：
       console.error('同步供应商失败:', error);
       window.supplierUIUtils.showError(error.message || '同步供应商失败，请重试');
     } finally {
-      this.hideLoading();
+      window.supplierUIUtils.hideLoading();
     }
   }
 
-  /**
-   * 显示加载状态
-   */
-  showLoading(message = '加载中...') {
-    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
-    return window.supplierUIUtils.showLoading(true, message);
-  }
-
-  /**
-   * 隐藏加载状态
-   */
-  hideLoading() {
-    // 🔄 Phase 2.5: 重构到UI工具层 - 保持向后兼容
-    return window.supplierUIUtils.showLoading(false);
-  }
-
+  
   /**
    * 显示编辑模态框
    */
@@ -1730,7 +1693,7 @@ ${certType}：
     }
 
     try {
-      this.showLoading('保存中...');
+      window.supplierUIUtils.showLoading(true, '保存中...');
 
       const token = localStorage.getItem('authToken');
       const response = await fetch(`/api/documents/${this.editContext.documentId}`, {
@@ -1760,7 +1723,7 @@ ${certType}：
       console.error('更新失败:', error);
       window.supplierUIUtils.showError(error.message || '更新失败，请重试');
     } finally {
-      this.hideLoading();
+      window.supplierUIUtils.hideLoading();
     }
   }
 
@@ -1773,7 +1736,7 @@ ${certType}：
     }
 
     try {
-      this.showLoading('删除中...');
+      window.supplierUIUtils.showLoading(true, '删除中...');
 
       const token = localStorage.getItem('authToken');
       const response = await fetch(`/api/documents/${documentId}`, {
@@ -1796,7 +1759,7 @@ ${certType}：
       console.error('删除失败:', error);
       window.supplierUIUtils.showError(error.message || '删除失败，请重试');
     } finally {
-      this.hideLoading();
+      window.supplierUIUtils.hideLoading();
     }
   }
 
@@ -1855,7 +1818,7 @@ ${certType}：
     }
 
     try {
-      this.showLoading('添加中...');
+      window.supplierUIUtils.showLoading(true, '添加中...');
 
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/materials', {
@@ -1910,7 +1873,7 @@ ${certType}：
       
       window.supplierUIUtils.showError(errorMessage);
     } finally {
-      this.hideLoading();
+      window.supplierUIUtils.hideLoading();
     }
   }
 
@@ -1923,7 +1886,7 @@ ${certType}：
     }
 
     try {
-      this.showLoading('删除中...');
+      window.supplierUIUtils.showLoading(true, '删除中...');
 
       const token = localStorage.getItem('authToken');
       const response = await fetch(`/api/materials/${materialId}`, {
@@ -1948,7 +1911,7 @@ ${certType}：
       console.error('删除物料失败:', error);
       window.supplierUIUtils.showError(error.message || '删除失败，请重试');
     } finally {
-      this.hideLoading();
+      window.supplierUIUtils.hideLoading();
     }
   }
 }
