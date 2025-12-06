@@ -269,67 +269,16 @@ class SupplierUIUtils {
    * @param {string} materialId - 物料ID (可选)
    */
   showUploadModal(type, supplierId, materialId = null) {
-    console.log('📤 显示上传模态框:', { type, supplierId, materialId });
+    console.log('📤 UI工具层显示上传模态框:', { type, supplierId, materialId });
 
-    // 创建或更新上传模态框
-    let modal = document.getElementById('supplier-upload-modal');
-    if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'supplier-upload-modal';
-      modal.className = 'supplier-modal';
-      modal.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        max-width: 500px;
-        width: 90vw;
-        display: none;
-      `;
-
-      modal.innerHTML = `
-        <div class="modal-header">
-          <h3>📤 上传资料</h3>
-          <button class="modal-close-btn" onclick="window.supplierUIUtils.hideUploadModal()">×</button>
-        </div>
-        <div class="modal-body">
-          <div class="upload-form">
-            <p>正在上传${type === 'common' ? '通用' : '物料'}资料...</p>
-            <div class="upload-progress">
-              <div class="progress-bar">
-                <div class="progress-fill" style="width: 0%"></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="window.supplierUIUtils.hideUploadModal()">取消</button>
-        </div>
-      `;
-
-      document.body.appendChild(modal);
+    // 保守方案：直接调用控制层的showUploadModal
+    // 这样既更新了调用点，又保证了功能完整
+    if (window.supplierManager && window.supplierManager.showUploadModal) {
+      window.supplierManager.showUploadModal(type, supplierId, materialId);
+    } else {
+      console.error('❌ 无法访问控制层的showUploadModal方法');
+      this.showError('模态框加载失败');
     }
-
-    modal.style.display = 'block';
-
-    // 模拟上传进度
-    let progress = 0;
-    const progressInterval = setInterval(() => {
-      progress += Math.random() * 15;
-      if (progress >= 100) {
-        progress = 100;
-        clearInterval(progressInterval);
-        setTimeout(() => {
-          this.hideUploadModal();
-          this.showSuccess('资料上传成功');
-        }, 500);
-      }
-      modal.querySelector('.progress-fill').style.width = `${progress}%`;
-    }, 200);
   }
 
   /**
