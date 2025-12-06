@@ -893,24 +893,8 @@ class SupplierDocumentManager {
    */
   
   /**
-   * 单个邮件模板
-   */
-  getEmailTemplate() {
-    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
-    return window.supplierServices.getEmailTemplate();
-  }
-
-  /**
    * 获取证书类型中文名称
    */
-  
-  /**
-   * 替换邮件模板变量
-   */
-  replaceEmailVariables(template, variables) {
-    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
-    return window.supplierServices.replaceEmailVariables(template, variables);
-  }
 
   /**
    * 生成单个邮件
@@ -972,8 +956,8 @@ class SupplierDocumentManager {
       };
       
       // 生成邮件内容
-      const template = this.getEmailTemplate();
-      const emailContent = this.replaceEmailVariables(template, variables);
+      const template = window.supplierServices.getEmailTemplate();
+      const emailContent = window.supplierServices.replaceEmailVariables(template, variables);
       
       // 生成邮件主题
       const urgency = targetDoc.daysUntilExpiry < 0 ? '【已过期】' : targetDoc.daysUntilExpiry <= 7 ? '【紧急】' : '【提醒】';
