@@ -361,91 +361,50 @@ class SupplierUIUtils {
   showAddMaterialModal(supplierId) {
     console.log('➕ 显示新增物料模态框:', { supplierId });
 
-    // 创建或更新新增物料模态框
-    let modal = document.getElementById('supplier-add-material-modal');
+    // 使用HTML中已存在的新增物料模态框
+    const modal = document.getElementById('addMaterialModal');
     if (!modal) {
-      modal = document.createElement('div');
-      modal.id = 'supplier-add-material-modal';
-      modal.className = 'supplier-modal';
-      modal.style.cssText = `
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-        z-index: 10000;
-        max-width: 500px;
-        width: 90vw;
-        display: none;
-      `;
-
-      modal.innerHTML = `
-        <div class="modal-header">
-          <h3>➕ 新增物料</h3>
-          <button class="modal-close-btn" onclick="window.supplierUIUtils.hideAddMaterialModal()">×</button>
-        </div>
-        <div class="modal-body">
-          <form class="add-material-form">
-            <div class="form-group">
-              <label>物料名称:</label>
-              <input type="text" name="materialName" placeholder="请输入物料名称" required>
-            </div>
-            <div class="form-group">
-              <label>物料编码:</label>
-              <input type="text" name="materialCode" placeholder="请输入物料编码">
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button class="btn-cancel" onclick="window.supplierUIUtils.hideAddMaterialModal()">取消</button>
-          <button class="btn-confirm" onclick="window.supplierUIUtils.confirmAddMaterial('${supplierId}')">确认添加</button>
-        </div>
-      `;
-
-      document.body.appendChild(modal);
+      console.error('❌ 找不到addMaterialModal元素');
+      this.showError('新增物料模态框加载失败');
+      return;
     }
 
-    modal.style.display = 'block';
+    // 重置表单
+    const nameInput = document.getElementById('newMaterialName');
+    const codeInput = document.getElementById('newMaterialCode');
+    const remarkInput = document.getElementById('newMaterialRemark');
+
+    if (nameInput) nameInput.value = '';
+    if (codeInput) codeInput.value = '';
+    if (remarkInput) remarkInput.value = '';
+
+    // 显示模态框
+    modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
+    modal.style.setProperty('position', 'fixed', 'important');
+    modal.style.setProperty('top', '0', 'important');
+    modal.style.setProperty('left', '0', 'important');
+    modal.style.setProperty('width', '100%', 'important');
+    modal.style.setProperty('height', '100%', 'important');
+    modal.style.setProperty('z-index', '9999', 'important');
+    modal.style.setProperty('align-items', 'center', 'important');
+    modal.style.setProperty('justify-content', 'center', 'important');
+
+    console.log('✅ 新增物料模态框已显示');
   }
 
   /**
    * 隐藏新增物料模态框
    */
   hideAddMaterialModal() {
-    const modal = document.getElementById('supplier-add-material-modal');
+    const modal = document.getElementById('addMaterialModal');
     if (modal) {
-      modal.style.display = 'none';
+      modal.style.setProperty('display', 'none', 'important');
+      console.log('✅ 新增物料模态框已隐藏');
     }
   }
 
-  /**
-   * 确认新增物料
-   * @param {string} supplierId - 供应商ID
-   */
-  confirmAddMaterial(supplierId) {
-    const form = document.querySelector('#supplier-add-material-modal .add-material-form');
-    const formData = new FormData(form);
-    const materialName = formData.get('materialName');
-    const materialCode = formData.get('materialCode');
-
-    if (!materialName) {
-      this.showError('请输入物料名称');
-      return;
-    }
-
-    console.log('📝 确认新增物料:', { supplierId, materialName, materialCode });
-
-    // 这里应该调用实际的API
-    // 模拟API调用
-    setTimeout(() => {
-      this.hideAddMaterialModal();
-      this.showSuccess(`物料 "${materialName}" 添加成功`);
-      form.reset();
-    }, 1000);
-  }
-
+  
   /**
    * 重置上传表单（不清空预设字段）
    */

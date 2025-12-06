@@ -196,7 +196,7 @@ class SupplierDocumentManager {
           e.preventDefault();
           const supplierId = parseInt(addMaterialBtn.dataset.supplierId);
           console.log('➕ 调用新增物料模态框:', supplierId);
-          this.showAddMaterialModal(supplierId);
+          window.supplierUIUtils.showAddMaterialModal(supplierId);
           return;
         }
 
@@ -315,13 +315,13 @@ class SupplierDocumentManager {
 
       // 新增物料模态框关闭按钮
       if (e.target.closest('.add-material-modal-close')) {
-        this.hideAddMaterialModal();
+        window.supplierUIUtils.hideAddMaterialModal();
         return;
       }
 
       // 新增物料模态框取消按钮
       if (e.target.closest('.add-material-cancel-btn')) {
-        this.hideAddMaterialModal();
+        window.supplierUIUtils.hideAddMaterialModal();
         return;
       }
 
@@ -1836,52 +1836,6 @@ ${certType}：
   }
 
   /**
-   * 显示新增物料模态框
-   */
-  showAddMaterialModal(supplierId) {
-    console.log('➕ 显示新增物料模态框:', supplierId);
-    
-    const modal = document.getElementById('addMaterialModal');
-    if (!modal) {
-      console.error('❌ 找不到addMaterialModal元素');
-      window.supplierUIUtils.showError('新增物料模态框加载失败');
-      return;
-    }
-    
-    this.addMaterialContext = { supplierId };
-    
-    // 重置表单
-    const nameInput = document.getElementById('newMaterialName');
-    const codeInput = document.getElementById('newMaterialCode');
-    const remarkInput = document.getElementById('newMaterialRemark');
-    
-    if (nameInput) nameInput.value = '';
-    if (codeInput) codeInput.value = '';
-    if (remarkInput) remarkInput.value = '';
-    
-    // 显示模态框
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-    modal.style.setProperty('position', 'fixed', 'important');
-    modal.style.setProperty('top', '0', 'important');
-    modal.style.setProperty('left', '0', 'important');
-    modal.style.setProperty('width', '100%', 'important');
-    modal.style.setProperty('height', '100%', 'important');
-    modal.style.setProperty('z-index', '9999', 'important');
-    modal.style.setProperty('align-items', 'center', 'important');
-    modal.style.setProperty('justify-content', 'center', 'important');
-    console.log('✅ 新增物料模态框已显示');
-  }
-
-  /**
-   * 隐藏新增物料模态框
-   */
-  hideAddMaterialModal() {
-    document.getElementById('addMaterialModal').style.setProperty('display', 'none', 'important');
-    this.addMaterialContext = null;
-  }
-
-  /**
    * 提交新增物料
    */
   async submitAddMaterial() {
@@ -1921,7 +1875,7 @@ ${certType}：
       if (response.ok && data.success) {
         console.log('✅ 前端判断：创建成功');
         window.supplierUIUtils.showSuccess('物料添加成功');
-        this.hideAddMaterialModal();
+        window.supplierUIUtils.hideAddMaterialModal();
         await this.refresh(false, this.addMaterialContext?.supplierId); // 只刷新相关供应商
       } else {
         console.log('❌ 前端判断：创建失败', { 
