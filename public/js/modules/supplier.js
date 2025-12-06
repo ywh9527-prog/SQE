@@ -12,23 +12,7 @@ class SupplierDocumentManager {
   /**
    * 格式化日期显示（只显示年-月-日）
    */
-  formatDate(dateString) {
-    if (!dateString || dateString === '永久' || dateString === '永久有效') {
-      return dateString;
-    }
-    
-    try {
-      const date = new Date(dateString);
-      const year = date.getFullYear();
-      const month = String(date.getMonth() + 1).padStart(2, '0');
-      const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
-    } catch (error) {
-      console.warn('日期格式化失败:', dateString, error);
-      return dateString;
-    }
-  }
-
+  
   /**
    * 初始化模块
    */
@@ -541,7 +525,7 @@ class SupplierDocumentManager {
 
       // 状态筛选
       if (this.statusFilter) {
-        const hasStatus = this.checkSupplierStatus(supplier, this.statusFilter);
+        const hasStatus = window.supplierServices.checkSupplierStatus(supplier, this.statusFilter);
         if (!hasStatus) {
           return false;
         }
@@ -549,7 +533,7 @@ class SupplierDocumentManager {
 
       // 资料筛选
       if (this.documentFilter) {
-        const hasDocumentIssue = this.checkDocumentIssue(supplier, this.documentFilter);
+        const hasDocumentIssue = window.supplierServices.checkDocumentIssue(supplier, this.documentFilter);
         if (!hasDocumentIssue) {
           return false;
         }
@@ -562,19 +546,11 @@ class SupplierDocumentManager {
   /**
    * 检查供应商状态
    */
-  checkSupplierStatus(supplier, status) {
-    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
-    return window.supplierServices.checkSupplierStatus(supplier, status);
-  }
-
+  
   /**
    * 检查资料问题
    */
-  checkDocumentIssue(supplier, issue) {
-    // 🔄 Phase 2.5: 重构到服务层 - 保持向后兼容
-    return window.supplierServices.checkDocumentIssue(supplier, issue);
-  }
-
+  
   /**
    * 绑定搜索事件
    */
@@ -702,7 +678,7 @@ class SupplierDocumentManager {
     const msds = supplier.commonDocuments['environmental_msds'];
     const msdsHtml = msds ? `
       <div class="doc-cell">
-        <div class="doc-date">${msds.isPermanent ? '永久有效' : this.formatDate(msds.expiryDate)}</div>
+        <div class="doc-date">${msds.isPermanent ? '永久有效' : window.supplierServices.formatDate(msds.expiryDate)}</div>
         <div class="doc-status ${msds.status}">${window.supplierServices.getStatusIcon(msds.status)} ${msds.isPermanent ? '' : msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
@@ -711,7 +687,7 @@ class SupplierDocumentManager {
     const qa = supplier.commonDocuments['quality_agreement'];
     const qaHtml = qa ? `
       <div class="doc-cell">
-        <div class="doc-date">${qa.isPermanent ? '永久有效' : this.formatDate(qa.expiryDate)}</div>
+        <div class="doc-date">${qa.isPermanent ? '永久有效' : window.supplierServices.formatDate(qa.expiryDate)}</div>
         <div class="doc-status ${qa.status}">${window.supplierServices.getStatusIcon(qa.status)} ${qa.isPermanent ? '' : qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
       </div>
     ` : '<div class="doc-cell missing">❌ 缺失</div>';
@@ -803,7 +779,7 @@ class SupplierDocumentManager {
             <span class="doc-type">${window.supplierServices.getDocumentTypeText(doc.documentType)}</span>
             <span class="doc-name">${doc.documentName}</span>
             <span class="doc-expiry">
-              ${doc.isPermanent ? '永久有效' : `到期: ${this.formatDate(doc.expiryDate)}`}
+              ${doc.isPermanent ? '永久有效' : `到期: ${window.supplierServices.formatDate(doc.expiryDate)}`}
             </span>
             ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
               <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
@@ -871,7 +847,7 @@ class SupplierDocumentManager {
                 <span class="doc-type">${window.supplierServices.getDocumentTypeText(doc.documentType)} (${doc.componentName})</span>
                 <span class="doc-name">${doc.documentName}</span>
                 <span class="doc-expiry">
-                  ${doc.isPermanent ? '永久有效' : `到期: ${this.formatDate(doc.expiryDate)}`}
+                  ${doc.isPermanent ? '永久有效' : `到期: ${window.supplierServices.formatDate(doc.expiryDate)}`}
                 </span>
                 ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
                   <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
@@ -1018,7 +994,7 @@ class SupplierDocumentManager {
         物料名称: targetDoc.materialName || '',
         具体构成名称: targetDoc.componentName || '',
         证书类型: window.supplierServices.getCertificateTypeText(targetDoc.documentType),
-        到期日期: targetDoc.isPermanent ? '永久有效' : this.formatDate(targetDoc.expiryDate),
+        到期日期: targetDoc.isPermanent ? '永久有效' : window.supplierServices.formatDate(targetDoc.expiryDate),
         剩余天数: targetDoc.isPermanent ? '永久有效' : `${targetDoc.daysUntilExpiry}天`,
         SQE工程师联系方式: 'SQE团队' // 可以从配置中获取
       };
@@ -1115,7 +1091,7 @@ ${certType}：
           const status = doc.daysUntilExpiry < 0 ? `已过期${Math.abs(doc.daysUntilExpiry)}天` : `剩余${doc.daysUntilExpiry}天`;
           const urgency = doc.daysUntilExpiry < 0 ? '🔴' : doc.daysUntilExpiry <= 7 ? '🟡' : '🟢';
           emailContent += `${urgency} ${doc.documentName}${materialInfo}
-   到期日期：${this.formatDate(doc.expiryDate)}
+   到期日期：${window.supplierServices.formatDate(doc.expiryDate)}
    状态：${status}
 `;
         });
