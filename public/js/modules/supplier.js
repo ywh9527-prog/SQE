@@ -1122,46 +1122,6 @@ ${certType}：
   }
 
   /**
-   * 重置上传表单（不清空预设字段）
-   */
-  resetUploadFormWithoutPresets() {
-    document.getElementById('documentType').value = '';
-    document.getElementById('componentName').value = '';
-    document.getElementById('expiryDate').value = '';
-    document.getElementById('isPermanent').checked = false;
-    document.getElementById('documentRemark').value = '';
-    document.getElementById('expiryDate').disabled = false;
-    document.getElementById('filePreview').style.display = 'none';
-    document.getElementById('fileInput').value = '';
-    this.selectedFile = null;
-    // 注意：不清空 uploadSupplierName 和 uploadMaterialName（预设字段）
-  }
-
-  /**
-   * 重置上传表单（完全重置）
-   */
-  resetUploadForm() {
-    document.getElementById('documentType').value = '';
-    document.getElementById('componentName').value = '';
-    document.getElementById('expiryDate').value = '';
-    document.getElementById('isPermanent').checked = false;
-    document.getElementById('documentRemark').value = '';
-    document.getElementById('expiryDate').disabled = false;
-    document.getElementById('filePreview').style.display = 'none';
-    document.getElementById('fileInput').value = '';
-    this.selectedFile = null;
-    // 清空所有字段，包括预设字段
-    const supplierNameInput = document.getElementById('uploadSupplierName');
-    if (supplierNameInput) {
-      supplierNameInput.value = '';
-    }
-    const materialNameInput = document.getElementById('uploadMaterialName');
-    if (materialNameInput) {
-      materialNameInput.value = '';
-    }
-  }
-
-  /**
    * 绑定文件上传事件
    */
   bindFileUploadEvents() {
