@@ -12,7 +12,7 @@ class SupplierDocumentManager {
   /**
    * 格式化日期显示（只显示年-月-日）
    */
-  
+
   /**
    * 初始化模块
    */
@@ -71,7 +71,7 @@ class SupplierDocumentManager {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       console.log('📊 API响应状态:', response.status);
       const data = await response.json();
       console.log('📊 API响应数据:', data);
@@ -114,7 +114,7 @@ class SupplierDocumentManager {
             }
           });
         }
-        
+
         // 给物料资料也添加filePath
         if (data.data && data.data.materials) {
           data.data.materials.forEach(material => {
@@ -127,7 +127,7 @@ class SupplierDocumentManager {
             }
           });
         }
-        
+
         this.detailsCache[supplierId] = data.data;
         return data.data;
       } else {
@@ -166,7 +166,7 @@ class SupplierDocumentManager {
     if (container) {
       container.addEventListener('click', async (e) => {
         console.log('🖱️ 点击事件触发:', e.target);
-        
+
         // 展开/收起按钮
         const toggleBtn = e.target.closest('.toggle-details-btn');
         if (toggleBtn) {
@@ -374,10 +374,10 @@ class SupplierDocumentManager {
    */
   async refresh(showMessage = true, supplierId = null) {
     console.log('🔄 刷新数据...', { supplierId });
-    
+
     // 记录当前展开的供应商
     const expandedSuppliers = new Set(this.expandedSuppliers);
-    
+
     // 如果指定了supplierId，只刷新该供应商的详情
     if (supplierId) {
       delete this.detailsCache[supplierId];
@@ -387,9 +387,9 @@ class SupplierDocumentManager {
       this.detailsCache = {};
       console.log('🔄 清空所有详情缓存');
     }
-    
+
     await this.loadSummary();
-    
+
     // 重新加载供应商详情
     if (supplierId) {
       // 如果指定了supplierId，确保重新加载该供应商的详情
@@ -402,9 +402,9 @@ class SupplierDocumentManager {
         await this.loadDetails(sid);
       }
     }
-    
+
     this.render();
-    
+
     if (showMessage) {
       window.supplierUIUtils.showSuccess('数据已刷新');
     }
@@ -546,11 +546,11 @@ class SupplierDocumentManager {
   /**
    * 检查供应商状态
    */
-  
+
   /**
    * 检查资料问题
    */
-  
+
   /**
    * 绑定搜索事件
    */
@@ -564,7 +564,7 @@ class SupplierDocumentManager {
         searchTimeout = setTimeout(() => {
           this.searchKeyword = e.target.value.trim();
           this.render();
-          
+
           // 显示/隐藏清除按钮
           const clearBtn = document.querySelector('.clear-search-btn');
           if (clearBtn) {
@@ -643,11 +643,11 @@ class SupplierDocumentManager {
   /**
    * 获取状态筛选文本
    */
-  
+
   /**
    * 获取资料筛选文本
    */
-  
+
   /**
    * 渲染供应商行
    */
@@ -879,44 +879,44 @@ class SupplierDocumentManager {
   /**
    * 工具函数: 获取状态图标
    */
-  
+
   /**
    * 工具函数: 获取资料类型文本
    */
-  
+
   /**
    * 显示成功消息
    */
-  
-    /**
-   * 生成单个邮件
-   */
+
+  /**
+ * 生成单个邮件
+ */
   async generateSingleEmail(documentId, supplierId) {
     try {
       console.log('📧 生成单个邮件:', { documentId, supplierId });
-      
+
       // 获取供应商信息
       const supplier = this.suppliers.find(s => s.supplierId === supplierId);
       if (!supplier) {
         window.supplierUIUtils.showError('供应商信息不存在');
         return;
       }
-      
+
       // 获取供应商详情
       const details = await this.loadDetails(supplierId);
       if (!details) {
         window.supplierUIUtils.showError('无法获取供应商详情');
         return;
       }
-      
+
       // 查找目标文档
       let targetDoc = null;
-      
+
       // 在通用资料中查找
       if (details.commonDocuments) {
         targetDoc = details.commonDocuments.find(doc => doc.id === documentId);
       }
-      
+
       // 在物料资料中查找
       if (!targetDoc && details.materials) {
         for (const material of details.materials) {
@@ -930,12 +930,12 @@ class SupplierDocumentManager {
           }
         }
       }
-      
+
       if (!targetDoc) {
         window.supplierUIUtils.showError('文档信息不存在');
         return;
       }
-      
+
       // 准备邮件变量
       const variables = {
         供应商名称: supplier.supplierName,
@@ -946,18 +946,18 @@ class SupplierDocumentManager {
         剩余天数: targetDoc.isPermanent ? '永久有效' : `${targetDoc.daysUntilExpiry}天`,
         SQE工程师联系方式: 'SQE团队' // 可以从配置中获取
       };
-      
+
       // 生成邮件内容
       const template = window.supplierServices.getEmailTemplate();
       const emailContent = window.supplierServices.replaceEmailVariables(template, variables);
-      
+
       // 生成邮件主题
       const urgency = targetDoc.daysUntilExpiry < 0 ? '【已过期】' : targetDoc.daysUntilExpiry <= 7 ? '【紧急】' : '【提醒】';
       const subject = `${urgency}${window.supplierServices.getCertificateTypeText(targetDoc.documentType)}到期提醒 - ${supplier.supplierName}`;
-      
+
       // 显示邮件预览模态框
       window.supplierUIUtils.showEmailModal(subject, emailContent);
-      
+
     } catch (error) {
       console.error('生成单个邮件失败:', error);
       window.supplierUIUtils.showError('生成邮件失败');
@@ -970,27 +970,27 @@ class SupplierDocumentManager {
   async generateBatchEmail(type, supplierId, materialId = null, materialName = null) {
     try {
       console.log('📧 生成批量邮件:', { type, supplierId, materialId, materialName });
-      
+
       // 获取供应商信息
       const supplier = this.suppliers.find(s => s.supplierId === supplierId);
       if (!supplier) {
         window.supplierUIUtils.showError('供应商信息不存在');
         return;
       }
-      
+
       // 获取供应商详情
       const details = await this.loadDetails(supplierId);
       if (!details) {
         window.supplierUIUtils.showError('无法获取供应商详情');
         return;
       }
-      
+
       let documentsToNotify = [];
-      
+
       if (type === 'common') {
         // 通用资料批量邮件
         if (details.commonDocuments) {
-          documentsToNotify = details.commonDocuments.filter(doc => 
+          documentsToNotify = details.commonDocuments.filter(doc =>
             !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
           );
         }
@@ -998,17 +998,17 @@ class SupplierDocumentManager {
         // 物料资料批量邮件
         const material = details.materials.find(m => m.materialId === materialId);
         if (material && material.documents) {
-          documentsToNotify = material.documents.filter(doc => 
+          documentsToNotify = material.documents.filter(doc =>
             !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
           );
         }
       }
-      
+
       if (documentsToNotify.length === 0) {
         window.supplierUIUtils.showSuccess('没有需要发送邮件的资料');
         return;
       }
-      
+
       // 按证书类型分组
       const groupedDocs = {};
       documentsToNotify.forEach(doc => {
@@ -1018,7 +1018,7 @@ class SupplierDocumentManager {
         }
         groupedDocs[certType].push(doc);
       });
-      
+
       // 生成汇总邮件内容
       let emailContent = `尊敬的${supplier.supplierName}您好，
 
@@ -1028,7 +1028,7 @@ class SupplierDocumentManager {
 
 【证书到期监测清单】
 `;
-      
+
       // 添加各种证书信息
       for (const [certType, docs] of Object.entries(groupedDocs)) {
         emailContent += `
@@ -1044,7 +1044,7 @@ ${certType}：
 `;
         });
       }
-      
+
       emailContent += `
 【更新建议】
 • 请在证书到期前完成更新并提交最新版本至我司质量部门
@@ -1062,16 +1062,16 @@ ${certType}：
 
 ---
 此邮件由供应商资料管理系统自动发送，请勿直接回复。如已处理，请忽略本提醒。`;
-      
+
       // 生成邮件主题
       const hasExpired = documentsToNotify.some(doc => doc.daysUntilExpiry < 0);
       const hasUrgent = documentsToNotify.some(doc => doc.daysUntilExpiry <= 7 && doc.daysUntilExpiry >= 0);
       const urgency = hasExpired ? '【已过期】' : hasUrgent ? '【紧急】' : '【提醒】';
       const subject = `${urgency}证书到期汇总提醒 - ${supplier.supplierName}（共${documentsToNotify.length}个证书）`;
-      
+
       // 显示邮件预览模态框
       window.supplierUIUtils.showEmailModal(subject, emailContent);
-      
+
     } catch (error) {
       console.error('生成批量邮件失败:', error);
       window.supplierUIUtils.showError('生成批量邮件失败');
@@ -1163,7 +1163,7 @@ ${certType}：
     dropZone.ondrop = (e) => {
       e.preventDefault();
       dropZone.classList.remove('dragover');
-      
+
       if (e.dataTransfer.files.length > 0) {
         this.handleFileUpload(e.dataTransfer.files);
       }
@@ -1177,7 +1177,7 @@ ${certType}：
    */
   handleFileUpload(files) {
     console.log('📁 处理文件上传，文件数量:', files.length);
-    
+
     if (files.length === 0) {
       console.log('❌ 没有文件');
       return;
@@ -1185,7 +1185,7 @@ ${certType}：
 
     const file = files[0];
     console.log('📁 选择的文件:', file.name, '大小:', file.size);
-    
+
     const allowedTypes = ['.pdf', '.xlsx', '.xls', '.doc', '.docx'];
     const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
 
@@ -1203,7 +1203,7 @@ ${certType}：
     // 存储文件到UI工具层
     window.supplierUIUtils.selectedFile = file;
     console.log('✅ 文件已保存到 UI工具层 selectedFile:', file.name);
-    
+
     // 显示文件预览
     const filePreview = document.getElementById('filePreview');
     const fileName = filePreview.querySelector('.file-name');
@@ -1230,7 +1230,7 @@ ${certType}：
   togglePermanentDate() {
     const isPermanent = document.getElementById('isPermanent').checked;
     const expiryDate = document.getElementById('expiryDate');
-    
+
     if (isPermanent) {
       expiryDate.disabled = true;
       expiryDate.value = '';
@@ -1318,14 +1318,14 @@ ${certType}：
     // 添加物料相关字段
     if (uploadContext.type === 'material') {
       formData.append('materialId', uploadContext.materialId);
-      
+
       // 构成信息现在作为备注处理
       const componentName = document.getElementById('componentName').value.trim();
       if (componentName) {
         // 将构成信息添加到备注中
         const enhancedRemark = remark ? `${remark} (构成: ${componentName})` : `构成: ${componentName}`;
         formData.set('remarks', enhancedRemark);
-        
+
         // 也可以选择将构成信息添加到文档名称中
         // const enhancedDocumentName = `${documentName} (${componentName})`;
         // formData.set('documentName', enhancedDocumentName);
@@ -1374,7 +1374,7 @@ ${certType}：
   async syncSuppliersFromIQC() {
     try {
       window.supplierUIUtils.showLoading(true, '正在同步供应商数据...');
-      
+
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/suppliers/import-from-iqc', {
         method: 'POST',
@@ -1383,24 +1383,24 @@ ${certType}：
           'Content-Type': 'application/json'
         }
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         const { newSuppliers, updatedSuppliers, totalSuppliers, folderSyncResults } = data.data;
-        
+
         console.log('📊 同步返回数据:', data.data);
         console.log('📁 文件夹同步结果:', folderSyncResults);
-        
+
         if (newSuppliers && newSuppliers.length > 0) {
           window.supplierUIUtils.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.slice(0, 5).join(', ')}${newSuppliers.length > 5 ? '...' : ''}，已为所有供应商创建文件夹结构`);
         } else {
           window.supplierUIUtils.showSuccess(`同步完成！已为 ${totalSuppliers} 个供应商创建文件夹结构`);
         }
-        
+
         // 刷新供应商列表
         await this.refresh(false);
-        
+
       } else {
         throw new Error(data.message || '同步失败');
       }
@@ -1412,13 +1412,13 @@ ${certType}：
     }
   }
 
-  
+
   /**
    * 显示编辑模态框
    */
   async showEditModal(documentId) {
     console.log('✏️ 显示编辑模态框:', documentId);
-    
+
     try {
       // 先显示模态框
       const modal = document.getElementById('editModal');
@@ -1427,8 +1427,8 @@ ${certType}：
         window.supplierUIUtils.showError('编辑模态框加载失败');
         return;
       }
-      
-// 显示模态框
+
+      // 显示模态框
       const editModal = document.getElementById('editModal');
       editModal.style.setProperty('display', 'flex', 'important');
       editModal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
@@ -1452,19 +1452,19 @@ ${certType}：
 
       const data = await response.json();
       console.log('📄 获取文档详情:', data);
-      
+
       if (!data.success) {
         throw new Error(data.error || '获取文档信息失败');
       }
 
       const doc = data.data;
-      
+
       // 填充表单
       const editName = document.getElementById('editDocumentName');
       const editPermanent = document.getElementById('editIsPermanent');
       const editExpiry = document.getElementById('editExpiryDate');
       const editRemark = document.getElementById('editDocumentRemark');
-      
+
       if (editName) editName.value = doc.documentName || '';
       if (editPermanent) editPermanent.checked = doc.isPermanent || false;
       if (editExpiry) editExpiry.value = doc.expiryDate || '';
@@ -1475,12 +1475,12 @@ ${certType}：
 
       // 存储编辑上下文
       this.editContext = { documentId };
-      
+
       console.log('✅ 编辑表单填充完成');
     } catch (error) {
       console.error('❌ 获取文档信息失败:', error);
       window.supplierUIUtils.showError(error.message || '获取文档信息失败');
-      
+
       // 隐藏模态框
       const modal = document.getElementById('editModal');
       if (modal) {
@@ -1503,7 +1503,7 @@ ${certType}：
   toggleEditPermanentDate() {
     const isPermanent = document.getElementById('editIsPermanent').checked;
     const expiryDate = document.getElementById('editExpiryDate');
-    
+
     if (isPermanent) {
       expiryDate.disabled = true;
       expiryDate.value = '';
@@ -1610,9 +1610,9 @@ ${certType}：
         window.supplierUIUtils.showError('文件路径不存在');
         return;
       }
-      
+
       console.log('📂 打开本地文件夹:', filePath);
-      
+
       const token = localStorage.getItem('authToken');
       const response = await fetch('/api/system/open-folder', {
         method: 'POST',
@@ -1622,9 +1622,9 @@ ${certType}：
         },
         body: JSON.stringify({ filePath })
       });
-      
+
       const data = await response.json();
-      
+
       if (data.success) {
         console.log('✅ 文件夹已打开');
       } else {
@@ -1674,11 +1674,11 @@ ${certType}：
       });
 
       const data = await response.json();
-      console.log('📄 新增物料响应详情:', { 
-        status: response.status, 
+      console.log('📄 新增物料响应详情:', {
+        status: response.status,
         statusText: response.statusText,
         ok: response.ok,
-        data: data 
+        data: data
       });
 
       // 检查HTTP状态码和响应数据
@@ -1688,10 +1688,10 @@ ${certType}：
         window.supplierUIUtils.hideAddMaterialModal();
         await this.refresh(false, parseInt(supplierId)); // 只刷新相关供应商
       } else {
-        console.log('❌ 前端判断：创建失败', { 
-          responseOk: response.ok, 
+        console.log('❌ 前端判断：创建失败', {
+          responseOk: response.ok,
           dataSuccess: data.success,
-          error: data.error 
+          error: data.error
         });
         throw new Error(data.error || `添加失败 (HTTP ${response.status})`);
       }
@@ -1702,13 +1702,13 @@ ${certType}：
         stack: error.stack,
         name: error.name
       });
-      
+
       // 尝试获取更多错误信息
       let errorMessage = error.message || '添加失败，请重试';
       if (error.message.includes('Unexpected token')) {
         errorMessage = '服务器响应格式错误，请检查服务器日志';
       }
-      
+
       window.supplierUIUtils.showError(errorMessage);
     } finally {
       window.supplierUIUtils.hideLoading();
@@ -1762,7 +1762,7 @@ window.testSupplierManager = () => {
   console.log('- uploadModal存在:', !!document.getElementById('uploadModal'));
   console.log('- editModal存在:', !!document.getElementById('editModal'));
   console.log('- addMaterialModal存在:', !!document.getElementById('addMaterialModal'));
-  
+
   if (window.supplierManager) {
     console.log('- supplierManager方法:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.supplierManager)));
   }
@@ -1778,7 +1778,7 @@ window.testDocumentAPI = async (documentId) => {
         'Authorization': `Bearer ${token}`
       }
     });
-    
+
     console.log('📄 API响应状态:', response.status);
     const data = await response.json();
     console.log('📄 API响应数据:', data);
@@ -1790,15 +1790,15 @@ window.testDocumentAPI = async (documentId) => {
 // 测试模态框显示
 window.testModals = () => {
   console.log('🧪 测试模态框显示:');
-  
+
   const uploadModal = document.getElementById('uploadModal');
   const editModal = document.getElementById('editModal');
   const addMaterialModal = document.getElementById('addMaterialModal');
-  
+
   console.log('- uploadModal:', uploadModal);
   console.log('- editModal:', editModal);
   console.log('- addMaterialModal:', addMaterialModal);
-  
+
   // 测试显示上传模态框
   if (uploadModal) {
     // 强制设置样式
@@ -1814,11 +1814,11 @@ window.testModals = () => {
       align-items: center !important;
       justify-content: center !important;
     `;
-    
+
     console.log('✅ 上传模态框强制显示（红色背景）');
     console.log('🔍 模态框最终样式:', uploadModal.style.cssText);
     console.log('🔍 模态框计算样式:', window.getComputedStyle(uploadModal));
-    
+
     // 3秒后自动隐藏
     setTimeout(() => {
       uploadModal.style.display = 'none';
@@ -1847,7 +1847,7 @@ window.checkModal = (modalId) => {
     console.log(`❌ 模态框 ${modalId} 不存在`);
     return false;
   }
-  
+
   console.log(`✅ 模态框 ${modalId} 存在:`, {
     tagName: modal.tagName,
     className: modal.className,
@@ -1861,14 +1861,14 @@ window.checkModal = (modalId) => {
     offsetWidth: modal.offsetWidth,
     offsetHeight: modal.offsetHeight
   });
-  
+
   return true;
 };
 
 // 测试数据库连接
 window.testDatabaseConnection = async () => {
   console.log('🧪 测试数据库连接...');
-  
+
   try {
     const token = localStorage.getItem('authToken');
     const response = await fetch('/api/materials/test-db', {
@@ -1876,10 +1876,10 @@ window.testDatabaseConnection = async () => {
         'Authorization': `Bearer ${token}`
       }
     });
-    
+
     const data = await response.json();
     console.log('🧪 数据库测试结果:', { status: response.status, data });
-    
+
     if (data.success) {
       console.log('✅ 数据库连接正常');
       console.log(`📊 当前物料数量: ${data.data.materialCount}`);
@@ -1887,7 +1887,7 @@ window.testDatabaseConnection = async () => {
     } else {
       console.log('❌ 数据库连接失败:', data.error);
     }
-    
+
   } catch (error) {
     console.error('🧪 数据库测试失败:', error);
   }
@@ -1896,9 +1896,9 @@ window.testDatabaseConnection = async () => {
 // 测试物料创建和删除
 window.testMaterialOperations = async (supplierId) => {
   console.log('🧪 测试物料操作...');
-  
+
   const testMaterialName = `测试物料_${Date.now()}`;
-  
+
   try {
     // 1. 测试创建
     console.log('📝 测试创建物料:', testMaterialName);
@@ -1916,14 +1916,14 @@ window.testMaterialOperations = async (supplierId) => {
         description: '测试物料描述'
       })
     });
-    
+
     const createData = await createResponse.json();
     console.log('📝 创建响应:', { status: createResponse.status, data: createData });
-    
+
     if (createData.success) {
       const materialId = createData.data.materialId;
       console.log('✅ 创建成功，物料ID:', materialId);
-      
+
       // 2. 测试删除
       console.log('🗑️ 测试删除物料:', materialId);
       const deleteResponse = await fetch(`/api/materials/${materialId}`, {
@@ -1934,10 +1934,10 @@ window.testMaterialOperations = async (supplierId) => {
         },
         body: JSON.stringify({ supplierId })
       });
-      
+
       const deleteData = await deleteResponse.json();
       console.log('🗑️ 删除响应:', { status: deleteResponse.status, data: deleteData });
-      
+
       // 3. 测试重复创建（应该成功）
       console.log('📝 测试重复创建已删除的物料:', testMaterialName);
       const recreateResponse = await fetch('/api/materials', {
@@ -1953,14 +1953,14 @@ window.testMaterialOperations = async (supplierId) => {
           description: '重新创建的测试物料'
         })
       });
-      
+
       const recreateData = await recreateResponse.json();
       console.log('📝 重新创建响应:', { status: recreateResponse.status, data: recreateData });
-      
+
     } else {
       console.log('❌ 创建失败:', createData);
     }
-    
+
   } catch (error) {
     console.error('🧪 测试失败:', error);
   }
@@ -1977,7 +1977,7 @@ if (typeof window !== 'undefined') {
       if (!window.supplierManager) {
         window.supplierManager = new SupplierDocumentManager();
         console.log('✅ 供应商资料管理模块初始化完成');
-        
+
         // 延迟测试，确保所有元素都已加载
         setTimeout(() => {
           console.log('🧪 运行自动测试...');

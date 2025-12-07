@@ -1,0 +1,198 @@
+/* ============================================
+   供应商模块按钮与交互增强样式 - Phase 4
+   创建时间: 2025-12-07
+   参考: IQC 模块按钮交互
+   优化目标: 触感反馈、微交互、视觉愉悦
+   ============================================ */
+
+/* ============================================
+   1. 通用按钮增强
+   ============================================ */
+
+/* 基础按钮重置与增强 */
+button {
+    cursor: pointer;
+    font-family: inherit;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 按钮点击时的缩放效果 */
+button:active {
+    transform: scale(0.96) !important;
+}
+
+/* ============================================
+   2. 主要操作按钮 (如: 上传、批量邮件)
+   ============================================ */
+
+.upload-btn,
+.batch-email-btn,
+.add-material-btn {
+    background: linear-gradient(135deg,
+            var(--primary-500) 0%,
+            var(--primary-600) 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px rgba(157, 122, 84, 0.2);
+    z-index: 1;
+}
+
+/* 按钮光晕效果 */
+.upload-btn::before,
+.batch-email-btn::before,
+.add-material-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.upload-btn:hover::before,
+.batch-email-btn:hover::before,
+.add-material-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.upload-btn:hover,
+.batch-email-btn:hover,
+.add-material-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3);
+}
+
+/* ============================================
+   3. 次要/危险按钮 (如: 删除)
+   ============================================ */
+
+.delete-material-btn,
+.delete-btn {
+    background: white;
+    color: var(--error-600);
+    border: 1px solid var(--error-300);
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-weight: 500;
+    font-size: 0.85rem;
+}
+
+.delete-material-btn:hover,
+.delete-btn:hover {
+    background: var(--error-500);
+    color: white;
+    border-color: var(--error-500);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* ============================================
+   4. 小图标按钮 (Action Buttons)
+   ============================================ */
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid transparent;
+    background: transparent;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: var(--gray-600);
+    padding: 0;
+}
+
+.action-btn:hover {
+    background: white;
+    border-color: var(--gray-200);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-2px) rotate(5deg);
+    color: var(--primary-600);
+}
+
+/* 特定图标按钮颜色 */
+.email-btn:hover {
+    color: var(--primary-600);
+    background: var(--primary-50);
+    border-color: var(--primary-200);
+}
+
+.edit-btn:hover {
+    color: var(--accent-500);
+    background: #fff7ed;
+    border-color: #ffedd5;
+}
+
+.folder-btn:hover {
+    color: #eab308;
+    background: #fefce8;
+    border-color: #fef9c3;
+}
+
+/* ============================================
+   5. 涟漪效果 (Ripple Effect) - CSS Only
+   ============================================ */
+
+/* 使用伪元素模拟简单的点击涟漪 */
+button:active::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    height: 100%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.4) 0%, transparent 60%);
+    transform: translate(-50%, -50%) scale(0);
+    animation: ripple 0.4s linear;
+}
+
+@keyframes ripple {
+    to {
+        transform: translate(-50%, -50%) scale(2);
+        opacity: 0;
+    }
+}
+
+/* ============================================
+   6. 筛选区域按钮增强
+   ============================================ */
+
+.filter-btn {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid var(--gray-300);
+    color: var(--gray-700);
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 500;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.filter-btn:hover {
+    border-color: var(--primary-400);
+    color: var(--primary-600);
+    background: white;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.filter-btn.active {
+    background: var(--primary-500);
+    color: white;
+    border-color: var(--primary-600);
+    box-shadow: 0 2px 4px rgba(157, 122, 84, 0.3);
+}

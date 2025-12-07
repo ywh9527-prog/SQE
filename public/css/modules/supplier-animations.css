@@ -1,0 +1,487 @@
+/* ============================================
+   供应商模块动画与统计卡片样式 - Phase 3
+   创建时间: 2025-12-07
+   参考: IQC 模块动画设计
+   优化目标: 动态、流畅、数据可视化增强
+   ============================================ */
+
+/* ============================================
+   1. 通用动画类
+   ============================================ */
+
+/* 渐入动画 */
+.fade-in {
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* 上滑渐入 */
+.slide-up-fade {
+    animation: slideUpFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 缩放渐入 */
+.scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   2. 数据统计卡片样式 (预留/增强)
+   ============================================ */
+
+/* 统计卡片容器 */
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-400);
+}
+
+/* 统计卡片装饰条 */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-400), var(--accent-500));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+/* 统计数值 */
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.25rem;
+    display: block;
+    animation: number-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes number-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 统计标签 */
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 统计图标 */
+.stat-icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--primary-400);
+    opacity: 0.2;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    opacity: 1;
+    transform: scale(1.2) rotate(10deg);
+}
+
+/* ============================================
+   3. 现有统计单元格增强 (针对表格中的统计)
+   ============================================ */
+
+/* 增强 .material-count */
+.material-count {
+    font-weight: 700 !important;
+    color: var(--primary-600) !important;
+    font-size: 1rem !important;
+    position: relative;
+    display: inline-block;
+}
+
+/* 鼠标悬停时显示小动画 */
+.supplier-row:hover .material-count {
+    animation: pulse-text 1s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================
+   4. 加载动画增强
+   ============================================ */
+
+.loading-spinner-enhanced {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-200);
+    border-top: 3px solid var(--primary-500);
+    border-radius: 50%;
+    animation: smooth-spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+@keyframes smooth-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text-enhanced {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* 上滑渐入 */
+.slide-up-fade {
+    animation: slideUpFade 0.5s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideUpFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 缩放渐入 */
+.scale-in {
+    animation: scaleIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   2. 数据统计卡片样式 (预留/增强)
+   ============================================ */
+
+/* 统计卡片容器 */
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: 16px;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--gray-200);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    border-color: var(--primary-400);
+}
+
+/* 统计卡片装饰条 */
+.stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-400), var(--accent-500));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.stat-card:hover::before {
+    opacity: 1;
+}
+
+/* 统计数值 */
+.stat-value {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--gray-900);
+    letter-spacing: -0.03em;
+    font-variant-numeric: tabular-nums;
+    margin-bottom: 0.25rem;
+    display: block;
+    animation: number-pop 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes number-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 统计标签 */
+.stat-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 统计图标 */
+.stat-icon {
+    position: absolute;
+    right: 1.5rem;
+    top: 1.5rem;
+    font-size: 1.5rem;
+    color: var(--primary-400);
+    opacity: 0.2;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover .stat-icon {
+    opacity: 1;
+    transform: scale(1.2) rotate(10deg);
+}
+
+/* ============================================
+   3. 现有统计单元格增强 (针对表格中的统计)
+   ============================================ */
+
+/* 增强 .material-count */
+.material-count {
+    font-weight: 700 !important;
+    color: var(--primary-600) !important;
+    font-size: 1rem !important;
+    position: relative;
+    display: inline-block;
+}
+
+/* 鼠标悬停时显示小动画 */
+.supplier-row:hover .material-count {
+    animation: pulse-text 1s ease-in-out infinite;
+}
+
+@keyframes pulse-text {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+/* ============================================
+   4. 加载动画增强
+   ============================================ */
+
+.loading-spinner-enhanced {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-200);
+    border-top: 3px solid var(--primary-500);
+    border-radius: 50%;
+    animation: smooth-spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+@keyframes smooth-spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.loading-text-enhanced {
+    color: var(--gray-600);
+    font-size: 0.9rem;
+    font-weight: 500;
+    margin-top: 1rem;
+    animation: pulse-opacity 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse-opacity {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.6;
+    }
+}
+
+/* ============================================
+   5. 适配现有加载与空状态类名 (Phase 7)
+   ============================================ */
+
+/* 适配 .details-loading */
+.details-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem !important;
+    gap: 1rem;
+    color: var(--gray-600);
+}
+
+/* 使用伪元素创建加载动画 */
+.details-loading::before {
+    content: '';
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-200);
+    border-top: 3px solid var(--primary-500);
+    border-radius: 50%;
+    animation: smooth-spin 1s cubic-bezier(0.68, -0.55, 0.27, 1.55) infinite;
+}
+
+/* 适配 .no-documents-hint */
+.no-documents-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 3rem 2rem !important;
+    background: var(--gray-50);
+    border-radius: 12px;
+    border: 2px dashed var(--gray-200);
+    margin: 1rem 0;
+    transition: all 0.3s ease;
+}
+
+.no-documents-hint:hover {
+    border-color: var(--primary-400);
+    background: rgba(157, 122, 84, 0.05);
+}
+
+.no-documents-hint .hint-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+.no-documents-hint .hint-text {
+    color: var(--gray-600);
+    font-weight: 500;
+}
