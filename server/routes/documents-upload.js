@@ -123,58 +123,67 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
         // 注意：componentId不再是必填项，构成信息现在作为备注处理
 
-        // 验证通用资料类型
-        const supplierLevelTypes = ['quality_agreement', 'environmental_msds', 'iso_certification', 'csr', 'other'];
-        const componentLevelTypes = ['environmental_rohs', 'environmental_reach', 'environmental_hf'];
+        // 验证资料类型是否匹配级别 - 使用动态资料类型系统
+        try {
+            // 读取动态资料类型配置
+            const documentTypesPath = path.join(__dirname, '../../data/document-types.json');
 
-        if (level === 'supplier' && !supplierLevelTypes.includes(documentType)) {
-            const docTypeMap = {
-                'environmental_rohs': 'ROHS认证',
-                'environmental_reach': 'REACH合规声明',
-                'environmental_hf': 'HF认证',
-                'environmental_msds': 'MSDS安全数据表'
-            };
-            
-            const suggestedType = docTypeMap[documentType];
-            const documentTypeChinese = suggestedType || documentType;
-            let message = `请选择正确的资料类型`;
-            
-            if (suggestedType) {
-                message += `。"${documentTypeChinese}"属于物料资料类型，请上传到物料的对应构成部分`;
-            } else {
-                message += `。通用资料类型包括: 质量保证协议、MSDS安全数据表、ISO认证、CSR报告、其他证书`;
+            if (!fs.existsSync(documentTypesPath)) {
+                return res.status(500).json({
+                    success: false,
+                    error: '配置文件缺失',
+                    message: '资料类型配置文件不存在，请联系管理员'
+                });
             }
-            
-            return res.status(400).json({
-                success: false,
-                error: '资料类型不匹配',
-                message: message
-            });
-        }
 
-        if (level === 'component' && !componentLevelTypes.includes(documentType)) {
-            const supplierTypeMap = {
-                'quality_agreement': '质量保证协议',
-                'environmental_msds': 'MSDS安全数据表',
-                'iso_certification': 'ISO认证',
-                'csr': 'CSR报告',
-                'other': '其他证书'
-            };
-            
-            const suggestedType = supplierTypeMap[documentType];
-            const documentTypeChinese = suggestedType || documentType;
-            let message = `请选择正确的资料类型`;
-            
-            if (suggestedType) {
-                message += `。"${documentTypeChinese}"属于通用资料类型，请上传到供应商的通用资料部分`;
-            } else {
-                message += `。物料资料类型包括: ROHS认证、REACH合规声明、HF认证`;
+            const documentTypes = JSON.parse(fs.readFileSync(documentTypesPath, 'utf8'));
+
+            // 根据level确定分类
+            const expectedCategory = level === 'supplier' ? 'common' : 'material';
+
+            // 过滤有效的资料类型ID
+            const validTypeIds = documentTypes
+                .filter(dt => dt.category === expectedCategory && dt.isActive)
+                .map(dt => dt.id);
+
+            // 验证当前类型是否有效
+            if (!validTypeIds.includes(documentType)) {
+                // 获取友好的错误提示
+                const currentDocType = documentTypes.find(dt => dt.id === documentType);
+
+                if (currentDocType) {
+                    // 类型存在但分类不匹配
+                    const expectedCategoryText = expectedCategory === 'common' ? '通用资料' : '物料资料';
+                    const actualCategoryText = currentDocType.category === 'common' ? '通用资料' : '物料资料';
+
+                    return res.status(400).json({
+                        success: false,
+                        error: '资料类型不匹配',
+                        message: `"${currentDocType.name}"属于${actualCategoryText}类型，请上传到${expectedCategoryText}部分`
+                    });
+                } else {
+                    // 类型不存在，提供可用类型列表
+                    const availableTypes = documentTypes
+                        .filter(dt => dt.category === expectedCategory && dt.isActive)
+                        .map(dt => dt.name)
+                        .join('、');
+
+                    return res.status(400).json({
+                        success: false,
+                        error: '资料类型不存在',
+                        message: `请选择正确的${expectedCategory === 'common' ? '通用' : '物料'}资料类型。可用类型包括: ${availableTypes}`
+                    });
+                }
             }
-            
-            return res.status(400).json({
+
+            console.log(`✅ 资料类型验证通过: ${documentType} (${expectedCategory})`);
+
+        } catch (error) {
+            console.error('验证资料类型时出错:', error);
+            return res.status(500).json({
                 success: false,
-                error: '资料类型不匹配',
-                message: message
+                error: '验证失败',
+                message: '资料类型验证过程中出现错误，请重试'
             });
         }
 
@@ -210,18 +219,41 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             console.log(`⚠️ materialId为空`);
         }
 
-        // 转换文档类型为中文
-        const documentTypeMap = {
-            'quality_agreement': '质量协议',
-            'environmental_msds': 'MSDS安全数据表',
-            'iso_certification': 'ISO认证',
-            'csr': 'CSR报告',
-            'other': '其他证书',
-            'environmental_rohs': 'ROHS认证',
-            'environmental_reach': 'REACH合规声明',
-            'environmental_hf': 'HF认证'
-        };
-        const documentTypeChinese = documentTypeMap[documentType] || documentType;
+        // 转换文档类型为中文 - 支持动态资料类型
+        let documentTypeChinese = '';
+
+        try {
+            // 优先从动态资料类型配置中获取名称
+            const documentTypesPath = path.join(__dirname, '../../data/document-types.json');
+            if (fs.existsSync(documentTypesPath)) {
+                const documentTypes = JSON.parse(fs.readFileSync(documentTypesPath, 'utf8'));
+                const docType = documentTypes.find(dt => dt.id === documentType);
+                if (docType) {
+                    documentTypeChinese = docType.name;
+                    console.log(`✅ 从动态配置获取类型名称: ${documentType} -> ${documentTypeChinese}`);
+                }
+            }
+
+            // 如果动态配置中没有找到，使用硬编码映射作为后备
+            if (!documentTypeChinese) {
+                const documentTypeMap = {
+                    'quality_agreement': '质量协议',
+                    'environmental_msds': 'MSDS安全数据表',
+                    'iso_certification': 'ISO认证',
+                    'csr': 'CSR报告',
+                    'other': '其他证书',
+                    'environmental_rohs': 'ROHS认证',
+                    'environmental_reach': 'REACH合规声明',
+                    'environmental_hf': 'HF认证'
+                };
+                documentTypeChinese = documentTypeMap[documentType] || documentType;
+                console.log(`⚠️ 使用硬编码映射: ${documentType} -> ${documentTypeChinese}`);
+            }
+
+        } catch (error) {
+            console.error('❌ 获取文档类型名称失败:', error);
+            documentTypeChinese = documentType; // 最后的后备
+        }
 
         // 从remarks中提取构成信息用于文件命名
         let componentName = '';

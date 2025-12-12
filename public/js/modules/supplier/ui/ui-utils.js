@@ -271,6 +271,9 @@ class SupplierUIUtils {
     // 重置表单到干净状态（但不清空预设字段）
     this.resetUploadFormWithoutPresets();
 
+    // 动态加载资料类型列表
+    this.loadDocumentTypeOptions(type);
+
     const title = document.getElementById('uploadModalTitle');
     const materialGroup = document.getElementById('materialGroup');
     const componentGroup = document.getElementById('componentGroup');
@@ -440,6 +443,48 @@ class SupplierUIUtils {
     // 清空所有字段，包括预设字段
     document.getElementById('uploadSupplierName').value = '';
     document.getElementById('uploadMaterialName').value = '';
+  }
+
+  /**
+   * 动态加载资料类型选项
+   * @param {string} type - 资料类型分类 (common/material)
+   */
+  async loadDocumentTypeOptions(type) {
+    try {
+      console.log(`🔄 加载${type === 'common' ? '通用' : '物料'}资料类型选项...`);
+
+      // 确保documentTypeService已加载
+      if (!window.documentTypeService) {
+        console.error('❌ documentTypeService 未加载，使用默认选项');
+        return;
+      }
+
+      // 获取指定分类的资料类型
+      const documentTypes = await window.documentTypeService.getAllDocumentTypes({ category: type });
+
+      const documentTypeSelect = document.getElementById('documentType');
+      if (!documentTypeSelect) {
+        console.error('❌ 找不到资料类型下拉列表元素');
+        return;
+      }
+
+      // 清空现有选项
+      documentTypeSelect.innerHTML = '<option value="">请选择</option>';
+
+      // 添加资料类型选项
+      documentTypes.forEach(docType => {
+        const option = document.createElement('option');
+        option.value = docType.id;
+        option.textContent = docType.name;
+        documentTypeSelect.appendChild(option);
+      });
+
+      console.log(`✅ 已加载 ${documentTypes.length} 个${type === 'common' ? '通用' : '物料'}资料类型选项`);
+
+    } catch (error) {
+      console.error('❌ 加载资料类型选项失败:', error);
+      this.showError('加载资料类型选项失败，请刷新页面重试');
+    }
   }
 
 }

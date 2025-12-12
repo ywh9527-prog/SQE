@@ -18,8 +18,29 @@ class LocalFileSyncService {
    * 判断是否为通用资料
    */
   isCommonDocument(documentType) {
-    const commonTypes = ['质量协议', 'MSDS', '企业资质', 'ISO认证'];
-    return commonTypes.includes(documentType);
+    // 如果传入的是中文名称，直接判断
+    const commonTypes = ['质量协议', 'MSDS', '企业资质', 'ISO认证', '企业承诺书', '质量保证协议', 'MSDS安全数据表', '营业执照', 'CSR报告'];
+    if (commonTypes.includes(documentType)) {
+      return true;
+    }
+
+    // 如果传入的是ID，从动态配置中查找
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const documentTypesPath = path.join(__dirname, '../../data/document-types.json');
+
+      if (fs.existsSync(documentTypesPath)) {
+        const documentTypes = JSON.parse(fs.readFileSync(documentTypesPath, 'utf8'));
+        const docType = documentTypes.find(dt => dt.id === documentType);
+        return docType ? docType.category === 'common' : false;
+      }
+    } catch (error) {
+      console.error('判断资料类型失败:', error);
+    }
+
+    // 默认作为物料资料处理
+    return false;
   }
 
   /**
@@ -28,16 +49,57 @@ class LocalFileSyncService {
   generateFileName(fileData, supplierName, materialName, documentType, componentName, version = 1) {
     const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
     const versionStr = `v${version}`; // 版本号字符串
-    
+
+    // 如果传入的documentType已经是中文名称，直接使用；否则尝试转换
+    let documentTypeDisplayName = documentType;
+
+    // 检查是否是中文（包含中文字符），如果不是中文，尝试作为ID转换
+    if (!/[\u4e00-\u9fa5]/.test(documentType)) {
+      documentTypeDisplayName = this.getDocumentTypeDisplayName(documentType);
+    }
+
     if (this.isCommonDocument(documentType)) {
       // 通用资料命名格式：{供应商名称}_{证书类型}_v{版本号}_{日期}.{扩展名}
-      return `${supplierName}_${documentType}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
+      return `${supplierName}_${documentTypeDisplayName}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
     } else {
       // 物料资料命名格式：{供应商名称}_{物料名称}_{证书类型}_{构成名称}_v{版本号}_{日期}.{扩展名}
       // 构成信息在证书类型之后，版本号之前
       const componentNameClean = componentName ? componentName.replace(/[^\w\u4e00-\u9fa5]/g, '_') : '未知构成';
-      return `${supplierName}_${materialName}_${documentType}_${componentNameClean}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
+      return `${supplierName}_${materialName}_${documentTypeDisplayName}_${componentNameClean}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
     }
+  }
+
+  /**
+   * 获取资料类型显示名称
+   */
+  getDocumentTypeDisplayName(documentType) {
+    // 如果已经是中文名称，直接返回
+    const commonTypes = ['质量协议', 'MSDS', '企业资质', 'ISO认证'];
+    if (commonTypes.includes(documentType)) {
+      return documentType;
+    }
+
+    // 如果是ID，从动态配置中查找对应的中文名称
+    try {
+      const fs = require('fs');
+      const path = require('path');
+      const documentTypesPath = path.join(__dirname, '../../data/document-types.json');
+
+      if (fs.existsSync(documentTypesPath)) {
+        const documentTypes = JSON.parse(fs.readFileSync(documentTypesPath, 'utf8'));
+        const docType = documentTypes.find(dt => dt.id === documentType);
+        if (docType) {
+          console.log(`✅ LocalFileSyncService: ${documentType} -> ${docType.name}`);
+          return docType.name;
+        }
+      }
+    } catch (error) {
+      console.error('获取资料类型显示名称失败:', error);
+    }
+
+    // 如果都找不到，返回原始值
+    console.log(`⚠️ LocalFileSyncService: 无法找到类型名称，使用原始值: ${documentType}`);
+    return documentType;
   }
 
   /**

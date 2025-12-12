@@ -189,6 +189,24 @@ class SupplierDocumentManager {
           return;
         }
 
+        // 资料类型设置按钮
+        const settingsBtn = e.target.closest('.document-type-settings-btn');
+        if (settingsBtn) {
+          console.log('⚙️ 点击资料类型设置按钮', settingsBtn.dataset);
+          e.preventDefault();
+          const type = settingsBtn.dataset.type || 'common';
+          console.log('⚙️ 调用资料类型设置模态框:', type);
+
+          // 确保UI组件已加载
+          if (window.documentTypeSimpleUI) {
+            window.documentTypeSimpleUI.showSettingsModal(type);
+          } else {
+            console.error('❌ documentTypeSimpleUI 未加载，请检查脚本引用');
+            window.supplierUIUtils.showError('资料类型设置功能未加载，请刷新页面重试');
+          }
+          return;
+        }
+
         // 新增物料按钮
         const addMaterialBtn = e.target.closest('.add-material-btn');
         if (addMaterialBtn) {
@@ -743,6 +761,9 @@ class SupplierDocumentManager {
             <button class="upload-btn" data-type="common" data-supplier-id="${supplierId}" title="上传通用资料">
               📤 上传
             </button>
+            <button class="settings-btn document-type-settings-btn" data-type="common" title="资料类型设置">
+              ⚙️ 资料类型设置
+            </button>
           </div>
         </div>
     `;
@@ -756,7 +777,7 @@ class SupplierDocumentManager {
         html += `
           <li class="document-item ${doc.status}">
             <span class="doc-icon">${window.supplierServices.getStatusIcon(doc.status)}</span>
-            <span class="doc-type">${window.supplierServices.getDocumentTypeText(doc.documentType)}</span>
+            <span class="doc-type">${window.supplierServices.getCertificateTypeTextSync(doc.documentType)}</span>
             <span class="doc-name">${doc.documentName}</span>
             <span class="doc-expiry">
               ${doc.isPermanent ? '永久有效' : `到期: ${window.supplierServices.formatDate(doc.expiryDate)}`}
@@ -824,7 +845,7 @@ class SupplierDocumentManager {
             html += `
               <li class="document-item ${doc.status}">
                 <span class="doc-icon">${window.supplierServices.getStatusIcon(doc.status)}</span>
-                <span class="doc-type">${window.supplierServices.getDocumentTypeText(doc.documentType)} (${doc.componentName})</span>
+                <span class="doc-type">${window.supplierServices.getCertificateTypeTextSync(doc.documentType)} (${doc.componentName})</span>
                 <span class="doc-name">${doc.documentName}</span>
                 <span class="doc-expiry">
                   ${doc.isPermanent ? '永久有效' : `到期: ${window.supplierServices.formatDate(doc.expiryDate)}`}
@@ -936,12 +957,15 @@ class SupplierDocumentManager {
         return;
       }
 
+      // 获取证书类型文本（异步）
+      const certificateTypeText = await window.supplierServices.getCertificateTypeText(targetDoc.documentType);
+
       // 准备邮件变量
       const variables = {
         供应商名称: supplier.supplierName,
         物料名称: targetDoc.materialName || '',
         具体构成名称: targetDoc.componentName || '',
-        证书类型: window.supplierServices.getCertificateTypeText(targetDoc.documentType),
+        证书类型: certificateTypeText,
         到期日期: targetDoc.isPermanent ? '永久有效' : window.supplierServices.formatDate(targetDoc.expiryDate),
         剩余天数: targetDoc.isPermanent ? '永久有效' : `${targetDoc.daysUntilExpiry}天`,
         SQE工程师联系方式: 'SQE团队' // 可以从配置中获取
@@ -953,7 +977,7 @@ class SupplierDocumentManager {
 
       // 生成邮件主题
       const urgency = targetDoc.daysUntilExpiry < 0 ? '【已过期】' : targetDoc.daysUntilExpiry <= 7 ? '【紧急】' : '【提醒】';
-      const subject = `${urgency}${window.supplierServices.getCertificateTypeText(targetDoc.documentType)}到期提醒 - ${supplier.supplierName}`;
+      const subject = `${urgency}${certificateTypeText}到期提醒 - ${supplier.supplierName}`;
 
       // 显示邮件预览模态框
       window.supplierUIUtils.showEmailModal(subject, emailContent);
@@ -1009,15 +1033,15 @@ class SupplierDocumentManager {
         return;
       }
 
-      // 按证书类型分组
+      // 按证书类型分组（异步处理）
       const groupedDocs = {};
-      documentsToNotify.forEach(doc => {
-        const certType = window.supplierServices.getCertificateTypeText(doc.documentType);
+      for (const doc of documentsToNotify) {
+        const certType = await window.supplierServices.getCertificateTypeText(doc.documentType);
         if (!groupedDocs[certType]) {
           groupedDocs[certType] = [];
         }
         groupedDocs[certType].push(doc);
-      });
+      }
 
       // 生成汇总邮件内容
       let emailContent = `尊敬的${supplier.supplierName}您好，

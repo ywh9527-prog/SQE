@@ -218,10 +218,25 @@ class SupplierServices {
 
   /**
    * 获取证书类型文本
-   * @param {string} documentType - 证书类型代码
+   * @param {string} documentType - 证书类型代码或ID
    * @return {string} 证书类型的中文描述
    */
-  getCertificateTypeText(documentType) {
+  async getCertificateTypeText(documentType) {
+    // 首先尝试从动态资料类型配置中获取
+    if (window.documentTypeService) {
+      try {
+        const documentTypes = await window.documentTypeService.getAllDocumentTypes();
+        const docType = documentTypes.find(dt => dt.id === documentType);
+        if (docType) {
+          console.log(`✅ 从动态配置获取证书类型: ${documentType} -> ${docType.name}`);
+          return docType.name;
+        }
+      } catch (error) {
+        console.error('❌ 获取动态资料类型失败:', error);
+      }
+    }
+
+    // 如果动态配置不可用或未找到，使用硬编码映射作为后备
     const map = {
       quality_agreement: '质量保证协议',
       environmental_msds: 'MSDS',
@@ -232,7 +247,105 @@ class SupplierServices {
       csr: 'CSR',
       other: '其他证书'
     };
-    return map[documentType] || documentType;
+    const fallbackResult = map[documentType] || documentType;
+    console.log(`⚠️ 使用硬编码映射: ${documentType} -> ${fallbackResult}`);
+    return fallbackResult;
+  }
+
+  /**
+   * 获取证书类型文本（同步版本，用于界面显示）
+   * @param {string} documentType - 证书类型代码或ID
+   * @return {string} 证书类型的中文描述
+   */
+  getCertificateTypeTextSync(documentType) {
+    console.log(`🔍 getCertificateTypeTextSync 被调用: ${documentType}`);
+
+    // 首先检查缓存
+    if (this._documentTypeCache && this._documentTypeCache[documentType]) {
+      console.log(`✅ 从本地缓存返回: ${documentType} -> ${this._documentTypeCache[documentType]}`);
+      return this._documentTypeCache[documentType];
+    }
+
+    // 检查是否是中文（包含中文字符），如果是直接返回
+    if (/[\u4e00-\u9fa5]/.test(documentType)) {
+      console.log(`✅ 检测到中文，直接返回: ${documentType}`);
+      return documentType;
+    }
+
+    // 尝试从documentTypeService获取缓存的资料类型
+    if (window.documentTypeService && window.documentTypeService.cache && window.documentTypeService.cache.documentTypes) {
+      const cachedTypes = window.documentTypeService.cache.documentTypes;
+      const docType = cachedTypes.find(dt => dt.id === documentType);
+      if (docType) {
+        // 缓存结果
+        if (!this._documentTypeCache) {
+          this._documentTypeCache = {};
+        }
+        this._documentTypeCache[documentType] = docType.name;
+        console.log(`✅ 从documentTypeService缓存获取: ${documentType} -> ${docType.name}`);
+        return docType.name;
+      }
+    }
+
+    // 如果缓存中没有，发起HTTP请求获取数据（同步方法中的异步处理）
+    if (!this._isLoadingDocumentTypes) {
+      this._isLoadingDocumentTypes = true;
+      this._loadDocumentTypesAsync();
+    }
+
+    // 使用硬编码映射作为后备（只处理系统预设的硬编码类型）
+    const map = {
+      quality_agreement: '质量保证协议',
+      environmental_msds: 'MSDS',
+      iso_certification: 'ISO认证',
+      environmental_rohs: 'ROHS',
+      environmental_reach: 'REACH',
+      environmental_hf: 'HF',
+      csr: 'CSR',
+      other: '其他证书'
+    };
+    const fallbackResult = map[documentType] || documentType;
+
+    // 缓存结果
+    if (!this._documentTypeCache) {
+      this._documentTypeCache = {};
+    }
+    this._documentTypeCache[documentType] = fallbackResult;
+
+    console.log(`⚠️ 使用硬编码映射返回: ${documentType} -> ${fallbackResult}`);
+    return fallbackResult;
+  }
+
+  /**
+   * 异步加载文档类型数据
+   */
+  async _loadDocumentTypesAsync() {
+    try {
+      console.log('📋 异步加载文档类型数据...');
+      const response = await fetch('/api/document-types');
+      const data = await response.json();
+
+      if (data.success && data.data) {
+        // 更新documentTypeService的缓存
+        if (window.documentTypeService) {
+          window.documentTypeService.cache.documentTypes = data.data;
+        }
+        // 清除本地缓存，强制下次使用新数据
+        this.clearDocumentTypeCache();
+        console.log('✅ 文档类型数据加载完成');
+      }
+    } catch (error) {
+      console.error('❌ 加载文档类型数据失败:', error);
+    } finally {
+      this._isLoadingDocumentTypes = false;
+    }
+  }
+
+  /**
+   * 清除资料类型缓存
+   */
+  clearDocumentTypeCache() {
+    this._documentTypeCache = {};
   }
 
 }
