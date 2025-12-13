@@ -260,19 +260,32 @@ class SupplierServices {
   getCertificateTypeTextSync(documentType) {
     console.log(`🔍 getCertificateTypeTextSync 被调用: ${documentType}`);
 
-    // 首先检查缓存
-    if (this._documentTypeCache && this._documentTypeCache[documentType]) {
-      console.log(`✅ 从本地缓存返回: ${documentType} -> ${this._documentTypeCache[documentType]}`);
-      return this._documentTypeCache[documentType];
-    }
-
     // 检查是否是中文（包含中文字符），如果是直接返回
     if (/[\u4e00-\u9fa5]/.test(documentType)) {
       console.log(`✅ 检测到中文，直接返回: ${documentType}`);
       return documentType;
     }
 
-    // 尝试从documentTypeService获取缓存的资料类型
+    // 首先检查缓存
+    if (this._documentTypeCache && this._documentTypeCache[documentType]) {
+      console.log(`✅ 从本地缓存返回: ${documentType} -> ${this._documentTypeCache[documentType]}`);
+      return this._documentTypeCache[documentType];
+    }
+
+    // 🎯 [CORE-LOGIC] 强制同步加载方案 - 确保数据完整性
+    // 如果缓存中没有，立即同步获取数据（改进方案）
+    if (!this._isLoadingDocumentTypes && !this._documentTypesLoaded) {
+      this._isLoadingDocumentTypes = true;
+      this._loadDocumentTypesSync();
+    }
+
+    // 再次检查缓存（同步加载后应该有了）
+    if (this._documentTypeCache && this._documentTypeCache[documentType]) {
+      console.log(`✅ 同步加载后从缓存返回: ${documentType} -> ${this._documentTypeCache[documentType]}`);
+      return this._documentTypeCache[documentType];
+    }
+
+    // 检查documentTypeService缓存
     if (window.documentTypeService && window.documentTypeService.cache && window.documentTypeService.cache.documentTypes) {
       const cachedTypes = window.documentTypeService.cache.documentTypes;
       const docType = cachedTypes.find(dt => dt.id === documentType);
@@ -285,12 +298,6 @@ class SupplierServices {
         console.log(`✅ 从documentTypeService缓存获取: ${documentType} -> ${docType.name}`);
         return docType.name;
       }
-    }
-
-    // 如果缓存中没有，发起HTTP请求获取数据（同步方法中的异步处理）
-    if (!this._isLoadingDocumentTypes) {
-      this._isLoadingDocumentTypes = true;
-      this._loadDocumentTypesAsync();
     }
 
     // 使用硬编码映射作为后备（只处理系统预设的硬编码类型）
@@ -317,7 +324,52 @@ class SupplierServices {
   }
 
   /**
-   * 异步加载文档类型数据
+   * 🎯 [DATA-FLOW] 同步加载文档类型数据 - 强制同步方案
+   * 使用XMLHttpRequest实现同步请求，确保数据立即可用
+   */
+  _loadDocumentTypesSync() {
+    try {
+      console.log('📋 同步加载文档类型数据...');
+
+      // 使用XMLHttpRequest实现同步请求
+      const xhr = new XMLHttpRequest();
+      xhr.open('GET', '/api/document-types', false); // false = 同步请求
+      xhr.send();
+
+      if (xhr.status === 200) {
+        const data = JSON.parse(xhr.responseText);
+
+        if (data.success && data.data) {
+          // 初始化本地缓存
+          if (!this._documentTypeCache) {
+            this._documentTypeCache = {};
+          }
+
+          // 将所有文档类型映射到缓存
+          data.data.forEach(docType => {
+            this._documentTypeCache[docType.id] = docType.name;
+          });
+
+          // 更新documentTypeService的缓存
+          if (window.documentTypeService && window.documentTypeService.cache) {
+            window.documentTypeService.cache.documentTypes = data.data;
+          }
+
+          this._documentTypesLoaded = true;
+          console.log('✅ 文档类型数据同步加载完成，缓存了', data.data.length, '个类型');
+        }
+      } else {
+        console.warn('⚠️ 同步加载文档类型失败，状态码:', xhr.status);
+      }
+    } catch (error) {
+      console.error('❌ 同步加载文档类型数据失败:', error);
+    } finally {
+      this._isLoadingDocumentTypes = false;
+    }
+  }
+
+  /**
+   * 异步加载文档类型数据（保留用于后台更新）
    */
   async _loadDocumentTypesAsync() {
     try {
@@ -346,11 +398,27 @@ class SupplierServices {
    */
   clearDocumentTypeCache() {
     this._documentTypeCache = {};
+    this._documentTypesLoaded = false; // 重置加载状态
+  }
+
+  /**
+   * 🎯 [CONFIG] 初始化预加载文档类型 - 页面加载时主动调用
+   * 建议在页面初始化时调用此方法，确保数据已准备好
+   */
+  initializeDocumentTypes() {
+    if (!this._documentTypesLoaded) {
+      console.log('🚀 初始化文档类型数据...');
+      this._loadDocumentTypesSync();
+    }
   }
 
 }
 
 // 创建全局服务实例
 window.supplierServices = new SupplierServices();
+
+// 🎯 [CONFIG] 页面加载时立即初始化文档类型数据
+// 确保在界面渲染前数据已准备好
+window.supplierServices.initializeDocumentTypes();
 
 console.log('✅ SupplierServices 服务层已加载 (Phase 2.5 - formatDate, getStatusIcon, getDocumentTypeText, getCertificateTypeText, getStatusFilterText, getDocumentFilterText)');
