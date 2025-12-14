@@ -853,12 +853,23 @@ class SupplierDocumentManager {
             <ul class="document-list">
         `;
 
-        if (material.documents && material.documents.length > 0) {
-          material.documents.forEach(doc => {
+        // 🎯 本体检测文档
+        if (material.directDocuments && material.directDocuments.length > 0) {
+          html += `
+            <div class="detection-section">
+              <h6 class="detection-title">🎯 本体检测</h6>
+              <ul class="document-list">
+          `;
+
+          material.directDocuments.forEach(doc => {
+              // 确保本体检测文档也有filePath属性
+              if (!doc.filePath) {
+                doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/物料资料';
+              }
             html += `
               <li class="document-item ${doc.status}">
                 <span class="doc-icon">${window.supplierServices.getStatusIcon(doc.status)}</span>
-                <span class="doc-type">${window.supplierServices.getCertificateTypeTextSync(doc.documentType)} (${doc.componentName})</span>
+                <span class="doc-type">${window.supplierServices.getCertificateTypeTextSync(doc.documentType)}</span>
                 <span class="doc-name">${doc.documentName}</span>
                 <span class="doc-expiry">
                   ${doc.isPermanent ? '永久有效' : `到期: ${window.supplierServices.formatDate(doc.expiryDate)}`}
@@ -867,21 +878,87 @@ class SupplierDocumentManager {
                   <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
                 ` : ''}
                 <div class="doc-actions">
-                  <button class="action-btn email-btn single-email-btn" data-document-id="${doc.documentId}" data-supplier-id="${supplierId}" title="发送邮件">
-                    📧
-                  </button>
-                  <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
-                  <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
-                  ${doc.filePath ? `
-                    <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
-                      📁
+                    <button class="action-btn email-btn single-email-btn" data-document-id="${doc.documentId}" data-supplier-id="${supplierId}" title="发送邮件">
+                      📧
                     </button>
-                  ` : '<!-- 无文件路径 -->'}
-                </div>
+                    <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
+                    <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
+                    ${doc.filePath ? `
+                      <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
+                        📁
+                      </button>
+                    ` : ''}
+                  </div>
               </li>
             `;
           });
-        } else {
+
+          html += `
+              </ul>
+            </div>
+          `;
+        }
+
+        // 🔗 引用检测构成
+        if (material.referencedComponents && Object.keys(material.referencedComponents).length > 0) {
+          html += `
+            <div class="detection-section">
+              <h6 class="detection-title">🔗 引用检测</h6>
+          `;
+
+          Object.entries(material.referencedComponents).forEach(([componentName, component]) => {
+            html += `
+              <div class="component-section">
+                <h7 class="component-title">🧪 ${componentName}</h7>
+                <ul class="document-list">
+            `;
+
+            component.documents.forEach(doc => {
+              // 确保检测报告文档也有filePath属性
+              if (!doc.filePath) {
+                doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/物料资料';
+              }
+              html += `
+                <li class="document-item ${doc.status}">
+                  <span class="doc-icon">${window.supplierServices.getStatusIcon(doc.status)}</span>
+                  <span class="doc-type">${window.supplierServices.getCertificateTypeTextSync(doc.documentType)}</span>
+                  <span class="doc-name">${doc.documentName}</span>
+                  <span class="doc-expiry">
+                    ${doc.isPermanent ? '永久有效' : `到期: ${window.supplierServices.formatDate(doc.expiryDate)}`}
+                  </span>
+                  ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
+                    <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
+                  ` : ''}
+                  <div class="doc-actions">
+                    <button class="action-btn email-btn single-email-btn" data-document-id="${doc.documentId}" data-supplier-id="${supplierId}" title="发送邮件">
+                      📧
+                    </button>
+                    <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
+                    <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
+                    ${doc.filePath ? `
+                      <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
+                        📁
+                      </button>
+                    ` : ''}
+                  </div>
+                </li>
+              `;
+            });
+
+            html += `
+                </ul>
+              </div>
+            `;
+          });
+
+          html += `
+            </div>
+          `;
+        }
+
+        // 如果既没有本体检测也没有引用检测，显示暂无文档
+        if ((!material.directDocuments || material.directDocuments.length === 0) &&
+            (!material.referencedComponents || Object.keys(material.referencedComponents).length === 0)) {
           html += '<li class="no-documents">暂无资料</li>';
         }
 
@@ -972,6 +1049,7 @@ class SupplierDocumentManager {
       // 在物料资料中查找
       if (!targetDoc && details.materials) {
         for (const material of details.materials) {
+          // 查找直接物料文档
           if (material.documents) {
             targetDoc = material.documents.find(doc => doc.documentId === documentId);
             if (targetDoc) {
@@ -980,13 +1058,59 @@ class SupplierDocumentManager {
               break;
             }
           }
+
+          // 查找本体检测文档
+          if (!targetDoc && material.directDocuments) {
+            targetDoc = material.directDocuments.find(doc => doc.documentId === documentId);
+            if (targetDoc) {
+              targetDoc.materialName = material.materialName;
+              targetDoc.detectionType = 'direct';
+              break;
+            }
+          }
+
+          // 查找引用检测文档
+          if (!targetDoc && material.referencedComponents) {
+            for (const [componentName, component] of Object.entries(material.referencedComponents)) {
+              if (component.documents) {
+                targetDoc = component.documents.find(doc => doc.documentId === documentId);
+                if (targetDoc) {
+                  targetDoc.materialName = material.materialName;
+                  targetDoc.componentName = componentName;
+                  targetDoc.detectionType = 'referenced';
+                  break;
+                }
+              }
+            }
+            if (targetDoc) break;
+          }
         }
       }
 
       if (!targetDoc) {
+        console.error('❌ 未找到目标文档:', { documentId, supplierId });
+        console.error('📊 可用的文档数据:', {
+          commonDocuments: details.commonDocuments?.map(doc => ({ id: doc.id, name: doc.documentName })),
+          materials: details.materials?.map(material => ({
+            materialName: material.materialName,
+            directDocuments: material.directDocuments?.map(doc => ({ documentId: doc.documentId, name: doc.documentName })),
+            referencedComponents: Object.entries(material.referencedComponents || {}).map(([name, comp]) => ({
+              componentName: name,
+              documents: comp.documents?.map(doc => ({ documentId: doc.documentId, name: doc.documentName }))
+            }))
+          }))
+        });
         window.supplierUIUtils.showError('文档信息不存在');
         return;
       }
+
+      console.log('✅ 找到目标文档:', {
+        documentId,
+        documentName: targetDoc.documentName,
+        materialName: targetDoc.materialName,
+        componentName: targetDoc.componentName,
+        detectionType: targetDoc.detectionType
+      });
 
       // 获取证书类型文本（异步）
       const certificateTypeText = await window.supplierServices.getCertificateTypeText(targetDoc.documentType);
@@ -1335,11 +1459,17 @@ ${certType}：
       validationErrors.push('请设置到期日期或选择永久有效');
     }
 
-    // 3. 物料资料需要构成名称
+    // 3. 物料资料需要检测类型
     if (uploadContext.type === 'material') {
-      const componentName = document.getElementById('componentName').value;
-      if (!componentName || componentName.trim() === '') {
-        validationErrors.push('物料资料上传必须填写构成名称');
+      const detectionType = document.querySelector('input[name="detectionType"]:checked');
+      if (!detectionType) {
+        validationErrors.push('请选择检测类型');
+      } else if (detectionType.value === 'referenced') {
+        // 引用检测需要选择构成
+        const componentId = document.getElementById('componentSelect').value;
+        if (!componentId) {
+          validationErrors.push('引用检测必须选择构成');
+        }
       }
     }
 
@@ -1362,8 +1492,8 @@ ${certType}：
     formData.append('isPermanent', isPermanent);
     formData.append('remarks', remark);
 
-    // 添加资料层级 (通用资料是supplier，物料资料是component)
-    const level = uploadContext.type === 'common' ? 'supplier' : 'component';
+    // 添加资料层级 (通用资料是supplier，物料资料是material)
+    const level = uploadContext.type === 'common' ? 'supplier' : 'material';
     formData.append('level', level);
 
     // 添加资料名称（使用文件名作为默认名称）
@@ -1374,16 +1504,14 @@ ${certType}：
     if (uploadContext.type === 'material') {
       formData.append('materialId', uploadContext.materialId);
 
-      // 构成信息现在作为备注处理
-      const componentName = document.getElementById('componentName').value.trim();
-      if (componentName) {
-        // 将构成信息添加到备注中
-        const enhancedRemark = remark ? `${remark} (构成: ${componentName})` : `构成: ${componentName}`;
-        formData.set('remarks', enhancedRemark);
+      // 添加检测类型
+      const detectionType = document.querySelector('input[name="detectionType"]:checked').value;
+      formData.append('detectionType', detectionType);
 
-        // 也可以选择将构成信息添加到文档名称中
-        // const enhancedDocumentName = `${documentName} (${componentName})`;
-        // formData.set('documentName', enhancedDocumentName);
+      // 如果是引用检测，添加构成ID
+      if (detectionType === 'referenced') {
+        const componentId = document.getElementById('componentSelect').value;
+        formData.append('componentId', componentId);
       }
     }
 

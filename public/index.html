@@ -33,7 +33,7 @@
     <link rel="stylesheet" href="css/modules/supplier-interactions.css">
     <link rel="stylesheet" href="css/modules/supplier-modal-enhanced.css">
     <!-- 模态框修复样式 -->
-    <link rel="stylesheet" href="css/modal-fix.css">
+    <link rel="stylesheet" href="css/modal-fix.css?v=1.7">
     <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -550,8 +550,9 @@
     <script src="js/modules/router.js"></script>
     <script src="js/modules/iqc.js"></script>
     <script src="js/modules/supplier/services/supplier-services.js?v=3.2.1"></script>
-    <script src="js/modules/supplier/ui/supplier-ui.js?v=3.2.2"></script>
-    <script src="js/modules/supplier/ui/ui-utils.js?v=3.2.4"></script>
+    <!-- 旧版 supplier-ui.js 已废弃，避免全局变量冲突 -->
+    <!-- <script src="js/modules/supplier/ui/supplier-ui.js?v=3.2.2"></script> -->
+    <script src="js/modules/supplier/ui/ui-utils.js?v=3.2.6"></script>
 
     <!-- 供应商资料类型设置功能 -->
     <link rel="stylesheet" href="css/modules/document-type-settings.css?v=1.2.3">
@@ -559,7 +560,7 @@
     <script src="js/modules/supplier/services/document-type-service.js?v=1.0.0"></script>
     <script src="js/modules/supplier/ui/document-type-simple-ui.js?v=1.2.3"></script>
 
-    <script src="js/modules/supplier.js"></script>
+    <script src="js/modules/supplier.js?v=3.2.8"></script>
 
     <!-- 供应商资料管理初始化脚本 -->
     <script>
@@ -716,6 +717,38 @@
                         <input type="text" id="uploadMaterialName" readonly>
                     </div>
 
+                    <!-- 检测类型 (仅物料资料上传时显示) -->
+                    <div class="form-group" id="detectionTypeGroup" style="display: none;">
+                        <label>🎯 检测类型</label>
+                        <div class="detection-type-options">
+                            <div class="detection-type-option">
+                                <label>
+                                    <input type="radio" name="detectionType" value="direct" checked>
+                                    <span>本体检测</span>
+                                </label>
+                                <small>检测对象是供应商交付的物料本身</small>
+                            </div>
+                            <div class="detection-type-option">
+                                <label>
+                                    <input type="radio" name="detectionType" value="referenced">
+                                    <span>引用检测</span>
+                                </label>
+                                <small>检测对象是上游材料/零件的检测报告</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 构成选择 (仅引用检测时显示) -->
+                    <div class="form-group" id="componentGroup" style="display: none;">
+                        <label>🧪 选择构成</label>
+                        <select id="componentSelect" class="component-select">
+                            <option value="">请选择构成</option>
+                        </select>
+                        <button type="button" id="openComponentManagementBtn" class="add-component-btn" style="margin-top: 8px;">
+                            ➕ 添加新构成
+                        </button>
+                    </div>
+
                     <!-- 资料类型 -->
                     <div class="form-group">
                         <label>资料类型</label>
@@ -730,12 +763,6 @@
                             <option value="csr">CSR</option>
                             <option value="other">其他</option>
                         </select>
-                    </div>
-
-                    <!-- 构成名称 (仅物料资料上传时显示) -->
-                    <div class="form-group" id="componentGroup" style="display: none;">
-                        <label>构成名称</label>
-                        <input type="text" id="componentName" placeholder="请输入构成名称">
                     </div>
 
                     <!-- 文件上传区域 -->
@@ -866,6 +893,62 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary email-modal-cancel-btn">关闭</button>
                 <button type="button" class="btn btn-primary email-copy-btn">📋 复制到剪贴板</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 构成管理模态框 -->
+    <div id="componentManagementModal" class="modal" style="display: none;">
+        <div class="modal-content component-management-modal">
+            <div class="modal-header">
+                <h3>🧪 构成管理</h3>
+                <button class="modal-close component-modal-close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- 构成信息输入区域 -->
+                <div class="component-input-section">
+                    <h4>📝 构成信息</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>构成名称 <span class="required">*</span></label>
+                            <input type="text" id="componentNameInput" placeholder="请输入构成名称" maxlength="50">
+                        </div>
+                        <div class="form-group">
+                            <label>构成编码</label>
+                            <input type="text" id="componentCodeInput" placeholder="自动生成或手动输入" maxlength="20">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>构成描述</label>
+                        <textarea id="componentDescriptionInput" placeholder="可选，描述构成的具体信息" rows="3" maxlength="200"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>所属供应商</label>
+                        <input type="text" id="componentSupplierInput" readonly>
+                    </div>
+                </div>
+
+                <!-- 现有构成列表 -->
+                <div class="component-list-section">
+                    <h4>📋 现有构成列表</h4>
+                    <div class="component-list-container">
+                        <div class="component-list-header">
+                            <span>构成名称</span>
+                            <span>构成编码</span>
+                            <span>创建时间</span>
+                            <span>操作</span>
+                        </div>
+                        <div id="componentList" class="component-list-body">
+                            <!-- 构成列表将动态加载 -->
+                            <div class="no-components">暂无构成，请添加新构成</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" id="addComponentBtn" class="btn btn-primary">➕ 添加</button>
+                <button type="button" id="saveComponentBtn" class="btn btn-success" style="display: none;">💾 保存</button>
+                <button type="button" class="btn btn-secondary component-modal-close-btn">关闭</button>
             </div>
         </div>
     </div>
