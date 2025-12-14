@@ -205,6 +205,114 @@
     border-bottom: 2px solid #e5e7eb;
 }
 
+/* ==================== 物料区域样式 ==================== */
+.materials-container {
+    padding-left: 0;
+}
+
+.material-section {
+    margin-bottom: 20px;
+    padding: 16px;
+    background: #f9fafb;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.material-section:hover {
+    background: #f3f4f6;
+    border-color: #d1d5db;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.material-section:last-child {
+    margin-bottom: 0;
+}
+
+.material-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.material-header h5 {
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.material-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.material-actions .btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.material-actions .btn:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+/* ==================== 物料操作按钮样式修复 ==================== */
+/* 修复删除物料按钮的显示问题 - 避免.action-btn圆形样式冲突 */
+.material-actions .delete-material-btn {
+    /* 覆盖.action-btn的圆形样式 */
+    width: auto !important;
+    height: auto !important;
+    border-radius: 4px !important;
+    padding: 4px 8px !important;
+    font-size: 12px !important;
+    border: 1px solid #fca5a5 !important;
+    color: #dc2626 !important;
+    background: #fef2f2 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+}
+
+.material-actions .delete-material-btn:hover {
+    background: #fee2e2 !important;
+    border-color: #f87171 !important;
+    color: #b91c1c !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 无物料提示样式 */
+.no-materials-hint {
+    text-align: center;
+    padding: 32px;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.no-materials-hint .hint-icon {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.no-materials-hint .hint-text {
+    font-size: 14px;
+}
+
 /* ==================== 资料列表 ==================== */
 .document-list {
     list-style: none;

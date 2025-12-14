@@ -818,14 +818,27 @@ class SupplierDocumentManager {
       </div>
     `;
 
-    // 物料资料
+    // 🏭 检测报告 - 统一容器，与通用资料同级
     if (details.materials && details.materials.length > 0) {
+      html += `
+        <div class="details-section">
+          <div class="section-header">
+            <h4>🏭 检测报告</h4>
+            <div class="section-actions">
+              <button class="add-material-btn" data-supplier-id="${supplierId}" title="新增物料">
+                ➕ 新增物料
+              </button>
+            </div>
+          </div>
+          <div class="materials-container">
+      `;
+
       details.materials.forEach(material => {
         html += `
-          <div class="details-section">
-            <div class="section-header">
-              <h4>🏭 物料: ${material.materialName}</h4>
-              <div class="section-actions">
+          <div class="material-section">
+            <div class="material-header">
+              <h5>📦 物料：${material.materialName}</h5>
+              <div class="material-actions">
                 <button class="email-btn batch-email-btn" data-type="material" data-supplier-id="${supplierId}" data-material-id="${material.materialId}" data-material-name="${material.materialName}" title="批量邮件通知">
                   📧 批量邮件
                 </button>
@@ -877,16 +890,34 @@ class SupplierDocumentManager {
           </div>
         `;
       });
+
+      html += `
+          </div>
+        </div>
+      `;
     }
 
-    // 新增物料按钮
-    html += `
-      <div class="details-section">
-        <button class="add-material-btn" data-supplier-id="${supplierId}" title="新增物料">
-          ➕ 新增物料
-        </button>
-      </div>
-    `;
+    // 如果没有物料，显示空的检测报告区域
+    if (!details.materials || details.materials.length === 0) {
+      html += `
+        <div class="details-section">
+          <div class="section-header">
+            <h4>🏭 检测报告</h4>
+            <div class="section-actions">
+              <button class="add-material-btn" data-supplier-id="${supplierId}" title="新增物料">
+                ➕ 新增物料
+              </button>
+            </div>
+          </div>
+          <div class="materials-container">
+            <div class="no-materials-hint">
+              <span class="hint-icon">📭</span>
+              <span class="hint-text">暂无检测报告，点击上方"新增物料"按钮添加</span>
+            </div>
+          </div>
+        </div>
+      `;
+    }
 
     html += `
           </div>
