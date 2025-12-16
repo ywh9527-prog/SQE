@@ -1,11 +1,12 @@
 /**
- * 供应商资料管理模块 v3.1
+ * 供应商资料管理模块 v3.2
  * 表格预览 + 展开详情视图
- * 
+ *
  * 核心功能:
  * 1. 表格预览 - 显示供应商资料汇总
  * 2. 展开详情 - 显示通用资料和物料资料
  * 3. 构成信息作为资料备注
+ * 4. 上传界面集成资料类型设置功能
  */
 
 class SupplierDocumentManager {
@@ -199,6 +200,7 @@ class SupplierDocumentManager {
 
           // 确保UI组件已加载
           if (window.documentTypeSimpleUI) {
+            // 简化：直接调用，不传递复杂回调
             window.documentTypeSimpleUI.showSettingsModal(type);
           } else {
             console.error('❌ documentTypeSimpleUI 未加载，请检查脚本引用');
@@ -729,6 +731,29 @@ class SupplierDocumentManager {
   }
 
   /**
+   * 渲染文档操作按钮（统一方法，消除代码重复）
+   */
+  renderDocumentActions(doc, supplierId) {
+    // 统一处理文档ID的差异
+    const documentId = doc.id || doc.documentId;
+
+    return `
+      <div class="doc-actions">
+        <button class="action-btn email-btn single-email-btn" data-document-id="${documentId}" data-supplier-id="${supplierId}" title="发送邮件">
+          📧
+        </button>
+        <button class="action-btn edit-btn" data-document-id="${documentId}" title="编辑">✏️</button>
+        <button class="action-btn delete-btn" data-document-id="${documentId}" title="删除">🗑️</button>
+        ${doc.filePath ? `
+          <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
+            📁
+          </button>
+        ` : ''}
+      </div>
+    `;
+  }
+
+  /**
    * 渲染供应商详情
    */
   renderSupplierDetails(supplierId) {
@@ -785,18 +810,7 @@ class SupplierDocumentManager {
             ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
               <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
             ` : ''}
-            <div class="doc-actions">
-              <button class="action-btn email-btn single-email-btn" data-document-id="${doc.id}" data-supplier-id="${supplierId}" title="发送邮件">
-                📧
-              </button>
-              <button class="action-btn edit-btn" data-document-id="${doc.id}" title="编辑">✏️</button>
-              <button class="action-btn delete-btn" data-document-id="${doc.id}" title="删除">🗑️</button>
-              ${doc.filePath ? `
-                <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
-                  📁
-                </button>
-              ` : ''}
-            </div>
+            ${this.renderDocumentActions(doc, supplierId)}
           </li>
         `;
       });
@@ -845,7 +859,7 @@ class SupplierDocumentManager {
                 <button class="upload-btn" data-type="material" data-supplier-id="${supplierId}" data-material-id="${material.materialId}" title="上传物料资料">
                   📤 上传资料
                 </button>
-                <button class="action-btn delete-material-btn" data-supplier-id="${supplierId}" data-material-id="${material.materialId}" data-material-name="${material.materialName}" title="删除物料">
+                <button class="delete-material-btn" data-supplier-id="${supplierId}" data-material-id="${material.materialId}" data-material-name="${material.materialName}" title="删除物料">
                   🗑️ 删除物料
                 </button>
               </div>
@@ -877,18 +891,7 @@ class SupplierDocumentManager {
                 ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
                   <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
                 ` : ''}
-                <div class="doc-actions">
-                    <button class="action-btn email-btn single-email-btn" data-document-id="${doc.documentId}" data-supplier-id="${supplierId}" title="发送邮件">
-                      📧
-                    </button>
-                    <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
-                    <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
-                    ${doc.filePath ? `
-                      <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
-                        📁
-                      </button>
-                    ` : ''}
-                  </div>
+                ${this.renderDocumentActions(doc, supplierId)}
               </li>
             `;
           });
@@ -909,7 +912,7 @@ class SupplierDocumentManager {
           Object.entries(material.referencedComponents).forEach(([componentName, component]) => {
             html += `
               <div class="component-section">
-                <h7 class="component-title">🧪 ${componentName}</h7>
+                <h7 class="component-title">🧪 构成：${componentName}</h7>
                 <ul class="document-list">
             `;
 
@@ -929,18 +932,7 @@ class SupplierDocumentManager {
                   ${doc.daysUntilExpiry !== null && !doc.isPermanent ? `
                     <span class="doc-days">(${doc.daysUntilExpiry}天)</span>
                   ` : ''}
-                  <div class="doc-actions">
-                    <button class="action-btn email-btn single-email-btn" data-document-id="${doc.documentId}" data-supplier-id="${supplierId}" title="发送邮件">
-                      📧
-                    </button>
-                    <button class="action-btn edit-btn" data-document-id="${doc.documentId}" title="编辑">✏️</button>
-                    <button class="action-btn delete-btn" data-document-id="${doc.documentId}" title="删除">🗑️</button>
-                    ${doc.filePath ? `
-                      <button class="action-btn folder-btn" data-file-path="${doc.filePath}" title="打开文件夹">
-                        📁
-                      </button>
-                    ` : ''}
-                  </div>
+                  ${this.renderDocumentActions(doc, supplierId)}
                 </li>
               `;
             });

@@ -26,14 +26,16 @@ class DocumentTypeSimpleUI {
   /**
    * 显示资料类型设置模态框
    * @param {string} category - 资料分类 (common/material)
-   * @param {Function} onClose - 关闭回调
    */
-  async showSettingsModal(category = 'common', onClose = null) {
+  async showSettingsModal(category = 'common') {
     console.log(`⚙️ 显示简洁版资料类型设置 - 分类: ${category}`);
 
     try {
       // 加载数据
       const documentTypes = await window.documentTypeService.getAllDocumentTypes({ category });
+
+      // 保存当前分类，用于操作后的刷新
+      this.currentCategory = category;
 
       // 创建模态框HTML
       const modalHtml = this.renderSimpleModal(category, documentTypes);
@@ -43,8 +45,8 @@ class DocumentTypeSimpleUI {
       modalContainer.innerHTML = modalHtml;
       document.body.appendChild(modalContainer);
 
-      // 绑定事件
-      this.bindSimpleModalEvents(modalContainer, category, onClose);
+      // 绑定事件 - 简化，不传递复杂回调
+      this.bindSimpleModalEvents(modalContainer, category);
 
       // 显示动画
       const overlay = modalContainer.querySelector('.modal-overlay');
@@ -168,33 +170,42 @@ class DocumentTypeSimpleUI {
    * 绑定简洁版模态框事件
    * @param {HTMLElement} modalContainer - 模态框容器
    * @param {string} category - 分类
-   * @param {Function} onClose - 关闭回调
    */
-  bindSimpleModalEvents(modalContainer, category, onClose) {
+  bindSimpleModalEvents(modalContainer, category) {
     // modalContainer 本身就是 overlay
     modalContainer.addEventListener('click', (e) => {
       if (e.target === e.currentTarget) {
-        // 点击遮罩层关闭
-        this.closeModal(e.target.querySelector('.modal-close-btn'), onClose);
+        // 点击遮罩层关闭 - 简化，不传递回调
+        this.closeModal(e.target.querySelector('.modal-close-btn'));
       }
     });
 
-    // ESC键关闭
+    // ESC键关闭 - 简化，不传递回调
     const handleEscKey = (e) => {
       if (e.key === 'Escape') {
-        this.closeModal(modalContainer.querySelector('.modal-close-btn'), onClose);
+        this.closeModal(modalContainer.querySelector('.modal-close-btn'));
         document.removeEventListener('keydown', handleEscKey);
       }
     };
     document.addEventListener('keydown', handleEscKey);
+
+    // 简化事件绑定，不传递复杂回调
+    const closeBtn = modalContainer.querySelector('.modal-close-btn');
+    if (closeBtn) {
+      closeBtn.onclick = () => this.closeModal(closeBtn);
+    }
+
+    const footerCloseBtn = modalContainer.querySelector('.modal-footer .btn-secondary');
+    if (footerCloseBtn) {
+      footerCloseBtn.onclick = () => this.closeModal(footerCloseBtn);
+    }
   }
 
   /**
    * 关闭模态框
    * @param {HTMLElement} closeBtn - 关闭按钮元素
-   * @param {Function} onClose - 关闭回调
    */
-  closeModal(closeBtn, onClose = null) {
+  closeModal(closeBtn) {
     console.log('🔒 关闭简洁版资料类型设置模态框');
 
     const modalContainer = closeBtn.closest('.document-type-settings-modal');
@@ -214,7 +225,9 @@ class DocumentTypeSimpleUI {
         // 如果不是body的直接子元素，从其父元素中移除
         modalContainer.parentNode.removeChild(modalContainer);
       }
-      if (onClose) onClose();
+
+      // 清理保存的分类
+      this.currentCategory = null;
     }, 300);
   }
 
@@ -269,6 +282,9 @@ class DocumentTypeSimpleUI {
 
       // 显示成功消息
       this.showSuccess('文档类型添加成功！');
+
+      // 简单刷新：直接调用相关刷新方法
+      this.performPostOperationRefresh();
 
     } catch (error) {
       console.error('❌ 添加文档类型失败:', error);
@@ -328,6 +344,9 @@ class DocumentTypeSimpleUI {
       await this.refreshTypeList();
       this.showSuccess('文档类型删除成功');
 
+      // 简单刷新：直接调用相关刷新方法
+      this.performPostOperationRefresh();
+
     } catch (error) {
       console.error('❌ 删除文档类型失败:', error);
       this.showError('删除失败: ' + error.message);
@@ -335,15 +354,21 @@ class DocumentTypeSimpleUI {
   }
 
   /**
-   * 刷新类型列表
-   * @param {string} category - 分类
+   * 刷新类型列表 - 使用保存的分类
    */
-  async refreshTypeList(category = 'common') {
+  async refreshTypeList() {
     try {
       console.log('🔄 刷新文档类型列表');
 
-      // 重新加载数据
-      const documentTypes = await window.documentTypeService.getAllDocumentTypes({ category });
+      if (!this.currentCategory) {
+        console.warn('⚠️ 未保存当前分类，无法刷新');
+        return;
+      }
+
+      // 重新加载数据 - 使用保存的分类
+      const documentTypes = await window.documentTypeService.getAllDocumentTypes({
+        category: this.currentCategory
+      });
 
       // 更新列表显示
       const listContainer = document.querySelector('.document-type-list');
@@ -351,12 +376,42 @@ class DocumentTypeSimpleUI {
         listContainer.innerHTML = documentTypes.map(docType => this.renderDocumentTypeItem(docType)).join('');
       }
 
-      console.log('✅ 文档类型列表已刷新');
+      console.log(`✅ 文档类型列表已刷新 (${this.currentCategory})`);
 
     } catch (error) {
       console.error('❌ 刷新列表失败:', error);
       this.showError('刷新失败: ' + error.message);
     }
+  }
+
+  /**
+   * 操作后的刷新方法 - 简单方案
+   */
+  performPostOperationRefresh() {
+    console.log('🔄 执行操作后刷新 - 简单方案');
+
+    // 延迟刷新，确保操作完成
+    setTimeout(() => {
+      try {
+        // 刷新上传界面的资料类型选项（如果存在）
+        if (window.supplierUIUtils && window.supplierUIUtils.loadDocumentTypeOptions) {
+          console.log('🔄 刷新上传界面资料类型选项');
+          if (this.currentCategory === 'common') {
+            window.supplierUIUtils.loadDocumentTypeOptions('common');
+          } else {
+            window.supplierUIUtils.loadDocumentTypeOptions('material');
+          }
+        }
+
+        // 刷新主页面的供应商详情（如果存在）
+        if (window.supplierManager && window.supplierManager.renderSupplierDetails && window.supplierManager.currentSupplierId) {
+          console.log('🔄 刷新主页面供应商详情');
+          window.supplierManager.renderSupplierDetails(window.supplierManager.currentSupplierId);
+        }
+      } catch (error) {
+        console.warn('⚠️ 刷新过程中出现错误（不影响主要功能）:', error);
+      }
+    }, 500); // 延迟500ms确保操作完成
   }
 
   // ==================== 消息提示方法 ====================

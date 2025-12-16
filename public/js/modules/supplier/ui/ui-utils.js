@@ -418,6 +418,9 @@ class SupplierUIUtils {
     // 存储上传上下文
     this.uploadContext = { type, supplierId, materialId };
 
+    // 绑定资料类型设置按钮事件 - 确保无论如何都会绑定
+    this.bindDocumentTypeSettingsButton(type);
+
     // 显示模态框 - 使用!important覆盖内联样式
     modal.style.setProperty('display', 'flex', 'important');
     modal.style.setProperty('z-index', '9999', 'important');
@@ -506,40 +509,41 @@ class SupplierUIUtils {
       this.showError('加载构成列表失败，请重试');
     }
   console.log('✅ 上传模态框已显示（UI工具层）');
-
-    // 绑定资料类型设置按钮事件
-    this.bindDocumentTypeSettingsButton(type);
   }
 
   /**
    * 绑定资料类型设置按钮事件
    */
   bindDocumentTypeSettingsButton(type) {
+    console.log('🔍 开始绑定资料类型设置按钮事件...');
     const settingsBtn = document.getElementById('openDocumentTypeSettingsBtn');
+    console.log('🔍 查找资料类型设置按钮:', settingsBtn);
+
     if (settingsBtn) {
       // 移除旧的事件监听器
       settingsBtn.replaceWith(settingsBtn.cloneNode(true));
       const newBtn = document.getElementById('openDocumentTypeSettingsBtn');
+      console.log('🔍 获取新按钮元素:', newBtn);
 
       newBtn.addEventListener('click', () => {
         console.log('⚙️ 点击资料类型设置按钮', { type });
 
-        // 关闭上传模态框
-        const uploadModal = document.getElementById('supplierModal');
-        if (uploadModal) {
-          uploadModal.style.display = 'none';
-        }
-
-        // 根据上传类型确定资料类型分类
+        // 🎯 [DATA-FLOW] 修复：通用资料独立，检测报告共享
         const category = type === 'common' ? 'common' : 'material';
 
-        // 调用资料类型设置UI
-        if (window.documentTypeSettingsUI) {
-          window.documentTypeSettingsUI.showModal(category);
+        // 调用资料类型设置UI - 简化调用，不传递复杂回调
+        if (window.documentTypeSimpleUI) {
+          console.log('✅ 调用简洁版资料类型设置UI，分类:', category);
+
+          // 简化：直接调用，不传递回调
+          window.documentTypeSimpleUI.showSettingsModal(category);
         } else {
+          console.error('❌ 简洁版资料类型设置功能未加载');
           this.showError('资料类型设置功能未加载，请刷新页面重试');
         }
       });
+
+      console.log('✅ 资料类型设置按钮事件绑定成功');
     } else {
       console.warn('⚠️ 未找到资料类型设置按钮 #openDocumentTypeSettingsBtn');
     }
@@ -707,8 +711,13 @@ class SupplierUIUtils {
         return;
       }
 
+      // 🎯 [DATA-FLOW] 修复：通用资料独立，检测报告共享
+      const category = type === 'common' ? 'common' : 'material';
+
+      console.log(`📋 正在获取分类: ${category} 的资料类型`);
+
       // 获取指定分类的资料类型
-      const documentTypes = await window.documentTypeService.getAllDocumentTypes({ category: type });
+      const documentTypes = await window.documentTypeService.getAllDocumentTypes({ category });
 
       const documentTypeSelect = document.getElementById('documentType');
       if (!documentTypeSelect) {
@@ -727,7 +736,7 @@ class SupplierUIUtils {
         documentTypeSelect.appendChild(option);
       });
 
-      console.log(`✅ 已加载 ${documentTypes.length} 个${type === 'common' ? '通用' : '物料'}资料类型选项`);
+      console.log(`✅ 已加载 ${documentTypes.length} 个${category} 资料类型选项`);
 
     } catch (error) {
       console.error('❌ 加载资料类型选项失败:', error);
@@ -1241,7 +1250,7 @@ class SupplierUIUtils {
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 10000;
+            z-index: 16000;
             display: flex;
             align-items: center;
             justify-content: center;
