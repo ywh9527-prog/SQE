@@ -60,7 +60,7 @@
     padding: 8px 12px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 8px;
 }
 
@@ -71,7 +71,7 @@
     padding: 8px 16px;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 16px;
     transition: background 0.2s ease;
 }
 
@@ -148,7 +148,7 @@
     display: flex;
     align-items: center;
     gap: 8px;
-    font-size: 14px; /* 从12px增加到14px，与通用资料保持一致 */
+    font-size: 16px; /* 从12px增加到14px，与通用资料保持一致 */
     min-width: 500px; /* 确保有足够空间容纳所有元素 */
     justify-content: space-between; /* 确保按钮区域能够靠右显示 */
 }
@@ -158,7 +158,7 @@
 }
 
 .detection-section .doc-icon {
-    font-size: 14px;
+    font-size: 16px;
     width: 16px;
     text-align: center;
 }
@@ -374,7 +374,7 @@
     padding: 40px 20px;
     text-align: center;
     color: #9ca3af;
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .required {
