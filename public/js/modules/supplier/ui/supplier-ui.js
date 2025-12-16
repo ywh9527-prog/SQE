@@ -335,7 +335,7 @@ class SupplierUI {
    */
   renderDocumentItem(doc, supplierId, isMaterial = false, materialId = null) {
     const docId = isMaterial ? doc.documentId : doc.id;
-    const docTypeText = window.supplierServices.getDocumentTypeText(doc.documentType);
+    const docTypeText = window.supplierServices.getCertificateTypeTextSync(doc.documentType);
     const typeText = isMaterial ? `${docTypeText} (${doc.componentName})` : docTypeText;
 
     return `

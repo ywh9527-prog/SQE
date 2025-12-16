@@ -1105,7 +1105,7 @@ class SupplierDocumentManager {
       });
 
       // 获取证书类型文本（异步）
-      const certificateTypeText = await window.supplierServices.getCertificateTypeText(targetDoc.documentType);
+      const certificateTypeText = window.supplierServices.getCertificateTypeTextSync(targetDoc.documentType);
 
       // 准备邮件变量
       const variables = {
@@ -1183,7 +1183,7 @@ class SupplierDocumentManager {
       // 按证书类型分组（异步处理）
       const groupedDocs = {};
       for (const doc of documentsToNotify) {
-        const certType = await window.supplierServices.getCertificateTypeText(doc.documentType);
+        const certType = window.supplierServices.getCertificateTypeTextSync(doc.documentType);
         if (!groupedDocs[certType]) {
           groupedDocs[certType] = [];
         }
