@@ -33,9 +33,15 @@
 }
 
 .modal-content {
-  background: white;
+  background: linear-gradient(135deg, #faf8f6 0%, #f5f2ed 100%);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 10px 15px rgba(0, 0, 0, 0.1),
+    0 20px 25px rgba(0, 0, 0, 0.1),
+    0 25px 50px rgba(0, 0, 0, 0.15);
+  border: none;
   max-height: 80vh;
   overflow: hidden;
   display: flex;
@@ -60,12 +66,13 @@
 /* ==================== 模态框头部 ==================== */
 .modal-header {
   padding: 20px 24px;
-  border-bottom: 1px solid #e5e7eb;
+  border-bottom: none;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
   color: white;
+  border-radius: 12px 12px 0 0;
 }
 
 .modal-header h3 {
@@ -376,8 +383,8 @@
   animation: slideIn 0.3s ease forwards;
 }
 
-/* ==================== Toast消息样式 ==================== */
-.toast-message {
+/* ==================== 文档类型设置专用Toast消息样式 ==================== */
+.document-type-toast {
   position: fixed;
   top: 20px;
   right: 20px;
@@ -392,19 +399,19 @@
   max-width: 300px;
 }
 
-.toast-message.show {
+.document-type-toast.show {
   transform: translateX(0);
 }
 
-.toast-message.success {
+.document-type-toast.success {
   background: #10b981;
 }
 
-.toast-message.error {
+.document-type-toast.error {
   background: #ef4444;
 }
 
-.toast-message.info {
+.document-type-toast.info {
   background: #3b82f6;
 }
 
@@ -425,31 +432,54 @@
 
 /* ==================== 资料类型设置按钮样式 ==================== */
 .document-type-settings-btn {
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
+  background: linear-gradient(135deg,
+          var(--primary-500) 0%,
+          var(--primary-600) 100%);
   color: white;
   border: none;
-  padding: 8px 16px;
-  border-radius: 6px;
-  font-weight: 500;
-  font-size: 14px;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  transition: all 0.2s ease;
-  box-shadow: 0 2px 6px rgba(107, 114, 128, 0.25);
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(157, 122, 84, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
   white-space: nowrap;
 }
 
+/* 按钮光晕效果 */
+.document-type-settings-btn::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: -1;
+}
+
+.document-type-settings-btn:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
 .document-type-settings-btn:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.35);
-  background: linear-gradient(135deg, #4b5563 0%, #374151 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3);
 }
 
 .document-type-settings-btn:active {
   transform: translateY(0);
-  box-shadow: 0 2px 4px rgba(107, 114, 128, 0.25);
+  box-shadow: 0 2px 4px rgba(157, 122, 84, 0.2);
 }
 
 .document-type-settings-btn:focus {

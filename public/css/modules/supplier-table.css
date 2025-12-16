@@ -271,28 +271,33 @@
 }
 
 /* ==================== 物料操作按钮样式修复 ==================== */
-/* 修复删除物料按钮的显示问题 - 避免.action-btn圆形样式冲突 */
+/* 确保删除物料按钮使用现代化样式 - 避免.action-btn圆形样式冲突 */
 .material-actions .delete-material-btn {
-    /* 覆盖.action-btn的圆形样式 */
+    /* 覆盖.action-btn的圆形样式，保持现代化按钮外观 */
     width: auto !important;
     height: auto !important;
-    border-radius: 4px !important;
-    padding: 4px 8px !important;
-    font-size: 12px !important;
-    border: 1px solid #fca5a5 !important;
-    color: #dc2626 !important;
-    background: #fef2f2 !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 0.5rem !important;
+    /* 确保使用 supplier-interactions.css 中的现代化样式 */
+    background: linear-gradient(135deg, var(--error-500) 0%, var(--error-600) 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
 }
 
 .material-actions .delete-material-btn:hover {
-    background: #fee2e2 !important;
-    border-color: #f87171 !important;
-    color: #b91c1c !important;
-    transform: translateY(-1px) !important;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3) !important;
+    background: linear-gradient(135deg, var(--error-600) 0%, var(--error-700) 100%) !important;
 }
 
 /* 无物料提示样式 */

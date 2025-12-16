@@ -236,7 +236,7 @@ class SupplierDocumentManager {
           e.preventDefault();
           const documentId = parseInt(deleteBtn.dataset.documentId);
           console.log('🗑️ 调用删除功能:', documentId);
-          this.deleteDocument(documentId);
+          await this.deleteDocument(documentId);
           return;
         }
 
@@ -259,7 +259,7 @@ class SupplierDocumentManager {
           const materialId = parseInt(deleteMaterialBtn.dataset.materialId);
           const materialName = deleteMaterialBtn.dataset.materialName || '未知物料';
           console.log('🗑️ 调用删除物料功能:', { supplierId, materialId, materialName });
-          this.deleteMaterial(supplierId, materialId, materialName);
+          await this.deleteMaterial(supplierId, materialId, materialName);
           return;
         }
 
@@ -1602,27 +1602,46 @@ ${certType}：
   async showEditModal(documentId) {
     console.log('✏️ 显示编辑模态框:', documentId);
 
+    // 🔍 调试信息 - 检查全局对象状态
+    console.log('🔍 调试信息:');
+    console.log('- window.supplierUIUtils 存在:', !!window.supplierUIUtils);
+    console.log('- window.supplierUIUtils.modalManager 存在:', !!(window.supplierUIUtils?.modalManager));
+    console.log('- window.App.SupplierUIUtils.ModalManager 存在:', !!(window.App?.SupplierUIUtils?.ModalManager));
+    console.log('- editModal 元素存在:', !!document.getElementById('editModal'));
+
     try {
-      // 先显示模态框
-      const modal = document.getElementById('editModal');
-      if (!modal) {
-        console.error('❌ 找不到editModal元素');
-        window.supplierUIUtils.showError('编辑模态框加载失败');
+      // 🎯 修复: 尝试多个可能的modalManager来源
+      const modalManager = window.supplierUIUtils?.modalManager ||
+                          window.App?.SupplierUIUtils?.ModalManager ||
+                          window.supplierModalManager;
+
+      console.log('🎯 找到的modalManager:', modalManager);
+
+      if (!modalManager) {
+        console.error('❌ 弹窗管理器未初始化');
+        window.supplierUIUtils?.showError('编辑模态框加载失败');
+        return;
+      }
+
+      // 检查edit模态框是否存在
+      if (!modalManager.hasModal('edit')) {
+        console.error('❌ 找不到编辑模态框');
+        window.supplierUIUtils?.showError('编辑模态框加载失败');
         return;
       }
 
       // 显示模态框
-      const editModal = document.getElementById('editModal');
-      editModal.style.setProperty('display', 'flex', 'important');
-      editModal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-      editModal.style.setProperty('position', 'fixed', 'important');
-      editModal.style.setProperty('top', '0', 'important');
-      editModal.style.setProperty('left', '0', 'important');
-      editModal.style.setProperty('width', '100%', 'important');
-      editModal.style.setProperty('height', '100%', 'important');
-      editModal.style.setProperty('z-index', '9999', 'important');
-      editModal.style.setProperty('align-items', 'center', 'important');
-      editModal.style.setProperty('justify-content', 'center', 'important');
+      const success = modalManager.show('edit', {
+        title: '编辑资料',
+        data: { documentId }
+      });
+
+      if (!success) {
+        console.error('❌ 显示编辑模态框失败');
+        window.supplierUIUtils.showError('编辑模态框显示失败');
+        return;
+      }
+
       console.log('✅ 编辑模态框已显示');
 
       // 获取文档详情
@@ -1676,7 +1695,16 @@ ${certType}：
    * 隐藏编辑模态框
    */
   hideEditModal() {
-    document.getElementById('editModal').style.setProperty('display', 'none', 'important');
+    // 使用统一弹窗管理器隐藏模态框
+    if (window.supplierUIUtils?.modalManager) {
+      window.supplierUIUtils.modalManager.hide('edit');
+    } else {
+      // 降级方案
+      const modal = document.getElementById('editModal');
+      if (modal) {
+        modal.style.setProperty('display', 'none', 'important');
+      }
+    }
     this.editContext = null;
   }
 
@@ -1752,7 +1780,14 @@ ${certType}：
    * 删除文档
    */
   async deleteDocument(documentId) {
-    if (!confirm('确定要删除这份资料吗？此操作不可撤销。')) {
+    // 使用供应商专用确认弹窗
+    const confirmed = await window.supplierUIUtils.confirmAction('确定要删除这份资料吗？此操作不可撤销。', {
+      type: 'danger',
+      confirmText: '删除',
+      cancelText: '取消'
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -1902,7 +1937,14 @@ ${certType}：
    * 删除物料
    */
   async deleteMaterial(supplierId, materialId, materialName) {
-    if (!confirm(`确定要删除物料"${materialName}"吗？删除后将同时删除该物料下的所有资料，此操作不可撤销。`)) {
+    // 使用供应商专用确认弹窗
+    const confirmed = await window.supplierUIUtils.confirmAction(`确定要删除物料"${materialName}"吗？删除后将同时删除该物料下的所有资料，此操作不可撤销。`, {
+      type: 'danger',
+      confirmText: '删除',
+      cancelText: '取消'
+    });
+
+    if (!confirmed) {
       return;
     }
 

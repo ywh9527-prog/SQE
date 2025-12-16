@@ -10,7 +10,7 @@
 
 const express = require('express');
 const router = express.Router();
-const { sequelize } = require('../database/config');
+const { sequelize, DataTypes } = require('../database/config');
 
 /**
  * POST /api/materials
@@ -154,6 +154,8 @@ router.post('/components', async (req, res) => {
     try {
         const { materialId, componentName, componentCode, description } = req.body;
 
+        console.log('🔍 后端接收到的数据:', { materialId, componentName, componentCode, description });
+
         // 验证必填字段
         if (!materialId || !componentName) {
             return res.status(400).json({
@@ -165,15 +167,16 @@ router.post('/components', async (req, res) => {
 
         // 检查物料是否存在
         const [materials] = await sequelize.query(
-            'SELECT id, material_name FROM materials WHERE id = ?',
+            'SELECT id, material_name FROM materials WHERE id = ? AND status = "Active"',
             { replacements: [materialId] }
         );
 
         if (materials.length === 0) {
+            console.error(`❌ 物料不存在: materialId=${materialId}`);
             return res.status(404).json({
                 success: false,
                 error: '物料不存在',
-                message: `找不到ID为 ${materialId} 的物料`
+                message: `找不到ID为 ${materialId} 的物料，请刷新页面重试`
             });
         }
 
@@ -191,15 +194,67 @@ router.post('/components', async (req, res) => {
             });
         }
 
-        // 插入具体构成
-        const [result] = await sequelize.query(
+        // 插入具体构成 - 使用命名参数避免位置参数问题
+        const insertData = {
+            material_id: materialId,
+            component_name: componentName,
+            component_code: componentCode || null,
+            description: description || null,
+            status: 'Active',
+            created_at: new Date(),
+            updated_at: new Date()
+        };
+
+        console.log('🔍 插入数据对象:', insertData);
+
+        // 使用Sequelize但修复ID获取问题
+        const result = await sequelize.query(
             `INSERT INTO material_components (material_id, component_name, component_code, description, status, created_at, updated_at)
-       VALUES (?, ?, ?, ?, 'Active', datetime('now'), datetime('now'))`,
-            { replacements: [materialId, componentName, componentCode || null, description || null] }
+             VALUES (?, ?, ?, ?, ?, ?, ?)`,
+            {
+                replacements: [
+                    insertData.material_id,
+                    insertData.component_name,
+                    insertData.component_code,
+                    insertData.description,
+                    insertData.status,
+                    insertData.created_at,
+                    insertData.updated_at
+                ],
+                type: sequelize.QueryTypes.INSERT
+            }
         );
 
-        // 获取插入的构成ID
-        const componentId = result;
+        // Sequelize的INSERT操作返回格式
+        console.log('🔍 Sequelize插入结果:', result);
+
+        // 尝试多种方式获取ID
+        let componentId = null;
+
+        // 方式1: 检查result[0]（某些Sequelize版本）
+        if (result && result[0] && result[0].insertId) {
+            componentId = result[0].insertId;
+        }
+        // 方式2: 检查result本身
+        else if (result && result.insertId) {
+            componentId = result.insertId;
+        }
+        // 方式3: 查询最新记录（备用方案）
+        else {
+            const [latestRecord] = await sequelize.query(
+                'SELECT id FROM material_components ORDER BY id DESC LIMIT 1',
+                { type: sequelize.QueryTypes.SELECT }
+            );
+            componentId = latestRecord?.id;
+        }
+
+        console.log('🔍 获取到的构成ID:', componentId);
+
+        if (!componentId) {
+            throw new Error('插入失败：无法获取新记录ID');
+        }
+
+        console.log('🔍 获取到的构成ID:', componentId);
 
         // 查询完整的构成信息
         const [components] = await sequelize.query(
@@ -295,9 +350,10 @@ router.get('/', async (req, res) => {
 router.get('/:materialId/components', async (req, res) => {
     try {
         const { materialId } = req.params;
+        console.log('🔍 查询构成列表，物料ID:', materialId);
 
         const [components] = await sequelize.query(
-            `SELECT 
+            `SELECT
         mc.*,
         COUNT(sd.id) as document_count
        FROM material_components mc
@@ -307,6 +363,9 @@ router.get('/:materialId/components', async (req, res) => {
        ORDER BY mc.component_name`,
             { replacements: [materialId] }
         );
+
+        console.log('🔍 查询到的原始构成数据:', components);
+        console.log('🔍 构成数量:', components.length);
 
         res.json({
             success: true,
@@ -325,6 +384,170 @@ router.get('/:materialId/components', async (req, res) => {
         res.status(500).json({
             success: false,
             error: '查询具体构成列表失败',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * PUT /api/materials/components/:componentId
+ * 编辑构成信息
+ *
+ * Params:
+ * - componentId: 构成ID
+ *
+ * Body:
+ * {
+ *   "componentName": "构成名称",
+ *   "componentCode": "构成编码",
+ *   "description": "构成描述"
+ * }
+ */
+router.put('/components/:componentId', async (req, res) => {
+    try {
+        const { componentId } = req.params;
+        const { componentName, componentCode, description } = req.body;
+
+        // 参数验证
+        if (!componentName || componentName.trim() === '') {
+            return res.status(400).json({
+                success: false,
+                error: '构成名称不能为空'
+            });
+        }
+
+        // 检查构成是否存在
+        const [existingComponents] = await sequelize.query(
+            'SELECT * FROM material_components WHERE id = ? AND status = "Active"',
+            { replacements: [componentId] }
+        );
+
+        if (existingComponents.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: '构成不存在'
+            });
+        }
+
+        const existingComponent = existingComponents[0];
+
+        // 检查构成名称是否与其他构成重复（排除当前构成）
+        const [duplicateComponents] = await sequelize.query(
+            'SELECT id FROM material_components WHERE material_id = ? AND component_name = ? AND id != ? AND status = "Active"',
+            { replacements: [existingComponent.material_id, componentName.trim(), componentId] }
+        );
+
+        if (duplicateComponents.length > 0) {
+            return res.status(400).json({
+                success: false,
+                error: '构成名称已存在'
+            });
+        }
+
+        // 更新构成信息
+        await sequelize.query(
+            `UPDATE material_components
+             SET component_name = ?, component_code = ?, description = ?, updated_at = CURRENT_TIMESTAMP
+             WHERE id = ?`,
+            {
+                replacements: [
+                    componentName.trim(),
+                    componentCode ? componentCode.trim() : null,
+                    description ? description.trim() : null,
+                    componentId
+                ]
+            }
+        );
+
+        // 查询更新后的构成信息
+        const [updatedComponents] = await sequelize.query(
+            'SELECT * FROM material_components WHERE id = ?',
+            { replacements: [componentId] }
+        );
+
+        const updatedComponent = updatedComponents[0];
+
+        res.json({
+            success: true,
+            data: {
+                componentId: updatedComponent.id,
+                materialId: updatedComponent.material_id,
+                componentName: updatedComponent.component_name,
+                componentCode: updatedComponent.component_code,
+                description: updatedComponent.description,
+                status: updatedComponent.status,
+                createdAt: updatedComponent.created_at,
+                updatedAt: updatedComponent.updated_at
+            },
+            message: '构成信息更新成功'
+        });
+
+    } catch (error) {
+        console.error('更新构成信息失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '更新构成信息失败',
+            message: error.message
+        });
+    }
+});
+
+/**
+ * DELETE /api/materials/components/:componentId
+ * 删除构成
+ *
+ * Params:
+ * - componentId: 构成ID
+ */
+router.delete('/components/:componentId', async (req, res) => {
+    try {
+        const { componentId } = req.params;
+
+        // 检查构成是否存在
+        const [existingComponents] = await sequelize.query(
+            'SELECT * FROM material_components WHERE id = ? AND status = "Active"',
+            { replacements: [componentId] }
+        );
+
+        if (existingComponents.length === 0) {
+            return res.status(404).json({
+                success: false,
+                error: '构成不存在'
+            });
+        }
+
+        const component = existingComponents[0];
+
+        // 检查是否有关联的文档
+        const [documentCount] = await sequelize.query(
+            'SELECT COUNT(*) as count FROM supplier_documents WHERE component_id = ? AND status = "active" AND is_current = 1',
+            { replacements: [componentId] }
+        );
+
+        if (documentCount[0].count > 0) {
+            return res.status(400).json({
+                success: false,
+                error: '该构成下还有文档，无法删除',
+                message: `请先删除或转移该构成下的 ${documentCount[0].count} 个文档`
+            });
+        }
+
+        // 软删除构成
+        await sequelize.query(
+            'UPDATE material_components SET status = "Deleted", updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+            { replacements: [componentId] }
+        );
+
+        res.json({
+            success: true,
+            message: '构成删除成功'
+        });
+
+    } catch (error) {
+        console.error('删除构成失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '删除构成失败',
             message: error.message
         });
     }

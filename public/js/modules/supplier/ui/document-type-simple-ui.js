@@ -313,8 +313,14 @@ class DocumentTypeSimpleUI {
         return;
       }
 
-      // 确认删除
-      if (!confirm(`确定要删除文档类型"${docType.name}"吗？此操作不可恢复。`)) {
+      // 使用供应商专用确认弹窗
+      const confirmed = await window.supplierUIUtils.confirmAction(`确定要删除文档类型"${docType.name}"吗？此操作不可恢复。`, {
+        type: 'danger',
+        confirmText: '删除',
+        cancelText: '取消'
+      });
+
+      if (!confirmed) {
         return;
       }
 
@@ -360,7 +366,13 @@ class DocumentTypeSimpleUI {
    * @param {string} message - 消息内容
    */
   showSuccess(message) {
-    this.showToast(message, 'success');
+    // 使用统一的UI工具层
+    if (window.supplierUIUtils) {
+      window.supplierUIUtils.showSuccess(message);
+    } else {
+      // 降级方案
+      this.showToast(message, 'success');
+    }
   }
 
   /**
@@ -368,7 +380,13 @@ class DocumentTypeSimpleUI {
    * @param {string} message - 消息内容
    */
   showError(message) {
-    this.showToast(message, 'error');
+    // 使用统一的UI工具层
+    if (window.supplierUIUtils) {
+      window.supplierUIUtils.showError(message);
+    } else {
+      // 降级方案
+      this.showToast(message, 'error');
+    }
   }
 
   /**
@@ -378,14 +396,14 @@ class DocumentTypeSimpleUI {
    */
   showToast(message, type = 'info') {
     // 移除现有的toast
-    const existingToast = document.querySelector('.toast-message');
+    const existingToast = document.querySelector('.document-type-toast');
     if (existingToast) {
       document.body.removeChild(existingToast);
     }
 
     // 创建新的toast
     const toast = document.createElement('div');
-    toast.className = `toast-message ${type}`;
+    toast.className = `document-type-toast ${type}`;
     toast.textContent = message;
 
     // 添加到页面

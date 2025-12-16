@@ -65,9 +65,10 @@ const upload = multer({
  * 
  * Body (multipart/form-data):
  * - supplierId: 供应商ID (必填)
- * - level: 资料层级 supplier/material/component (必填)
- * - materialId: 物料ID (level=material或component时必填)
- * - componentId: 具体构成ID (level=component时必填)
+ * - level: 资料层级 supplier/material (必填)
+ * - materialId: 物料ID (level=material时必填)
+ * - detectionType: 检测类型 direct/referenced (必填, level=material时)
+ * - componentId: 具体构成ID (detectionType=referenced时必填)
  * - documentType: 资料类型 (必填)
  * - documentName: 资料名称/版本号 (必填)
  * - documentNumber: 协议编号/证书编号 (可选)
@@ -84,6 +85,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             supplierId,
             level,
             materialId,
+            detectionType,
             componentId,
             documentType,
             documentName,
@@ -113,7 +115,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         }
 
         // 验证层级相关字段
-        if (level === 'component' && !materialId) {
+        if (level === 'material' && !materialId) {
             return res.status(400).json({
                 success: false,
                 error: '缺少必填字段',
@@ -121,7 +123,26 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             });
         }
 
-        // 注意：componentId不再是必填项，构成信息现在作为备注处理
+        // 验证检测类型相关字段
+        if (level === 'material' && !detectionType) {
+            return res.status(400).json({
+                success: false,
+                error: '缺少必填字段',
+                message: '物料资料上传时，detectionType为必填项'
+            });
+        }
+
+        // 如果是引用检测，必须有构成ID
+        if (detectionType === 'referenced' && !componentId) {
+            return res.status(400).json({
+                success: false,
+                error: '缺少必填字段',
+                message: '引用检测必须指定构成ID'
+            });
+        }
+
+        // 供应商级资料的detectionType默认为'direct'（数据库不允许null）
+        const finalDetectionType = (level === 'supplier') ? 'direct' : detectionType;
 
         // 验证资料类型是否匹配级别 - 使用动态资料类型系统
         try {
@@ -255,16 +276,22 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             documentTypeChinese = documentType; // 最后的后备
         }
 
-        // 从remarks中提取构成信息用于文件命名
+        // 获取构成信息用于文件命名（仅引用检测时）
         let componentName = '';
-        console.log(`🔍 检查构成信息: remarks=${remarks}, level=${level}`);
-        if (remarks && level === 'component') {
-            const componentMatch = remarks.match(/构成:\s*(.+?)(?:\(|$)/);
-            if (componentMatch) {
-                componentName = componentMatch[1].trim();
-                console.log(`✅ 从备注中提取构成信息: ${componentName}`);
+        console.log(`🔍 检查构成信息: detectionType=${detectionType}, componentId=${componentId}`);
+
+        if (detectionType === 'referenced' && componentId) {
+            // 从数据库获取构成名称
+            const [componentData] = await sequelize.query(
+                'SELECT component_name FROM material_components WHERE id = ?',
+                { replacements: [componentId] }
+            );
+
+            if (componentData.length > 0) {
+                componentName = componentData[0].component_name;
+                console.log(`✅ 获取到构成名称: ${componentName}`);
             } else {
-                console.log(`❌ 备注中没有找到构成信息: ${remarks}`);
+                console.log(`❌ 未找到构成ID ${componentId} 对应的构成`);
             }
         }
 
@@ -299,19 +326,21 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         const result = await sequelize.query(
             `INSERT INTO supplier_documents (
         supplier_id, level, material_id, component_id,
+        detection_type,
         document_type, document_name, document_number,
         file_path, file_size,
         expiry_date, is_permanent,
         status, responsible_person, issuing_authority, remarks,
         version, is_current,
         upload_date, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 1, datetime('now'), datetime('now'), datetime('now'))`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'active', ?, ?, ?, ?, 1, datetime('now'), datetime('now'), datetime('now'))`,
             {
                 replacements: [
                     supplierId,
                     level,
                     materialId || null,
                     componentId || null,
+                    finalDetectionType,
                     documentType,
                     documentName,
                     documentNumber || null,
@@ -372,7 +401,16 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         });
 
     } catch (error) {
-        console.error('上传资料失败:', error);
+        console.error('❌ 上传资料失败:', error);
+        console.error('❌ 错误堆栈:', error.stack);
+        console.error('❌ 请求数据:', {
+            body: req.body,
+            file: req.file ? {
+                originalname: req.file.originalname,
+                size: req.file.size,
+                path: req.file.path
+            } : null
+        });
 
         // 如果上传失败，删除已上传的文件
         if (req.file && fs.existsSync(req.file.path)) {
@@ -382,7 +420,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
         res.status(500).json({
             success: false,
             error: '上传资料失败',
-            message: error.message
+            message: error.message,
+            stack: error.stack
         });
     }
 });

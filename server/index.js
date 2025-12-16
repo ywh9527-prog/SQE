@@ -51,7 +51,9 @@ console.log('✅ suppliersSummaryRoutes 加载完成');
 
 console.log('✅ suppliersSyncRoutes 加载完成');
 
-
+// 文档类型设置功能路由
+const documentTypesRoutes = require('./routes/document-types');
+console.log('✅ documentTypesRoutes 加载完成');
 
 // 路由注册
 console.log('🔧 开始注册API路由...');
@@ -87,6 +89,10 @@ app.use('/api/materials', materialsRoutes);
 console.log('✅ /api/materials/* 路由已注册 (materials)');
 app.use('/api/documents', documentRoutes);
 console.log('✅ /api/documents/* 路由已注册 (documents)');
+
+// 文档类型设置功能路由
+app.use('/api/document-types', documentTypesRoutes);
+console.log('✅ /api/document-types/* 路由已注册 (document-types)');
 
 console.log('🎉 所有API路由注册完成');
 

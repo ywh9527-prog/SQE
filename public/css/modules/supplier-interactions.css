@@ -83,21 +83,60 @@ button:active {
 
 .delete-material-btn,
 .delete-btn {
-    background: white;
-    color: var(--error-600);
-    border: 1px solid var(--error-300);
-    padding: 0.5rem 1rem;
+    background: linear-gradient(135deg,
+            var(--error-500) 0%,
+            var(--error-600) 100%);
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
     border-radius: 10px;
-    font-weight: 500;
-    font-size: 0.85rem;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+/* 删除按钮光晕效果 */
+.delete-material-btn::before,
+.delete-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+    z-index: -1;
+}
+
+.delete-material-btn:hover::before,
+.delete-btn:hover::before {
+    width: 300px;
+    height: 300px;
 }
 
 .delete-material-btn:hover,
 .delete-btn:hover {
-    background: var(--error-500);
-    color: white;
-    border-color: var(--error-500);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
+    background: linear-gradient(135deg,
+            var(--error-600) 0%,
+            var(--error-700) 100%);
+}
+
+.delete-material-btn:active,
+.delete-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
 }
 
 /* ============================================

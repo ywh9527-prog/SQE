@@ -402,8 +402,14 @@ class DocumentTypeSettingsUI {
         return;
       }
 
-      // 确认删除
-      if (!confirm(`确定要删除文档类型"${docType.name}"吗？此操作不可恢复。`)) {
+      // 使用供应商专用确认弹窗
+      const confirmed = await window.supplierUIUtils.confirmAction(`确定要删除文档类型"${docType.name}"吗？此操作不可恢复。`, {
+        type: 'danger',
+        confirmText: '删除',
+        cancelText: '取消'
+      });
+
+      if (!confirmed) {
         return;
       }
 
@@ -490,7 +496,13 @@ class DocumentTypeSettingsUI {
    * @param {string} message - 消息内容
    */
   showSuccess(message) {
-    this.showMessage(message, 'success');
+    // 使用统一的UI工具层
+    if (window.supplierUIUtils) {
+      window.supplierUIUtils.showSuccess(message);
+    } else {
+      // 降级方案
+      this.showMessage(message, 'success');
+    }
   }
 
   /**
@@ -498,7 +510,13 @@ class DocumentTypeSettingsUI {
    * @param {string} message - 消息内容
    */
   showError(message) {
-    this.showMessage(message, 'error');
+    // 使用统一的UI工具层
+    if (window.supplierUIUtils) {
+      window.supplierUIUtils.showError(message);
+    } else {
+      // 降级方案
+      this.showMessage(message, 'error');
+    }
   }
 
   /**
@@ -506,18 +524,28 @@ class DocumentTypeSettingsUI {
    * @param {string} message - 消息内容
    */
   showInfo(message) {
-    this.showMessage(message, 'info');
+    // 使用统一的UI工具层
+    if (window.supplierUIUtils && window.supplierUIUtils.showInfo) {
+      window.supplierUIUtils.showInfo(message);
+    } else {
+      // 降级方案：使用成功样式显示信息
+      if (window.supplierUIUtils) {
+        window.supplierUIUtils.showSuccess(message);
+      } else {
+        this.showMessage(message, 'info');
+      }
+    }
   }
 
   /**
-   * 显示消息
+   * 显示消息（降级方案，仅在supplierUIUtils不可用时使用）
    * @param {string} message - 消息内容
    * @param {string} type - 消息类型 (success/error/info)
    */
   showMessage(message, type = 'info') {
     // 创建消息元素
     const messageEl = document.createElement('div');
-    messageEl.className = `toast-message ${type}`;
+    messageEl.className = `document-type-toast ${type}`;
     messageEl.textContent = message;
 
     // 添加到页面

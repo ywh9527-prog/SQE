@@ -225,28 +225,33 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
 
         // 查询供应商详细资料
         const [results] = await sequelize.query(`
-            SELECT 
+            SELECT
                 s.id as supplier_id,
                 s.name as supplier_name,
                 m.id as material_id,
                 m.material_name,
                 sd.id as document_id,
                 sd.level as document_level,
+                sd.detection_type,
                 sd.document_type,
                 sd.document_name,
                 sd.expiry_date,
                 sd.is_permanent,
                 sd.status as document_status,
+                sd.component_id,
+                mc.component_name,
+                sd.file_path,
                 sd.remarks
             FROM suppliers s
             LEFT JOIN materials m ON s.id = m.supplier_id AND m.status = 'Active'
-            LEFT JOIN supplier_documents sd ON 
+            LEFT JOIN supplier_documents sd ON
                 ((sd.supplier_id = s.id AND sd.level = 'supplier') OR
-                 (sd.material_id = m.id AND sd.level = 'component'))
-                AND sd.status = 'active' 
+                 (sd.material_id = m.id AND sd.level = 'material'))
+                AND sd.status = 'active'
                 AND sd.is_current = 1
+            LEFT JOIN material_components mc ON sd.component_id = mc.id
             WHERE s.id = :supplierId
-            ORDER BY m.id, sd.document_type
+            ORDER BY m.id, sd.detection_type, mc.component_name, sd.document_type
         `, {
             replacements: { supplierId: id }
         });
@@ -290,7 +295,8 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
                         expiryDate: row.expiry_date,
                         daysUntilExpiry: daysUntilExpiry,
                         isPermanent: row.is_permanent === 1,
-                        status: warningLevel
+                        status: warningLevel,
+                        filePath: row.file_path // 添加文件路径字段
                     });
                 }
             }
@@ -301,11 +307,12 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
                     materialsMap[row.material_id] = {
                         materialId: row.material_id,
                         materialName: row.material_name,
-                        documents: []
+                        directDocuments: [],      // 本体检测文档
+                        referencedComponents: {}  // 引用检测构成
                     };
                 }
 
-                if (row.document_level === 'component' && row.document_id) {
+                if (row.document_level === 'material' && row.document_id) {
                     let daysUntilExpiry = null;
                     let warningLevel = 'normal';
 
@@ -323,25 +330,33 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
                         }
                     }
 
-                    // 从备注中提取构成信息
-                    let componentName = '';
-                    if (row.remarks) {
-                        const componentMatch = row.remarks.match(/构成:\s*(.+?)(?:\(|$)/);
-                        if (componentMatch) {
-                            componentName = componentMatch[1].trim();
-                        }
-                    }
-
-                    materialsMap[row.material_id].documents.push({
+                    const document = {
                         documentId: row.document_id,
                         documentType: row.document_type,
                         documentName: row.document_name,
-                        componentName: componentName,
                         expiryDate: row.expiry_date,
                         daysUntilExpiry: daysUntilExpiry,
                         isPermanent: row.is_permanent === 1,
-                        status: warningLevel
-                    });
+                        status: warningLevel,
+                        filePath: row.file_path // 添加文件路径字段
+                    };
+
+                    // 根据检测类型分类
+                    if (row.detection_type === 'direct') {
+                        // 本体检测文档
+                        materialsMap[row.material_id].directDocuments.push(document);
+                    } else if (row.detection_type === 'referenced') {
+                        // 引用检测文档，按构成分组
+                        const componentName = row.component_name || '未分类构成';
+                        if (!materialsMap[row.material_id].referencedComponents[componentName]) {
+                            materialsMap[row.material_id].referencedComponents[componentName] = {
+                                componentId: row.component_id,
+                                componentName: componentName,
+                                documents: []
+                            };
+                        }
+                        materialsMap[row.material_id].referencedComponents[componentName].documents.push(document);
+                    }
                 }
             }
         });

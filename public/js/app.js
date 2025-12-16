@@ -110,13 +110,29 @@ function displayUserInfo() {
 }
 
 // 登出功能
-function logout() {
-    if (confirm('确定要退出登录吗？')) {
-        // 清除本地存储
-        localStorage.removeItem('authToken');
-        localStorage.removeItem('user');
-        
-        // 跳转到登录页面
-        window.location.href = '/pages/login.html';
+async function logout() {
+    // 使用供应商专用确认弹窗（如果可用）
+    if (window.supplierUIUtils) {
+      const confirmed = await window.supplierUIUtils.confirmAction('确定要退出登录吗？', {
+        type: 'info',
+        confirmText: '退出登录',
+        cancelText: '取消'
+      });
+
+      if (!confirmed) {
+        return;
+      }
+    } else {
+      // 降级到原生confirm
+      if (!confirm('确定要退出登录吗？')) {
+        return;
+      }
     }
+
+    // 清除本地存储
+    localStorage.removeItem('authToken');
+    localStorage.removeItem('user');
+
+    // 跳转到登录页面
+    window.location.href = '/pages/login.html';
 }

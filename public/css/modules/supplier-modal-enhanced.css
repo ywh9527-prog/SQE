@@ -20,11 +20,14 @@
    ============================================ */
 
 .modal-content {
-    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%) !important;
+    background: linear-gradient(135deg, #faf8f6 0%, #f5f2ed 100%) !important;
     border-radius: 20px !important;
     box-shadow:
-        0 20px 60px rgba(0, 0, 0, 0.3),
-        0 0 0 1px rgba(255, 255, 255, 0.5) inset !important;
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 10px 15px rgba(0, 0, 0, 0.1),
+        0 20px 25px rgba(0, 0, 0, 0.1),
+        0 25px 50px rgba(0, 0, 0, 0.15) !important;
     border: none !important;
     animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
     overflow: hidden;
@@ -47,12 +50,11 @@
    ============================================ */
 
 .modal-header {
-    background: linear-gradient(90deg,
-            var(--primary-500) 0%,
-            var(--primary-600) 100%) !important;
-    color: white !important;
+    background: linear-gradient(135deg, #fafafa 0%, #f8f9fa 100%) !important;
+    color: var(--primary-700) !important;
     padding: 1.2rem 1.5rem !important;
-    border-bottom: none !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    border-radius: 20px 20px 0 0 !important;
     position: relative;
 }
 

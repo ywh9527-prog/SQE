@@ -15,6 +15,7 @@
     <!-- 年份选择器样式 -->
     <link rel="stylesheet" href="css/modules/year_switcher.css">
     <!-- Toast 提示框样式 -->
+    <!-- 保留原样式作为后备 -->
     <link rel="stylesheet" href="css/utils/toast.css?v=2">
     <!-- 进度指示器样式 -->
     <link rel="stylesheet" href="css/utils/progress.css">
@@ -31,6 +32,8 @@
     <link rel="stylesheet" href="css/modules/supplier-status-badges.css">
     <link rel="stylesheet" href="css/modules/supplier-animations.css">
     <link rel="stylesheet" href="css/modules/supplier-interactions.css">
+    <link rel="stylesheet" href="css/modules/supplier-modals-bem.css?v=4.1">
+    <!-- 保留旧的模态框样式作为后备 -->
     <link rel="stylesheet" href="css/modules/supplier-modal-enhanced.css">
     <!-- 模态框修复样式 -->
     <link rel="stylesheet" href="css/modal-fix.css?v=1.7">
@@ -552,7 +555,12 @@
     <script src="js/modules/supplier/services/supplier-services.js?v=3.2.1"></script>
     <!-- 旧版 supplier-ui.js 已废弃，避免全局变量冲突 -->
     <!-- <script src="js/modules/supplier/ui/supplier-ui.js?v=3.2.2"></script> -->
-    <script src="js/modules/supplier/ui/ui-utils.js?v=3.2.6"></script>
+
+    <!-- 统一弹窗管理器 - 必须在ui-utils之前加载 -->
+    <script src="js/modules/supplier/ui/modal-manager.js?v=4.0"></script>
+
+    <!-- UI工具层 - 依赖modal-manager -->
+    <script src="js/modules/supplier/ui/ui-utils.js?v=3.2.7"></script>
 
     <!-- 供应商资料类型设置功能 -->
     <link rel="stylesheet" href="css/modules/document-type-settings.css?v=1.2.3">
@@ -697,18 +705,18 @@
     <!-- 主入口脚本 (必须最后加载) -->
     <script src="js/app.js"></script>
     <!-- 上传模态框 -->
-    <div id="uploadModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3 id="uploadModalTitle">上传资料</h3>
-                <button class="modal-close upload-modal-close">&times;</button>
+    <div id="uploadModal" class="supplier-modal supplier-modal--upload" style="display: none;">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 id="uploadModalTitle" class="supplier-modal__title">上传资料</h3>
+                <button class="supplier-modal__close upload-modal-close">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="supplier-modal__body">
                 <form id="uploadForm">
                     <!-- 供应商信息 -->
-                    <div class="form-group">
-                        <label>供应商</label>
-                        <input type="text" id="uploadSupplierName" readonly>
+                    <div class="supplier-form__group">
+                        <label class="supplier-form__label">供应商</label>
+                        <input type="text" id="uploadSupplierName" class="supplier-form__input supplier-form__input--readonly" readonly>
                     </div>
 
                     <!-- 物料信息 (仅物料资料上传时显示) -->

@@ -46,20 +46,18 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
     field: 'component_id',
     comment: '具体构成ID (level=component时必填)'
   },
+  detectionType: {
+    type: DataTypes.ENUM('direct', 'referenced'),
+    allowNull: false,
+    defaultValue: 'direct',
+    field: 'detection_type',
+    comment: '检测类型：direct(本体检测), referenced(引用检测)'
+  },
   documentType: {
-    type: DataTypes.ENUM(
-      'quality_agreement',      // 质量保证协议 (通用资料)
-      'environmental_msds',     // MSDS (通用资料) ⭐ 修改
-      'iso_certification',      // ISO认证 (通用资料)
-      'environmental_rohs',     // ROHS (物料资料)
-      'environmental_reach',    // REACH (物料资料)
-      'environmental_hf',       // HF (物料资料)
-      'csr',                    // CSR (通用资料)
-      'other'                   // 其他
-    ),
+    type: DataTypes.STRING(50),  // 改为STRING以支持动态文档类型ID
     allowNull: false,
     field: 'document_type',
-    comment: '资料类型'
+    comment: '资料类型 (支持动态文档类型ID)'
   },
   documentName: {
     type: DataTypes.STRING(255),
