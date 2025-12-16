@@ -506,6 +506,43 @@ class SupplierUIUtils {
       this.showError('加载构成列表失败，请重试');
     }
   console.log('✅ 上传模态框已显示（UI工具层）');
+
+    // 绑定资料类型设置按钮事件
+    this.bindDocumentTypeSettingsButton(type);
+  }
+
+  /**
+   * 绑定资料类型设置按钮事件
+   */
+  bindDocumentTypeSettingsButton(type) {
+    const settingsBtn = document.getElementById('openDocumentTypeSettingsBtn');
+    if (settingsBtn) {
+      // 移除旧的事件监听器
+      settingsBtn.replaceWith(settingsBtn.cloneNode(true));
+      const newBtn = document.getElementById('openDocumentTypeSettingsBtn');
+
+      newBtn.addEventListener('click', () => {
+        console.log('⚙️ 点击资料类型设置按钮', { type });
+
+        // 关闭上传模态框
+        const uploadModal = document.getElementById('supplierModal');
+        if (uploadModal) {
+          uploadModal.style.display = 'none';
+        }
+
+        // 根据上传类型确定资料类型分类
+        const category = type === 'common' ? 'common' : 'material';
+
+        // 调用资料类型设置UI
+        if (window.documentTypeSettingsUI) {
+          window.documentTypeSettingsUI.showModal(category);
+        } else {
+          this.showError('资料类型设置功能未加载，请刷新页面重试');
+        }
+      });
+    } else {
+      console.warn('⚠️ 未找到资料类型设置按钮 #openDocumentTypeSettingsBtn');
+    }
   }
 
   /**
