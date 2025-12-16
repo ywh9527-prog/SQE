@@ -1,0 +1,160 @@
+/**
+ * 供应商模块统一字体层级管理 v2.1
+ * 建立清晰的字体大小层级，确保整个供应商管理界面的视觉一致性
+ *
+ * 字体层级体系（全面增大，修复h7标签问题）：
+ * - 第一级标题（20px）：通用资料、检测报告、物料{物料名}
+ * - 第二级标题（17px）：本体检测、引用检测
+ * - 第三级标题（17px）：构成{构成名} - 修复h7标签约束问题
+ * - 内容文本（16px）：文档名称
+ * - 辅助文本（13px）：过期时间
+ * - 小号文本（12px）：天数、状态等
+ */
+
+/* ==================== 第一级标题 - 20px ==================== */
+/* 通用资料、检测报告、物料{物料名} */
+.supplier-documents .section-header,
+.details-section h4,
+.section-header h4,
+.material-header h5 {
+    font-size: 20px !important;
+    font-weight: 600 !important;
+    color: #1f2937 !important;
+}
+
+/* 排除子标题，确保第一级标题不被影响 */
+.detection-section .detection-title,
+.component-section .component-title {
+    font-size: inherit !important;
+}
+
+/* ==================== 第二级标题 - 17px ==================== */
+/* 本体检测、引用检测 */
+.detection-title {
+    font-size: 17px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+/* 确保检测报告和通用资料的标题是20px，但子标题是17px */
+.detection-section .detection-title {
+    font-size: 17px !important;
+}
+
+/* ==================== 第三级标题 - 17px ==================== */
+/* 构成{构成名} - 调整为更易读的大小 */
+.component-title,
+h7.component-title {
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+}
+
+/* 构成名称（在列表中的显示） */
+.component-item__header .component-name {
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+}
+
+/* 强制覆盖所有 h7 标签的字体大小 */
+h7 {
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+}
+
+/* ==================== 内容文本 - 16px ==================== */
+/* 文档名称 */
+.document-item,
+.document-item .doc-type,
+.document-item .doc-name,
+.detection-section .document-item {
+    font-size: 16px !important;
+}
+
+/* ==================== 辅助文本 - 13px ==================== */
+/* 过期时间 */
+.doc-expiry,
+.detection-section .doc-expiry,
+.document-item .doc-expiry {
+    font-size: 13px !important;
+    color: #9ca3af !important;
+}
+
+/* ==================== 小号文本 - 12px ==================== */
+/* 天数、状态等 */
+.doc-days,
+.detection-section .doc-days,
+.document-item .doc-days,
+.doc-status {
+    font-size: 12px !important;
+    color: #6b7280 !important;
+}
+
+/* ==================== 特殊元素强制覆盖 ==================== */
+/* 确保所有可能影响字体大小的元素都被覆盖 */
+.detection-section .document-item {
+    font-size: 16px !important;
+}
+
+.detection-section .doc-type {
+    font-size: 16px !important;
+}
+
+.detection-section .doc-name {
+    font-size: 16px !important;
+}
+
+.detection-section .doc-expiry {
+    font-size: 13px !important;
+}
+
+.detection-section .doc-days {
+    font-size: 12px !important;
+}
+
+/* ==================== 层级优先级确保 ==================== */
+/* 确保字体层级不会被其他规则覆盖，按正确顺序应用 */
+
+/* 第一级标题强制应用 - 20px */
+.supplier-documents .section-header,
+.details-section h4,
+.section-header h4,
+.material-header h5 {
+    font-size: 20px !important;
+}
+
+/* 第二级标题强制应用 - 17px */
+.detection-title {
+    font-size: 17px !important;
+}
+
+/* 第三级标题强制应用 - 17px */
+.component-title {
+    font-size: 17px !important;
+}
+
+.component-item__header .component-name {
+    font-size: 17px !important;
+}
+
+/* 强制覆盖所有 h7 标签 */
+h7 {
+    font-size: 17px !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+}
+
+/* 内容文本样式确保 */
+.document-item {
+    font-size: 16px !important;
+}
+
+.doc-expiry {
+    font-size: 13px !important;
+}
+
+.doc-days {
+    font-size: 12px !important;
+}

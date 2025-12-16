@@ -197,7 +197,6 @@
 }
 
 .details-section h4 {
-    font-size: 16px;
     font-weight: 600;
     color: #1f2937;
     margin-bottom: 12px;
@@ -239,7 +238,6 @@
 }
 
 .material-header h5 {
-    font-size: 14px;
     font-weight: 600;
     color: #374151;
     margin: 0;
@@ -280,7 +278,7 @@
     align-items: center !important;
     gap: 0.5rem !important;
     /* 确保使用 supplier-interactions.css 中的现代化样式 */
-    background: linear-gradient(135deg, var(--error-500) 0%, var(--error-600) 100%) !important;
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%) !important;
     color: white !important;
     border: none !important;
     padding: 0.6rem 1.2rem !important;
@@ -296,8 +294,8 @@
 
 .material-actions .delete-material-btn:hover {
     transform: translateY(-2px) !important;
-    box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3) !important;
-    background: linear-gradient(135deg, var(--error-600) 0%, var(--error-700) 100%) !important;
+    box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3) !important;
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%) !important;
 }
 
 /* 无物料提示样式 */
@@ -377,12 +375,10 @@
 
 .doc-expiry {
     color: #4b5563;
-    font-size: 13px;
 }
 
 .doc-days {
     color: #9ca3af;
-    font-size: 12px;
     font-style: italic;
 }
 

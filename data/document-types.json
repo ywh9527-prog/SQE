@@ -102,5 +102,31 @@
     "createdBy": "system",
     "createdAt": "2025-12-12T11:53:48.127Z",
     "usageCount": 0
+  },
+  {
+    "id": "doc_type_1765912561048_985",
+    "name": "哈哈2",
+    "description": "",
+    "category": "common",
+    "isRequired": false,
+    "isSystemDefault": false,
+    "sortOrder": 6,
+    "isActive": true,
+    "createdBy": "user",
+    "createdAt": "2025-12-16T19:16:01.048Z",
+    "usageCount": 0
+  },
+  {
+    "id": "doc_type_1765912618002_130",
+    "name": "哈哈",
+    "description": "",
+    "category": "material",
+    "isRequired": false,
+    "isSystemDefault": false,
+    "sortOrder": 104,
+    "isActive": true,
+    "createdBy": "user",
+    "createdAt": "2025-12-16T19:16:58.002Z",
+    "usageCount": 0
   }
 ]

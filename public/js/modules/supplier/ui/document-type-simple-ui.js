@@ -50,6 +50,8 @@ class DocumentTypeSimpleUI {
 
       // 显示动画
       const overlay = modalContainer.querySelector('.modal-overlay');
+      // 添加专用类确保层级正确
+      overlay.classList.add('document-type-settings-modal');
       requestAnimationFrame(() => {
         overlay.classList.add('show');
       });
@@ -74,7 +76,7 @@ class DocumentTypeSimpleUI {
     const categoryText = category === 'common' ? '通用资料' : '物料资料';
 
     return `
-      <div class="modal-overlay document-type-settings-modal">
+      <div class="modal-overlay document-type-settings-modal" style="z-index: 1001000 !important;">
         <div class="modal-content">
           <!-- 模态框头部 -->
           <div class="modal-header">
@@ -283,6 +285,13 @@ class DocumentTypeSimpleUI {
       // 显示成功消息
       this.showSuccess('文档类型添加成功！');
 
+      // 🔄 清理并重新加载资料类型缓存，确保新添加的类型能正确显示
+      if (window.supplierServices && window.supplierServices.clearDocumentTypeCache) {
+        window.supplierServices.clearDocumentTypeCache();
+        window.supplierServices.initializeDocumentTypes();
+        console.log('🔄 已清理并重新加载资料类型缓存');
+      }
+
       // 简单刷新：直接调用相关刷新方法
       this.performPostOperationRefresh();
 
@@ -342,7 +351,14 @@ class DocumentTypeSimpleUI {
 
       await window.documentTypeService.deleteDocumentType(id);
       await this.refreshTypeList();
-      this.showSuccess('文档类型删除成功');
+      this.showSuccess('文档类型删除成功！');
+
+      // 🔄 清理并重新加载资料类型缓存，确保删除后的类型列表正确显示
+      if (window.supplierServices && window.supplierServices.clearDocumentTypeCache) {
+        window.supplierServices.clearDocumentTypeCache();
+        window.supplierServices.initializeDocumentTypes();
+        console.log('🔄 已清理并重新加载资料类型缓存（删除操作）');
+      }
 
       // 简单刷新：直接调用相关刷新方法
       this.performPostOperationRefresh();

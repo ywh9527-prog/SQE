@@ -472,12 +472,10 @@
 }
 
 .document-item .doc-expiry {
-  font-size: 0.875rem;
   color: var(--text-secondary);
 }
 
 .document-item .doc-days {
-  font-size: 0.75rem;
   color: var(--text-muted);
 }
 

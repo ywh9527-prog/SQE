@@ -297,7 +297,7 @@
 }
 
 .delete-material-btn {
-  background-color: #ef4444;
+  background-color: #9d7a54;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -308,7 +308,7 @@
 }
 
 .delete-material-btn:hover {
-  background-color: #dc2626;
+  background-color: #8b6939;
 }
 
 /* 邮件按钮样式 */
@@ -435,7 +435,7 @@
 }
 
 .delete-btn:hover {
-  background-color: #fee2e2;
+  background-color: #f3f4f6;
 }
 
 /* 搜索和筛选控件样式 */

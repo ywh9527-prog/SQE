@@ -84,8 +84,8 @@ button:active {
 .delete-material-btn,
 .delete-btn {
     background: linear-gradient(135deg,
-            var(--error-500) 0%,
-            var(--error-600) 100%);
+            var(--primary-500) 0%,
+            var(--primary-600) 100%);
     color: white;
     border: none;
     padding: 0.6rem 1.2rem;
@@ -95,7 +95,7 @@ button:active {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 4px 6px rgba(157, 122, 84, 0.2);
     transition: all 0.3s ease;
     position: relative;
     overflow: hidden;
@@ -127,16 +127,16 @@ button:active {
 .delete-material-btn:hover,
 .delete-btn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 8px 15px rgba(239, 68, 68, 0.3);
+    box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3);
     background: linear-gradient(135deg,
-            var(--error-600) 0%,
-            var(--error-700) 100%);
+            var(--primary-600) 0%,
+            var(--primary-700) 100%);
 }
 
 .delete-material-btn:active,
 .delete-btn:active {
     transform: translateY(0);
-    box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 2px 4px rgba(157, 122, 84, 0.2);
 }
 
 /* ============================================
@@ -182,6 +182,24 @@ button:active {
     color: #eab308;
     background: #fefce8;
     border-color: #fef9c3;
+}
+
+/* 小图标删除按钮保持透明背景 - 覆盖大按钮样式 */
+.action-btn.delete-btn {
+    background: transparent !important;
+    border: none !important;
+    color: var(--gray-600) !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.action-btn.delete-btn:hover {
+    background: white !important;
+    border: 1px solid var(--gray-200) !important;
+    color: var(--gray-700) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+    transform: translateY(-2px) rotate(5deg) !important;
+    outline: none !important;
 }
 
 /* ============================================

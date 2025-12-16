@@ -16,7 +16,7 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                z-index: 9999;
+                z-index: 1004000; /* 确保在所有模态框和确认弹窗之上 */
                 pointer-events: none;
             `;
             document.body.appendChild(this.container);

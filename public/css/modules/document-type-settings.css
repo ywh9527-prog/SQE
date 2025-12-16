@@ -21,10 +21,15 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 1100 !important; /* 设置类模态框层级，高于普通模态框 */
   opacity: 0;
   transition: opacity 0.3s ease, backdrop-filter 0.3s ease;
   backdrop-filter: blur(0px);
+}
+
+/* 专门确保资料类型设置模态框在最高层级 */
+.modal-overlay.document-type-settings-modal {
+  z-index: 1150 !important; /* 确保在所有普通模态框之上 */
 }
 
 .modal-overlay.show {
