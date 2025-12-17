@@ -440,20 +440,24 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
 
     const supplierData = supplier[0];
     
-    // 获取文档汇总
+    // 获取文档汇总（包含层级信息）
     const [documents] = await sequelize.query(`
-        SELECT document_type, expiry_date, status, created_at, file_path as filePath, document_name
-        FROM supplier_documents 
-        WHERE supplier_id = ? 
-        ORDER BY document_type, created_at DESC
+        SELECT sd.document_type, sd.expiry_date, sd.status, sd.created_at, sd.file_path as filePath,
+               sd.document_name, sd.level, sd.material_id, sd.component_id, sd.is_permanent,
+               m.material_name, mc.component_name
+        FROM supplier_documents sd
+        LEFT JOIN materials m ON sd.material_id = m.id
+        LEFT JOIN material_components mc ON sd.component_id = mc.id
+        WHERE sd.supplier_id = ?
+        ORDER BY sd.level, sd.material_id, sd.component_id, sd.document_type, sd.created_at DESC
     `, {
       replacements: [id]
     });
 
-    // 构建供应商资料汇总 - 匹配前端期望的数据结构
+    // 构建供应商资料汇总 - 正确分离通用资料和检测报告
     const commonDocuments = [];
-    const materials = {};
-    
+    const materialsMap = {};
+
     // 分离通用资料和检测报告
     documents.forEach(doc => {
       let daysUntilExpiry = null;
@@ -474,19 +478,37 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
       }
 
       const docData = {
-        id: doc.document_type, // 临时使用document_type作为id
+        id: doc.document_type,
         documentType: doc.document_type,
         documentName: doc.document_name,
-        filePath: doc.filePath, // 恢复原始filePath
+        filePath: doc.filePath,
         expiryDate: doc.expiry_date,
         daysUntilExpiry: daysUntilExpiry,
-        isPermanent: doc.is_permanent === 1,
-        status: warningLevel
+        isPermanent: Boolean(doc.is_permanent),
+        status: warningLevel,
+        level: doc.level,
+        materialId: doc.material_id,
+        componentName: doc.component_name
       };
 
-      // 判断是否为通用资料（level为supplier或没有level字段）
-      // 这里简化处理，将所有文档都作为通用资料返回
-      commonDocuments.push(docData);
+      // 根据level字段正确分离资料
+      if (doc.level === 'supplier') {
+        // 通用资料
+        commonDocuments.push(docData);
+      } else if (doc.level === 'component' && doc.material_id) {
+        // 检测报告 - 按物料分组
+        const materialKey = doc.material_id.toString();
+
+        if (!materialsMap[materialKey]) {
+          materialsMap[materialKey] = {
+            materialId: doc.material_id,
+            materialName: doc.material_name || `物料${doc.material_id}`,
+            documents: []
+          };
+        }
+
+        materialsMap[materialKey].documents.push(docData);
+      }
     });
 
     const supplierSummary = {
@@ -494,7 +516,7 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
       supplierName: supplierData.name,
       materialCount: supplierData.material_count || 0,
       commonDocuments: commonDocuments,
-      materials: Object.values(materials)
+      materials: Object.values(materialsMap)
     };
 
     res.json({

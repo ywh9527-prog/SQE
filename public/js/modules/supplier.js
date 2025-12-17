@@ -1136,7 +1136,7 @@ class SupplierDocumentManager {
   }
 
   /**
-   * 生成批量邮件
+   * 生成批量邮件（支持通用资料和检测报告）
    */
   async generateBatchEmail(type, supplierId, materialId = null, materialName = null) {
     try {
@@ -1149,12 +1149,24 @@ class SupplierDocumentManager {
         return;
       }
 
-      // 获取供应商详情
+      // 获取供应商详情（批量邮件时强制重新加载以确保数据最新）
+      delete this.detailsCache[supplierId]; // 清除缓存
       const details = await this.loadDetails(supplierId);
       if (!details) {
         window.supplierUIUtils.showError('无法获取供应商详情');
         return;
       }
+
+      // 添加总体调试日志
+      console.log(`📧 供应商${supplierId}详情结构:`, {
+        commonDocumentsCount: details.commonDocuments?.length || 0,
+        materialsCount: details.materials?.length || 0,
+        materials: details.materials?.map(m => ({
+          materialId: m.materialId,
+          materialName: m.materialName,
+          documentsCount: m.documents?.length || 0
+        }))
+      });
 
       let documentsToNotify = [];
 
@@ -1165,14 +1177,50 @@ class SupplierDocumentManager {
             !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
           );
         }
+        // 添加调试日志
+        console.log(`📧 通用资料批量邮件:`, {
+          commonDocuments: details.commonDocuments?.length || 0,
+          documentsToNotify: documentsToNotify.length
+        });
       } else if (type === 'material' && materialId) {
-        // 物料资料批量邮件
+        // 检测报告批量邮件
         const material = details.materials.find(m => m.materialId === materialId);
-        if (material && material.documents) {
-          documentsToNotify = material.documents.filter(doc =>
-            !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
-          );
+
+        if (material) {
+          // 处理新的数据结构（documents数组）
+          if (material.documents) {
+            documentsToNotify.push(...material.documents.filter(doc =>
+              !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
+            ));
+          }
+
+          // 兼容旧的数据结构（directDocuments + referencedComponents）
+          if (material.directDocuments) {
+            documentsToNotify.push(...material.directDocuments.filter(doc =>
+              !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
+            ));
+          }
+
+          // 处理引用检测的构成
+          if (material.referencedComponents) {
+            Object.values(material.referencedComponents).forEach(component => {
+              if (component.documents) {
+                documentsToNotify.push(...component.documents.filter(doc =>
+                  !doc.isPermanent && (doc.daysUntilExpiry <= 30 || doc.daysUntilExpiry < 0)
+                ));
+              }
+            });
+          }
         }
+
+        // 添加调试日志
+        console.log(`📧 物料${materialId}(${materialName})的检测报告:`, {
+          material,
+          documentsToNotify: documentsToNotify.length,
+          hasDocuments: !!material?.documents,
+          hasDirectDocuments: !!material?.directDocuments,
+          hasReferencedComponents: !!material?.referencedComponents
+        });
       }
 
       if (documentsToNotify.length === 0) {
@@ -1208,7 +1256,19 @@ ${certType}：
         docs.forEach(doc => {
           const materialInfo = doc.materialName ? `（物料：${doc.materialName}${doc.componentName ? ` - ${doc.componentName}` : ''}）` : '';
           const status = doc.daysUntilExpiry < 0 ? `已过期${Math.abs(doc.daysUntilExpiry)}天` : `剩余${doc.daysUntilExpiry}天`;
-          const urgency = doc.daysUntilExpiry < 0 ? '🔴' : doc.daysUntilExpiry <= 7 ? '🟡' : '🟢';
+          // 状态标识符号：使用系统一致的 getStatusIcon 逻辑
+          let urgency;
+          if (doc.daysUntilExpiry < 0) {
+            urgency = '❌';  // 已过期 - 与系统 getStatusIcon('expired') 一致
+          } else if (doc.daysUntilExpiry <= 7) {
+            urgency = '🔴';  // 7天内紧急 - 对应 critical
+          } else if (doc.daysUntilExpiry <= 15) {
+            urgency = '🔴';  // 15天内紧急 - 对应 urgent
+          } else if (doc.daysUntilExpiry <= 30) {
+            urgency = '🟡';  // 30天内警告 - 对应 warning
+          } else {
+            urgency = '🟢';  // 正常 - 对应 normal（不应该出现在邮件中）
+          }
           emailContent += `${urgency} ${doc.documentName}${materialInfo}
    到期日期：${window.supplierServices.formatDate(doc.expiryDate)}
    状态：${status}
