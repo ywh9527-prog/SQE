@@ -5,7 +5,7 @@
  * 核心改进:
  * 1. 构成信息作为资料的备注，而不是独立层级
  * 2. 提供汇总统计 (ROHS/REACH/HF的数量和最差状态)
- * 3. 区分"通用资料"和"物料资料"
+ * 3. 区分"通用资料"和"检测报告"
  */
 
 const express = require('express');
@@ -139,7 +139,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
                 };
             }
 
-            // 收集物料资料 (构成级)
+            // 收集检测报告 (构成级)
             if (row.document_level === 'component' && row.document_id) {
                 let daysUntilExpiry = null;
                 let warningLevel = 'normal';
@@ -165,7 +165,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
             }
         });
 
-        // 统计物料资料 (ROHS/REACH/HF)
+        // 统计检测报告 (ROHS/REACH/HF)
         const suppliers = Object.values(supplierMap).map(supplier => {
             delete supplier.materialIds; // 删除临时字段
 
@@ -301,7 +301,7 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
                 }
             }
 
-            // 物料资料
+            // 检测报告
             if (row.material_id) {
                 if (!materialsMap[row.material_id]) {
                     materialsMap[row.material_id] = {

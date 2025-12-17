@@ -18,13 +18,7 @@ class LocalFileSyncService {
    * 判断是否为通用资料
    */
   isCommonDocument(documentType) {
-    // 如果传入的是中文名称，直接判断
-    const commonTypes = ['质量协议', 'MSDS', '企业资质', 'ISO认证', '企业承诺书', '质量保证协议', 'MSDS安全数据表', '营业执照', 'CSR报告'];
-    if (commonTypes.includes(documentType)) {
-      return true;
-    }
-
-    // 如果传入的是ID，从动态配置中查找
+    // 🎯 修复：优先使用动态配置，支持自定义资料类型
     try {
       const fs = require('fs');
       const path = require('path');
@@ -32,14 +26,25 @@ class LocalFileSyncService {
 
       if (fs.existsSync(documentTypesPath)) {
         const documentTypes = JSON.parse(fs.readFileSync(documentTypesPath, 'utf8'));
-        const docType = documentTypes.find(dt => dt.id === documentType);
-        return docType ? docType.category === 'common' : false;
+
+        // 如果传入的是ID，通过ID查找
+        const docTypeById = documentTypes.find(dt => dt.id === documentType);
+        if (docTypeById) {
+          return docTypeById.category === 'common';
+        }
+
+        // 如果传入的是中文名称，通过名称查找
+        const docTypeByName = documentTypes.find(dt => dt.name === documentType);
+        if (docTypeByName) {
+          return docTypeByName.category === 'common';
+        }
       }
     } catch (error) {
       console.error('判断资料类型失败:', error);
     }
 
-    // 默认作为物料资料处理
+    // 🎯 删除硬编码列表，完全依赖动态配置
+    // 如果动态配置中没有找到，默认作为检测报告处理
     return false;
   }
 
@@ -60,9 +65,10 @@ class LocalFileSyncService {
 
     if (this.isCommonDocument(documentType)) {
       // 通用资料命名格式：{供应商名称}_{证书类型}_v{版本号}_{日期}.{扩展名}
+      // 🎯 修复：通用资料不包含物料名称和构成名称
       return `${supplierName}_${documentTypeDisplayName}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
     } else {
-      // 物料资料命名格式：{供应商名称}_{物料名称}_{证书类型}_{构成名称}_v{版本号}_{日期}.{扩展名}
+      // 检测报告命名格式：{供应商名称}_{物料名称}_{证书类型}_{构成名称}_v{版本号}_{日期}.{扩展名}
       // 构成信息在证书类型之后，版本号之前
       const componentNameClean = componentName ? componentName.replace(/[^\w\u4e00-\u9fa5]/g, '_') : '未知构成';
       return `${supplierName}_${materialName}_${documentTypeDisplayName}_${componentNameClean}_${versionStr}_${today}.${this.getFileExtension(fileData.originalname)}`;
@@ -117,11 +123,11 @@ class LocalFileSyncService {
     // 如果materialName为空，只创建基础文件夹结构
     if (!materialName) {
         const commonPath = path.join(supplierPath, '通用资料');
-        const materialPath = path.join(supplierPath, '物料资料');
-        
+        const materialPath = path.join(supplierPath, '检测报告');
+
         await fs.ensureDir(commonPath);
         await fs.ensureDir(materialPath);
-        
+
         return {
             supplierPath,
             commonPath,
@@ -144,15 +150,15 @@ class LocalFileSyncService {
             documentPath
         };
     } else {
-        // 物料资料路径：uploads/供应商A/物料资料/胶带/（文件直接放在构成文件夹下）
-        const materialPath = path.join(supplierPath, '物料资料', materialName);
-        
+        // 检测报告路径：uploads/供应商A/检测报告/胶带/（文件直接放在构成文件夹下）
+        const materialPath = path.join(supplierPath, '检测报告', materialName);
+
         await fs.ensureDir(materialPath);
-        
+
         return {
             supplierPath,
             materialPath,
-            documentPath: materialPath  // 物料资料的documentPath就是materialPath
+            documentPath: materialPath  // 检测报告的documentPath就是materialPath
         };
     }
 }
@@ -163,11 +169,14 @@ class LocalFileSyncService {
   async createSupplierFolderStructure(supplierName) {
     const basePath = path.join(__dirname, '../../资料档案');
     const supplierPath = path.join(basePath, supplierName);
-    
+
     // 创建基础文件夹结构
+    const commonPath = path.join(supplierPath, '通用资料');
+    const materialPath = path.join(supplierPath, '检测报告');
+
     await fs.ensureDir(commonPath);
     await fs.ensureDir(materialPath);
-    
+
     return {
       supplierPath,
       commonPath,

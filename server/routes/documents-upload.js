@@ -119,7 +119,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: '缺少必填字段',
-                message: '物料资料上传时，materialId为必填项'
+                message: '检测报告上传时，materialId为必填项'
             });
         }
 
@@ -128,7 +128,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             return res.status(400).json({
                 success: false,
                 error: '缺少必填字段',
-                message: '物料资料上传时，detectionType为必填项'
+                message: '检测报告上传时，detectionType为必填项'
             });
         }
 
@@ -174,8 +174,8 @@ router.post('/upload', upload.single('file'), async (req, res) => {
 
                 if (currentDocType) {
                     // 类型存在但分类不匹配
-                    const expectedCategoryText = expectedCategory === 'common' ? '通用资料' : '物料资料';
-                    const actualCategoryText = currentDocType.category === 'common' ? '通用资料' : '物料资料';
+                    const expectedCategoryText = expectedCategory === 'common' ? '通用资料' : '检测报告';
+                    const actualCategoryText = currentDocType.category === 'common' ? '通用资料' : '检测报告';
 
                     return res.status(400).json({
                         success: false,
@@ -208,8 +208,40 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             });
         }
 
-        // 简化版本逻辑：每次上传都作为新文档，不做版本检查和替换
+        // 🎯 修复：自动递增版本号，实现并行存储
+        // 查找同一供应商、同一资料类型的最新版本号
         let version = 1;
+
+        try {
+            // 构建查询条件
+            let versionQuery = `
+                SELECT MAX(version) as maxVersion
+                FROM supplier_documents
+                WHERE supplier_id = ? AND document_type = ?
+            `;
+            let queryParams = [supplierId, documentType];
+
+            // 如果是检测报告，还需要匹配物料ID
+            if (level === 'material' && materialId) {
+                versionQuery += ' AND material_id = ?';
+                queryParams.push(materialId);
+            }
+
+            const [versionResult] = await sequelize.query(versionQuery, {
+                replacements: queryParams
+            });
+
+            if (versionResult.length > 0 && versionResult[0].maxVersion) {
+                version = versionResult[0].maxVersion + 1;
+                console.log(`📈 自动递增版本号: ${documentType} -> v${version}`);
+            } else {
+                console.log(`🆕 新资料类型，从版本1开始: ${documentType}`);
+            }
+        } catch (error) {
+            console.error('❌ 查询版本号失败:', error);
+            // 如果查询失败，使用默认版本1
+            console.log('⚠️ 使用默认版本1');
+        }
 
         // 获取供应商信息用于文件同步
         const [supplierData] = await sequelize.query(
@@ -222,7 +254,7 @@ router.post('/upload', upload.single('file'), async (req, res) => {
             supplierName = supplierData[0].name;
         }
 
-        // 获取物料信息（如果是物料资料）
+        // 获取物料信息（如果是检测报告）
         let materialName = '';
         console.log(`🔍 检查物料信息: materialId=${materialId}`);
         if (materialId) {

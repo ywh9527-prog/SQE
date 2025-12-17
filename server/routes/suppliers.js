@@ -454,7 +454,7 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
     const commonDocuments = [];
     const materials = {};
     
-    // 分离通用资料和物料资料
+    // 分离通用资料和检测报告
     documents.forEach(doc => {
       let daysUntilExpiry = null;
       let warningLevel = 'normal';

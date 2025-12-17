@@ -104,21 +104,8 @@
     "usageCount": 0
   },
   {
-    "id": "doc_type_1765912561048_985",
-    "name": "哈哈2",
-    "description": "",
-    "category": "common",
-    "isRequired": false,
-    "isSystemDefault": false,
-    "sortOrder": 6,
-    "isActive": true,
-    "createdBy": "user",
-    "createdAt": "2025-12-16T19:16:01.048Z",
-    "usageCount": 0
-  },
-  {
-    "id": "doc_type_1765912618002_130",
-    "name": "哈哈",
+    "id": "doc_type_1765912858716_322",
+    "name": "哈哈哈！！",
     "description": "",
     "category": "material",
     "isRequired": false,
@@ -126,7 +113,20 @@
     "sortOrder": 104,
     "isActive": true,
     "createdBy": "user",
-    "createdAt": "2025-12-16T19:16:58.002Z",
+    "createdAt": "2025-12-16T19:20:58.716Z",
+    "usageCount": 0
+  },
+  {
+    "id": "doc_type_1765951212292_874",
+    "name": "测试1",
+    "description": "",
+    "category": "common",
+    "isRequired": false,
+    "isSystemDefault": false,
+    "sortOrder": 6,
+    "isActive": true,
+    "createdBy": "user",
+    "createdAt": "2025-12-17T06:00:12.293Z",
     "usageCount": 0
   }
 ]

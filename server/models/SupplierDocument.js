@@ -8,11 +8,11 @@ const { sequelize } = require('../database/config');
  * 核心改进:
  * 1. 支持三层架构: 供应商→物料→资料(构成作为备注)
  * 2. MSDS归为通用资料
- * 3. ROHS/REACH/HF归为物料资料(构成作为备注)
+ * 3. ROHS/REACH/HF归为检测报告(构成作为备注)
  * 
  * 层级说明:
  * - supplier: 通用资料 (质量保证协议、MSDS、ISO认证等)
- * - material: 物料资料 (ROHS、REACH、HF等，构成信息作为备注)
+ * - material: 检测报告 (ROHS、REACH、HF等，构成信息作为备注)
  * - component: 具体构成 (作为资料备注，不作为独立层级)
  */
 const SupplierDocument = sequelize.define('SupplierDocument', {
@@ -32,7 +32,7 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
     type: DataTypes.ENUM('supplier', 'material', 'component'),
     allowNull: false,
     defaultValue: 'supplier',
-    comment: '资料层级: supplier(通用资料), material(物料资料), component(具体构成-作为备注)'
+    comment: '资料层级: supplier(通用资料), material(检测报告), component(具体构成-作为备注)'
   },
   materialId: {
     type: DataTypes.INTEGER,
@@ -180,28 +180,12 @@ const SupplierDocument = sequelize.define('SupplierDocument', {
     {
       fields: ['status']
     },
-    {
-      // 通用资料: 同一供应商下同类型资料只能有一个当前版本
-      unique: true,
-      fields: ['supplier_id', 'document_type', 'is_current'],
-      where: {
-        level: 'supplier',
-        is_current: true,
-        status: 'active'
-      },
-      name: 'unique_supplier_document'
-    },
-    {
-      // 物料资料: 同一物料下同类型资料只能有一个当前版本
-      unique: true,
-      fields: ['component_id', 'document_type', 'is_current'],
-      where: {
-        level: 'component',
-        is_current: true,
-        status: 'active'
-      },
-      name: 'unique_component_document'
-    }
+    // 🎯 移除UNIQUE约束，允许同一资料类型重复上传
+    // 原约束：同一供应商下同类型资料只能有一个当前版本
+    // 修改原因：用户需要支持同一资料类型的重复上传
+    // 🎯 移除检测报告的UNIQUE约束，保持一致性
+    // 原约束：同一物料下同类型资料只能有一个当前版本
+    // 修改原因：允许同一资料类型的重复上传
   ],
   comment: '供应商资料表 (支持三层架构: 供应商→物料→资料(构成备注))'
 });
@@ -279,7 +263,7 @@ SupplierDocument.findSupplierDocuments = function (supplierId, options = {}) {
   });
 };
 
-    // 查询物料资料
+    // 查询检测报告
 SupplierDocument.findComponentDocuments = function (componentId, options = {}) {
   return this.findAll({
     where: {

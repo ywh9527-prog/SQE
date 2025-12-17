@@ -73,7 +73,7 @@ class DocumentTypeSimpleUI {
    * @returns {string} HTML字符串
    */
   renderSimpleModal(category, documentTypes) {
-    const categoryText = category === 'common' ? '通用资料' : '物料资料';
+    const categoryText = category === 'common' ? '通用资料' : '检测报告';
 
     return `
       <div class="modal-overlay document-type-settings-modal" style="z-index: 1001000 !important;">

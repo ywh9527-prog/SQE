@@ -82,7 +82,7 @@ async function verifyDatabase() {
                         };
                     }
 
-                    // 物料资料
+                    // 检测报告
                     if (row.level === 'component' && row.document_id) {
                         const exists = supplierMap[supplierId].materials[materialId].components[componentId].documents.find(d => d.id === row.document_id);
                         if (!exists) {

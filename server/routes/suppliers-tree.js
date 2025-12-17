@@ -203,7 +203,7 @@ router.get('/tree', async (req, res) => {
 
                     const component = material.components[componentId];
 
-                    // 物料资料
+                    // 检测报告
                     if (row.document_level === 'component' && row.document_id && shouldIncludeDocuments) {
                         const exists = component.documents.find(d => d.id === row.document_id);
                         if (!exists) {

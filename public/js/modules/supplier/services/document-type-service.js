@@ -332,7 +332,7 @@ class DocumentTypeService {
 
     // 分类验证
     if (!data.category || !['common', 'material'].includes(data.category)) {
-      errors.push('分类必须是 通用资料 或 物料资料');
+      errors.push('分类必须是 通用资料 或 检测报告');
     }
 
     return {

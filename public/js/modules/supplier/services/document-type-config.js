@@ -20,7 +20,7 @@ class DocumentTypeConfig {
     id,                    // 唯一标识符 (生成: doc_type_xxx)
     name,                  // 类型名称 (如: "质量保证协议")
     description,           // 类型说明 (如: "企业与供应商之间的质量保证文件")
-    category,             // 分类 (common: 通用资料, material: 物料资料)
+    category,             // 分类 (common: 通用资料, material: 检测报告)
     isRequired,           // 是否必需 (true/false)
     isSystemDefault,      // 是否系统默认 (不可删除)
     sortOrder,            // 排序序号
@@ -263,7 +263,7 @@ const SystemDefaultDocumentTypes = [
     createdBy: 'system'
   }),
 
-  // 物料资料类型
+  // 检测报告类型
   new DocumentTypeConfig({
     id: 'doc_type_101',
     name: 'ROHS证书',

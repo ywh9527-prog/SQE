@@ -87,7 +87,7 @@ class DocumentTypeSettingsUI {
    * @returns {string} HTML字符串
    */
   renderModal(category, documentTypes, stats) {
-    const categoryText = category === 'common' ? '通用资料' : '物料资料';
+    const categoryText = category === 'common' ? '通用资料' : '检测报告';
 
     return `
       <div class="modal-overlay document-type-settings-modal">

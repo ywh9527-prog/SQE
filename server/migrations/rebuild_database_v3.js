@@ -178,7 +178,7 @@ async function rebuildDatabase() {
     `);
         console.log('  ✅ 插入3个通用资料');
 
-        // 4.5 插入物料资料 (ROHS、REACH、HF)
+        // 4.5 插入检测报告 (ROHS、REACH、HF)
         await sequelize.query(`
       INSERT INTO supplier_documents 
         (supplier_id, level, material_id, component_id, document_type, document_name, file_path, file_size, expiry_date, is_permanent)
@@ -190,7 +190,7 @@ async function rebuildDatabase() {
         (1, 'component', 2, 3, 'environmental_rohs', 'ROHS V2.0', '/uploads/supplier_1/material_2/component_3/rohs_v2.pdf', 256000, '2025-10-15', 0),
         (1, 'component', 2, 3, 'environmental_reach', 'REACH V1.5', '/uploads/supplier_1/material_2/component_3/reach_v1.5.pdf', 256000, '2025-11-30', 0)
     `);
-        console.log('  ✅ 插入6个物料资料');
+        console.log('  ✅ 插入6个检测报告');
 
         console.log('\n✅ 数据库重构完成！\n');
 

@@ -122,7 +122,7 @@ class SupplierDocumentManager {
             if (material.documents) {
               material.documents.forEach(doc => {
                 if (!doc.filePath) {
-                  doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/物料资料';
+                  doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/检测报告';
                 }
               });
             }
@@ -878,7 +878,7 @@ class SupplierDocumentManager {
           material.directDocuments.forEach(doc => {
               // 确保本体检测文档也有filePath属性
               if (!doc.filePath) {
-                doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/物料资料';
+                doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/检测报告';
               }
             html += `
               <li class="document-item ${doc.status}">
@@ -919,7 +919,7 @@ class SupplierDocumentManager {
             component.documents.forEach(doc => {
               // 确保检测报告文档也有filePath属性
               if (!doc.filePath) {
-                doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/物料资料';
+                doc.filePath = 'D:/AI/IFLOW-SQE-Data-Analysis-Assistant-refactored/资料档案/晶蓝/检测报告';
               }
               html += `
                 <li class="document-item ${doc.status}">
