@@ -476,14 +476,13 @@ class SupplierDocumentManager {
         <table class="supplier-table">
           <thead>
             <tr>
-              <th>供应商</th>
-              <th>MSDS</th>
-              <th>质量协议</th>
-              <th>ROHS</th>
-              <th>REACH</th>
-              <th>HF</th>
-              <th>物料</th>
-              <th>操作</th>
+              <th rowspan="2">供应商</th>
+              <th colspan="5">资料状态</th>
+              <th rowspan="2">物料</th>
+              <th rowspan="2">操作</th>
+            </tr>
+            <tr class="sub-header">
+              <th colspan="5">完成度进度 & 状态分布</th>
             </tr>
           </thead>
           <tbody>
@@ -669,49 +668,119 @@ class SupplierDocumentManager {
    */
 
   /**
-   * 渲染供应商行
+   * 🎯 [UI-EVENT] 渲染供应商行 - 双行显示 + 进度条设计
    */
   renderSupplierRow(supplier) {
     const isExpanded = this.expandedSuppliers.has(supplier.supplierId);
 
-    // MSDS
-    const msds = supplier.commonDocuments['environmental_msds'];
-    const msdsHtml = msds ? `
-      <div class="doc-cell">
-        <div class="doc-date">${msds.isPermanent ? '永久有效' : window.supplierServices.formatDate(msds.expiryDate)}</div>
-        <div class="doc-status ${msds.status}">${window.supplierServices.getStatusIcon(msds.status)} ${msds.isPermanent ? '' : msds.daysUntilExpiry !== null ? msds.daysUntilExpiry + '天' : ''}</div>
-      </div>
-    ` : '<div class="doc-cell missing">❌ 缺失</div>';
+    // 🎯 [DATA-FLOW] 获取进度条数据（新的动态统计数据）
+    const progressBarData = supplier.documentStats?.progressBar || {
+      totalDocuments: 0,
+      completionRate: 0,
+      statusStats: { normal: 0, warning: 0, urgent: 0, critical: 0, expired: 0 },
+      statusText: '暂无文档'
+    };
 
-    // 质量协议
-    const qa = supplier.commonDocuments['quality_agreement'];
-    const qaHtml = qa ? `
-      <div class="doc-cell">
-        <div class="doc-date">${qa.isPermanent ? '永久有效' : window.supplierServices.formatDate(qa.expiryDate)}</div>
-        <div class="doc-status ${qa.status}">${window.supplierServices.getStatusIcon(qa.status)} ${qa.isPermanent ? '' : qa.daysUntilExpiry !== null ? qa.daysUntilExpiry + '天' : ''}</div>
-      </div>
-    ` : '<div class="doc-cell missing">❌ 缺失</div>';
-
-    // ROHS/REACH/HF
-    const rohsHtml = this.renderMaterialDocStat(supplier.materialDocuments.rohs);
-    const reachHtml = this.renderMaterialDocStat(supplier.materialDocuments.reach);
-    const hfHtml = this.renderMaterialDocStat(supplier.materialDocuments.hf);
+    // 🎨 [UI-EVENT] 渲染进度条组件
+    const progressHtml = this.renderProgressBar(progressBarData);
 
     return `
       <tr class="supplier-row ${isExpanded ? 'expanded' : ''}">
-        <td class="supplier-name">${supplier.supplierName}</td>
-        <td>${msdsHtml}</td>
-        <td>${qaHtml}</td>
-        <td>${rohsHtml}</td>
-        <td>${reachHtml}</td>
-        <td>${hfHtml}</td>
-        <td class="material-count">${supplier.materialCount}个</td>
-        <td>
+        <td class="supplier-name" rowspan="2">${supplier.supplierName}</td>
+        <td colspan="5" class="progress-cell">
+          ${progressHtml}
+        </td>
+        <td class="material-count" rowspan="2">${supplier.materialCount}个</td>
+        <td class="toggle-cell" rowspan="2">
           <button class="toggle-details-btn" data-supplier-id="${supplier.supplierId}">
             ${isExpanded ? '📁 收起' : '📂 展开'}
           </button>
         </td>
       </tr>
+      <tr class="supplier-status-row ${isExpanded ? 'expanded' : ''}">
+        <td colspan="5" class="status-cell">
+          ${this.renderStatusStats(progressBarData.statusStats)}
+        </td>
+      </tr>
+    `;
+  }
+
+  /**
+   * 🎨 [UI-EVENT] 渲染进度条组件 - BEM规范实现
+   */
+  renderProgressBar(progressData) {
+    const { totalDocuments, completionRate, statusText } = progressData;
+
+    if (totalDocuments === 0) {
+      return `
+        <div class="supplier-progress supplier-progress--empty">
+          <div class="supplier-progress__bar-section">
+            <div class="supplier-progress__bar-container">
+              <div class="supplier-progress__bar-fill" style="width: 0%"></div>
+            </div>
+            <div class="supplier-progress__bar-text">暂无文档</div>
+          </div>
+          <div class="supplier-progress__status-section">
+            <!-- 无状态显示 -->
+          </div>
+        </div>
+      `;
+    }
+
+    // 🎨 根据完成度选择颜色
+    const getBarModifier = (rate) => {
+      if (rate >= 90) return 'supplier-progress__bar-fill--excellent';
+      if (rate >= 75) return 'supplier-progress__bar-fill--good';
+      if (rate >= 50) return 'supplier-progress__bar-fill--warning';
+      if (rate >= 25) return 'supplier-progress__bar-fill--urgent';
+      return 'supplier-progress__bar-fill--critical';
+    };
+
+    return `
+      <div class="supplier-progress">
+        <div class="supplier-progress__bar-section">
+          <div class="supplier-progress__bar-container">
+            <div class="supplier-progress__bar-fill ${getBarModifier(completionRate)}" style="width: ${completionRate}%"></div>
+          </div>
+          <div class="supplier-progress__bar-text">${statusText}</div>
+        </div>
+        <div class="supplier-progress__status-section">
+          <!-- 状态统计将在第二行显示 -->
+        </div>
+      </div>
+    `;
+  }
+
+  /**
+   * 🎨 [UI-EVENT] 渲染状态统计 - 色彩编码显示
+   */
+  renderStatusStats(statusStats) {
+    const statusConfig = [
+      { key: 'normal', icon: '🟢', label: '正常' },
+      { key: 'warning', icon: '🟡', label: '警告' },
+      { key: 'urgent', icon: '🔴', label: '紧急' },
+      { key: 'critical', icon: '🔴', label: '严重' },
+      { key: 'expired', icon: '❌', label: '过期' }
+    ];
+
+    const statusItems = statusConfig
+      .filter(({ key }) => statusStats[key] > 0)
+      .map(({ key, icon, label }) => `
+        <div class="supplier-progress__status-item supplier-progress__status-item--${key}">
+          <span class="supplier-progress__status-icon">${icon}</span>
+          <span class="supplier-progress__status-count">${statusStats[key]}</span>
+        </div>
+      `).join('');
+
+    return `
+      <div class="supplier-progress">
+        <div class="supplier-progress__bar-section">
+          <!-- 进度条区域留空，状态在右侧显示 -->
+        </div>
+        <div class="supplier-progress__status-section">
+          ${statusItems || '<div class="supplier-progress__status-item" style="opacity: 0.6">暂无状态数据</div>'}
+        </div>
+      </div>
     `;
   }
 

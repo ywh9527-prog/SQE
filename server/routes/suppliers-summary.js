@@ -12,6 +12,112 @@ const express = require('express');
 const router = express.Router();
 const { sequelize } = require('../database/config');
 
+// 🎯 [CORE-LOGIC] 动态文档统计服务 - 支持所有文档类型的准确统计
+class DocumentStatsService {
+    /**
+     * 计算文档状态
+     */
+    static calculateDocumentStatus(expiryDate, isPermanent) {
+        let daysUntilExpiry = null;
+        let warningLevel = 'normal';
+
+        if (!isPermanent && expiryDate) {
+            daysUntilExpiry = Math.ceil((new Date(expiryDate) - new Date()) / (1000 * 60 * 60 * 24));
+
+            if (daysUntilExpiry < 0) {
+                warningLevel = 'expired';
+            } else if (daysUntilExpiry <= 7) {
+                warningLevel = 'critical';
+            } else if (daysUntilExpiry <= 15) {
+                warningLevel = 'urgent';
+            } else if (daysUntilExpiry <= 30) {
+                warningLevel = 'warning';
+            }
+        }
+
+        return { daysUntilExpiry, status: warningLevel };
+    }
+
+    /**
+     * 统计所有文档的状态分布（动态统计，无硬编码）
+     */
+    static calculateStatusStats(documents) {
+        const statusStats = {
+            normal: 0,
+            warning: 0,
+            urgent: 0,
+            critical: 0,
+            expired: 0
+        };
+
+        documents.forEach(doc => {
+            if (doc.status && statusStats.hasOwnProperty(doc.status)) {
+                statusStats[doc.status]++;
+            }
+        });
+
+        return statusStats;
+    }
+
+    /**
+     * 生成进度条数据
+     */
+    static generateProgressBarData(statusStats) {
+        const totalDocuments = Object.values(statusStats).reduce((sum, count) => sum + count, 0);
+
+        if (totalDocuments === 0) {
+            return {
+                totalDocuments: 0,
+                completionRate: 0,
+                statusStats: statusStats,
+                statusText: '暂无文档'
+            };
+        }
+
+        // 计算完成度：正常和警告算作"完成"，紧急和过期算作"需要关注"
+        const completedCount = statusStats.normal + statusStats.warning;
+        const completionRate = Math.round((completedCount / totalDocuments) * 100);
+
+        return {
+            totalDocuments,
+            completionRate,
+            statusStats,
+            statusText: `${completedCount}/${totalDocuments} (${completionRate}%)`
+        };
+    }
+
+    /**
+     * 保留原有的材料文档统计（确保展开功能不受影响）
+     */
+    static calculateMaterialDocumentStats(materialDocumentsRaw) {
+        const stats = {
+            rohs: { count: 0, worstStatus: 'normal' },
+            reach: { count: 0, worstStatus: 'normal' },
+            hf: { count: 0, worstStatus: 'normal' }
+        };
+
+        const statusPriority = { 'normal': 0, 'warning': 1, 'urgent': 2, 'critical': 3, 'expired': 4 };
+
+        materialDocumentsRaw.forEach(doc => {
+            let key = null;
+            if (doc.documentType === 'environmental_rohs') key = 'rohs';
+            else if (doc.documentType === 'environmental_reach') key = 'reach';
+            else if (doc.documentType === 'environmental_hf') key = 'hf';
+
+            if (key) {
+                stats[key].count++;
+
+                // 更新最差状态
+                if (statusPriority[doc.status] > statusPriority[stats[key].worstStatus]) {
+                    stats[key].worstStatus = doc.status;
+                }
+            }
+        });
+
+        return stats;
+    }
+}
+
 // 认证中间件
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -71,10 +177,10 @@ router.get('/summary', authenticateToken, async (req, res) => {
             FROM suppliers s
             LEFT JOIN materials m ON s.id = m.supplier_id AND m.status = 'Active'
             LEFT JOIN material_components mc ON m.id = mc.material_id AND mc.status = 'Active'
-            LEFT JOIN supplier_documents sd ON 
+            LEFT JOIN supplier_documents sd ON
                 ((sd.supplier_id = s.id AND sd.level = 'supplier') OR
-                 (sd.material_id = m.id AND sd.level = 'component'))
-                AND sd.status = 'active' 
+                 (sd.material_id = m.id AND (sd.level = 'material' OR sd.level = 'component')))
+                AND sd.status = 'active'
                 AND sd.is_current = 1
             ${whereClause}
             ORDER BY s.id, m.id, mc.id, sd.document_type
@@ -96,7 +202,8 @@ router.get('/summary', authenticateToken, async (req, res) => {
                     materialCount: 0,
                     materialIds: new Set(),
                     commonDocuments: {},
-                    materialDocumentsRaw: [] // 临时存储，用于后续统计
+                    materialDocumentsRaw: [], // 临时存储，用于后续统计
+                    allDocumentsRaw: [] // 🎯 [DATA-FLOW] 新增：收集所有文档用于动态统计
                 };
             }
 
@@ -112,90 +219,96 @@ router.get('/summary', authenticateToken, async (req, res) => {
             if (row.document_level === 'supplier' && row.document_id) {
                 const docType = row.document_type;
 
-                // 计算到期信息
-                let daysUntilExpiry = null;
-                let warningLevel = 'normal';
-
-                if (!row.is_permanent && row.expiry_date) {
-                    daysUntilExpiry = Math.ceil((new Date(row.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-
-                    if (daysUntilExpiry < 0) {
-                        warningLevel = 'expired';
-                    } else if (daysUntilExpiry <= 7) {
-                        warningLevel = 'critical';
-                    } else if (daysUntilExpiry <= 15) {
-                        warningLevel = 'urgent';
-                    } else if (daysUntilExpiry <= 30) {
-                        warningLevel = 'warning';
-                    }
-                }
+                // 🎯 [DATA-FLOW] 使用统一的文档状态计算服务
+                const { daysUntilExpiry, status } = DocumentStatsService.calculateDocumentStatus(
+                    row.expiry_date,
+                    row.is_permanent === 1
+                );
 
                 supplier.commonDocuments[docType] = {
                     documentName: row.document_name,
                     expiryDate: row.expiry_date,
                     daysUntilExpiry: daysUntilExpiry,
                     isPermanent: row.is_permanent === 1,
-                    status: warningLevel
+                    status: status
                 };
+
+                // 🎯 [DATA-FLOW] 收集所有文档用于统一统计
+                supplier.allDocumentsRaw = supplier.allDocumentsRaw || [];
+                supplier.allDocumentsRaw.push({
+                    documentType: docType,
+                    status: status
+                });
             }
 
             // 收集检测报告 (构成级)
             if (row.document_level === 'component' && row.document_id) {
-                let daysUntilExpiry = null;
-                let warningLevel = 'normal';
-
-                if (!row.is_permanent && row.expiry_date) {
-                    daysUntilExpiry = Math.ceil((new Date(row.expiry_date) - new Date()) / (1000 * 60 * 60 * 24));
-
-                    if (daysUntilExpiry < 0) {
-                        warningLevel = 'expired';
-                    } else if (daysUntilExpiry <= 7) {
-                        warningLevel = 'critical';
-                    } else if (daysUntilExpiry <= 15) {
-                        warningLevel = 'urgent';
-                    } else if (daysUntilExpiry <= 30) {
-                        warningLevel = 'warning';
-                    }
-                }
+                // 🎯 [DATA-FLOW] 使用统一的文档状态计算服务
+                const { status } = DocumentStatsService.calculateDocumentStatus(
+                    row.expiry_date,
+                    row.is_permanent === 1
+                );
 
                 supplier.materialDocumentsRaw.push({
                     documentType: row.document_type,
-                    status: warningLevel
+                    status: status
+                });
+
+                // 🎯 [DATA-FLOW] 收集所有文档用于统一统计
+                supplier.allDocumentsRaw = supplier.allDocumentsRaw || [];
+                supplier.allDocumentsRaw.push({
+                    documentType: row.document_type,
+                    status: status
+                });
+            }
+
+            // 🎯 [DATA-FLOW] 新增：收集物料级文档 (material层)
+            if (row.document_level === 'material' && row.document_id) {
+                // 🎯 [DATA-FLOW] 使用统一的文档状态计算服务
+                const { status } = DocumentStatsService.calculateDocumentStatus(
+                    row.expiry_date,
+                    row.is_permanent === 1
+                );
+
+                supplier.materialDocumentsRaw.push({
+                    documentType: row.document_type,
+                    status: status
+                });
+
+                // 🎯 [DATA-FLOW] 收集所有文档用于统一统计
+                supplier.allDocumentsRaw = supplier.allDocumentsRaw || [];
+                supplier.allDocumentsRaw.push({
+                    documentType: row.document_type,
+                    status: status
                 });
             }
         });
 
-        // 统计检测报告 (ROHS/REACH/HF)
+        // 🎯 [DATA-FLOW] 统计所有文档类型 - 动态统计，支持自定义文档类型
         const suppliers = Object.values(supplierMap).map(supplier => {
             delete supplier.materialIds; // 删除临时字段
 
-            // 统计各类资料的数量和最差状态
-            const stats = {
-                rohs: { count: 0, worstStatus: 'normal' },
-                reach: { count: 0, worstStatus: 'normal' },
-                hf: { count: 0, worstStatus: 'normal' }
+            // 🎯 [CORE-LOGIC] 新增：动态统计所有文档的状态分布
+            const allStatusStats = DocumentStatsService.calculateStatusStats(supplier.allDocumentsRaw || []);
+            const progressBarData = DocumentStatsService.generateProgressBarData(allStatusStats);
+
+            // 🎯 [CORE-LOGIC] 保留：原有的材料文档统计（确保展开功能不受影响）
+            const materialDocumentStats = DocumentStatsService.calculateMaterialDocumentStats(supplier.materialDocumentsRaw || []);
+
+            // 🎯 [DATA-FLOW] 设置新的数据结构
+            supplier.documentStats = {
+                // 进度条数据（用于新的双行显示）
+                progressBar: progressBarData,
+                // 详细状态统计（用于状态色彩显示）
+                statusDetails: allStatusStats
             };
 
-            const statusPriority = { 'normal': 0, 'warning': 1, 'urgent': 2, 'critical': 3, 'expired': 4 };
+            // 保留原有的数据结构（确保展开功能不受影响）
+            supplier.materialDocuments = materialDocumentStats;
 
-            supplier.materialDocumentsRaw.forEach(doc => {
-                let key = null;
-                if (doc.documentType === 'environmental_rohs') key = 'rohs';
-                else if (doc.documentType === 'environmental_reach') key = 'reach';
-                else if (doc.documentType === 'environmental_hf') key = 'hf';
-
-                if (key) {
-                    stats[key].count++;
-
-                    // 更新最差状态
-                    if (statusPriority[doc.status] > statusPriority[stats[key].worstStatus]) {
-                        stats[key].worstStatus = doc.status;
-                    }
-                }
-            });
-
-            supplier.materialDocuments = stats;
-            delete supplier.materialDocumentsRaw; // 删除临时字段
+            // 删除临时字段
+            delete supplier.materialDocumentsRaw;
+            delete supplier.allDocumentsRaw;
 
             return supplier;
         });
