@@ -468,8 +468,6 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
 
         if (daysUntilExpiry < 0) {
           warningLevel = 'expired';
-        } else if (daysUntilExpiry <= 7) {
-          warningLevel = 'critical';
         } else if (daysUntilExpiry <= 15) {
           warningLevel = 'urgent';
         } else if (daysUntilExpiry <= 30) {

@@ -518,7 +518,7 @@ router.get('/expiring', async (req, res) => {
                 documentName: doc.document_name,
                 expiryDate: doc.expiry_date,
                 daysUntilExpiry: daysUntilExpiry,
-                warningLevel: daysUntilExpiry <= 7 ? 'critical' : daysUntilExpiry <= 15 ? 'urgent' : 'warning'
+                warningLevel: daysUntilExpiry <= 15 ? 'urgent' : daysUntilExpiry <= 30 ? 'warning' : 'normal'
             };
         });
 

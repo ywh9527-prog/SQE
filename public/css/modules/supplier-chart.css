@@ -1,0 +1,321 @@
+/**
+ * 供应商资料状态图表 - 现代UI设计 2024
+ *
+ * 设计理念：
+ * 1. 极简主义2.0 - 有意义的信息密度
+ * 2. 数据驱动可视化 - 诚实展示数据
+ * 3. 系统化色彩 - 语义明确的颜色体系
+ * 4. 网格系统 - 严格对齐的布局
+ * 5. 呼吸感设计 - 8px基础间距系统
+ *
+ * 创建时间: 2025-12-18
+ * 设计: 浮浮酱 (猫娘UI/UX工程师)
+ */
+
+/* ==================== 色彩系统定义 ==================== */
+:root {
+    /* 状态色彩 - 语义明确 */
+    --status-normal: #10b981;      /* 成功绿 */
+    --status-warning: #f59e0b;      /* 警告黄 */
+    --status-urgent: #f97316;       /* 紧急橙 */
+        --status-expired: #ef4444;      /* 过期红 */
+
+    /* 中性色彩 - 现代极简 */
+    --neutral-50: #f9fafb;
+    --neutral-100: #f3f4f6;
+    --neutral-200: #e5e7eb;
+    --neutral-300: #d1d5db;
+    --neutral-400: #9ca3af;
+    --neutral-500: #6b7280;
+    --neutral-600: #4b5563;
+    --neutral-700: #374151;
+    --neutral-800: #1f2937;
+    --neutral-900: #111827;
+
+    /* 主色调 - 咖啡色系 */
+    --primary-50: #fef7ed;
+    --primary-100: #fed7aa;
+    --primary-200: #fdba74;
+    --primary-300: #fb923c;
+    --primary-400: #f97316;
+    --primary-500: #ea580c;
+    --primary-600: #dc2626;
+    --primary-700: #b91c1c;
+    --primary-800: #991b1b;
+    --primary-900: #7f1d1d;
+
+    /* 间距系统 - 8px基础 */
+    --space-1: 0.25rem;   /* 4px */
+    --space-2: 0.5rem;    /* 8px */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.25rem;   /* 20px */
+    --space-6: 1.5rem;    /* 24px */
+    --space-8: 2rem;      /* 32px */
+
+    /* 圆角系统 */
+    --radius-sm: 0.25rem;  /* 4px */
+    --radius-md: 0.375rem; /* 6px */
+    --radius-lg: 0.5rem;   /* 8px */
+    --radius-xl: 0.75rem;  /* 12px */
+
+    /* 字体系统 */
+    --text-xs: 0.75rem;    /* 12px */
+    --text-sm: 0.875rem;   /* 14px */
+    --text-base: 1rem;     /* 16px */
+    --text-lg: 1.125rem;   /* 18px */
+}
+
+/* ==================== 表格容器 ==================== */
+.supplier-chart-container {
+    width: 100%;
+    background: var(--neutral-50);
+    border-radius: var(--radius-xl);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--neutral-200);
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+/* ==================== 表格布局 ==================== */
+.supplier-chart-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--text-sm);
+    border-spacing: 0;
+    table-layout: fixed;
+}
+
+/* 确保表格占满容器 - 解决标题不延伸问题 */
+.supplier-chart-container .supplier-chart-table {
+    width: 100%;
+    min-width: 900px;
+    max-width: 100%;
+}
+
+/* 列宽定义 - 严格网格系统 */
+.supplier-chart-table colgroup col:nth-child(1) { width: 16%; }  /* 供应商 */
+.supplier-chart-table colgroup col:nth-child(2) { width: 56%; }  /* 状态图表 */
+.supplier-chart-table colgroup col:nth-child(3) { width: 14%; }  /* 物料 */
+.supplier-chart-table colgroup col:nth-child(4) { width: 14%; }  /* 操作 */
+
+/* ==================== 表头设计 ==================== */
+.supplier-chart-table thead {
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-600) 50%, var(--primary-500) 100%);
+    color: white;
+}
+
+.supplier-chart-table thead th {
+    padding: var(--space-4) var(--space-3);
+    text-align: left;
+    font-weight: 600;
+    font-size: var(--text-sm);
+    letter-spacing: 0.025em;
+    white-space: nowrap;
+    border: none;
+}
+
+.supplier-chart-table thead th:first-child {
+    border-top-left-radius: var(--radius-xl);
+}
+
+.supplier-chart-table thead th:last-child {
+    border-top-right-radius: var(--radius-xl);
+}
+
+/* ==================== 表格行设计 ==================== */
+.supplier-chart-table tbody tr {
+    border-bottom: 1px solid var(--neutral-200);
+    transition: background-color 0.2s ease;
+}
+
+.supplier-chart-table tbody tr:hover {
+    background-color: var(--neutral-100);
+}
+
+.supplier-chart-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.supplier-chart-table tbody td {
+    padding: var(--space-3);
+    vertical-align: middle;
+    border: none;
+    font-size: var(--text-sm);
+}
+
+/* ==================== 叠加柱状图组件 ==================== */
+.supplier-status-chart {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    height: 48px;
+    width: 100%;
+}
+
+/* 图表容器 */
+.supplier-status-chart__visual {
+    flex: 1;
+    height: 100%;
+    display: flex;
+    align-items: flex-end;
+    gap: 2px;
+    background: var(--neutral-100);
+    border-radius: var(--radius-md);
+    padding: var(--space-2);
+    position: relative;
+}
+
+/* 单个状态柱 */
+.supplier-status-chart__bar {
+    flex: 1;
+    min-height: 4px;
+    border-radius: 2px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+}
+
+/* 状态色彩 */
+.supplier-status-chart__bar--normal {
+    background: linear-gradient(180deg, var(--status-normal) 0%, #059669 100%);
+}
+
+.supplier-status-chart__bar--warning {
+    background: linear-gradient(180deg, var(--status-warning) 0%, #d97706 100%);
+}
+
+.supplier-status-chart__bar--urgent {
+    background: linear-gradient(180deg, var(--status-urgent) 0%, #ea580c 100%);
+}
+
+.supplier-status-chart__bar--expired {
+    background: linear-gradient(180deg, var(--status-expired) 0%, #dc2626 100%);
+}
+
+/* 悬停效果 */
+.supplier-status-chart__bar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* 工具提示 */
+.supplier-status-chart__bar::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--neutral-800);
+    color: white;
+    padding: var(--space-1) var(--space-2);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    margin-bottom: var(--space-1);
+    z-index: 10;
+}
+
+.supplier-status-chart__bar:hover::after {
+    opacity: 1;
+}
+
+/* 统计信息 */
+.supplier-status-chart__stats {
+    min-width: 80px;
+    text-align: right;
+}
+
+.supplier-status-chart__total {
+    font-size: var(--text-base);
+    font-weight: 600;
+    color: var(--neutral-800);
+    line-height: 1.2;
+}
+
+.supplier-status-chart__label {
+    font-size: var(--text-xs);
+    color: var(--neutral-500);
+    margin-top: 2px;
+}
+
+/* ==================== 空状态 ==================== */
+.supplier-status-chart--empty {
+    opacity: 0.6;
+}
+
+.supplier-status-chart--empty .supplier-status-chart__visual {
+    background: var(--neutral-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.supplier-status-chart--empty .supplier-status-chart__empty-text {
+    font-size: var(--text-xs);
+    color: var(--neutral-400);
+    font-style: italic;
+}
+
+/* ==================== 响应式设计 ==================== */
+@media (max-width: 1200px) {
+    .supplier-chart-table colgroup col:nth-child(1) { width: 18%; }
+    .supplier-chart-table colgroup col:nth-child(2) { width: 52%; }
+    .supplier-chart-table colgroup col:nth-child(3) { width: 15%; }
+    .supplier-chart-table colgroup col:nth-child(4) { width: 15%; }
+}
+
+@media (max-width: 768px) {
+    .supplier-chart-table {
+        font-size: var(--text-xs);
+    }
+
+    .supplier-chart-table thead th {
+        padding: var(--space-2) var(--space-1);
+        font-size: var(--text-xs);
+    }
+
+    .supplier-chart-table tbody td {
+        padding: var(--space-2);
+    }
+
+    .supplier-status-chart {
+        height: 40px;
+        gap: var(--space-2);
+    }
+
+    .supplier-status-chart__stats {
+        min-width: 60px;
+    }
+
+    .supplier-status-chart__total {
+        font-size: var(--text-sm);
+    }
+}
+
+/* ==================== 动画效果 ==================== */
+@keyframes chart-bar-grow {
+    from {
+        height: 0;
+        opacity: 0;
+    }
+    to {
+        height: var(--bar-height);
+        opacity: 1;
+    }
+}
+
+.supplier-status-chart__bar {
+    animation: chart-bar-grow 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* 延迟动画 */
+.supplier-status-chart__bar:nth-child(1) { animation-delay: 0.1s; }
+.supplier-status-chart__bar:nth-child(2) { animation-delay: 0.2s; }
+.supplier-status-chart__bar:nth-child(3) { animation-delay: 0.3s; }
+.supplier-status-chart__bar:nth-child(4) { animation-delay: 0.4s; }
+.supplier-status-chart__bar:nth-child(5) { animation-delay: 0.5s; }

@@ -26,8 +26,6 @@ class DocumentStatsService {
 
             if (daysUntilExpiry < 0) {
                 warningLevel = 'expired';
-            } else if (daysUntilExpiry <= 7) {
-                warningLevel = 'critical';
             } else if (daysUntilExpiry <= 15) {
                 warningLevel = 'urgent';
             } else if (daysUntilExpiry <= 30) {
@@ -46,7 +44,6 @@ class DocumentStatsService {
             normal: 0,
             warning: 0,
             urgent: 0,
-            critical: 0,
             expired: 0
         };
 
@@ -96,7 +93,7 @@ class DocumentStatsService {
             hf: { count: 0, worstStatus: 'normal' }
         };
 
-        const statusPriority = { 'normal': 0, 'warning': 1, 'urgent': 2, 'critical': 3, 'expired': 4 };
+        const statusPriority = { 'normal': 0, 'warning': 1, 'urgent': 2, 'expired': 3 };
 
         materialDocumentsRaw.forEach(doc => {
             let key = null;
@@ -392,8 +389,6 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
 
                         if (daysUntilExpiry < 0) {
                             warningLevel = 'expired';
-                        } else if (daysUntilExpiry <= 7) {
-                            warningLevel = 'critical';
                         } else if (daysUntilExpiry <= 15) {
                             warningLevel = 'urgent';
                         } else if (daysUntilExpiry <= 30) {
@@ -434,8 +429,6 @@ router.get('/:id/details', authenticateToken, async (req, res) => {
 
                         if (daysUntilExpiry < 0) {
                             warningLevel = 'expired';
-                        } else if (daysUntilExpiry <= 7) {
-                            warningLevel = 'critical';
                         } else if (daysUntilExpiry <= 15) {
                             warningLevel = 'urgent';
                         } else if (daysUntilExpiry <= 30) {

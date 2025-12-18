@@ -458,8 +458,8 @@ class SupplierDocumentManager {
             <option value="">全部状态</option>
             <option value="normal">🟢 正常</option>
             <option value="warning">🟡 即将到期</option>
-            <option value="urgent">🔴 紧急</option>
-            <option value="expired">❌ 已过期</option>
+            <option value="urgent">🟠 紧急</option>
+            <option value="expired">🔴 已过期</option>
           </select>
                   </div>
       </div>
@@ -643,7 +643,7 @@ class SupplierDocumentManager {
     const progressBarData = supplier.documentStats?.progressBar || {
       totalDocuments: 0,
       completionRate: 0,
-      statusStats: { normal: 0, warning: 0, urgent: 0, critical: 0, expired: 0 },
+      statusStats: { normal: 0, warning: 0, urgent: 0, expired: 0 },
       statusText: '暂无文档'
     };
 
@@ -702,8 +702,7 @@ class SupplierDocumentManager {
       { key: 'normal', color: '#22c55e', label: '正常' },
       { key: 'warning', color: '#f59e0b', label: '警告' },
       { key: 'urgent', color: '#f97316', label: '紧急' },
-      { key: 'critical', color: '#ef4444', label: '严重' },
-      { key: 'expired', color: '#6b7280', label: '过期' }
+      { key: 'expired', color: '#ef4444', label: '过期' }
     ];
 
     // 生成堆叠段
@@ -727,13 +726,13 @@ class SupplierDocumentManager {
     
     // 生成小图标状态显示
     const miniStatusItems = statusConfig
-      .filter(({ key }) => statusStats[key] > 0 && ['normal', 'warning', 'urgent', 'critical', 'expired'].includes(key))
+      .filter(({ key }) => statusStats[key] > 0 && ['normal', 'warning', 'urgent', 'expired'].includes(key))
       .slice(0, 4) // 最多显示4个状态
       .map(({ key }) => {
         const icon = key === 'normal' ? '🟢' :
                     key === 'warning' ? '🟡' :
                     key === 'urgent' ? '🟠' :
-                    key === 'critical' ? '🔴' : '❌';
+                    key === 'expired' ? '🔴' : '⚪';
         return `<span class="supplier-progress__mini-status" style="font-size: 1.2em; font-weight: 500;">${icon}${statusStats[key]}</span>`;
       }).join('');
 
@@ -768,8 +767,7 @@ class SupplierDocumentManager {
       { key: 'normal', icon: '🟢', label: '正常' },
       { key: 'warning', icon: '🟡', label: '警告' },
       { key: 'urgent', icon: '🟠', label: '紧急' },
-      { key: 'critical', icon: '🔴', label: '严重' },
-      { key: 'expired', icon: '❌', label: '过期' }
+      { key: 'expired', icon: '🔴', label: '过期' }
     ];
 
     const statusItems = statusConfig
@@ -1371,11 +1369,9 @@ ${certType}：
           // 状态标识符号：使用系统一致的 getStatusIcon 逻辑
           let urgency;
           if (doc.daysUntilExpiry < 0) {
-            urgency = '❌';  // 已过期 - 与系统 getStatusIcon('expired') 一致
-          } else if (doc.daysUntilExpiry <= 7) {
-            urgency = '🔴';  // 7天内紧急 - 对应 critical
+            urgency = '🔴';  // 已过期 - 与系统 getStatusIcon('expired') 一致
           } else if (doc.daysUntilExpiry <= 15) {
-            urgency = '🔴';  // 15天内紧急 - 对应 urgent
+            urgency = '🟠';  // 15天内紧急 - 对应 urgent
           } else if (doc.daysUntilExpiry <= 30) {
             urgency = '🟡';  // 30天内警告 - 对应 warning
           } else {

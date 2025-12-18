@@ -153,8 +153,6 @@ router.get('/tree', async (req, res) => {
 
                         if (daysUntilExpiry < 0) {
                             doc.warningLevel = 'expired';
-                        } else if (daysUntilExpiry <= 7) {
-                            doc.warningLevel = 'critical';
                         } else if (daysUntilExpiry <= 15) {
                             doc.warningLevel = 'urgent';
                         } else if (daysUntilExpiry <= 30) {
@@ -229,8 +227,6 @@ router.get('/tree', async (req, res) => {
 
                                 if (daysUntilExpiry < 0) {
                                     doc.warningLevel = 'expired';
-                                } else if (daysUntilExpiry <= 7) {
-                                    doc.warningLevel = 'critical';
                                 } else if (daysUntilExpiry <= 15) {
                                     doc.warningLevel = 'urgent';
                                 } else if (daysUntilExpiry <= 30) {
@@ -258,7 +254,7 @@ router.get('/tree', async (req, res) => {
                 // 计算构成状态
                 material.components.forEach(component => {
                     const warningLevels = component.documents.map(d => d.warningLevel);
-                    if (warningLevels.includes('expired') || warningLevels.includes('critical')) {
+                    if (warningLevels.includes('expired') || warningLevels.includes('urgent')) {
                         component.status = 'urgent';
                     } else if (warningLevels.includes('urgent')) {
                         component.status = 'urgent';
@@ -282,7 +278,7 @@ router.get('/tree', async (req, res) => {
             const supplierDocWarnings = supplier.supplierDocuments.map(d => d.warningLevel);
             const materialStatuses = supplier.materials.map(m => m.status);
 
-            if (supplierDocWarnings.includes('expired') || supplierDocWarnings.includes('critical') || materialStatuses.includes('urgent')) {
+            if (supplierDocWarnings.includes('expired') || supplierDocWarnings.includes('urgent') || materialStatuses.includes('urgent')) {
                 supplier.status = 'urgent';
             } else if (supplierDocWarnings.includes('urgent') || supplierDocWarnings.includes('warning') || materialStatuses.includes('warning')) {
                 supplier.status = 'warning';

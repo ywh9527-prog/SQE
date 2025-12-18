@@ -118,7 +118,7 @@ class SupplierUI {
     }
 
     const statusPriority = {
-      'critical': 4, 'urgent': 3, 'warning': 2, 'normal': 1, 'expired': 5
+      'urgent': 3, 'warning': 2, 'normal': 1, 'expired': 4
     };
 
     let worstStatus = 'normal';
@@ -153,7 +153,7 @@ class SupplierUI {
     }
 
     const statusPriority = {
-      'critical': 4, 'urgent': 3, 'warning': 2, 'normal': 1, 'expired': 5
+      'urgent': 3, 'warning': 2, 'normal': 1, 'expired': 4
     };
 
     let worstStatus = 'normal';

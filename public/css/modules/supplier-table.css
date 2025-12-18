@@ -116,9 +116,7 @@
 }
 
 .doc-status.urgent,
-.doc-status.critical,
-.doc-cell.urgent,
-.doc-cell.critical {
+.doc-cell.urgent {
     background-color: #fee2e2;
     color: #991b1b;
 }
@@ -357,8 +355,7 @@
     border-left-color: #f59e0b;
 }
 
-.document-item.urgent,
-.document-item.critical {
+.document-item.urgent {
     border-left-color: #ef4444;
 }
 

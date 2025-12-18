@@ -41,9 +41,8 @@ class SupplierServices {
     const map = {
       normal: '🟢',
       warning: '🟡',
-      urgent: '🔴',
-      critical: '🔴',
-      expired: '❌'
+      urgent: '🟠',
+      expired: '🔴'
     };
     return map[status] || '⚪';
   }
@@ -76,9 +75,8 @@ class SupplierServices {
     const map = {
       normal: '🟢 正常',
       warning: '🟡 即将到期',
-      urgent: '🔴 紧急',
-      critical: '🔴 严重',
-      expired: '❌ 已过期'
+      urgent: '🟠 紧急',
+      expired: '🔴 已过期'
     };
     return map[status] || status;
   }
@@ -209,9 +207,8 @@ class SupplierServices {
     const map = {
       normal: '🟢',
       warning: '🟡',
-      urgent: '🔴',
-      critical: '🔴',
-      expired: '❌'
+      urgent: '🟠',
+      expired: '🔴'
     };
     return map[status] || '⚪';
   }

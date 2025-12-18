@@ -61,9 +61,7 @@
     animation: urgent-pulse 1.5s ease-in-out infinite;
 }
 
-/* 严重/过期状态 - 深红渐变 */
-.doc-status.critical,
-.status-badge.critical,
+/* 过期状态 - 深红渐变 */
 .doc-status.expired,
 .status-badge.expired {
     background: linear-gradient(135deg,
