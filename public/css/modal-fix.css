@@ -154,11 +154,7 @@
     border-bottom: none;
 }
 
-.detection-section .doc-icon {
-    font-size: 16px;
-    width: 16px;
-    text-align: center;
-}
+/* 检测报告的doc-icon样式已统一移至supplier-table.css管理，删除冲突定义 */
 
 .detection-section .doc-type {
     font-weight: 500;
