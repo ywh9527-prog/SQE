@@ -17,18 +17,21 @@
     flex-direction: column;
     gap: 6px;
     padding: 8px 12px;
-    background: #fafafa;
-    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
     min-height: 60px;
     transition: all 0.3s ease;
     justify-content: center;
     width: 100%; /* 占满表格单元格 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
 .supplier-progress:hover {
-    background: #f5f5f5;
+    background: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
 }
 
 /* ==================== 进度条行 ==================== */
@@ -52,38 +55,48 @@
     position: relative;
     height: 24px;
     width: 100%; /* 占满父容器宽度 */
-    background: #f3f4f6;
-    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
     min-height: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* 堆叠柱状图段 */
+/* 堆叠柱状图段 - 玻璃态风格 */
 .supplier-progress__stack-segment {
     position: absolute;
     height: 100%;
-    transition: all 0.3s ease;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
     border-radius: 0;
     top: 0;
-    min-width: 1px; /* 确保即使很小的段也能看到 */
+    min-width: 2px; /* 稍微增加最小宽度 */
     z-index: 1;
-    /* 保留内联样式的背景色，只添加边框 */
-    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    /* 玻璃态效果 */
+    border: none !important;
+    backdrop-filter: blur(5px);
     box-sizing: border-box !important;
+    /* 内发光效果 */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
 .supplier-progress__stack-segment:first-child {
-    border-radius: 6px 0 0 6px;
+    border-radius: 12px 0 0 12px;
 }
 
 .supplier-progress__stack-segment:last-child {
-    border-radius: 0 6px 6px 0;
+    border-radius: 0 12px 12px 0;
+}
+
+/* 如果只有一个段，让它成为完整的胶囊 */
+.supplier-progress__stack-segment:first-child:last-child {
+    border-radius: 12px;
 }
 
 .supplier-progress__stack-segment:hover {
-    transform: scaleY(1.2);
-    filter: brightness(1.1);
+    transform: translateY(-2px) scaleY(1.1);
+    filter: brightness(1.2) saturate(1.2);
     z-index: 10;
 }
 
