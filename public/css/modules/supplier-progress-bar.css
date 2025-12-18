@@ -14,13 +14,15 @@
 /* ==================== 块(Block) ==================== */
 .supplier-progress {
     display: flex;
-    align-items: center;
-    gap: 12px;
+    flex-direction: column;
+    gap: 6px;
     padding: 8px 12px;
     background: #fafafa;
     border-radius: 6px;
-    min-height: 48px;
+    min-height: 60px;
     transition: all 0.3s ease;
+    justify-content: center;
+    width: 100%; /* 占满表格单元格 */
 }
 
 .supplier-progress:hover {
@@ -29,21 +31,71 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* ==================== 进度条区域 ==================== */
-.supplier-progress__bar-section {
-    flex: 0 0 65%; /* 65%宽度，符合专业UI设计比例 */
+/* ==================== 进度条行 ==================== */
+.supplier-progress__bar-row {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+    justify-content: center;
+    align-items: center;
+    min-height: 30px; /* 确保有足够高度 */
+    width: 100%; /* 占满父容器宽度 */
+}
+
+/* ==================== 信息行 ==================== */
+.supplier-progress__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
 }
 
 .supplier-progress__bar-container {
     position: relative;
-    height: 8px;
-    background: #e5e7eb;
-    border-radius: 4px;
+    height: 24px;
+    width: 100%; /* 占满父容器宽度 */
+    background: #f3f4f6;
+    border-radius: 6px;
     overflow: hidden;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    min-height: 24px;
+}
+
+/* 堆叠柱状图段 */
+.supplier-progress__stack-segment {
+    position: absolute;
+    height: 100%;
+    transition: all 0.3s ease;
+    border-radius: 0;
+    top: 0;
+    min-width: 1px; /* 确保即使很小的段也能看到 */
+    z-index: 1;
+    /* 保留内联样式的背景色，只添加边框 */
+    border: 1px solid rgba(0, 0, 0, 0.2) !important;
+    box-sizing: border-box !important;
+}
+
+.supplier-progress__stack-segment:first-child {
+    border-radius: 6px 0 0 6px;
+}
+
+.supplier-progress__stack-segment:last-child {
+    border-radius: 0 6px 6px 0;
+}
+
+.supplier-progress__stack-segment:hover {
+    transform: scaleY(1.2);
+    filter: brightness(1.1);
+    z-index: 10;
+}
+
+/* 空状态显示 */
+.supplier-progress__bar-empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 10px;
+    font-style: italic;
 }
 
 .supplier-progress__bar-fill {
@@ -81,20 +133,36 @@
 }
 
 .supplier-progress__bar-text {
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
     color: #374151;
     text-align: left;
-    margin-top: 2px;
+    white-space: nowrap; /* 防止换行 */
 }
 
 /* ==================== 状态统计区域 ==================== */
 .supplier-progress__status-section {
-    flex: 0 0 35%; /* 35%宽度，与进度条形成65:35比例 */
     display: flex;
     align-items: center;
     gap: 8px;
     flex-wrap: wrap;
+}
+
+/* 纯状态显示模式（占满整行） */
+.supplier-progress__status-section--full {
+    flex: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+.supplier-progress-status-only {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-radius: 6px;
+    min-height: 40px;
 }
 
 .supplier-progress__status-item {
@@ -120,6 +188,25 @@
 
 .supplier-progress__status-count {
     font-weight: 600;
+}
+
+/* 小状态图标样式 */
+.supplier-progress__mini-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 4px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+}
+
+.supplier-progress__mini-status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* ==================== 状态修饰符 ==================== */
@@ -185,15 +272,7 @@
 }
 
 /* ==================== 响应式设计 ==================== */
-@media (max-width: 1200px) {
-    .supplier-progress__bar-section {
-        flex: 0 0 60%;
-    }
-
-    .supplier-progress__status-section {
-        flex: 0 0 40%;
-    }
-}
+/* 保持65:35黄金比例，仅在移动端时调整布局 */
 
 @media (max-width: 768px) {
     .supplier-progress {

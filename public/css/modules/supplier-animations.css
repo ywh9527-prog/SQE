@@ -160,7 +160,7 @@
     color: var(--primary-600) !important;
     font-size: 1rem !important;
     position: relative;
-    display: inline-block;
+    /* 移除 display: inline-block 避免居中冲突 */
 }
 
 /* 鼠标悬停时显示小动画 */
@@ -355,7 +355,7 @@
     color: var(--primary-600) !important;
     font-size: 1rem !important;
     position: relative;
-    display: inline-block;
+    /* 移除 display: inline-block 避免居中冲突 */
 }
 
 /* 鼠标悬停时显示小动画 */

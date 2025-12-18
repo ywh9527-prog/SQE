@@ -27,7 +27,6 @@ class SupplierDocumentManager {
     this.currentSupplier = null;
     this.searchKeyword = '';
     this.statusFilter = null;
-    this.documentFilter = null;
 
     this.init();
   }
@@ -462,27 +461,16 @@ class SupplierDocumentManager {
             <option value="urgent">🔴 紧急</option>
             <option value="expired">❌ 已过期</option>
           </select>
-          <select id="documentFilter" onchange="supplierManager.filterByDocument()" class="filter-select">
-            <option value="">全部资料</option>
-            <option value="missing_msds">缺失MSDS</option>
-            <option value="missing_qa">缺失质量协议</option>
-            <option value="missing_rohs">缺失ROHS</option>
-            <option value="missing_reach">缺失REACH</option>
-            <option value="missing_hf">缺失HF</option>
-          </select>
-        </div>
+                  </div>
       </div>
       <div class="supplier-table-container">
         <table class="supplier-table">
           <thead>
             <tr>
-              <th rowspan="2">供应商</th>
+              <th>供应商</th>
               <th colspan="5">资料状态</th>
-              <th rowspan="2">物料</th>
-              <th rowspan="2">操作</th>
-            </tr>
-            <tr class="sub-header">
-              <th colspan="5">完成度进度 & 状态分布</th>
+              <th>物料</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody>
@@ -519,7 +507,6 @@ class SupplierDocumentManager {
         共找到 <span class="highlight">${filteredSuppliers.length}</span> 个供应商 
         ${this.searchKeyword ? `（搜索："${this.searchKeyword}"）` : ''}
         ${this.statusFilter ? `（状态：${window.supplierServices.getStatusFilterText(this.statusFilter)}）` : ''}
-        ${this.documentFilter ? `（资料：${window.supplierServices.getDocumentFilterText(this.documentFilter)}）` : ''}
       </div>
     `;
 
@@ -550,14 +537,7 @@ class SupplierDocumentManager {
         }
       }
 
-      // 资料筛选
-      if (this.documentFilter) {
-        const hasDocumentIssue = window.supplierServices.checkDocumentIssue(supplier, this.documentFilter);
-        if (!hasDocumentIssue) {
-          return false;
-        }
-      }
-
+      
       return true;
     });
   }
@@ -616,12 +596,7 @@ class SupplierDocumentManager {
       statusFilter.value = this.statusFilter || '';
     }
 
-    // 资料筛选
-    const documentFilter = document.getElementById('documentFilter');
-    if (documentFilter) {
-      documentFilter.value = this.documentFilter || '';
-    }
-  }
+      }
 
   /**
    * 清除搜索
@@ -640,22 +615,13 @@ class SupplierDocumentManager {
     this.render();
   }
 
-  /**
-   * 按资料筛选
-   */
-  filterByDocument() {
-    const select = document.getElementById('documentFilter');
-    this.documentFilter = select.value || null;
-    this.render();
-  }
-
+  
   /**
    * 清除所有筛选
    */
   clearAllFilters() {
     this.searchKeyword = '';
     this.statusFilter = null;
-    this.documentFilter = null;
     this.render();
   }
 
@@ -681,84 +647,127 @@ class SupplierDocumentManager {
       statusText: '暂无文档'
     };
 
+    
     // 🎨 [UI-EVENT] 渲染进度条组件
     const progressHtml = this.renderProgressBar(progressBarData);
 
     return `
       <tr class="supplier-row ${isExpanded ? 'expanded' : ''}">
-        <td class="supplier-name" rowspan="2">${supplier.supplierName}</td>
+        <td class="supplier-name" style="text-align: center !important;">
+          <i class="far fa-building" style="color: #3b82f6; margin-right: 8px; font-size: 1.6em;"></i>
+          <span style="font-size: 1.1em; font-weight: 600;">${supplier.supplierName}</span>
+        </td>
         <td colspan="5" class="progress-cell">
           ${progressHtml}
         </td>
-        <td class="material-count" rowspan="2">${supplier.materialCount}个</td>
-        <td class="toggle-cell" rowspan="2">
+        <td class="material-count" style="vertical-align: middle !important;">
+          ${supplier.materialCount}个
+        </td>
+        <td class="toggle-cell" style="text-align: center !important;">
           <button class="toggle-details-btn" data-supplier-id="${supplier.supplierId}">
             ${isExpanded ? '📁 收起' : '📂 展开'}
           </button>
         </td>
       </tr>
-      <tr class="supplier-status-row ${isExpanded ? 'expanded' : ''}">
-        <td colspan="5" class="status-cell">
-          ${this.renderStatusStats(progressBarData.statusStats)}
-        </td>
-      </tr>
     `;
   }
 
   /**
-   * 🎨 [UI-EVENT] 渲染进度条组件 - BEM规范实现
+   * 🎨 [UI-EVENT] 渲染堆叠柱状图组件 - 横向堆叠显示
    */
   renderProgressBar(progressData) {
-    const { totalDocuments, completionRate, statusText } = progressData;
+    const { totalDocuments, statusStats } = progressData;
 
+    
     if (totalDocuments === 0) {
       return `
         <div class="supplier-progress supplier-progress--empty">
           <div class="supplier-progress__bar-section">
             <div class="supplier-progress__bar-container">
-              <div class="supplier-progress__bar-fill" style="width: 0%"></div>
+              <div class="supplier-progress__bar-empty">暂无文档</div>
             </div>
-            <div class="supplier-progress__bar-text">暂无文档</div>
+            <div class="supplier-progress__bar-text">0%</div>
           </div>
           <div class="supplier-progress__status-section">
-            <!-- 无状态显示 -->
+            <div class="supplier-progress__status-item" style="opacity: 0.6">暂无状态数据</div>
           </div>
         </div>
       `;
     }
 
-    // 🎨 根据完成度选择颜色
-    const getBarModifier = (rate) => {
-      if (rate >= 90) return 'supplier-progress__bar-fill--excellent';
-      if (rate >= 75) return 'supplier-progress__bar-fill--good';
-      if (rate >= 50) return 'supplier-progress__bar-fill--warning';
-      if (rate >= 25) return 'supplier-progress__bar-fill--urgent';
-      return 'supplier-progress__bar-fill--critical';
-    };
+    // 计算各状态百分比
+    const totalCount = Object.values(statusStats).reduce((sum, count) => sum + count, 0);
 
-    return `
-      <div class="supplier-progress">
-        <div class="supplier-progress__bar-section">
-          <div class="supplier-progress__bar-container">
-            <div class="supplier-progress__bar-fill ${getBarModifier(completionRate)}" style="width: ${completionRate}%"></div>
+    const statusConfig = [
+      { key: 'normal', color: '#22c55e', label: '正常' },
+      { key: 'warning', color: '#f59e0b', label: '警告' },
+      { key: 'urgent', color: '#f97316', label: '紧急' },
+      { key: 'critical', color: '#ef4444', label: '严重' },
+      { key: 'expired', color: '#6b7280', label: '过期' }
+    ];
+
+    // 生成堆叠段
+    let currentPosition = 0;
+    const stackSegments = statusConfig
+      .filter(({ key }) => statusStats[key] > 0)
+      .map(({ key, color, label }) => {
+        const percentage = (statusStats[key] / totalCount * 100).toFixed(1);
+        const leftPosition = currentPosition;
+        currentPosition += parseFloat(percentage);
+
+        
+        return `
+          <div class="supplier-progress__stack-segment"
+               style="left: ${leftPosition}%; width: ${percentage}%; background-color: ${color};"
+               title="${label}: ${statusStats[key]} (${percentage}%)">
           </div>
-          <div class="supplier-progress__bar-text">${statusText}</div>
+        `;
+      }).join('');
+
+    
+    // 生成小图标状态显示
+    const miniStatusItems = statusConfig
+      .filter(({ key }) => statusStats[key] > 0 && ['normal', 'warning', 'urgent', 'critical', 'expired'].includes(key))
+      .slice(0, 4) // 最多显示4个状态
+      .map(({ key }) => {
+        const icon = key === 'normal' ? '🟢' :
+                    key === 'warning' ? '🟡' :
+                    key === 'urgent' ? '🟠' :
+                    key === 'critical' ? '🔴' : '❌';
+        return `<span class="supplier-progress__mini-status" style="font-size: 1.2em; font-weight: 500;">${icon}${statusStats[key]}</span>`;
+      }).join('');
+
+    const finalHtml = `
+      <div class="supplier-progress">
+        <!-- 第一行：柱状图 -->
+        <div class="supplier-progress__bar-row">
+          <div class="supplier-progress__bar-container">
+            ${stackSegments}
+          </div>
         </div>
-        <div class="supplier-progress__status-section">
-          <!-- 状态统计将在第二行显示 -->
+        <!-- 第二行：详细信息 -->
+        <div class="supplier-progress__info-row">
+          <div class="supplier-progress__bar-text" style="font-size: 1.1em; font-weight: 500;">
+            ${statusStats.normal || 0}/${totalCount} (${((statusStats.normal || 0) / totalCount * 100).toFixed(1)}%)
+          </div>
+          <div class="supplier-progress__status-section">
+            ${miniStatusItems || '<div class="supplier-progress__status-item" style="opacity: 0.6">暂无状态数据</div>'}
+          </div>
         </div>
       </div>
     `;
+
+            return finalHtml;
   }
 
   /**
-   * 🎨 [UI-EVENT] 渲染状态统计 - 色彩编码显示
+   * 🎨 [UI-EVENT] 渲染状态统计 - 纯状态分布显示（无进度条）
    */
   renderStatusStats(statusStats) {
     const statusConfig = [
       { key: 'normal', icon: '🟢', label: '正常' },
       { key: 'warning', icon: '🟡', label: '警告' },
-      { key: 'urgent', icon: '🔴', label: '紧急' },
+      { key: 'urgent', icon: '🟠', label: '紧急' },
       { key: 'critical', icon: '🔴', label: '严重' },
       { key: 'expired', icon: '❌', label: '过期' }
     ];
@@ -773,11 +782,8 @@ class SupplierDocumentManager {
       `).join('');
 
     return `
-      <div class="supplier-progress">
-        <div class="supplier-progress__bar-section">
-          <!-- 进度条区域留空，状态在右侧显示 -->
-        </div>
-        <div class="supplier-progress__status-section">
+      <div class="supplier-progress-status-only">
+        <div class="supplier-progress__status-section supplier-progress__status-section--full">
           ${statusItems || '<div class="supplier-progress__status-item" style="opacity: 0.6">暂无状态数据</div>'}
         </div>
       </div>
@@ -847,7 +853,25 @@ class SupplierDocumentManager {
     html += `
       <div class="details-section">
         <div class="section-header">
-          <h4>📋 通用资料</h4>
+          <div style="display: flex; align-items: center; gap: 4px;">
+              <h4 style="margin: 0;">📋 通用资料</h4>
+              <span class="section-tooltip" data-tooltip="📋 通用资料
+
+适用于所有物料的供应商整体资质文件：
+
+🔸 质量保证协议
+🔸 MSDS安全数据表
+🔸 ISO认证、企业资质证书
+🔸 营业执照等
+
+特点：不针对特定物料，属于供应商整体资质证明">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </span>
+            </div>
           <div class="section-actions">
             <button class="email-btn batch-email-btn" data-type="common" data-supplier-id="${supplierId}" title="批量邮件通知">
               📧 批量邮件
@@ -906,7 +930,26 @@ class SupplierDocumentManager {
       html += `
         <div class="details-section">
           <div class="section-header">
-            <h4>🏭 检测报告</h4>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <h4 style="margin: 0;">🏭 检测报告</h4>
+              <span class="section-tooltip" data-tooltip="🏭 检测报告
+
+针对特定物料的检测和认证文件：
+
+🔸 本体检测：材料成分、性能等检测报告
+🔸 构成检测：零部件构成明细表
+🔸 ROHS/REACH环保认证
+🔸 HF有害物质检测
+🔸 物料规格书等
+
+特点：与具体物料一一对应，确保符合技术要求">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </span>
+            </div>
             <div class="section-actions">
               <button class="add-material-btn" data-supplier-id="${supplierId}" title="新增物料">
                 ➕ 新增物料

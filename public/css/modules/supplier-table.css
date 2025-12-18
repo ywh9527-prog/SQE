@@ -49,7 +49,7 @@
 
 .supplier-table thead th {
     padding: 16px 12px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     white-space: nowrap;
 }
@@ -73,10 +73,11 @@
 }
 
 /* ==================== 供应商名称 ==================== */
-.supplier-name {
+.supplier-table tbody td.supplier-name {
     font-weight: 600;
     color: #1f2937;
     min-width: 150px;
+    text-align: center !important;
 }
 
 /* ==================== 资料单元格 ==================== */
@@ -134,12 +135,18 @@
 }
 
 /* ==================== 物料数量 ==================== */
-.material-count {
+.supplier-table tbody td.material-count {
     color: #6b7280;
     font-weight: 500;
+    text-align: center !important;
+    vertical-align: middle !important;
 }
 
 /* ==================== 操作按钮 ==================== */
+.supplier-table tbody td.toggle-cell {
+    text-align: center !important;
+}
+
 .toggle-details-btn {
     padding: 6px 16px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -173,6 +180,8 @@
 .details-container {
     padding: 24px;
     animation: slideDown 0.3s ease-out;
+    position: relative;
+    z-index: 1;
 }
 
 @keyframes slideDown {
@@ -445,4 +454,101 @@
     .doc-type {
         min-width: auto;
     }
+}
+
+/* ==================== 提示图标样式 ==================== */
+.section-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-radius: 50%;
+    margin-left: 4px;
+    cursor: help;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    flex-shrink: 0;
+    padding: 2px;
+}
+
+.section-tooltip svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2;
+}
+
+/* 确保父容器允许tooltip溢出显示 */
+.section-header {
+    overflow: visible !important;
+    position: relative;
+    z-index: 10;
+}
+
+.details-section {
+    overflow: visible !important;
+    position: relative;
+    z-index: 5;
+}
+
+.section-tooltip:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    transform: translateY(-1px) scale(1.1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.section-tooltip:hover svg {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* 现代化tooltip显示效果 */
+.section-tooltip[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 8px);
+    left: calc(100% + 8px);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    color: #1e293b;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 380px;
+    max-width: 420px;
+    white-space: pre-line;
+    line-height: 1.6;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    z-index: 99999;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    text-align: left;
+    animation: tooltipFadeIn 0.3s ease-out;
+}
+
+/* 添加淡入动画 */
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 添加小箭头指向图标 */
+.section-tooltip[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    top: calc(100% + 2px);
+    left: calc(100% - 4px);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-right: 6px solid #f8fafc;
+    z-index: 100000;
+    transform: rotate(45deg);
 }
