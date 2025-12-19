@@ -26,7 +26,7 @@ class SupplierDocumentManager {
     // 筛选状态
     this.currentSupplier = null;
     this.searchKeyword = '';
-    this.statusFilter = null;
+    this.statusFilter = ''; // 🎯 [修复] 初始化为空字符串，与逻辑保持一致
 
     this.init();
   }
@@ -38,6 +38,10 @@ class SupplierDocumentManager {
     console.log('🚀 初始化供应商资料管理模块 v3.1...');
 
     try {
+      // 设置全局实例 - 必须在render()之前！
+      window.supplierManager = this;
+      console.log('✅ 全局实例已设置:', window.supplierManager);
+
       // 加载供应商汇总数据
       await this.loadSummary();
 
@@ -46,10 +50,6 @@ class SupplierDocumentManager {
 
       // 渲染界面
       this.render();
-
-      // 设置全局实例
-      window.supplierManager = this;
-      console.log('✅ 全局实例已设置:', window.supplierManager);
 
       console.log('✅ 供应商资料管理模块初始化完成');
     } catch (error) {
@@ -444,24 +444,92 @@ class SupplierDocumentManager {
     const filteredSuppliers = this.filterSuppliers();
     console.log('🎨 筛选后供应商数量:', filteredSuppliers.length);
 
-    // 渲染搜索和筛选控件
+    // 渲染搜索和筛选控件 - 统计栏单独一行
     let html = `
-      <div class="supplier-controls">
-        <div class="search-section">
-          <input type="text" id="supplierSearch" placeholder="搜索供应商名称..." 
-                 value="${this.searchKeyword}" class="search-input">
-          <button onclick="supplierManager.clearSearch()" class="clear-search-btn" 
-                  ${this.searchKeyword ? '' : 'style="display:none;"'}>✕</button>
+      <div class="supplier-controls-container">
+        <!-- 统计信息栏 -->
+        <div class="stats-bar">
+          <div class="stats-info">
+            <div class="stats-item-simple">
+              <span class="stats-label-simple">总供应商</span>
+              <span class="stats-value-simple">${this.suppliers.length}</span>
+            </div>
+            <div class="stats-divider-simple"></div>
+            <div class="stats-item-simple">
+              <span class="stats-label-simple">当前显示</span>
+              <span class="stats-value-simple">${filteredSuppliers.length}</span>
+            </div>
+          </div>
+          <div>
+            ${(this.searchKeyword || this.statusFilter) ?
+              `<button onclick="supplierManager.clearAllFilters()" class="btn btn-secondary">
+                重置筛选
+              </button>` : ''}
+          </div>
         </div>
-        <div class="filter-section">
-          <select id="statusFilter" onchange="supplierManager.filterByStatus()" class="filter-select">
-            <option value="">全部状态</option>
-            <option value="normal">🟢 正常</option>
-            <option value="warning">🟡 即将到期</option>
-            <option value="urgent">🟠 紧急</option>
-            <option value="expired">🔴 已过期</option>
-          </select>
-                  </div>
+
+        <!-- 搜索和筛选区域 -->
+        <div class="supplier-controls-row">
+          <!-- 搜索区域 -->
+          <div class="search-section">
+            <div class="search-section__header">
+              <svg class="search-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <h3 class="search-section__title">搜索供应商</h3>
+            </div>
+            <div class="search-input-wrapper">
+              <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <path d="m21 21-4.35-4.35"></path>
+              </svg>
+              <input type="text"
+                     id="supplierManagerSearchInput"
+                     placeholder="输入供应商名称..."
+                     value="${this.searchKeyword}"
+                     class="search-input"
+                     autocomplete="off">
+              <div class="search-actions">
+                <button onclick="supplierManager.performSearch()" class="search-submit-btn" title="搜索">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <path d="m21 21-4.35-4.35"></path>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="search-status ${this.searchKeyword ? 'search-status--active' : ''}">
+              ${this.searchKeyword ?
+                `正在搜索: ${this.searchKeyword}` :
+                '输入供应商名称进行搜索'}
+            </div>
+          </div>
+
+          <!-- 筛选区域 -->
+          <div class="filter-section">
+            <div class="filter-section__header">
+              <svg class="filter-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+              </svg>
+              <h3 class="filter-section__title">状态筛选</h3>
+            </div>
+            <select id="statusFilter"
+                    onchange="window.supplierManager?.filterByStatus()"
+                    class="filter-select">
+              <option value="" ${this.statusFilter === '' ? 'selected' : ''}>全部供应商</option>
+              <option value="normal" ${this.statusFilter === 'normal' ? 'selected' : ''}>正常状态</option>
+              <option value="warning" ${this.statusFilter === 'warning' ? 'selected' : ''}>即将到期</option>
+              <option value="urgent" ${this.statusFilter === 'urgent' ? 'selected' : ''}>紧急状态</option>
+              <option value="expired" ${this.statusFilter === 'expired' ? 'selected' : ''}>已过期</option>
+            </select>
+            <div class="filter-info ${this.statusFilter ? 'filter-info--active' : ''}">
+              ${this.statusFilter ?
+                `当前筛选: ${this.getStatusFilterText(this.statusFilter)}` :
+                '显示所有供应商'}
+            </div>
+          </div>
+        </div>
       </div>
       <div class="supplier-table-container">
         <table class="supplier-table">
@@ -504,42 +572,61 @@ class SupplierDocumentManager {
         </table>
       </div>
       <div class="supplier-summary">
-        共找到 <span class="highlight">${filteredSuppliers.length}</span> 个供应商 
+        共找到 <span class="highlight">${filteredSuppliers.length}</span> 个供应商
         ${this.searchKeyword ? `（搜索："${this.searchKeyword}"）` : ''}
-        ${this.statusFilter ? `（状态：${window.supplierServices.getStatusFilterText(this.statusFilter)}）` : ''}
+        ${this.statusFilter ? `（状态：${this.getStatusFilterText(this.statusFilter)}）` : ''}
       </div>
     `;
 
     container.innerHTML = html;
 
-    // 绑定搜索事件
-    this.bindSearchEvents();
+    // 延迟绑定搜索事件，确保DOM完全渲染
+    setTimeout(() => {
+      this.bindSearchEvents();
+      this.bindFilterEvents(); // 🎯 添加筛选事件绑定
+    }, 10);
   }
 
   /**
    * 筛选供应商数据
    */
   filterSuppliers() {
-    return this.suppliers.filter(supplier => {
+    console.log('🎯 开始筛选供应商数据:', {
+      totalSuppliers: this.suppliers.length,
+      searchKeyword: this.searchKeyword,
+      statusFilter: this.statusFilter
+    });
+
+    const filtered = this.suppliers.filter((supplier, index) => {
+      console.log(`\n📝 [${index + 1}/${this.suppliers.length}] 处理供应商: ${supplier.supplierName}`);
+
       // 搜索关键词筛选
       if (this.searchKeyword) {
         const keyword = this.searchKeyword.toLowerCase();
-        if (!supplier.supplierName.toLowerCase().includes(keyword)) {
+        const matchesSearch = supplier.supplierName.toLowerCase().includes(keyword);
+        console.log(`🔍 搜索筛选 "${this.searchKeyword}": ${matchesSearch ? '✅ 通过' : '❌ 不通过'}`);
+        if (!matchesSearch) {
           return false;
         }
       }
 
-      // 状态筛选
+      // 状态筛选 - 借鉴搜索逻辑：空字符串也跳过筛选
       if (this.statusFilter) {
         const hasStatus = window.supplierServices.checkSupplierStatus(supplier, this.statusFilter);
+        console.log(`🎯 状态筛选 "${this.statusFilter}": ${hasStatus ? '✅ 通过' : '❌ 不通过'}`);
         if (!hasStatus) {
           return false;
         }
+      } else {
+        console.log(`🌐 状态筛选跳过 (statusFilter = '${this.statusFilter}')，显示所有供应商`);
       }
 
-      
+      console.log(`✅ 供应商 ${supplier.supplierName} 通过所有筛选条件`);
       return true;
     });
+
+    console.log(`\n🎯 筛选完成: ${filtered.length}/${this.suppliers.length} 个供应商通过筛选`);
+    return filtered;
   }
 
   /**
@@ -554,84 +641,300 @@ class SupplierDocumentManager {
    * 绑定搜索事件
    */
   bindSearchEvents() {
-    const searchInput = document.getElementById('supplierSearch');
-    if (searchInput) {
-      // 防抖搜索
-      let searchTimeout;
-      searchInput.oninput = (e) => {
-        clearTimeout(searchTimeout);
-        searchTimeout = setTimeout(() => {
-          this.searchKeyword = e.target.value.trim();
-          this.render();
+    console.log('🔗 开始绑定搜索事件');
+    const searchInput = document.getElementById('supplierManagerSearchInput');
+    console.log('🔗 搜索输入框查找结果:', searchInput);
 
-          // 显示/隐藏清除按钮
-          const clearBtn = document.querySelector('.clear-search-btn');
-          if (clearBtn) {
-            clearBtn.style.display = this.searchKeyword ? 'block' : 'none';
-          }
-        }, 300);
-      };
+    if (searchInput) {
+      console.log('✅ 搜索输入框找到，开始绑定事件');
 
       // 回车搜索
       searchInput.onkeydown = (e) => {
         if (e.key === 'Enter') {
-          clearTimeout(searchTimeout);
-          this.searchKeyword = e.target.value.trim();
-          this.render();
+          e.preventDefault(); // 防止表单提交
+          console.log('⌨️ 回车键触发搜索');
+          this.performSearch();
         }
       };
-    }
 
-    // 清除搜索按钮
-    const clearBtn = document.querySelector('.clear-search-btn');
-    if (clearBtn) {
-      clearBtn.onclick = () => {
-        this.clearSearch();
+      // 简化输入事件处理
+      searchInput.oninput = (e) => {
+        // 实时搜索（可选）
+        if (e.target.value.trim().length >= 2 || e.target.value.trim() === '') {
+          // 可以在这里添加实时搜索逻辑
+        }
       };
+
+      console.log('✅ 搜索输入框事件绑定完成');
+    } else {
+      console.error('❌ 搜索输入框未找到，无法绑定事件');
     }
 
-    // 状态筛选
+    // 清除搜索按钮已移除 - 使用统计栏的重置按钮
+
+    console.log('🔗 搜索事件绑定完成');
+  }
+
+  /**
+   * 绑定筛选事件 - 🎯 新增方法确保事件正确绑定
+   */
+  bindFilterEvents() {
+    console.log('🎯 开始绑定筛选事件');
+    const statusFilter = document.getElementById('statusFilter');
+    console.log('🎯 筛选下拉框查找结果:', statusFilter);
+
+    if (statusFilter) {
+      console.log('✅ 筛选下拉框找到，开始绑定事件');
+
+      // 移除可能存在的旧事件监听器
+      statusFilter.onchange = null;
+
+      // 绑定新的事件监听器
+      statusFilter.onchange = () => {
+        console.log('🎯 筛选下拉框change事件触发');
+        this.filterByStatus();
+      };
+
+      console.log('✅ 筛选下拉框事件绑定完成');
+    } else {
+      console.error('❌ 筛选下拉框未找到，无法绑定事件');
+    }
+
+    console.log('🎯 筛选事件绑定完成');
+  }
+
+  /**
+   * 按状态筛选 - 借鉴搜索逻辑，使用空字符串代替null
+   */
+  filterByStatus() {
+    console.log('🎯 filterByStatus方法被调用了！');
     const statusFilter = document.getElementById('statusFilter');
     if (statusFilter) {
-      statusFilter.value = this.statusFilter || '';
+      // 🎯 [借鉴搜索逻辑] 使用空字符串，与搜索保持一致
+      this.statusFilter = statusFilter.value;
+      console.log('🎯 状态筛选变更:', {
+        selectedValue: `'${statusFilter.value}'`,
+        statusFilter: this.statusFilter,
+        type: typeof this.statusFilter,
+        isEmptyString: this.statusFilter === '',
+        isNull: this.statusFilter === null,
+        isUndefined: this.statusFilter === undefined
+      });
+    } else {
+      console.error('❌ 找不到statusFilter元素');
     }
+    console.log('🔄 调用render()方法');
+    this.render();
+  }
 
-      }
+  /**
+   * 执行搜索
+   */
+  performSearch() {
+    console.log('🔍 执行搜索方法被调用');
+    const searchInput = document.getElementById('supplierManagerSearchInput');
+    console.log('🔍 搜索输入框元素:', searchInput);
+
+    if (searchInput) {
+      this.searchKeyword = searchInput.value.trim();
+      console.log('🔍 搜索关键词:', this.searchKeyword);
+      this.render();
+    } else {
+      console.error('❌ 搜索输入框未找到，DOM可能未完全加载');
+      // 尝试重新绑定事件
+      setTimeout(() => {
+        this.bindSearchEvents();
+      }, 100);
+    }
+  }
 
   /**
    * 清除搜索
    */
   clearSearch() {
     this.searchKeyword = '';
+    const searchInput = document.getElementById('supplierManagerSearchInput');
+    if (searchInput) {
+      searchInput.value = '';
+    }
     this.render();
   }
 
   /**
-   * 按状态筛选
-   */
-  filterByStatus() {
-    const select = document.getElementById('statusFilter');
-    this.statusFilter = select.value || null;
-    this.render();
-  }
-
-  
-  /**
-   * 清除所有筛选
+   * 清除所有筛选 - 借鉴搜索逻辑，统一使用空字符串
    */
   clearAllFilters() {
+    console.log('🧹 清除所有筛选条件');
     this.searchKeyword = '';
-    this.statusFilter = null;
+    this.statusFilter = ''; // 🎯 [借鉴搜索逻辑] 使用空字符串，与搜索保持一致
+
+    // 清除搜索框
+    const searchInput = document.getElementById('supplierManagerSearchInput');
+    if (searchInput) {
+      searchInput.value = '';
+    }
+
+    // 清除筛选下拉框
+    const statusFilterSelect = document.getElementById('statusFilter');
+    if (statusFilterSelect) {
+      statusFilterSelect.value = '';
+    }
+
     this.render();
   }
 
   /**
    * 获取状态筛选文本
    */
+  getStatusFilterText(status) {
+    const statusMap = {
+      'normal': '🟢 正常状态',
+      'warning': '🟡 即将到期',
+      'urgent': '🟠 紧急状态',
+      'expired': '🔴 已过期'
+    };
+    return statusMap[status] || status;
+  }
 
   /**
-   * 获取资料筛选文本
+   * 🧪 调试筛选状态 - 临时方法
    */
+  debugFilterState() {
+    console.log('🔍 === 筛选状态调试信息 ===');
+    console.log('📊 当前状态:', {
+      statusFilter: this.statusFilter,
+      searchKeyword: this.searchKeyword,
+      totalSuppliers: this.suppliers.length,
+      typeStatusFilter: typeof this.statusFilter
+    });
+
+    const statusElement = document.getElementById('statusFilter');
+    if (statusElement) {
+      console.log('🎯 HTML元素状态:', {
+        value: `'${statusElement.value}'`,
+        selectedIndex: statusElement.selectedIndex,
+        selectedText: statusElement.options[statusElement.selectedIndex]?.text
+      });
+    } else {
+      console.error('❌ 找不到statusFilter元素');
+    }
+
+    console.log('🔍 =========================');
+  }
+
+  /**
+   * 🧪 手动触发筛选测试 - 借鉴搜索逻辑测试
+   */
+  testFilterChange(value) {
+    console.log('🧪 === 手动测试筛选变更 ===');
+    const statusElement = document.getElementById('statusFilter');
+    if (statusElement) {
+      statusElement.value = value;
+      console.log(`🎯 设置下拉框值为: '${value}'`);
+      this.filterByStatus();
+    } else {
+      console.error('❌ 找不到statusFilter元素');
+    }
+    console.log('🧪 =========================');
+  }
+
+  /**
+   * 🧪 最简单的测试方法 - 直接测试核心逻辑
+   */
+  simpleTest() {
+    console.log('🧪 === 最简单测试 ===');
+    console.log('1. 当前statusFilter:', this.statusFilter);
+    console.log('2. 总供应商数:', this.suppliers.length);
+
+    // 直接设置状态并重新渲染
+    this.statusFilter = '';
+    console.log('3. 设置statusFilter为空字符串');
+    this.render();
+    console.log('4. render()已调用');
+    console.log('🧪 ================');
+  }
+
+  /**
+   * 🧪 完整筛选流程测试
+   */
+  fullFilterTest() {
+    console.log('🧪 === 完整筛选流程测试 ===');
+
+    // 1. 检查依赖
+    console.log('1. 依赖检查:');
+    console.log('   - window.supplierServices存在:', !!window.supplierServices);
+    console.log('   - checkSupplierStatus方法存在:', !!(window.supplierServices && window.supplierServices.checkSupplierStatus));
+
+    // 2. 检查数据
+    console.log('2. 数据检查:');
+    console.log('   - 供应商总数:', this.suppliers.length);
+    console.log('   - 当前statusFilter:', `"${this.statusFilter}"`);
+    console.log('   - statusFilter类型:', typeof this.statusFilter);
+    console.log('   - statusFilter是否为真值:', !!this.statusFilter);
+
+    // 3. 手动执行筛选逻辑
+    console.log('3. 手动执行筛选:');
+    const filtered = this.suppliers.filter((supplier, index) => {
+      console.log(`   处理供应商 ${index + 1}: ${supplier.supplierName}`);
+
+      // 状态筛选逻辑
+      if (this.statusFilter) {
+        console.log(`   - statusFilter不为空，执行筛选`);
+        const hasStatus = window.supplierServices.checkSupplierStatus(supplier, this.statusFilter);
+        console.log(`   - 筛选结果: ${hasStatus}`);
+        return hasStatus;
+      } else {
+        console.log(`   - statusFilter为空，跳过筛选，通过`);
+        return true;
+      }
+    });
+
+    console.log('4. 筛选结果:');
+    console.log(`   - 通过筛选: ${filtered.length}/${this.suppliers.length}`);
+    console.log('   - 通过的供应商:', filtered.map(s => s.supplierName));
+
+    // 4. 直接设置并重新渲染
+    console.log('5. 设置状态并重新渲染:');
+    this.statusFilter = '';
+    this.render();
+
+    console.log('🧪 =========================');
+  }
+
+  /**
+   * 🧪 终极简单测试 - 绕过所有逻辑
+   */
+  ultimateSimpleTest() {
+    console.log('🧪 === 终极简单测试 ===');
+
+    // 直接检查供应商数据
+    console.log('1. 供应商数据:');
+    console.log('   - 数量:', this.suppliers.length);
+    if (this.suppliers.length > 0) {
+      console.log('   - 第一个供应商:', this.suppliers[0].supplierName);
+    }
+
+    // 强制设置为空并渲染
+    console.log('2. 强制设置状态:');
+    this.statusFilter = '';
+    this.searchKeyword = '';
+
+    console.log('3. 调用render:');
+    this.render();
+
+    console.log('4. 检查HTML元素:');
+    const select = document.getElementById('statusFilter');
+    if (select) {
+      console.log('   - 下拉框存在');
+      console.log('   - 当前值:', `'${select.value}'`);
+      console.log('   - 选中项索引:', select.selectedIndex);
+      console.log('   - 选中项文本:', select.options[select.selectedIndex]?.text);
+    } else {
+      console.log('   - 下拉框不存在！');
+    }
+
+    console.log('🧪 =======================');
+  }
 
   /**
    * 🎯 [UI-EVENT] 渲染供应商行 - 双行显示 + 进度条设计

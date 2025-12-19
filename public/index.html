@@ -43,6 +43,8 @@
     <link rel="stylesheet" href="css/modules/supplier-font-hierarchy.css?v=1.0">
     <!-- 🎨 供应商进度条组件样式 - BEM规范设计 -->
     <link rel="stylesheet" href="css/modules/supplier-progress-bar.css?v=1.0">
+    <!-- 🎯 供应商搜索筛选界面 - 专业版UI设计 -->
+    <link rel="stylesheet" href="css/modules/supplier-search-professional.css?v=1.0">
     <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -493,30 +495,8 @@
                         <div class="section-header">
                             <h2>资料列表</h2>
                             <div class="section-actions">
-                                <div class="batch-actions" id="batchActions" style="display: none;">
-                                    <span class="batch-info">已选择 <span id="selectedCount">0</span> 项</span>
-                                    <button class="btn btn-sm btn-primary" onclick="supplierManager.batchDownload()">
-                                        批量下载
-                                    </button>
-                                    <button class="btn btn-sm btn-warning" onclick="supplierManager.batchEdit()">
-                                        批量编辑
-                                    </button>
-                                    <button class="btn btn-sm btn-danger" onclick="supplierManager.batchDelete()">
-                                        批量删除
-                                    </button>
-                                    <button class="btn btn-sm btn-secondary" onclick="supplierManager.clearSelection()">
-                                        取消选择
-                                    </button>
-                                </div>
+                                <!-- 批量操作功能已移除 - 所有相关方法均未实现 -->
                                 <!-- 视图切换已移除 - 统一使用内嵌展开模式 -->
-                                <div class="selection-control">
-                                    <label class="checkbox-label">
-                                        <input type="checkbox" id="selectAll"
-                                            onchange="supplierManager.toggleSelectAll()">
-                                        <span class="checkmark"></span>
-                                        全选
-                                    </label>
-                                </div>
                             </div>
                         </div>
 
