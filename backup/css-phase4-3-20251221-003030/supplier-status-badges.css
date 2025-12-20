@@ -1,0 +1,155 @@
+/* ============================================
+   供应商状态徽章与图标增强样式 - Phase 2
+   创建时间: 2025-12-07
+   参考: IQC 模块状态徽章设计
+   优化目标: 醒目、直观、动态反馈
+   ============================================ */
+
+/* ============================================
+   1. 状态徽章 (Status Badge) 升级
+   ============================================ */
+
+/* 基础徽章样式 - 应用于 .doc-status 和 .status-badge */
+.doc-status,
+.status-badge {
+    padding: 0.4rem 0.8rem !important;
+    border-radius: 24px !important;
+    font-size: 0.75rem !important;
+    font-weight: 600 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    backdrop-filter: blur(8px);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    line-height: 1.2;
+    white-space: nowrap;
+}
+
+/* 正常状态 - 绿色渐变 */
+.doc-status.normal,
+.status-badge.normal {
+    background: linear-gradient(135deg,
+            rgba(16, 185, 129, 0.15) 0%,
+            rgba(16, 185, 129, 0.08) 100%) !important;
+    color: #059669 !important;
+    border: 1px solid rgba(16, 185, 129, 0.3) !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+/* 警告状态 - 橙色渐变 + 脉冲 */
+.doc-status.warning,
+.status-badge.warning {
+    background: linear-gradient(135deg,
+            rgba(245, 158, 11, 0.15) 0%,
+            rgba(245, 158, 11, 0.08) 100%) !important;
+    color: #d97706 !important;
+    border: 1px solid rgba(245, 158, 11, 0.3) !important;
+    animation: warning-pulse 2s ease-in-out infinite;
+}
+
+/* 紧急状态 - 红色渐变 + 强脉冲 */
+.doc-status.urgent,
+.status-badge.urgent {
+    background: linear-gradient(135deg,
+            rgba(239, 68, 68, 0.2) 0%,
+            rgba(239, 68, 68, 0.1) 100%) !important;
+    color: #dc2626 !important;
+    border: 1px solid rgba(239, 68, 68, 0.4) !important;
+    box-shadow: 0 2px 12px rgba(239, 68, 68, 0.3);
+    animation: urgent-pulse 1.5s ease-in-out infinite;
+}
+
+/* 过期状态 - 深红渐变 */
+.doc-status.expired,
+.status-badge.expired {
+    background: linear-gradient(135deg,
+            rgba(220, 38, 38, 0.2) 0%,
+            rgba(220, 38, 38, 0.1) 100%) !important;
+    color: #b91c1c !important;
+    border: 1px solid rgba(220, 38, 38, 0.5) !important;
+    box-shadow: 0 2px 12px rgba(220, 38, 38, 0.3);
+    animation: urgent-pulse 1.5s ease-in-out infinite;
+}
+
+/* 缺失状态 - 灰色虚线 */
+.doc-status.missing,
+.status-badge.missing {
+    background: rgba(107, 114, 128, 0.05) !important;
+    color: #6b7280 !important;
+    border: 1px dashed rgba(107, 114, 128, 0.3) !important;
+}
+
+/* ============================================
+   2. 状态图标 (Status Icon) 增强
+   ============================================ */
+
+/* 状态图标样式已统一移至 supplier-table.css，确保通用资料和检测报告完全一致 */
+
+/* ============================================
+   3. 动画定义
+   ============================================ */
+
+@keyframes warning-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes urgent-pulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+        box-shadow: 0 2px 12px rgba(239, 68, 68, 0.3);
+    }
+
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.5);
+    }
+}
+
+@keyframes icon-pop {
+    0% {
+        opacity: 0;
+        transform: scale(0.5);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* ============================================
+   4. 详情部分标题图标增强
+   ============================================ */
+
+.section-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* 为不同类型的标题添加特定颜色装饰 */
+.section-header h4::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--primary-500);
+    margin-right: 4px;
+}

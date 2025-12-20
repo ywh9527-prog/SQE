@@ -1,0 +1,339 @@
+/**
+ * 供应商资料进度条组件 - BEM规范设计
+ *
+ * 设计原则：
+ * 1. 遵循BEM命名规范
+ * 2. 响应式设计
+ * 3. 状态色彩系统统一
+ * 4. 专业的视觉效果
+ *
+ * 创建时间: 2025-12-18
+ * 设计: 浮浮酱 (猫娘UI/UX工程师)
+ */
+
+/* ==================== 块(Block) ==================== */
+.supplier-progress {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    min-height: 60px;
+    transition: all 0.3s ease;
+    justify-content: center;
+    width: 100%; /* 占满表格单元格 */
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+.supplier-progress:hover {
+    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* ==================== 进度条行 ==================== */
+.supplier-progress__bar-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 30px; /* 确保有足够高度 */
+    width: 100%; /* 占满父容器宽度 */
+}
+
+/* ==================== 信息行 ==================== */
+.supplier-progress__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+.supplier-progress__bar-container {
+    position: relative;
+    height: 24px;
+    width: 100%; /* 占满父容器宽度 */
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 堆叠柱状图段 - 玻璃态风格 */
+.supplier-progress__stack-segment {
+    position: absolute;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: 0;
+    top: 0;
+    min-width: 2px; /* 稍微增加最小宽度 */
+    z-index: 1;
+    /* 玻璃态效果 */
+    border: none !important;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box !important;
+    /* 内发光效果 */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.supplier-progress__stack-segment:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.supplier-progress__stack-segment:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+/* 如果只有一个段，让它成为完整的胶囊 */
+.supplier-progress__stack-segment:first-child:last-child {
+    border-radius: 12px;
+}
+
+.supplier-progress__stack-segment:hover {
+    transform: translateY(-2px) scaleY(1.1);
+    filter: brightness(1.2) saturate(1.2);
+    z-index: 10;
+}
+
+/* 空状态显示 */
+.supplier-progress__bar-empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 10px;
+    font-style: italic;
+}
+
+.supplier-progress__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.supplier-progress__bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.supplier-progress__bar-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    text-align: left;
+    white-space: nowrap; /* 防止换行 */
+}
+
+/* ==================== 状态统计区域 ==================== */
+.supplier-progress__status-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+/* 纯状态显示模式（占满整行） */
+.supplier-progress__status-section--full {
+    flex: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+.supplier-progress-status-only {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 8px 12px;
+    background: #fafafa;
+    border-radius: 6px;
+    min-height: 40px;
+}
+
+.supplier-progress__status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 12px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.supplier-progress__status-item:hover {
+    transform: scale(1.05);
+}
+
+.supplier-progress__status-icon {
+    font-size: 10px;
+    line-height: 1;
+}
+
+.supplier-progress__status-count {
+    font-weight: 600;
+}
+
+/* 小状态图标样式 */
+.supplier-progress__mini-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 4px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+}
+
+.supplier-progress__mini-status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== 状态修饰符 ==================== */
+.supplier-progress__status-item--normal {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.supplier-progress__status-item--warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.supplier-progress__status-item--urgent {
+    background: #fed7aa;
+    color: #9a3412;
+    border: 1px solid #fdba74;
+}
+
+
+.supplier-progress__status-item--expired {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+/* ==================== 进度条状态修饰符 ==================== */
+.supplier-progress__bar-fill--excellent {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+}
+
+.supplier-progress__bar-fill--good {
+    background: linear-gradient(90deg, #84cc16 0%, #65a30d 100%);
+}
+
+.supplier-progress__bar-fill--warning {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.supplier-progress__bar-fill--urgent {
+    background: linear-gradient(90deg, #f97316 0%, #ea580c 100%);
+}
+
+
+/* ==================== 特殊状态 ==================== */
+.supplier-progress--empty {
+    opacity: 0.6;
+}
+
+.supplier-progress--empty .supplier-progress__bar-text {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* ==================== 响应式设计 ==================== */
+/* 保持65:35黄金比例，仅在移动端时调整布局 */
+
+@media (max-width: 768px) {
+    .supplier-progress {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .supplier-progress__bar-section,
+    .supplier-progress__status-section {
+        flex: 1;
+        width: 100%;
+    }
+
+    .supplier-progress__status-section {
+        justify-content: center;
+    }
+}
+
+/* ==================== 动画效果 ==================== */
+.supplier-progress__status-item {
+    animation: status-pop 0.3s ease-out;
+}
+
+@keyframes status-pop {
+    0% {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ==================== 无障碍支持 ==================== */
+.supplier-progress:focus-within {
+    outline: 2px solid #3b82f6;
+    outline-offset: 2px;
+}
+
+/* ==================== 打印样式 ==================== */
+@media print {
+    .supplier-progress {
+        background: #ffffff;
+        border: 1px solid #e5e7eb;
+        box-shadow: none;
+    }
+
+    .supplier-progress__bar-fill::after {
+        display: none;
+    }
+
+    .supplier-progress__status-item {
+        background: #ffffff !important;
+        border: 1px solid #e5e7eb !important;
+        color: #374151 !important;
+    }
+}
