@@ -13,14 +13,15 @@
     background: rgba(0, 0, 0, 0.6) !important;
     backdrop-filter: blur(4px) !important;
     display: none !important;
-    align-items: center !important;
-    justify-content: center !important;
+    /* 注意：align-items和justify-content由JavaScript动态设置 */
     z-index: 99999 !important;
     animation: fadeIn 0.3s ease-out forwards;
 }
 
 .supplier-modal--active {
     display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
 }
 
 /* 入场动画 */
@@ -405,4 +406,902 @@
     display: flex !important;
     align-items: center !important;
     gap: 0.25rem !important;
+}
+
+/* ============================================
+   🎯 [CSS-MIGRATION] emailPreviewModal专用样式
+   迁移日期: 2025-12-20
+   来源: supplier-modal-enhanced.css
+   ============================================ */
+
+/* 邮件预览模态框修饰符 */
+.supplier-modal--email-preview .supplier-modal__content {
+    max-width: 600px !important;
+}
+
+/* ============================================
+   🎯 [CSS-MIGRATION] componentManagementModal专用样式
+   迁移日期: 2025-12-20
+   来源: modal-fix.css
+   ============================================ */
+
+/* 构成管理模态框修饰符 */
+.supplier-modal--component-management .supplier-modal__content {
+    width: 900px !important;
+    max-width: 95vw !important;
+    height: 80vh !important;
+    max-height: 800px !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* 构成管理模态框主体 */
+.supplier-modal--component-management .supplier-modal__body {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    padding: 20px !important;
+}
+
+/* 构成输入区域 */
+.supplier-modal__component-input {
+    margin-bottom: 30px !important;
+    padding: 20px !important;
+    background: #f9fafb !important;
+    border-radius: 8px !important;
+    border: 1px solid #e5e7eb !important;
+}
+
+.supplier-modal__component-input h4 {
+    margin: 0 0 15px 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* 构成表单行 */
+.supplier-modal__form-row {
+    display: flex !important;
+    gap: 15px !important;
+    margin-bottom: 15px !important;
+}
+
+.supplier-modal__form-row .supplier-modal__form-group {
+    flex: 1 !important;
+}
+
+/* 构成列表区域 */
+.supplier-modal__component-list {
+    flex: 1 !important;
+}
+
+.supplier-modal__component-list h4 {
+    margin: 0 0 15px 0 !important;
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* 构成列表容器 */
+.supplier-modal__list-container {
+    border: 1px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+}
+
+/* 构成列表头部 */
+.supplier-modal__list-header {
+    display: grid !important;
+    grid-template-columns: 2fr 1fr 1fr 1fr !important;
+    gap: 15px !important;
+    padding: 12px 20px !important;
+    background: #f3f4f6 !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    font-weight: 600 !important;
+    font-size: 13px !important;
+    color: #374151 !important;
+}
+
+/* 构成列表主体 */
+.supplier-modal__list-body {
+    max-height: 300px !important;
+    overflow-y: auto !important;
+}
+
+/* 构成列表项 */
+.supplier-modal__list-item {
+    display: grid !important;
+    grid-template-columns: 2fr 1fr 1fr 1fr !important;
+    gap: 15px !important;
+    padding: 12px 20px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+    align-items: center !important;
+    font-size: 13px !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.supplier-modal__list-item:hover {
+    background-color: #f9fafb !important;
+}
+
+.supplier-modal__list-item:last-child {
+    border-bottom: none !important;
+}
+
+/* 构成项内容 */
+.supplier-modal__item-name {
+    font-weight: 500 !important;
+    color: #374151 !important;
+}
+
+.supplier-modal__item-code {
+    color: #6b7280 !important;
+    font-family: 'Courier New', monospace !important;
+}
+
+.supplier-modal__item-time {
+    color: #9ca3af !important;
+    font-size: 12px !important;
+}
+
+/* 构成项操作 */
+.supplier-modal__item-actions {
+    display: flex !important;
+    gap: 5px !important;
+}
+
+.supplier-modal__item-actions button {
+    padding: 4px 8px !important;
+    font-size: 11px !important;
+    border: none !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+}
+
+.supplier-modal__edit-btn {
+    background: #3b82f6 !important;
+    color: white !important;
+}
+
+.supplier-modal__edit-btn:hover {
+    background: #2563eb !important;
+}
+
+.supplier-modal__delete-btn {
+    background: #ef4444 !important;
+    color: white !important;
+}
+
+.supplier-modal__delete-btn:hover {
+    background: #dc2626 !important;
+}
+
+/* 空构成状态 */
+.supplier-modal__no-components {
+    padding: 40px 20px !important;
+    text-align: center !important;
+    color: #9ca3af !important;
+    font-size: 16px !important;
+}
+
+/* 必填标识 */
+.supplier-modal__required {
+    color: #ef4444 !important;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .supplier-modal--component-management .supplier-modal__content {
+        width: 95vw !important;
+        height: 90vh !important;
+    }
+
+    .supplier-modal__form-row {
+        flex-direction: column !important;
+        gap: 10px !important;
+    }
+
+    .supplier-modal__list-header,
+    .supplier-modal__list-item {
+        grid-template-columns: 1fr !important;
+        gap: 5px !important;
+    }
+}
+
+/* ============================================
+   🎯 [CSS-MIGRATION] addMaterialModal专用样式
+   迁移日期: 2025-12-20
+   来源: 新增物料模态框设计
+   ============================================ */
+
+/* 新增物料模态框修饰符 */
+.supplier-modal--add-material .supplier-modal__content {
+    max-width: 500px !important;
+    width: 90% !important;
+}
+
+/* 新增物料表单 */
+.supplier-modal__form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+/* 新增物料表单组 */
+.supplier-modal__form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+}
+
+/* 表单输入框 */
+.supplier-modal__input,
+.supplier-modal__textarea {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    font-family: inherit !important;
+}
+
+.supplier-modal__input:focus,
+.supplier-modal__textarea:focus {
+    outline: none !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.supplier-modal__input::placeholder,
+.supplier-modal__textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* 文本域特殊样式 */
+.supplier-modal__textarea {
+    resize: vertical !important;
+    min-height: 80px !important;
+    line-height: 1.5 !important;
+}
+
+/* 邮件预览表单字段 */
+.supplier-modal__field {
+    margin-bottom: 1.5rem !important;
+}
+
+.supplier-modal__label {
+    display: block !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.supplier-modal__input {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 0.875rem !important;
+    background: #f9fafb !important;
+    color: #374151 !important;
+}
+
+.supplier-modal__textarea {
+    width: 100% !important;
+    padding: 0.75rem !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 8px !important;
+    font-size: 0.875rem !important;
+    background: #f9fafb !important;
+    color: #374151 !important;
+    resize: vertical !important;
+    font-family: inherit !important;
+    line-height: 1.5 !important;
+}
+
+/* 邮件预览按钮 */
+.supplier-modal__btn {
+    padding: 0.625rem 1.25rem !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    margin-right: 0.5rem !important;
+}
+
+.supplier-modal__btn--primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%) !important;
+    color: white !important;
+}
+
+.supplier-modal__btn--primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
+}
+
+.supplier-modal__btn--secondary {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.supplier-modal__btn--secondary:hover {
+    background: #e5e7eb !important;
+    color: #111827 !important;
+}
+
+/* 🎯 Phase 3.4: editModal BEM Styles */
+.supplier-modal--edit {
+    /* 继承基础supplier-modal样式 */
+}
+
+.supplier-modal--edit .supplier-modal__content {
+    max-width: 500px !important;
+    width: 90% !important;
+    max-height: 80vh !important;
+    overflow-y: auto !important;
+}
+
+.supplier-modal--edit .supplier-modal__header {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+    padding: 1.5rem !important;
+    border-radius: 16px 16px 0 0 !important;
+    border-bottom: none !important;
+}
+
+.supplier-modal--edit .supplier-modal__title {
+    color: white !important;
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__title::before {
+    content: "✏️" !important;
+    font-size: 1.1rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__close {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border: none !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.2rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.supplier-modal--edit .supplier-modal__close:hover {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(1.1) !important;
+}
+
+.supplier-modal--edit .supplier-modal__body {
+    padding: 2rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1.5rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__label {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    font-size: 0.9rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__required {
+    color: #ef4444 !important;
+    font-weight: bold !important;
+}
+
+.supplier-modal--edit .supplier-modal__input,
+.supplier-modal--edit .supplier-modal__textarea {
+    padding: 0.75rem 1rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.2s ease !important;
+    background: white !important;
+    font-family: inherit !important;
+}
+
+.supplier-modal--edit .supplier-modal__input:focus,
+.supplier-modal--edit .supplier-modal__textarea:focus {
+    outline: none !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.supplier-modal--edit .supplier-modal__textarea {
+    resize: vertical !important;
+    min-height: 80px !important;
+    line-height: 1.5 !important;
+}
+
+/* 永久有效复选框特殊样式 */
+.supplier-modal--edit .supplier-modal__checkbox-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    padding: 1rem !important;
+    background: #f8fafc !important;
+    border-radius: 8px !important;
+    border: 2px solid #e2e8f0 !important;
+}
+
+.supplier-modal--edit .supplier-modal__checkbox {
+    width: 1.2rem !important;
+    height: 1.2rem !important;
+    accent-color: #6366f1 !important;
+    cursor: pointer !important;
+}
+
+.supplier-modal--edit .supplier-modal__checkbox-label {
+    cursor: pointer !important;
+    user-select: none !important;
+    font-weight: 500 !important;
+    color: #374151 !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__checkbox-label::before {
+    content: "🔒" !important;
+    font-size: 1rem !important;
+}
+
+.supplier-modal--edit .supplier-modal__expiry-input {
+    transition: all 0.3s ease !important;
+}
+
+.supplier-modal--edit .supplier-modal__expiry-input:disabled {
+    background: #f3f4f6 !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+.supplier-modal--edit .supplier-modal__footer {
+    padding: 1.5rem 2rem !important;
+    background: #f9fafb !important;
+    border-top: 1px solid #e5e7eb !important;
+    border-radius: 0 0 16px 16px !important;
+    display: flex !important;
+    gap: 1rem !important;
+    justify-content: flex-end !important;
+}
+
+.supplier-modal--edit .supplier-modal__btn {
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    font-size: 0.95rem !important;
+    border: none !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    min-width: 80px !important;
+}
+
+.supplier-modal--edit .supplier-modal__btn--cancel {
+    background: #f3f4f6 !important;
+    color: #374151 !important;
+    border: 1px solid #d1d5db !important;
+}
+
+.supplier-modal--edit .supplier-modal__btn--cancel:hover {
+    background: #e5e7eb !important;
+    color: #111827 !important;
+    transform: translateY(-1px) !important;
+}
+
+.supplier-modal--edit .supplier-modal__btn--submit {
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+    color: white !important;
+}
+
+.supplier-modal--edit .supplier-modal__btn--submit:hover {
+    background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%) !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
+}
+
+.supplier-modal--edit .supplier-modal__btn--submit:disabled {
+    background: #d1d5db !important;
+    color: #9ca3af !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+}
+
+/* 响应式适配 */
+@media (max-width: 768px) {
+    .supplier-modal--edit .supplier-modal__content {
+        width: 95% !important;
+        margin: 1rem !important;
+    }
+
+    .supplier-modal--edit .supplier-modal__header {
+        padding: 1rem !important;
+    }
+
+    .supplier-modal--edit .supplier-modal__body {
+        padding: 1.5rem !important;
+    }
+
+    .supplier-modal--edit .supplier-modal__footer {
+        padding: 1rem 1.5rem !important;
+        flex-direction: column !important;
+    }
+
+    .supplier-modal--edit .supplier-modal__btn {
+        width: 100% !important;
+        order: 2 !important;
+    }
+
+    .supplier-modal--edit .supplier-modal__btn--cancel {
+        order: 1 !important;
+    }
+}
+
+/* ==================== Phase 4.1: 增强样式整合 ==================== */
+/* 🎯 [MERGE] 从 supplier-modal-enhanced.css 合并的优秀样式 */
+
+/* 增强的模态框内容动画 */
+@keyframes slideUpScale {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 应用增强动画到所有模态框内容 */
+.supplier-modal__content {
+    animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+}
+
+/* 增强的表单元素样式 */
+.supplier-modal__form-group label {
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 0.5rem !important;
+    display: block !important;
+}
+
+.supplier-modal__input,
+.supplier-modal__textarea,
+.supplier-modal__select {
+    border: 2px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+.supplier-modal__input:focus,
+.supplier-modal__textarea:focus,
+.supplier-modal__select:focus {
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
+    outline: none !important;
+}
+
+/* 增强的文件上传区域 */
+.supplier-modal__file-upload {
+    border: 2px dashed #d1d5db !important;
+    border-radius: 16px !important;
+    background: #f9fafb !important;
+    padding: 2rem !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+}
+
+.supplier-modal__file-upload:hover,
+.supplier-modal__file-upload.drag-over {
+    border-color: #6366f1 !important;
+    background: rgba(99, 102, 241, 0.05) !important;
+    transform: scale(1.02) !important;
+}
+
+/* 增强的按钮悬停效果 */
+.supplier-modal__btn--primary {
+    transition: all 0.3s ease !important;
+}
+
+.supplier-modal__btn--primary:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4) !important;
+}
+
+.supplier-modal__btn--secondary {
+    transition: all 0.3s ease !important;
+}
+
+.supplier-modal__btn--secondary:hover {
+    transform: translateY(-1px) !important;
+}
+
+/* 增强的关闭按钮旋转效果 */
+.supplier-modal__close {
+    transition: all 0.3s ease !important;
+}
+
+.supplier-modal__close:hover {
+    transform: rotate(90deg) !important;
+}
+
+/* ==================== 上传模态框样式 ==================== */
+.supplier-modal--upload .supplier-modal__content {
+    max-width: 700px !important;
+    width: 95% !important;
+    max-height: 85vh !important;
+}
+
+/* 上传模态框头部 */
+.supplier-modal--upload .supplier-modal__header {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+}
+
+/* 文件上传区域 */
+.supplier-modal__file-upload,
+.upload-drop-zone {
+    border: 3px dashed #d1d5db !important;
+    border-radius: 16px !important;
+    background: #f9fafb !important;
+    padding: 3rem 2rem !important;
+    text-align: center !important;
+    transition: all 0.3s ease !important;
+    cursor: pointer !important;
+    min-height: 200px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.supplier-modal__file-upload:hover,
+.supplier-modal__file-upload.drag-over,
+.upload-drop-zone:hover,
+.upload-drop-zone.drag-over {
+    border-color: #10b981 !important;
+    background: rgba(16, 185, 129, 0.05) !important;
+    transform: scale(1.02) !important;
+}
+
+/* 上传区域图标 */
+.supplier-modal__file-upload::before,
+.upload-drop-zone .upload-icon {
+    font-size: 3rem !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+}
+
+/* 上传提示文本 */
+.supplier-modal__file-upload-text,
+.upload-drop-zone p {
+    color: #6b7280 !important;
+    font-size: 1.1rem !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.supplier-modal__file-upload-subtext,
+.upload-drop-zone .upload-subtext {
+    color: #9ca3af !important;
+    font-size: 0.9rem !important;
+}
+
+/* 表单组样式 - 兼容原有.form-group */
+.supplier-modal__form-group,
+.form-group {
+    margin-bottom: 1.5rem !important;
+}
+
+.supplier-modal__form-group label,
+.form-group label {
+    display: block !important;
+    margin-bottom: 0.5rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+}
+
+/* 表单控件样式 - 兼容原有表单元素 */
+.supplier-modal__form-control,
+.form-group input[type="text"],
+.form-group input[type="date"],
+.form-group select,
+.form-group textarea {
+    width: 100% !important;
+    padding: 10px 12px !important;
+    border: 1px solid #d1d5db !important;
+    border-radius: 6px !important;
+    font-size: 14px !important;
+    transition: border-color 0.2s !important;
+    background: white !important;
+    box-sizing: border-box !important;
+}
+
+.supplier-modal__form-control:focus,
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    outline: none !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+}
+
+/* 只读输入框样式 */
+.form-group input[readonly],
+.supplier-modal__input--readonly {
+    background-color: #f9fafb !important;
+    color: #6b7280 !important;
+}
+
+/* 复选框样式 */
+.form-group input[type="checkbox"] {
+    margin-right: 8px !important;
+}
+
+/* 到期日期样式 */
+.expiry-date {
+    margin-top: 8px !important;
+}
+
+/* 选择器和输入框 */
+.supplier-modal__form-control {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    font-size: 1rem !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    box-sizing: border-box !important;
+}
+
+.supplier-modal__form-control:focus {
+    border-color: #10b981 !important;
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1) !important;
+    outline: none !important;
+}
+
+/* 上传按钮 */
+.supplier-modal__upload-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.875rem 2rem !important;
+    border-radius: 10px !important;
+    font-size: 1rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
+}
+
+.supplier-modal__upload-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4) !important;
+}
+
+.supplier-modal__upload-btn:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+/* 隐藏的文件输入 */
+.supplier-modal__hidden-input {
+    display: none !important;
+}
+
+/* 🎯 [FIX] 通用资料按钮右对齐修复 - 2025-12-20 */
+/* 覆盖supplier-modal.css中的section-actions样式，使用更高优先级的选择器 */
+
+/* 最高优先级：直接覆盖所有section-actions */
+.details-section .section-actions,
+.supplier-detail-view .section-actions,
+.common-documents .section-actions {
+    display: flex !important;
+    gap: 8px !important;
+    justify-content: flex-end !important; /* 强制按钮靠右对齐 */
+    align-items: center !important;
+    width: 100% !important;
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* 确保section-header使用flex布局 - 防止标题换行 */
+.details-section .section-header,
+.supplier-detail-view .section-header,
+.common-documents .section-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important; /* 防止换行 */
+    min-height: 40px !important; /* 确保有足够高度 */
+}
+
+/* 标题不换行 - 修复通用资料和检测报告换行问题 */
+.details-section .section-header h4,
+.supplier-detail-view .section-header h4,
+.common-documents .section-header h4 {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important; /* 防止标题被压缩 */
+    margin: 0 !important;
+    margin-right: 20px !important; /* 与按钮保持间距 */
+}
+
+/* 按钮容器强制靠右，不平均分布 */
+.details-section .section-actions,
+.supplier-detail-view .section-actions,
+.common-documents .section-actions {
+    display: flex !important;
+    gap: 8px !important;
+    justify-content: flex-end !important; /* 强制靠右，不是平均分布 */
+    align-items: center !important;
+    width: auto !important; /* 自动宽度，不占满整行 */
+    margin-left: auto !important; /* 自动左边距推到右边 */
+    flex-shrink: 0 !important; /* 防止按钮被压缩 */
+}
+
+/* 针对通用资料区域的特殊样式 */
+.details-section.common-documents .section-actions {
+    justify-content: flex-end !important;
+    flex-direction: row !important;
+}
+
+/* 强制按钮靠右 - 使用更具体的选择器 */
+.details-section .section-actions .batch-email-btn,
+.details-section .section-actions .upload-btn,
+.details-section .section-actions .settings-btn,
+.supplier-detail-view .section-actions .batch-email-btn,
+.supplier-detail-view .section-actions .upload-btn,
+.supplier-detail-view .section-actions .settings-btn {
+    margin-left: auto !important;
+    margin-right: 0 !important;
+}
+
+/* 如果还有其他section-actions，全部强制靠右 */
+div[class*="section"].section-actions {
+    justify-content: flex-end !important;
 }
