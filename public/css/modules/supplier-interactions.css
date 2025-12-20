@@ -1,25 +1,48 @@
 /* ============================================
-   供应商模块按钮与交互增强样式 - Phase 4
+   供应商模块按钮与交互增强样式 - Phase 2 修复版
    创建时间: 2025-12-07
+   修复时间: 2025-12-21
    参考: IQC 模块按钮交互
    优化目标: 触感反馈、微交互、视觉愉悦
+
+   Phase 2 修复记录：
+   - 移除全局button选择器，解决007.md冲突问题
+   - 采用BEM规范，仅针对供应商模块特定按钮类名
+   - 整合从supplier-components.css移动的按钮样式
+   修复: 浮浮酱 (猫娘工程师)
    ============================================ */
 
 /* ============================================
-   1. 通用按钮增强
+   1. 通用按钮增强 (BEM规范 - 无全局选择器)
    ============================================ */
 
-/* 基础按钮重置与增强 */
-button {
+/* 基础按钮重置与增强 - 仅适用于供应商模块特定按钮 */
+.supplier-interaction__btn,
+.upload-btn,
+.batch-email-btn,
+.add-material-btn,
+.delete-btn,
+.delete-material-btn,
+.filter-btn,
+.action-btn {
     cursor: pointer;
     font-family: inherit;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     position: relative;
     overflow: hidden;
+    border: none;
+    outline: none;
 }
 
 /* 按钮点击时的缩放效果 */
-button:active {
+.supplier-interaction__btn:active,
+.upload-btn:active,
+.batch-email-btn:active,
+.add-material-btn:active,
+.delete-btn:active,
+.delete-material-btn:active,
+.filter-btn:active,
+.action-btn:active {
     transform: scale(0.96) !important;
 }
 
@@ -217,8 +240,15 @@ button:active {
    5. 涟漪效果 (Ripple Effect) - CSS Only
    ============================================ */
 
-/* 使用伪元素模拟简单的点击涟漪 */
-button:active::after {
+/* 使用伪元素模拟简单的点击涟漪 - 仅限供应商模块按钮 */
+.supplier-interaction__btn:active::after,
+.upload-btn:active::after,
+.batch-email-btn:active::after,
+.add-material-btn:active::after,
+.delete-btn:active::after,
+.delete-material-btn:active::after,
+.filter-btn:active::after,
+.action-btn:active::after {
     content: '';
     position: absolute;
     top: 50%;

@@ -1,0 +1,196 @@
+/* ============================================
+   供应商模块模态框增强样式 - Phase 6
+   创建时间: 2025-12-07
+   参考: IQC 模块模态框设计
+   优化目标: 聚焦、清晰、现代感
+   ============================================ */
+
+/* ============================================
+   1. 模态框遮罩 (Overlay)
+   ============================================ */
+
+.modal-overlay {
+    background: rgba(0, 0, 0, 0.6) !important;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+/* ============================================
+   2. 模态框容器 (Content)
+   ============================================ */
+
+.modal-content {
+    background: linear-gradient(135deg, #faf8f6 0%, #f5f2ed 100%) !important;
+    border-radius: 20px !important;
+    box-shadow:
+        0 0 0 1px rgba(0, 0, 0, 0.1),
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 10px 15px rgba(0, 0, 0, 0.1),
+        0 20px 25px rgba(0, 0, 0, 0.1),
+        0 25px 50px rgba(0, 0, 0, 0.15) !important;
+    border: none !important;
+    animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    overflow: hidden;
+}
+
+@keyframes slideUpScale {
+    from {
+        opacity: 0;
+        transform: translateY(40px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ============================================
+   3. 模态框头部 (Header)
+   ============================================ */
+
+.modal-header {
+    background: linear-gradient(135deg, #fafafa 0%, #f8f9fa 100%) !important;
+    color: var(--primary-700) !important;
+    padding: 1.2rem 1.5rem !important;
+    border-bottom: 1px solid #e5e7eb !important;
+    border-radius: 20px 20px 0 0 !important;
+    position: relative;
+}
+
+.modal-header h3 {
+    font-size: 1.25rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.5px;
+    margin: 0 !important;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+/* 关闭按钮 */
+.close-modal-btn {
+    color: rgba(255, 255, 255, 0.8) !important;
+    font-size: 1.5rem !important;
+    transition: all 0.3s ease;
+    background: transparent !important;
+    border: none !important;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-modal-btn:hover {
+    color: white !important;
+    background: rgba(255, 255, 255, 0.2) !important;
+    transform: rotate(90deg);
+}
+
+/* ============================================
+   4. 模态框主体 (Body)
+   ============================================ */
+
+.modal-body {
+    padding: 2rem !important;
+    color: var(--gray-700);
+}
+
+/* 表单元素增强 */
+.form-group label {
+    font-weight: 600 !important;
+    color: var(--gray-700) !important;
+    margin-bottom: 0.5rem !important;
+    display: block;
+}
+
+.form-control,
+select,
+input[type="text"],
+input[type="date"],
+textarea {
+    border: 2px solid var(--gray-200) !important;
+    border-radius: 10px !important;
+    padding: 0.75rem 1rem !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-control:focus,
+select:focus,
+input[type="text"]:focus,
+input[type="date"]:focus,
+textarea:focus {
+    border-color: var(--primary-400) !important;
+    box-shadow: 0 0 0 4px rgba(157, 122, 84, 0.1) !important;
+    outline: none;
+}
+
+/* 文件上传区域增强 */
+.file-upload-area {
+    border: 2px dashed var(--gray-300) !important;
+    border-radius: 16px !important;
+    background: var(--gray-50) !important;
+    padding: 2rem !important;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.file-upload-area:hover,
+.file-upload-area.drag-over {
+    border-color: var(--primary-500) !important;
+    background: rgba(157, 122, 84, 0.05) !important;
+    transform: scale(1.02);
+}
+
+/* ============================================
+   5. 模态框底部 (Footer)
+   ============================================ */
+
+.modal-footer {
+    padding: 1.2rem 1.5rem !important;
+    background: var(--gray-50) !important;
+    border-top: 1px solid var(--gray-200) !important;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+/* 确认按钮 */
+.modal-footer .btn-primary {
+    background: linear-gradient(135deg,
+            var(--primary-500) 0%,
+            var(--primary-600) 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(157, 122, 84, 0.3);
+}
+
+.modal-footer .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(157, 122, 84, 0.4);
+}
+
+/* 取消按钮 */
+.modal-footer .btn-secondary {
+    background: white !important;
+    color: var(--gray-600) !important;
+    border: 2px solid var(--gray-200) !important;
+    padding: 0.75rem 1.5rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+}
+
+.modal-footer .btn-secondary:hover {
+    background: var(--gray-50) !important;
+    border-color: var(--gray-300) !important;
+    color: var(--gray-800) !important;
+}

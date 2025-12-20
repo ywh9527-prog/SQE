@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQE 供应商管理系统 v2.0</title>
+    <link rel="stylesheet" href="css/style_v2.css">
+    <!-- 模块化 CSS -->
+    <link rel="stylesheet" href="css/modules/iqc_v2.css">
+    <link rel="stylesheet" href="css/modules/iqc_v2_monthly_fix.css">
+    <link rel="stylesheet" href="css/modules/sheet-selection-debug.css">
+    <!-- IQC 卡片 UI/UX 增强样式 -->
+    <link rel="stylesheet" href="css/modules/iqc_cards_enhanced.css">
+    <!-- 年份选择器样式 -->
+    <link rel="stylesheet" href="css/modules/year_switcher.css">
+    <!-- Toast 提示框样式 -->
+    <!-- 保留原样式作为后备 -->
+    <link rel="stylesheet" href="css/utils/toast.css?v=3">
+    <!-- 进度指示器样式 -->
+    <link rel="stylesheet" href="css/utils/progress.css">
+    <!-- 供应商资料管理样式 -->
+    <link rel="stylesheet" href="css/modules/documents.css">
+
+    <!-- 供应商表格视图样式 v3.1 -->
+    <link rel="stylesheet" href="css/modules/supplier-table.css">
+    <!-- 供应商树形视图样式 -->
+    <link rel="stylesheet" href="css/modules/supplier-tree.css">
+    <!-- 供应商模态框样式 -->
+    <link rel="stylesheet" href="css/modules/supplier-modal.css?v=1.2-fix-selector-conflict">
+
+    <!-- 供应商 UI/UX 增强样式 (Phase 1-6) -->
+    <link rel="stylesheet" href="css/modules/supplier-cards-enhanced.css">
+    <link rel="stylesheet" href="css/modules/supplier-status-badges.css">
+    <link rel="stylesheet" href="css/modules/supplier-animations.css">
+    <link rel="stylesheet" href="css/modules/supplier-interactions.css">
+    <link rel="stylesheet" href="css/modules/supplier-modals-bem.css?v=4.4-component-migration">
+    <!-- 保留旧的模态框样式作为后备 -->
+    <link rel="stylesheet" href="css/modules/supplier-modal-enhanced.css">
+    <!-- 模态框修复样式 -->
+    <link rel="stylesheet" href="css/modal-fix.css?v=1.7">
+    <!-- 供应商字体层级统一管理样式 v1.0 -->
+    <link rel="stylesheet" href="css/modules/supplier-font-hierarchy.css?v=1.0">
+    <!-- 🎨 供应商进度条组件样式 - BEM规范设计 -->
+    <link rel="stylesheet" href="css/modules/supplier-progress-bar.css?v=1.0">
+    <!-- 🎯 供应商搜索筛选界面 - 专业版UI设计 -->
+    <link rel="stylesheet" href="css/modules/supplier-search-professional.css?v=1.3">
+    <script src="js/chart.min.js"></script>
+    <!-- 引入图标库 -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <!-- Font Awesome 图标库 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+
+<body>
+    <!-- 顶部进度条 -->
+    <div id="top-progress-bar" class="top-progress-bar" style="display: none;"></div>
+    <div class="app-container">
+        <!-- 侧边栏导航 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon">SQE</div>
+                <h2>质量管理平台</h2>
+            </div>
+
+            <nav class="sidebar-nav">
+                <a href="#dashboard" class="nav-item active" data-module="dashboard">
+                    <i class="ph ph-squares-four"></i>
+                    <span>工作台</span>
+                </a>
+                <a href="#iqc" class="nav-item" data-module="iqc">
+                    <i class="ph ph-chart-bar"></i>
+                    <span>IQC 质量分析</span>
+                </a>
+                <a href="#documents" class="nav-item" data-module="documents">
+                    <i class="ph ph-folder-open"></i>
+                    <span>供应商资料管理</span>
+                </a>
+                <a href="#performance" class="nav-item" data-module="performance">
+                    <i class="ph ph-trend-up"></i>
+                    <span>月度绩效评价</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-info" id="userInfo">
+                    <div class="avatar" id="userAvatar">A</div>
+                    <div class="details">
+                        <span class="name" id="userName">Admin</span>
+                        <span class="role" id="userRole">SQE Manager</span>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn" title="退出登录">
+                    <i class="ph ph-sign-out"></i>
+                </button>
+            </div>
+        </aside>
+
+        <!-- 主内容区域 -->
+        <main class="main-content">
+            <header class="top-bar">
+                <h2 id="page-title">工作台</h2>
+                <div class="top-actions">
+                    <button class="icon-btn"><i class="ph ph-bell"></i></button>
+                    <button class="icon-btn"><i class="ph ph-gear"></i></button>
+                </div>
+            </header>
+
+            <!-- 内容容器：各模块内容将动态渲染到这里 -->
+            <div id="content-container" class="content-container">
+                <!-- 默认显示 Dashboard -->
+                <div id="module-dashboard" class="module-view">
+                    <div class="welcome-card">
+                        <h3>欢迎回来，Admin</h3>
+                        <p>今天是 <span id="current-date"></span>，系统运行正常。</p>
+                        <script>
+                            document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
+                        </script>
+                    </div>
+                    <!-- 仪表盘概览卡片占位 -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon warning"><i class="ph ph-warning-circle"></i></div>
+                            <div class="stat-info">
+                                <span class="label">即将过期证书</span>
+                                <span class="value">3</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon success"><i class="ph ph-check-circle"></i></div>
+                            <div class="stat-info">
+                                <span class="label">本月合格率</span>
+                                <span class="value">98.5%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- IQC 模块容器 (初始隐藏) -->
+                <div id="module-iqc" class="module-view hidden">
+                    <div class="module-header">
+                        <h3>IQC 来料检验分析</h3>
+                    </div>
+
+                    <!-- 数据源卡片区域 -->
+                    <section class="iqc-data-source-section">
+                        <div class="data-source-cards">
+                            <!-- 外购数据卡片 -->
+                            <div class="data-card" data-type="purchase">
+                                <div class="card-header">
+                                    <h4><i class="ph ph-package"></i> 外购数据</h4>
+                                    <div class="update-status" id="purchase-update-status">
+                                        <span class="status-loading">加载中...</span>
+                                    </div>
+                                </div>
+                                <div class="card-stats">
+                                    <div class="stat-item">
+                                        <span class="label">总数据</span>
+                                        <span class="value" id="purchase-total-count">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">本次新增</span>
+                                        <span class="value" id="purchase-recent-count">-</span>
+                                    </div>
+                                </div>
+                                <div class="card-time-range">
+                                    <span class="time-range-label">数据时间范围：</span>
+                                    <span id="purchase-time-range">-</span>
+                                </div>
+                                <div class="card-year-selector">
+                                    <div class="year-select-group">
+                                        <label class="year-select-label">
+                                            <i class="ph ph-calendar"></i>
+                                            选择年份：
+                                        </label>
+                                        <select id="purchaseYearSelectCompact" class="year-select-compact">
+                                            <option value="">最新数据</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-secondary update-btn" data-type="purchase">
+                                        <i class="ph ph-arrow-clockwise"></i>
+                                        更新数据
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- 外协数据卡片 -->
+                            <div class="data-card" data-type="external">
+                                <div class="card-header">
+                                    <h4><i class="ph ph-factory"></i> 外协数据</h4>
+                                    <div class="update-status" id="external-update-status">
+                                        <span class="status-loading">加载中...</span>
+                                    </div>
+                                </div>
+                                <div class="card-stats">
+                                    <div class="stat-item">
+                                        <span class="label">总数据</span>
+                                        <span class="value" id="external-total-count">-</span>
+                                    </div>
+                                    <div class="stat-item">
+                                        <span class="label">本次新增</span>
+                                        <span class="value" id="external-recent-count">-</span>
+                                    </div>
+                                </div>
+                                <div class="card-time-range">
+                                    <span class="time-range-label">数据时间范围：</span>
+                                    <span id="external-time-range">-</span>
+                                </div>
+                                <div class="card-year-selector">
+                                    <div class="year-select-group">
+                                        <label class="year-select-label">
+                                            <i class="ph ph-calendar"></i>
+                                            选择年份：
+                                        </label>
+                                        <select id="externalYearSelectCompact" class="year-select-compact">
+                                            <option value="">最新数据</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="card-actions">
+                                    <button class="btn-secondary update-btn" data-type="external">
+                                        <i class="ph ph-arrow-clockwise"></i>
+                                        更新数据
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- 隐藏的上传表单（用于数据更新） -->
+                    <div id="hiddenUploadForm" style="display: none;">
+                        <form id="uploadForm" enctype="multipart/form-data">
+                            <input type="file" id="excelFile" name="excelFile" accept=".xlsx, .xls" class="file-input">
+                        </form>
+                    </div>
+
+                    <!-- 工作表选择（保持原有逻辑） -->
+                    <div id="sheetSelection" class="sheet-selection hidden">
+                        <div class="sheet-selection-content">
+                            <h5>请选择数据工作表:</h5>
+                            <div id="sheetTabContainer" class="sheet-tabs"></div>
+                            <div class="sheet-actions">
+                                <button type="button" id="confirmSheetBtn" class="btn-primary">确认分析</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 供应商搜索区域 -->
+                    <section id="supplierSearch" class="supplier-search-section card hidden">
+                        <div class="section-header">
+                            <h4><i class="ph ph-magnifying-glass"></i> 供应商筛选</h4>
+                        </div>
+                        <div class="search-controls">
+                            <div class="input-group">
+                                <input type="text" id="supplierSearchInput" list="supplierOptions"
+                                    placeholder="输入供应商名称..." class="form-input">
+                                <datalist id="supplierOptions"></datalist>
+                            </div>
+                            <div class="btn-group">
+                                <button id="searchSupplierBtn" class="btn-secondary"><i
+                                        class="ph ph-magnifying-glass"></i> 搜索</button>
+                                <button id="showAllBtn" class="btn-outline"><i class="ph ph-list"></i> 显示全部</button>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Loading 状态 -->
+                    <section id="loading" class="loading hidden">
+                        <div class="loading-container">
+                            <div class="loading-spinner"></div>
+                            <div class="loading-text">正在处理数据，请稍候...</div>
+                        </div>
+                    </section>
+
+                    <!-- 错误提示 -->
+                    <section id="error" class="error-section hidden">
+                        <div class="error-card">
+                            <i class="ph ph-warning-circle"></i>
+                            <p id="errorMessage"></p>
+                        </div>
+                    </section>
+
+                    <!-- 分析结果区域 -->
+                    <section id="results" class="results-section hidden">
+                        <div class="section-header">
+                            <h4>分析结果 <span id="filter-info" class="filter-tag"></span></h4>
+                        </div>
+
+                        <!-- 汇总卡片 -->
+                        <div class="summary-stats">
+                            <div class="iqc-stat-card iqc-stat-card--mini">
+                                <div class="iqc-stat-card__label">总批次数</div>
+                                <div class="iqc-stat-card__value" id="totalBatches">-</div>
+                            </div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--success">
+                                <div class="iqc-stat-card__label">合格批次数</div>
+                                <div class="iqc-stat-card__value" id="okBatches">-</div>
+                            </div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--danger">
+                                <div class="iqc-stat-card__label">退货批次数</div>
+                                <div class="iqc-stat-card__value" id="returnBatches">-</div>
+                            </div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--warning">
+                                <div class="iqc-stat-card__label">特采批次数</div>
+                                <div class="iqc-stat-card__value" id="specialBatches">-</div>
+                            </div>
+                            <div class="iqc-stat-card iqc-stat-card--mini iqc-stat-card--primary">
+                                <div class="iqc-stat-card__label">批次合格率</div>
+                                <div class="iqc-stat-card__value" id="passRate">-%</div>
+                            </div>
+                        </div>
+
+                        <div class="charts-grid">
+                            <!-- 缺陷分布图 -->
+                            <div class="iqc-chart-card">
+                                <h5>缺陷类型分布</h5>
+                                <div class="chart-wrapper">
+                                    <canvas id="defectDistributionChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 供应商良率排名 -->
+                            <div class="iqc-chart-card">
+                                <h5>供应商良率排名</h5>
+                                <div class="chart-wrapper">
+                                    <canvas id="supplierDefectRateChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 平均合格率趋势 -->
+                        <div class="iqc-chart-card iqc-chart-card--full-width">
+                            <h5>平均合格率趋势</h5>
+                            <div class="chart-wrapper large">
+                                <canvas id="monthlyTrendChart"></canvas>
+                            </div>
+
+                            <!-- 数据表格折叠区域 -->
+                            <div class="data-table-container">
+                                <div class="table-header-action">
+                                    <h6>详细数据表</h6>
+                                </div>
+                                <div class="table-wrapper">
+                                    <table id="cumulativePassRateTable" class="data-table">
+                                        <thead>
+                                            <tr>
+                                                <th>月份</th>
+                                                <th>批次数</th>
+                                                <th>合格数</th>
+                                                <th>特采数</th>
+                                                <th>批退数</th>
+                                                <th>当月合格率</th>
+                                                <th>平均合格率</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody></tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 周度对比 -->
+                        <div class="iqc-comparison-section card">
+                            <div class="section-header">
+                                <h5><i class="ph ph-arrows-left-right"></i> 周度数据对比</h5>
+                            </div>
+
+                            <div class="comparison-controls">
+                                <div class="date-range-group">
+                                    <label>本周:</label>
+                                    <input type="date" id="currentPeriodStart" class="form-input date-input">
+                                    <span>至</span>
+                                    <input type="date" id="currentPeriodEnd" class="form-input date-input">
+                                </div>
+                                <div class="date-range-group">
+                                    <label>上周:</label>
+                                    <input type="date" id="previousPeriodStart" class="form-input date-input">
+                                    <span>至</span>
+                                    <input type="date" id="previousPeriodEnd" class="form-input date-input">
+                                </div>
+                                <div class="btn-group">
+                                    <button id="compareBtn" class="btn-secondary">自定义对比</button>
+                                    <button id="resetBtn" class="btn-outline">重置</button>
+                                </div>
+                            </div>
+
+                            <div class="comparison-results">
+                                <div class="comparison-col">
+                                    <h6 id="currentPeriodTitle">本周数据</h6>
+                                    <div id="currentWeekData" class="data-list">
+                                        <div class="data-row"><span>总批次:</span> <span id="currentWeekTotal">-</span>
+                                        </div>
+                                        <div class="data-row"><span>合格:</span> <span id="currentWeekOk">-</span></div>
+                                        <div class="data-row"><span>退货:</span> <span id="currentWeekReturn">-</span>
+                                        </div>
+                                        <div class="data-row"><span>特采:</span> <span id="currentWeekSpecial">-</span>
+                                        </div>
+                                        <div class="data-row highlight"><span>合格率:</span> <span
+                                                id="currentWeekPassRate">-%</span></div>
+                                    </div>
+                                </div>
+                                <div class="comparison-divider">VS</div>
+                                <div class="comparison-col">
+                                    <h6 id="previousPeriodTitle">上周数据</h6>
+                                    <div id="previousWeekData" class="data-list">
+                                        <div class="data-row"><span>总批次:</span> <span id="previousWeekTotal">-</span>
+                                        </div>
+                                        <div class="data-row"><span>合格:</span> <span id="previousWeekOk">-</span></div>
+                                        <div class="data-row"><span>退货:</span> <span id="previousWeekReturn">-</span>
+                                        </div>
+                                        <div class="data-row"><span>特采:</span> <span id="previousWeekSpecial">-</span>
+                                        </div>
+                                        <div class="data-row highlight"><span>合格率:</span> <span
+                                                id="previousWeekPassRate">-%</span></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 月度统计详情 -->
+                        <div class="iqc-monthly-stats-section card">
+                            <div class="section-header">
+                                <h5>月度统计详情</h5>
+                            </div>
+                            <div id="monthlyData" class="monthly-grid"></div>
+                        </div>
+                    </section>
+                </div>
+
+
+                <div id="module-documents" class="module-view hidden">
+                    <!-- 供应商资料管理模块 -->
+                    <div class="module-header">
+                        <h3>供应商资料管理</h3>
+                        <div class="module-actions">
+                            <button class="btn btn-success" id="importBtn">
+                                <span class="btn-icon">🔄</span>
+                                同步供应商
+                            </button>
+                            <button class="btn btn-secondary" id="refreshBtn">
+                                <span class="btn-icon">🔄</span>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 筛选区域 -->
+                    <!-- <section class="filters-section">
+                        <div class="filter-row">
+                            <div class="filter-group">
+                                <label for="supplierSelect">供应商</label>
+                                <select id="supplierSelect" class="form-control">
+                                    <option value="">全部供应商</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="statusFilter">状态</label>
+                                <select id="statusFilter" class="form-control">
+                                    <option value="">全部状态</option>
+                                    <option value="active">有效</option>
+                                    <option value="expired">已过期</option>
+                                    <option value="archived">已归档</option>
+                                </select>
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="searchInput">搜索</label>
+                                <input type="text" id="searchInput" class="form-control" placeholder="搜索资料名称...">
+                            </div>
+
+                            <div class="filter-group">
+                                <label for="sortSelect">排序</label>
+                                <select id="sortSelect" class="form-control">
+                                    <option value="expiry-asc">到期时间（从近到远）</option>
+                                    <option value="expiry-desc">到期时间（从远到近）</option>
+                                    <option value="name-asc">资料名称（A-Z）</option>
+                                    <option value="name-desc">资料名称（Z-A）</option>
+                                    <option value="supplier-asc">供应商（A-Z）</option>
+                                    <option value="supplier-desc">供应商（Z-A）</option>
+                                    <option value="type-asc">资料类型</option>
+                                    <option value="upload-desc">上传时间（最新）</option>
+                                    <option value="upload-asc">上传时间（最旧）</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section> -->
+
+                    <!-- 资料类型标签已移除 - 改用状态分组展示，信息更直观 -->
+
+                    <!-- 资料列表 -->
+                    <section class="documents-section">
+                        <div class="section-header">
+                            <h2>资料列表</h2>
+                            <div class="section-actions">
+                                <!-- 批量操作功能已移除 - 所有相关方法均未实现 -->
+                                <!-- 视图切换已移除 - 统一使用内嵌展开模式 -->
+                            </div>
+                        </div>
+
+
+
+                        <div class="documents-container" id="documentsContainer">
+                            <!-- 资料卡片将在这里动态生成 -->
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <div class="loading-text">加载中...</div>
+                            </div>
+                        </div>
+
+                        <!-- 分页 -->
+                        <div class="pagination-container" id="paginationContainer">
+                            <!-- 分页按钮将在这里动态生成 -->
+                        </div>
+                    </section>
+                </div>
+                <div id="module-performance" class="module-view hidden">
+                    <h3>绩效评价 (开发中)</h3>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+
+
+    <!-- 工具脚本 (最先加载) -->
+    <script src="js/utils/api.js?v=20251124"></script>
+    <script src="js/utils/toast.js?v=2"></script>
+    <script src="js/utils/modal.js"></script>
+
+    <!-- 核心脚本 -->
+
+    <script src="js/ui.js"></script>
+    <script src="js/charts.js"></script>
+
+    <!-- 模块脚本 -->
+    <script src="js/modules/router.js"></script>
+    <script src="js/modules/iqc.js"></script>
+    <script src="js/modules/supplier/services/supplier-services.js?v=3.2.1"></script>
+    <!-- 旧版 supplier-ui.js 已废弃，避免全局变量冲突 -->
+    <!-- <script src="js/modules/supplier/ui/supplier-ui.js?v=3.2.2"></script> -->
+
+    <!-- 统一弹窗管理器 - 必须在ui-utils之前加载 -->
+    <script src="js/modules/supplier/ui/modal-manager.js?v=4.1-ultimate-fix"></script>
+
+    <!-- UI工具层 - 依赖modal-manager -->
+    <script src="js/modules/supplier/ui/ui-utils.js?v=3.4.1-fix-saving-state"></script>
+
+    <!-- 供应商资料类型设置功能 -->
+    <link rel="stylesheet" href="css/modules/document-type-settings.css?v=1.2.7">
+    <script src="js/modules/supplier/services/document-type-config.js?v=1.0.0"></script>
+    <script src="js/modules/supplier/services/document-type-service.js?v=1.0.0"></script>
+    <script src="js/modules/supplier/ui/document-type-simple-ui.js?v=1.2.7"></script>
+
+    <script src="js/modules/supplier.js?v=3.2.8"></script>
+
+    <!-- 供应商资料管理初始化脚本 -->
+    <script>
+        // 页面加载完成后初始化供应商资料管理模块
+        document.addEventListener('DOMContentLoaded', () => {
+            // 检查认证状态
+            if (typeof checkAuthentication === 'function') {
+                checkAuthentication();
+            }
+        });
+
+        // 视图切换
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.view-btn')) {
+                document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                e.target.classList.add('active');
+
+                const view = e.target.dataset.view;
+                const container = document.getElementById('documentsContainer');
+                if (container) {
+                    container.className = `documents-container view-${view}`;
+                }
+            }
+        });
+
+        // 模态框外部点击关闭
+        document.addEventListener('click', (e) => {
+            if (e.target.matches('.modal')) {
+                e.target.style.display = 'none';
+            }
+        });
+
+        // 文件上传区域处理 - 延迟绑定确保supplierManager存在
+        function bindUploadEvents() {
+            const dropZone = document.getElementById('uploadDropZone');
+            const fileInput = document.getElementById('fileInput');
+
+            console.log('绑定上传事件，supplierManager存在:', !!window.supplierManager);
+
+            if (dropZone && fileInput) {
+                // 拖拽上传
+                ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    });
+                });
+
+                ['dragenter', 'dragover'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => {
+                        dropZone.classList.add('drag-over');
+                    });
+                });
+
+                ['dragleave', 'drop'].forEach(eventName => {
+                    dropZone.addEventListener(eventName, () => {
+                        dropZone.classList.remove('drag-over');
+                    });
+                });
+
+                dropZone.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const files = e.dataTransfer.files;
+                    console.log('拖拽文件数量:', files.length);
+
+                    // 设置到fileInput中
+                    if (fileInput) {
+                        fileInput.files = files;
+                        console.log('已设置到fileInput，文件数量:', fileInput.files.length);
+                    }
+
+                    if (files.length > 0 && window.supplierManager) {
+                        window.supplierManager.handleFileUpload(files);
+                    } else {
+                        console.log('supplierManager不存在或无文件');
+                    }
+                });
+
+                // 点击上传
+                dropZone.addEventListener('click', () => {
+                    console.log('点击上传区域');
+                    fileInput.click();
+                });
+
+                // 文件选择事件 - 确保只绑定一次
+                if (!fileInput.hasAttribute('data-listener')) {
+                    fileInput.addEventListener('change', (e) => {
+                        console.log('文件选择事件触发:', e.target.files.length);
+                        console.log('选择的文件:', Array.from(e.target.files).map(f => f.name));
+
+                        if (e.target.files.length > 0 && window.supplierManager) {
+                            window.supplierManager.handleFileUpload(e.target.files);
+                        } else {
+                            console.log('没有选择文件或supplierManager不存在');
+                        }
+                    });
+                    fileInput.setAttribute('data-listener', 'true');
+                    console.log('文件选择事件已绑定');
+                } else {
+                    console.log('文件选择事件已存在');
+                }
+            } else {
+                console.log('未找到上传区域元素');
+            }
+        }
+
+        // 防止重复绑定的标志
+        let uploadEventsBound = false;
+
+        function bindUploadEventsOnce() {
+            if (uploadEventsBound) {
+                console.log('上传事件已绑定，跳过重复绑定');
+                return;
+            }
+
+            console.log('开始绑定上传事件...');
+            bindUploadEvents();
+            uploadEventsBound = true;
+        }
+
+        // 绑定上传事件
+        if (window.supplierManager) {
+            bindUploadEventsOnce();
+        } else {
+            console.log('supplierManager未初始化，延迟绑定事件');
+            setTimeout(bindUploadEventsOnce, 1000);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(bindUploadEventsOnce, 500);
+        });
+    </script>
+
+    <!-- 主入口脚本 (必须最后加载) -->
+    <script src="js/app.js"></script>
+    <!-- 上传模态框 -->
+    <div id="uploadModal" class="supplier-modal supplier-modal--upload" style="display: none;">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 id="uploadModalTitle" class="supplier-modal__title">上传资料</h3>
+                <button class="supplier-modal__close upload-modal-close">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <form id="uploadForm">
+                    <!-- 供应商信息 -->
+                    <div class="supplier-form__group">
+                        <label class="supplier-form__label">供应商</label>
+                        <input type="text" id="uploadSupplierName" class="supplier-form__input supplier-form__input--readonly" readonly>
+                    </div>
+
+                    <!-- 物料信息 (仅物料资料上传时显示) -->
+                    <div class="form-group" id="materialGroup" style="display: none;">
+                        <label>物料</label>
+                        <input type="text" id="uploadMaterialName" readonly>
+                    </div>
+
+                    <!-- 检测类型 (仅物料资料上传时显示) -->
+                    <div class="form-group" id="detectionTypeGroup" style="display: none;">
+                        <label>🎯 检测类型</label>
+                        <div class="detection-type-options">
+                            <div class="detection-type-option">
+                                <label>
+                                    <input type="radio" name="detectionType" value="direct" checked>
+                                    <span>本体检测</span>
+                                </label>
+                                <small>检测对象是供应商交付的物料本身</small>
+                            </div>
+                            <div class="detection-type-option">
+                                <label>
+                                    <input type="radio" name="detectionType" value="referenced">
+                                    <span>引用检测</span>
+                                </label>
+                                <small>检测对象是上游材料/零件的检测报告</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 构成选择 (仅引用检测时显示) -->
+                    <div class="form-group" id="componentGroup" style="display: none;">
+                        <label>🧪 选择构成</label>
+                        <select id="componentSelect" class="component-select">
+                            <option value="">请选择构成</option>
+                        </select>
+                        <button type="button" id="openComponentManagementBtn" class="add-component-btn" style="margin-top: 8px;">
+                            ➕ 添加新构成
+                        </button>
+                    </div>
+
+                    <!-- 资料类型 -->
+                    <div class="form-group">
+                        <label>资料类型</label>
+                        <select id="documentType" required>
+                            <option value="">请选择</option>
+                            <option value="quality_agreement">质量保证协议</option>
+                            <option value="environmental_msds">MSDS</option>
+                            <option value="iso_certification">ISO认证</option>
+                            <option value="environmental_rohs">ROHS</option>
+                            <option value="environmental_reach">REACH</option>
+                            <option value="environmental_hf">HF</option>
+                            <option value="csr">CSR</option>
+                            <option value="other">其他</option>
+                        </select>
+                        <button type="button" id="openDocumentTypeSettingsBtn" class="add-document-type-btn" style="margin-top: 8px;">
+                            ⚙️ 资料类型设置
+                        </button>
+                    </div>
+
+                    <!-- 文件上传区域 -->
+                    <div class="form-group">
+                        <label>选择文件</label>
+                        <div class="upload-drop-zone" id="uploadDropZone">
+                            <div class="upload-icon">📁</div>
+                            <p>拖拽文件到此处或点击选择</p>
+                            <input type="file" id="fileInput" accept=".pdf,.xlsx,.xls,.doc,.docx"
+                                style="display: none;">
+                        </div>
+                        <div id="filePreview" class="file-preview" style="display: none;">
+                            <span class="file-name"></span>
+                            <button type="button" class="remove-file"
+                                onclick="supplierManager.removeSelectedFile()">&times;</button>
+                        </div>
+                    </div>
+
+                    <!-- 到期日期 -->
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="isPermanent" onchange="supplierManager.togglePermanentDate()">
+                            永久有效
+                        </label>
+                        <input type="date" id="expiryDate" class="expiry-date">
+                    </div>
+
+                    <!-- 备注 -->
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="documentRemark" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary upload-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary upload-submit-btn">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 编辑模态框 -->
+    <div id="editModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>编辑资料</h3>
+                <button class="modal-close edit-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="editForm">
+                    <!-- 资料名称 -->
+                    <div class="form-group">
+                        <label>资料名称</label>
+                        <input type="text" id="editDocumentName" required>
+                    </div>
+
+                    <!-- 到期日期 -->
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="editIsPermanent"
+                                onchange="supplierManager.toggleEditPermanentDate()">
+                            永久有效
+                        </label>
+                        <input type="date" id="editExpiryDate" class="expiry-date">
+                    </div>
+
+                    <!-- 备注 -->
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="editDocumentRemark" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary edit-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary edit-submit-btn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增物料模态框 -->
+    <div id="addMaterialModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>新增物料</h3>
+                <button class="modal-close add-material-modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addMaterialForm">
+                    <div class="form-group">
+                        <label>物料名称</label>
+                        <input type="text" id="newMaterialName" required placeholder="请输入物料名称">
+                    </div>
+                    <div class="form-group">
+                        <label>物料编码</label>
+                        <input type="text" id="newMaterialCode" placeholder="请输入物料编码（可选）">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea id="newMaterialRemark" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary add-material-cancel-btn">取消</button>
+                <button type="button" class="btn btn-primary add-material-submit-btn">添加</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 邮件预览模态框 -->
+    <div id="emailPreviewModal" class="supplier-modal supplier-modal--email-preview" style="display: none;">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 class="supplier-modal__title">邮件预览</h3>
+                <button class="supplier-modal__close supplier-modal__close--email">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <div class="supplier-modal__field">
+                    <label class="supplier-modal__label">邮件主题</label>
+                    <input type="text" id="emailSubject" class="supplier-modal__input" readonly>
+                </div>
+                <div class="supplier-modal__field">
+                    <label class="supplier-modal__label">邮件内容</label>
+                    <textarea id="emailContent" class="supplier-modal__textarea" rows="15" readonly></textarea>
+                </div>
+            </div>
+            <div class="supplier-modal__footer">
+                <button type="button" class="supplier-modal__btn supplier-modal__btn--secondary email-modal-cancel-btn">关闭</button>
+                <button type="button" class="supplier-modal__btn supplier-modal__btn--primary email-copy-btn">📋 复制到剪贴板</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 构成管理模态框 -->
+    <div id="componentManagementModal" class="supplier-modal supplier-modal--component-management" style="display: none;">
+        <div class="supplier-modal__content supplier-modal__content--component-management">
+            <div class="supplier-modal__header">
+                <h3 class="supplier-modal__title">🧪 构成管理</h3>
+                <button class="supplier-modal__close supplier-modal__close--component">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <!-- 构成信息输入区域 -->
+                <div class="supplier-modal__component-input">
+                    <h4>📝 构成信息</h4>
+                    <div class="supplier-modal__form-row">
+                        <div class="supplier-modal__form-group">
+                            <label>构成名称 <span class="supplier-modal__required">*</span></label>
+                            <input type="text" id="componentNameInput" placeholder="请输入构成名称" maxlength="50">
+                        </div>
+                        <div class="supplier-modal__form-group">
+                            <label>构成编码</label>
+                            <input type="text" id="componentCodeInput" placeholder="自动生成或手动输入" maxlength="20">
+                        </div>
+                    </div>
+                    <div class="supplier-modal__form-group">
+                        <label>构成描述</label>
+                        <textarea id="componentDescriptionInput" placeholder="可选，描述构成的具体信息" rows="3" maxlength="200"></textarea>
+                    </div>
+                    <div class="supplier-modal__form-group">
+                        <label>所属供应商</label>
+                        <input type="text" id="componentSupplierInput" readonly>
+                    </div>
+                </div>
+
+                <!-- 现有构成列表 -->
+                <div class="supplier-modal__component-list">
+                    <h4>📋 现有构成列表</h4>
+                    <div class="supplier-modal__list-container">
+                        <div class="supplier-modal__list-header">
+                            <span>构成名称</span>
+                            <span>构成编码</span>
+                            <span>创建时间</span>
+                            <span>操作</span>
+                        </div>
+                        <div id="componentList" class="supplier-modal__list-body">
+                            <!-- 构成列表将动态加载 -->
+                            <div class="supplier-modal__no-components">暂无构成，请添加新构成</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="supplier-modal__footer">
+                <button type="button" id="addComponentBtn" class="supplier-modal__btn supplier-modal__btn--primary">➕ 添加</button>
+                <button type="button" id="saveComponentBtn" class="supplier-modal__btn supplier-modal__btn--submit" style="display: none;">💾 保存</button>
+                <button type="button" class="supplier-modal__btn supplier-modal__btn--secondary supplier-modal__close--component">关闭</button>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,754 @@
+/* 🎨 供应商搜索筛选界面 UI 增强样式 v2.0 */
+/* 现代化玻璃态设计 + 微交互优化 */
+
+/* ==================== 整体布局优化 ==================== */
+.supplier-controls-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 24px;
+  animation: slideDown 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== 操作按钮区域 ==================== */
+.supplier-actions-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%);
+  border-radius: 16px;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  animation: fadeIn 0.6s ease 0.4s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-secondary {
+  background: linear-gradient(135deg,
+    rgba(107, 114, 128, 0.2) 0%,
+    rgba(75, 85, 99, 0.1) 100%);
+  color: #374151;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+  backdrop-filter: blur(6px);
+}
+
+.btn-secondary:hover {
+  background: linear-gradient(135deg,
+    rgba(107, 114, 128, 0.3) 0%,
+    rgba(75, 85, 99, 0.2) 100%);
+  border-color: rgba(107, 114, 128, 0.5);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(107, 114, 128, 0.2);
+}
+
+.btn-secondary:active {
+  transform: translateY(0);
+}
+
+.btn-icon {
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.btn:hover .btn-icon {
+  transform: scale(1.1);
+}
+
+.btn-text {
+  letter-spacing: 0.3px;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.action-status {
+  font-size: 14px;
+  color: rgba(31, 41, 55, 0.7);
+  font-weight: 500;
+  padding: 8px 14px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  backdrop-filter: blur(4px);
+}
+
+/* ==================== 卡片样式增强 ==================== */
+.search-card,
+.filter-card {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.08) 100%);
+  backdrop-filter: blur(16px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  box-shadow:
+    0 12px 40px rgba(0, 0, 0, 0.08),
+    0 4px 12px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  position: relative;
+}
+
+/* 添加动态光效 */
+.search-card::before,
+.filter-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.search-card:hover::before,
+.filter-card:hover::before {
+  left: 100%;
+}
+
+.search-card:hover,
+.filter-card:hover {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.2) 0%,
+    rgba(255, 255, 255, 0.12) 100%);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow:
+    0 20px 60px rgba(0, 0, 0, 0.12),
+    0 8px 24px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.4),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.15);
+}
+
+/* ==================== 卡片头部优化 ==================== */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+  position: relative;
+  backdrop-filter: blur(8px);
+  justify-content: space-between;
+}
+
+.card-header::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  right: 20px;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.3),
+    transparent);
+}
+
+.card-icon {
+  font-size: 18px;
+  opacity: 0.9;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.3px;
+  flex: 1;
+}
+
+/* ==================== 卡片徽章 ==================== */
+.card-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  background: linear-gradient(135deg,
+    rgba(59, 130, 246, 0.2) 0%,
+    rgba(37, 99, 235, 0.1) 100%);
+  border: 1px solid rgba(59, 130, 246, 0.3);
+  border-radius: 12px;
+  backdrop-filter: blur(4px);
+  animation: badgePulse 2s infinite;
+}
+
+@keyframes badgePulse {
+  0%, 100% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}
+
+.badge-dot {
+  width: 6px;
+  height: 6px;
+  background: #3b82f6;
+  border-radius: 50%;
+  box-shadow: 0 0 8px rgba(59, 130, 246, 0.6);
+  animation: dotPulse 1.5s infinite;
+}
+
+@keyframes dotPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.2);
+  }
+}
+
+.badge-text {
+  font-size: 11px;
+  font-weight: 600;
+  color: #3b82f6;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+  letter-spacing: 0.5px;
+}
+
+/* ==================== 卡片内容优化 ==================== */
+.card-content {
+  padding: 20px;
+}
+
+/* ==================== 搜索框增强 ==================== */
+.search-input-wrapper {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.search-input {
+  width: 100%;
+  padding: 14px 90px 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  font-size: 15px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(8px);
+  color: #1f2937;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  box-sizing: border-box;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.search-input::placeholder {
+  color: rgba(31, 41, 55, 0.5);
+  font-weight: 400;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.12) 100%);
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.15),
+    0 4px 20px rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+/* ==================== 搜索按钮增强 ==================== */
+.search-actions {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.clear-search-btn {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.08) 100%);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: rgba(31, 41, 55, 0.7);
+  cursor: pointer;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.clear-search-btn svg {
+  width: 14px;
+  height: 14px;
+  stroke-width: 2;
+  transition: all 0.3s ease;
+}
+
+.clear-search-btn:hover {
+  background: linear-gradient(135deg,
+    rgba(239, 68, 68, 0.15) 0%,
+    rgba(239, 68, 68, 0.08) 100%);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #ef4444;
+  transform: scale(1.15) rotate(90deg);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+
+.clear-search-btn:hover svg {
+  stroke-width: 2.5;
+}
+
+.search-submit-btn {
+  background: linear-gradient(135deg, #3b82f6 0%, #2563eb 50%, #1d4ed8 100%);
+  backdrop-filter: blur(6px);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  color: white;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+  padding: 0;
+  box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+}
+
+.search-submit-btn svg {
+  width: 15px;
+  height: 15px;
+  stroke-width: 2.5;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.2));
+}
+
+.search-submit-btn:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 50%, #1e40af 100%);
+  border-color: rgba(37, 99, 235, 0.6);
+  transform: scale(1.15);
+  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+}
+
+.search-submit-btn:hover svg {
+  stroke-width: 3;
+  transform: rotate(20deg) scale(1.1);
+}
+
+.search-submit-btn:active {
+  transform: scale(1.05);
+}
+
+/* ==================== 状态文本优化 ==================== */
+.search-status,
+.filter-info {
+  font-size: 13px;
+  color: rgba(31, 41, 55, 0.7);
+  padding: 10px 14px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.03) 100%);
+  border-radius: 10px;
+  border-left: 3px solid rgba(59, 130, 246, 0.4);
+  backdrop-filter: blur(6px);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.search-status strong,
+.filter-info strong {
+  color: #1f2937;
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+.search-status:hover,
+.filter-info:hover {
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.12) 0%,
+    rgba(255, 255, 255, 0.06) 100%);
+  border-left-color: rgba(59, 130, 246, 0.6);
+  transform: translateX(2px);
+}
+
+/* 添加微光效果 */
+.search-status::before,
+.filter-info::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(255, 255, 255, 0.1),
+    transparent);
+  transition: left 0.6s ease;
+}
+
+.search-status:hover::before,
+.filter-info:hover::before {
+  left: 100%;
+}
+
+/* ==================== 筛选下拉框增强 ==================== */
+.filter-select {
+  width: 100%;
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  font-size: 15px;
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(255, 255, 255, 0.05) 100%);
+  backdrop-filter: blur(8px);
+  color: #1f2937;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+  margin-bottom: 12px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+}
+
+.filter-select:focus {
+  outline: none;
+  border-color: rgba(59, 130, 246, 0.5);
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.18) 0%,
+    rgba(255, 255, 255, 0.12) 100%);
+  box-shadow:
+    0 0 0 4px rgba(59, 130, 246, 0.15),
+    0 4px 20px rgba(59, 130, 246, 0.2);
+  transform: translateY(-1px);
+}
+
+.filter-select:hover {
+  border-color: rgba(59, 130, 246, 0.4);
+  background: linear-gradient(135deg,
+    rgba(255, 255, 255, 0.15) 0%,
+    rgba(255, 255, 255, 0.08) 100%);
+}
+
+/* 美化下拉框选项 */
+.filter-select option {
+  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+  color: #1f2937;
+  padding: 10px;
+  font-weight: 500;
+}
+
+/* ==================== 响应式设计 ==================== */
+@media (max-width: 768px) {
+  .supplier-controls-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+    margin-bottom: 20px;
+  }
+
+  .supplier-actions-row {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 16px;
+  }
+
+  .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .action-status {
+    text-align: center;
+    width: 100%;
+  }
+
+  .search-card,
+  .filter-card {
+    border-radius: 16px;
+  }
+
+  .card-header {
+    padding: 14px 16px;
+  }
+
+  .card-content {
+    padding: 16px;
+  }
+
+  .search-input,
+  .filter-select {
+    padding: 12px 16px;
+    font-size: 14px;
+  }
+
+  .search-actions {
+    right: 8px;
+  }
+
+  .clear-search-btn,
+  .search-submit-btn {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .supplier-actions-row {
+    padding: 12px 14px;
+  }
+
+  .btn {
+    padding: 12px 16px;
+    font-size: 13px;
+  }
+
+  .action-status {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+
+  .search-actions {
+    gap: 4px;
+  }
+
+  .clear-search-btn {
+    width: 22px;
+    height: 22px;
+  }
+
+  .search-submit-btn {
+    width: 26px;
+    height: 26px;
+  }
+
+  .search-submit-btn svg {
+    width: 13px;
+    height: 13px;
+  }
+
+  .card-title {
+    font-size: 14px;
+  }
+
+  .badge-text {
+    font-size: 10px;
+  }
+}
+
+/* ==================== 暗色模式支持 ==================== */
+@media (prefers-color-scheme: dark) {
+  .card-title {
+    color: #f3f4f6;
+  }
+
+  .search-input,
+  .filter-select {
+    color: #f3f4f6;
+  }
+
+  .search-input::placeholder {
+    color: rgba(243, 244, 246, 0.5);
+  }
+
+  .search-status,
+  .filter-info {
+    color: rgba(243, 244, 246, 0.6);
+    border-left-color: rgba(59, 130, 246, 0.5);
+  }
+}
+
+/* ==================== 高对比度模式支持 ==================== */
+@media (prefers-contrast: high) {
+  .search-card,
+  .filter-card {
+    border-color: rgba(255, 255, 255, 0.5);
+  }
+
+  .search-input,
+  .filter-select {
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .search-input:focus,
+  .filter-select:focus {
+    border-color: rgba(59, 130, 246, 0.8);
+  }
+}
+
+/* ==================== 额外的微交互效果 ==================== */
+
+/* 输入框聚焦时的光晕效果 */
+.search-input:focus::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg,
+    rgba(59, 130, 246, 0.2),
+    rgba(147, 51, 234, 0.2),
+    rgba(59, 130, 246, 0.2));
+  border-radius: 18px;
+  z-index: -1;
+  animation: glowRotate 3s linear infinite;
+}
+
+@keyframes glowRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 下拉框选择时的动画效果 */
+.filter-select:focus {
+  animation: selectFocus 0.4s ease;
+}
+
+@keyframes selectFocus {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+/* 按钮点击涟漪效果 */
+.search-submit-btn::after,
+.clear-search-btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+}
+
+.search-submit-btn:active::after,
+.clear-search-btn:active::after {
+  width: 40px;
+  height: 40px;
+  opacity: 0;
+}
+
+/* 卡片内容加载动画 */
+.card-content {
+  animation: contentFadeIn 0.6s ease 0.2s both;
+}
+
+@keyframes contentFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==================== 减少动画模式支持 ==================== */
+@media (prefers-reduced-motion: reduce) {
+  .search-card,
+  .filter-card,
+  .search-input,
+  .filter-select,
+  .clear-search-btn,
+  .search-submit-btn,
+  .search-status,
+  .filter-info {
+    transition: none;
+  }
+
+  .search-card::before,
+  .filter-card::before,
+  .search-status::before,
+  .filter-info::before,
+  .search-input:focus::before {
+    display: none;
+  }
+
+  .card-icon {
+    animation: none;
+  }
+
+  .card-badge {
+    animation: none;
+  }
+
+  .badge-dot {
+    animation: none;
+  }
+
+  .filter-select:focus {
+    animation: none;
+  }
+
+  .card-content {
+    animation: none;
+  }
+}

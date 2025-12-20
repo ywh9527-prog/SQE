@@ -1,21 +1,26 @@
 /**
- * 供应商模块通用组件样式库 - Phase 4.2
+ * 供应商模块通用组件样式库 - Phase 2 修复版
  *
  * 设计原则：
  * 1. 组件化设计 - 可复用的UI组件
  * 2. BEM命名规范 - 清晰的类名结构
- * 3. 响应式适配 - 移动端友好
- * 4. 现代化视觉 - 玻璃态设计
+ * 3. 模块隔离 - 避免全局选择器冲突
+ * 4. 响应式适配 - 移动端友好
+ * 5. 现代化视觉 - 玻璃态设计
  *
  * 整合内容：
- * - 状态徽章组件 (来自 supplier-status-badges.css)
- * - 进度条组件 (来自 supplier-progress-bar.css)
- * - 按钮交互组件 (来自 supplier-interactions.css)
- * - 动画效果组件 (来自 supplier-animations.css)
+ * - 状态徽章组件 (来自 supplier-status-badges.css) ✅
+ * - 进度条组件 (来自 supplier-progress-bar.css) ✅
+ * - 动画效果组件 (内置) ✅
+ * - 按钮交互组件 → 已移动到 supplier-interactions.css ✅
+ *
+ * 修复记录：
+ * - Phase 2: 移除全局button选择器，解决007.md冲突问题
+ * - 职责重新划分：组件库专注基础组件，交互样式独立管理
  *
  * 创建时间: 2025-12-20
- * 整合: 浮浮酱 (猫娘工程师)
- * 版本: 1.0.0
+ * 修复: 浮浮酱 (猫娘工程师)
+ * 版本: 2.0.0 - Phase 2 修复版
  */
 
 /* ============================================
@@ -104,6 +109,15 @@
     transform: translateY(-50%);
 }
 
+/* 缺失状态 - 灰色虚线 */
+.supplier-component__status-badge--missing,
+.doc-status.missing,
+.status-badge.missing {
+    background: rgba(107, 114, 128, 0.05) !important;
+    color: #6b7280 !important;
+    border: 1px dashed rgba(107, 114, 128, 0.3) !important;
+}
+
 /* ============================================
    2. 进度条组件 (Progress Bar)
    ============================================ */
@@ -168,6 +182,177 @@
     margin-top: 4px;
 }
 
+/* ============================================
+   进度条扩展样式 (整合自 supplier-progress-bar.css)
+   ============================================ */
+
+/* 进度条行容器 */
+.supplier-component__progress__bar-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 30px;
+    width: 100%;
+}
+
+/* 信息行 */
+.supplier-component__progress__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 堆叠进度条容器 */
+.supplier-component__progress__bar-container {
+    position: relative;
+    height: 24px;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.05);
+    backdrop-filter: blur(5px);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+    min-height: 24px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* 堆叠柱状图段 */
+.supplier-component__progress__stack-segment {
+    position: absolute;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: 0;
+    top: 0;
+    min-width: 2px;
+    z-index: 1;
+    border: none !important;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.supplier-component__progress__stack-segment:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.supplier-component__progress__stack-segment:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.supplier-component__progress__stack-segment:first-child:last-child {
+    border-radius: 12px;
+}
+
+.supplier-component__progress__stack-segment:hover {
+    transform: translateY(-2px) scaleY(1.1);
+    filter: brightness(1.2) saturate(1.2);
+    z-index: 10;
+}
+
+/* 空状态显示 */
+.supplier-component__progress__bar-empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 10px;
+    font-style: italic;
+}
+
+/* 状态统计区域 */
+.supplier-component__progress__status-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.supplier-component__progress__status-section--full {
+    flex: 1;
+    width: 100%;
+    justify-content: center;
+}
+
+.supplier-component__progress__status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 12px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.supplier-component__progress__status-item:hover {
+    transform: scale(1.05);
+}
+
+.supplier-component__progress__status-icon {
+    font-size: 10px;
+    line-height: 1;
+}
+
+.supplier-component__progress__status-count {
+    font-weight: 600;
+}
+
+/* 小状态图标样式 */
+.supplier-component__progress__mini-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 4px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+}
+
+.supplier-component__progress__mini-status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 状态修饰符 */
+.supplier-component__progress__status-item--normal {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.supplier-component__progress__status-item--warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.supplier-component__progress__status-item--urgent {
+    background: #fed7aa;
+    color: #9a3412;
+    border: 1px solid #fdba74;
+}
+
+.supplier-component__progress__status-item--expired {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+/* 进度条状态修饰符 */
+.supplier-component__progress-fill--excellent {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+}
+
+.supplier-component__progress-fill--good {
+    background: linear-gradient(90deg, #84cc16 0%, #65a30d 100%);
+}
+
 /* 不同状态的进度条颜色 */
 .supplier-component__progress-fill--normal {
     background: linear-gradient(90deg, #10b981 0%, #059669 100%);
@@ -186,101 +371,36 @@
 }
 
 /* ============================================
-   3. 按钮交互组件 (Button)
+   3. 基础组件按钮 (Component Buttons - BEM Only)
    ============================================ */
 
-/* 基础按钮重置与增强 */
-.supplier-component__btn,
-button {
-    cursor: pointer;
-    font-family: inherit;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
-    border: none;
-    outline: none;
-}
+/* 注意：按钮交互样式已移动到 supplier-interactions.css
+    此处仅保留组件专用的按钮样式，不使用全局选择器 */
 
-/* 按钮点击时的缩放效果 */
-.supplier-component__btn:active,
-button:active {
-    transform: scale(0.96) !important;
-}
+/* ============================================
+   4. 详情部分标题样式
+   ============================================ */
 
-/* 主要操作按钮 */
-.supplier-component__btn--primary,
-.upload-btn,
-.batch-email-btn,
-.add-material-btn {
-    background: linear-gradient(145deg,
-            var(--primary-500) 0%,
-            var(--primary-600) 50%,
-            var(--primary-700) 100%);
-    color: white;
-    padding: 0.7rem 1.4rem;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-/* 主要按钮悬停效果 */
-.supplier-component__btn--primary:hover,
-.upload-btn:hover,
-.batch-email-btn:hover,
-.add-material-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(59, 130, 246, 0.4);
-}
-
-/* 次要按钮 */
-.supplier-component__btn--secondary {
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    padding: 0.7rem 1.4rem;
-    border-radius: 12px;
-    font-weight: 600;
-    font-size: 0.875rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
-}
-
-/* 次要按钮悬停效果 */
-.supplier-component__btn--secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.3);
-    transform: translateY(-1px);
-}
-
-/* 小尺寸按钮 */
-.supplier-component__btn--small {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-    border-radius: 8px;
-}
-
-/* 图标按钮 */
-.supplier-component__btn--icon,
-.icon-btn {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
+/* 为不同类型的标题添加特定颜色装饰 */
+.section-header h4 {
     display: flex;
     align-items: center;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(8px);
+    gap: 0.5rem;
 }
 
-.supplier-component__btn--icon:hover,
-.icon-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
-    transform: scale(1.05);
+.section-header h4::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--primary-500);
+    margin-right: 4px;
 }
+
+/* ============================================
+   5. 组件专用样式 (仅保留BEM规范的组件样式)
+   ============================================ */
 
 /* ============================================
    4. 动画效果组件 (Animations)
@@ -380,14 +500,6 @@ button:active {
         font-size: 0.7rem !important;
     }
 
-    .supplier-component__btn--primary,
-    .upload-btn,
-    .batch-email-btn,
-    .add-material-btn {
-        padding: 0.6rem 1.2rem;
-        font-size: 0.8rem;
-    }
-
     .supplier-component__progress {
         padding: 6px 10px;
         min-height: 50px;
@@ -396,14 +508,6 @@ button:active {
 
 /* 超小屏幕适配 */
 @media (max-width: 480px) {
-    .supplier-component__btn--primary,
-    .upload-btn,
-    .batch-email-btn,
-    .add-material-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.75rem;
-    }
-
     .supplier-component__status-badge,
     .doc-status,
     .status-badge {
