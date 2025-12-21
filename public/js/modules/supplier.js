@@ -315,19 +315,19 @@ class SupplierDocumentManager {
       }
 
       // 编辑模态框关闭按钮
-      if (e.target.closest('.edit-modal-close')) {
+      if (e.target.closest('.supplier-modal__close--edit')) {
         this.hideEditModal();
         return;
       }
 
       // 编辑模态框取消按钮
-      if (e.target.closest('.edit-cancel-btn')) {
+      if (e.target.closest('.supplier-modal__cancel--edit')) {
         this.hideEditModal();
         return;
       }
 
       // 编辑模态框提交按钮
-      if (e.target.closest('.edit-submit-btn')) {
+      if (e.target.closest('.supplier-modal__submit--edit')) {
         await this.submitEdit();
         return;
       }

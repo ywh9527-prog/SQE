@@ -1,0 +1,447 @@
+/**
+ * 供应商模块布局样式 v1.0
+ * Phase 5: 建立supplier-layout.css，整合布局相关样式
+ * 整合内容：
+ * - supplier-table.css（表格视图样式）
+ * - supplier-tree.css（树形视图样式）
+ * - supplier-cards-enhanced.css（卡片布局样式）
+ *
+ * 创建时间：2025年12月21日 02:35
+ * 策划者：浮浮酱（猫娘工程师）
+ * 风险等级：🟡中等（涉及页面布局，可能影响显示）
+ */
+
+/* ==================== CSS变量定义 ==================== */
+:root {
+    /* 状态颜色 - 统一定义 */
+    --color-normal: #10b981;
+    --color-warning: #f59e0b;
+    --color-urgent: #ef4444;
+    --color-expired: #991b1b;
+
+    /* 背景颜色 */
+    --bg-normal: #f0fdf4;
+    --bg-warning: #fffbeb;
+    --bg-urgent: #fef2f2;
+    --bg-card: #ffffff;
+
+    /* 边框颜色 */
+    --border-normal: #86efac;
+    --border-warning: #fcd34d;
+    --border-urgent: #fca5a5;
+    --border-default: #e5e7eb;
+
+    /* 文字颜色 */
+    --text-primary: #111827;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
+
+    /* 间距 */
+    --spacing-xs: 0.25rem;
+    --spacing-sm: 0.5rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+
+    /* 圆角 */
+    --radius-sm: 0.25rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+    --radius-xl: 1rem;
+
+    /* 阴影 */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== 成功按钮样式 ==================== */
+.btn-success {
+    background-color: var(--color-normal);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-success:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* ==================== 表格布局 ==================== */
+/* 来自supplier-table.css */
+
+/* 表格容器 */
+.supplier-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+/* 基础表格样式 */
+.supplier-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+/* 表格头部 */
+.supplier-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.supplier-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-weight: 600;
+    border: none;
+    white-space: nowrap;
+}
+
+/* 表格主体 */
+.supplier-table tbody tr {
+    border-bottom: 1px solid var(--border-default);
+    transition: background-color 0.2s ease;
+}
+
+.supplier-table tbody tr:hover {
+    background-color: #f8fafc;
+}
+
+.supplier-table tbody td {
+    padding: 12px 16px;
+    vertical-align: middle;
+    border: none;
+}
+
+/* 表格行状态 */
+.supplier-table tbody tr.status-normal {
+    background-color: var(--bg-normal);
+}
+
+.supplier-table tbody tr.status-warning {
+    background-color: var(--bg-warning);
+}
+
+.supplier-table tbody tr.status-urgent {
+    background-color: var(--bg-urgent);
+}
+
+/* ==================== 树形布局 ==================== */
+/* 来自supplier-tree.css */
+
+/* 树形容器 */
+.supplier-tree {
+    width: 100%;
+    padding: var(--spacing-md);
+    background: var(--bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+/* 树形节点 */
+.supplier-tree-node {
+    margin-bottom: var(--spacing-md);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.supplier-tree-node:hover {
+    box-shadow: var(--shadow-md);
+}
+
+/* 树形节点头部 */
+.supplier-tree-node-header {
+    padding: var(--spacing-md);
+    background: #f8fafc;
+    border-bottom: 1px solid var(--border-default);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: pointer;
+}
+
+.supplier-tree-node-header:hover {
+    background: #f1f5f9;
+}
+
+/* 树形节点内容 */
+.supplier-tree-node-content {
+    padding: var(--spacing-md);
+    display: none;
+}
+
+.supplier-tree-node.expanded .supplier-tree-node-content {
+    display: block;
+}
+
+/* 树形节点状态指示器 */
+.supplier-tree-node-status {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: var(--spacing-sm);
+}
+
+.supplier-tree-node-status.normal {
+    background-color: var(--color-normal);
+}
+
+.supplier-tree-node-status.warning {
+    background-color: var(--color-warning);
+}
+
+.supplier-tree-node-status.urgent {
+    background-color: var(--color-urgent);
+}
+
+.supplier-tree-node-status.expired {
+    background-color: var(--color-expired);
+}
+
+/* ==================== 卡片布局 ==================== */
+/* 来自supplier-cards-enhanced.css */
+
+/* 供应商卡片容器 */
+.supplier-cards-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+    padding: var(--spacing-md);
+}
+
+/* 基础卡片样式 */
+.supplier-card {
+    background: var(--bg-card);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    border: 1px solid var(--border-default);
+}
+
+.supplier-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* 卡片头部 */
+.supplier-card-header {
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    border-bottom: 1px solid var(--border-default);
+}
+
+.supplier-card-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.supplier-card-subtitle {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin: 4px 0 0 0;
+}
+
+/* 卡片内容 */
+.supplier-card-body {
+    padding: var(--spacing-lg);
+}
+
+/* 卡片统计信息 */
+.supplier-card-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: var(--spacing-md);
+}
+
+.supplier-card-stat {
+    text-align: center;
+}
+
+.supplier-card-stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+}
+
+.supplier-card-stat-label {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* 卡片状态指示器 */
+.supplier-card-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: var(--radius-xl);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.supplier-card-status.normal {
+    background-color: var(--bg-normal);
+    color: var(--color-normal);
+    border: 1px solid var(--border-normal);
+}
+
+.supplier-card-status.warning {
+    background-color: var(--bg-warning);
+    color: #d97706;
+    border: 1px solid var(--border-warning);
+}
+
+.supplier-card-status.urgent {
+    background-color: var(--bg-urgent);
+    color: var(--color-urgent);
+    border: 1px solid var(--border-urgent);
+}
+
+.supplier-card-status.expired {
+    background-color: #f3f4f6;
+    color: var(--color-expired);
+    border: 1px solid #d1d5db;
+}
+
+/* 卡片操作按钮 */
+.supplier-card-actions {
+    padding: var(--spacing-md) var(--spacing-lg);
+    background: #f8fafc;
+    border-top: 1px solid var(--border-default);
+    display: flex;
+    gap: var(--spacing-sm);
+    justify-content: flex-end;
+}
+
+.supplier-card-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.supplier-card-btn.primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.supplier-card-btn.primary:hover {
+    background-color: #2563eb;
+}
+
+.supplier-card-btn.secondary {
+    background-color: #f3f4f6;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-default);
+}
+
+.supplier-card-btn.secondary:hover {
+    background-color: #e5e7eb;
+}
+
+/* ==================== 响应式布局 ==================== */
+
+/* 平板适配 */
+@media (max-width: 768px) {
+    .supplier-cards-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+        padding: var(--spacing-sm);
+    }
+
+    .supplier-table-container {
+        border-radius: var(--radius-md);
+    }
+
+    .supplier-table thead th,
+    .supplier-table tbody td {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .supplier-tree {
+        padding: var(--spacing-sm);
+    }
+
+    .supplier-card-header,
+    .supplier-card-body,
+    .supplier-card-actions {
+        padding: var(--spacing-md);
+    }
+}
+
+/* 手机适配 */
+@media (max-width: 480px) {
+    .supplier-cards-container {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-sm);
+        padding: var(--spacing-xs);
+    }
+
+    .supplier-table {
+        font-size: 12px;
+    }
+
+    .supplier-table thead th,
+    .supplier-table tbody td {
+        padding: 6px 8px;
+    }
+
+    .supplier-card-stats {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .supplier-card-actions {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+
+    .supplier-card-btn {
+        width: 100%;
+        padding: 8px 12px;
+    }
+}
+
+/* ==================== 打印样式 ==================== */
+@media print {
+    .supplier-card {
+        break-inside: avoid;
+        box-shadow: none;
+        border: 1px solid #ccc;
+    }
+
+    .supplier-table {
+        font-size: 12px;
+    }
+
+    .supplier-card-actions {
+        display: none;
+    }
+}

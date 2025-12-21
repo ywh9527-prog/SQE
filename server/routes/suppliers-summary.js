@@ -142,6 +142,15 @@ const authenticateToken = (req, res, next) => {
 /**
  * GET /api/suppliers/summary
  * 获取供应商资料汇总 (用于表格预览)
+ *
+ * 🔧 修复说明 (2025-12-21):
+ * 由于SQL查询涉及多表JOIN (suppliers -> materials -> material_components)，
+ * 当供应商有多个物料、每个物料有多个构成时，会产生笛卡尔积导致文档重复统计。
+ *
+ * 解决方案：为每个文档生成唯一键，使用Set集合去重
+ * - 供应商级文档: supplier_${document_id}
+ * - 构成级文档: component_${document_id}_${component_id}
+ * - 物料级文档: material_${document_id}_${material_id}
  */
 router.get('/summary', authenticateToken, async (req, res) => {
     try {
@@ -154,6 +163,7 @@ router.get('/summary', authenticateToken, async (req, res) => {
         }
 
         // 查询供应商及其资料
+        // 注意：此查询可能产生重复数据行，需要在后续处理中去重
         const [results] = await sequelize.query(`
             SELECT 
                 s.id as supplier_id,
@@ -183,13 +193,13 @@ router.get('/summary', authenticateToken, async (req, res) => {
             ORDER BY s.id, m.id, mc.id, sd.document_type
         `);
 
-        // 按供应商分组
+        // 按供应商分组，处理JOIN查询可能产生的重复数据
         const supplierMap = {};
 
         results.forEach(row => {
             const supplierId = row.supplier_id;
 
-            // 初始化供应商
+            // 初始化供应商数据结构
             if (!supplierMap[supplierId]) {
                 supplierMap[supplierId] = {
                     supplierId: supplierId,
@@ -200,7 +210,8 @@ router.get('/summary', authenticateToken, async (req, res) => {
                     materialIds: new Set(),
                     commonDocuments: {},
                     materialDocumentsRaw: [], // 临时存储，用于后续统计
-                    allDocumentsRaw: [] // 🎯 [DATA-FLOW] 新增：收集所有文档用于动态统计
+                    allDocumentsRaw: [], // 🎯 [DATA-FLOW] 新增：收集所有文档用于动态统计
+                    processedDocuments: new Set() // 🎯 [FIX] 去重集合：记录已处理的文档，避免重复统计
                 };
             }
 
@@ -212,8 +223,16 @@ router.get('/summary', authenticateToken, async (req, res) => {
                 supplier.materialCount++;
             }
 
-            // 处理通用资料
+            // 处理供应商级通用资料 (level = 'supplier')
             if (row.document_level === 'supplier' && row.document_id) {
+                // 🎯 [FIX] 去重检查：生成唯一键避免重复统计同一文档
+                // 格式：supplier_${document_id}
+                const docKey = `supplier_${row.document_id}`;
+                if (supplier.processedDocuments.has(docKey)) {
+                    return; // 跳过重复文档，避免因JOIN导致的重复统计
+                }
+                supplier.processedDocuments.add(docKey);
+
                 const docType = row.document_type;
 
                 // 🎯 [DATA-FLOW] 使用统一的文档状态计算服务
@@ -238,8 +257,17 @@ router.get('/summary', authenticateToken, async (req, res) => {
                 });
             }
 
-            // 收集检测报告 (构成级)
+            // 收集构成级检测报告 (level = 'component')
             if (row.document_level === 'component' && row.document_id) {
+                // 🎯 [FIX] 去重检查：生成唯一键避免重复统计同一构成文档
+                // 格式：component_${document_id}_${component_id}
+                // 注意：同一文档可能关联多个构成，需要component_id来区分
+                const docKey = `component_${row.document_id}_${row.component_id}`;
+                if (supplier.processedDocuments.has(docKey)) {
+                    return; // 跳过重复文档，避免因JOIN导致的重复统计
+                }
+                supplier.processedDocuments.add(docKey);
+
                 // 🎯 [DATA-FLOW] 使用统一的文档状态计算服务
                 const { status } = DocumentStatsService.calculateDocumentStatus(
                     row.expiry_date,
@@ -259,8 +287,17 @@ router.get('/summary', authenticateToken, async (req, res) => {
                 });
             }
 
-            // 🎯 [DATA-FLOW] 新增：收集物料级文档 (material层)
+            // 🎯 [DATA-FLOW] 收集物料级文档 (level = 'material')
             if (row.document_level === 'material' && row.document_id) {
+                // 🎯 [FIX] 去重检查：生成唯一键避免重复统计同一物料文档
+                // 格式：material_${document_id}_${material_id}
+                // 注意：同一文档可能关联多个物料，需要material_id来区分
+                const docKey = `material_${row.document_id}_${row.material_id}`;
+                if (supplier.processedDocuments.has(docKey)) {
+                    return; // 跳过重复文档，避免因JOIN导致的重复统计
+                }
+                supplier.processedDocuments.add(docKey);
+
                 // 🎯 [DATA-FLOW] 使用统一的文档状态计算服务
                 const { status } = DocumentStatsService.calculateDocumentStatus(
                     row.expiry_date,
@@ -303,9 +340,10 @@ router.get('/summary', authenticateToken, async (req, res) => {
             // 保留原有的数据结构（确保展开功能不受影响）
             supplier.materialDocuments = materialDocumentStats;
 
-            // 删除临时字段
-            delete supplier.materialDocumentsRaw;
-            delete supplier.allDocumentsRaw;
+            // 清理临时字段，只保留前端需要的数据
+            delete supplier.materialDocumentsRaw;      // 原始文档数据临时存储
+            delete supplier.allDocumentsRaw;          // 所有文档临时存储
+            delete supplier.processedDocuments;       // 🎯 [FIX] 去重集合，清理临时数据
 
             return supplier;
         });
