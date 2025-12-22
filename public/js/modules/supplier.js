@@ -333,19 +333,19 @@ class SupplierDocumentManager {
       }
 
       // 新增物料模态框关闭按钮
-      if (e.target.closest('.add-material-modal-close')) {
+      if (e.target.closest('.supplier-modal__close--add-material')) {
         window.supplierUIUtils.hideAddMaterialModal();
         return;
       }
 
       // 新增物料模态框取消按钮
-      if (e.target.closest('.add-material-cancel-btn')) {
+      if (e.target.closest('.supplier-modal__cancel--add-material')) {
         window.supplierUIUtils.hideAddMaterialModal();
         return;
       }
 
       // 新增物料模态框提交按钮
-      if (e.target.closest('.add-material-submit-btn')) {
+      if (e.target.closest('.supplier-modal__submit--add-material')) {
         await this.submitAddMaterial();
         return;
       }

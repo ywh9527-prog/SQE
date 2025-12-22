@@ -21,29 +21,7 @@
    1. 表格视图样式 (来自 supplier-table.css)
    ============================================ */
 
-/* 成功按钮样式 */
-.btn-success {
-    background-color: #10b981;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background-color 0.2s ease;
-}
-
-.btn-success:hover {
-    background-color: #059669;
-}
-
-.btn-success:disabled {
-    background-color: #9ca3af;
-    cursor: not-allowed;
-}
+/* 按钮样式已迁移到 supplier-interactions.css 和 supplier-core.css */
 
 /* ==================== 容器 ==================== */
 .supplier-table-container {
@@ -58,7 +36,6 @@
 .supplier-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
 }
 
 .supplier-table thead {
@@ -108,13 +85,11 @@
 }
 
 .doc-date {
-    font-size: 13px;
     color: #4b5563;
     font-weight: 500;
 }
 
 .doc-status {
-    font-size: 12px;
     padding: 2px 8px;
     border-radius: 12px;
     display: inline-block;
@@ -171,7 +146,6 @@
     border: none;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 13px;
     font-weight: 500;
     transition: all 0.2s;
 }
@@ -327,7 +301,6 @@
 
 .material-actions .btn {
     padding: 4px 8px;
-    font-size: 12px;
     border-radius: 4px;
     border: 1px solid #d1d5db;
     background: #fff;
@@ -387,7 +360,6 @@
 }
 
 .no-materials-hint .hint-text {
-    font-size: 14px;
 }
 
 /* ==================== 资料列表 ==================== */
@@ -481,7 +453,6 @@
 }
 
 .doc-type {
-    font-size: 11px;
     color: #6b7280;
     background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
     padding: 4px 10px;
@@ -497,14 +468,12 @@
 
 .doc-name {
     flex: 1;
-    font-size: 14px;
     color: #1f2937;
     font-weight: 500;
     line-height: 1.4;
 }
 
 .doc-expiry {
-    font-size: 12px;
     color: #6b7280;
     white-space: nowrap;
     background: rgba(0, 0, 0, 0.02);
@@ -514,7 +483,6 @@
 }
 
 .doc-days {
-    font-size: 11px;
     color: #059669;
     margin-left: 6px;
     font-weight: 600;
@@ -597,7 +565,6 @@
     color: #1e293b;
     padding: 16px 20px;
     border-radius: 12px;
-    font-size: 14px;
     font-weight: 500;
     min-width: 380px;
     max-width: 420px;
@@ -1514,7 +1481,6 @@
 /* 表格响应式 */
 @media (max-width: 1024px) {
     .supplier-table {
-        font-size: 13px;
     }
 
     .supplier-table thead th,
@@ -1541,7 +1507,6 @@
     }
 
     .supplier-table {
-        font-size: 12px;
     }
 
     .supplier-table thead th,
@@ -1551,7 +1516,6 @@
 
     .toggle-details-btn {
         padding: 4px 12px;
-        font-size: 12px;
     }
 
     .details-container {
@@ -1706,29 +1670,9 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-/* ==================== 成功按钮样式 ==================== */
-.btn-success {
-    background-color: var(--color-normal);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    transition: background-color 0.2s ease;
-}
-
-.btn-success:hover {
-    background-color: #059669;
-}
-
-.btn-success:disabled {
-    background-color: #9ca3af;
-    cursor: not-allowed;
-}
+/* ==================== 成功按钮样式已迁移 ==================== */
+/* .btn-success 样式已迁移到 supplier-interactions.css 和 supplier-core.css */
+/* 现在统一使用 btn-primary 主题色按钮 */
 
 /* ==================== 表格布局 ==================== */
 /* 来自supplier-table.css */
@@ -1746,7 +1690,6 @@
 .supplier-table {
     width: 100%;
     border-collapse: collapse;
-    font-size: 14px;
 }
 
 /* 表格头部 */
@@ -1907,7 +1850,6 @@
 }
 
 .supplier-card-subtitle {
-    font-size: 14px;
     color: var(--text-secondary);
     margin: 4px 0 0 0;
 }
@@ -1935,7 +1877,6 @@
 }
 
 .supplier-card-stat-label {
-    font-size: 12px;
     color: var(--text-muted);
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1947,7 +1888,6 @@
     align-items: center;
     padding: 4px 12px;
     border-radius: var(--radius-xl);
-    font-size: 12px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.5px;
@@ -1991,7 +1931,6 @@
     padding: 6px 12px;
     border: none;
     border-radius: var(--radius-sm);
-    font-size: 12px;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -2033,7 +1972,6 @@
     .supplier-table thead th,
     .supplier-table tbody td {
         padding: 8px 12px;
-        font-size: 13px;
     }
 
     .supplier-tree {
@@ -2056,7 +1994,6 @@
     }
 
     .supplier-table {
-        font-size: 12px;
     }
 
     .supplier-table thead th,
@@ -2089,7 +2026,6 @@
     }
 
     .supplier-table {
-        font-size: 12px;
     }
 
     .supplier-card-actions {
