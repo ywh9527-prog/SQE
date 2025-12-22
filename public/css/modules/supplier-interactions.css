@@ -303,9 +303,20 @@
 }
 
 .upload-btn:hover,
-.batch-email-btn:hover,
 .add-material-btn:hover {
     transform: translateY(-3px) scale(1.02);
+    box-shadow:
+        0 12px 25px rgba(157, 122, 84, 0.25),
+        0 6px 12px rgba(157, 122, 84, 0.15);
+}
+
+/* 修复批量邮件按钮hover效果 - 与其他按钮保持一致 */
+.batch-email-btn:hover {
+    transform: translateY(-3px) scale(1.02);
+    background: linear-gradient(145deg,
+            var(--primary-600) 0%,  /* 变为更深的蓝色，类似#2563eb */
+            var(--primary-700) 50%,
+            var(--primary-800) 100%);
     box-shadow:
         0 12px 25px rgba(157, 122, 84, 0.25),
         0 6px 12px rgba(157, 122, 84, 0.15);
@@ -404,9 +415,15 @@
 
 /* 特定图标按钮颜色 */
 .email-btn:hover {
-    color: var(--primary-600);
-    background: var(--primary-50);
-    border-color: var(--primary-200);
+    /* 与batch-email-btn保持一致的深蓝色变化 */
+    background: linear-gradient(145deg,
+            var(--primary-600) 0%,
+            var(--primary-700) 50%,
+            var(--primary-800) 100%);
+    color: white;
+    border-color: var(--primary-700);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
 }
 
 .edit-btn:hover {
@@ -794,4 +811,229 @@
 .btn-success:disabled {
     background-color: #9ca3af;
     cursor: not-allowed;
+}
+
+/* ============================================
+   从 supplier-layout.css 移动的按钮样式
+   ============================================ */
+
+/* 展开按钮样式 (来自 layout 第142-160行) */
+.toggle-details-btn {
+    padding: 6px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.toggle-details-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.toggle-details-btn:active {
+    transform: translateY(0);
+}
+
+/* 物料操作按钮样式 (来自 layout 第302-328行) */
+.material-actions .delete-material-btn {
+    /* 覆盖.action-btn的圆形样式，保持现代化按钮外观 */
+    width: auto !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    /* 确保使用 supplier-interactions.css 中的现代化样式 */
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+}
+
+.material-actions .delete-material-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3) !important;
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%) !important;
+}
+
+/* ============================================
+   12. 从 supplier-layout.css 移动的按钮样式
+   ============================================ */
+
+/* 分组切换按钮样式 (来自 layout 第662-673行) */
+.supplier-tree__group-header .group-toggle-btn {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: transform 0.2s ease;
+}
+
+.supplier-tree__group-header .group-toggle-btn:hover {
+  color: var(--text-primary);
+}
+
+/* 供应商切换按钮样式 (来自 layout 第724-737行) */
+.supplier-tree__header .supplier-toggle {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+}
+
+.supplier-tree__header .supplier-toggle:hover {
+  color: var(--text-primary);
+  background: #f3f4f6;
+  border-radius: var(--radius-sm);
+}
+
+/* 物料切换按钮样式 (来自 layout 第853-859行) */
+.material-item__header .material-toggle {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+/* 组件切换按钮样式 (来自 layout 第913-919行) */
+.component-item__header .component-toggle {
+  background: none;
+  border: none;
+  padding: var(--spacing-xs);
+  cursor: pointer;
+  color: var(--text-secondary);
+}
+
+/* 通用按钮样式 (来自 layout 第1010-1055行) */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn--sm {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  font-size: 0.75rem;
+}
+
+.btn--primary {
+  background: #3b82f6;
+  color: #ffffff;
+}
+
+.btn--primary:hover {
+  background: #2563eb;
+  box-shadow: var(--shadow-sm);
+}
+
+.btn--secondary {
+  background: #f3f4f6;
+  color: var(--text-primary);
+}
+
+.btn--secondary:hover {
+  background: #e5e7eb;
+}
+
+.quick-upload-btn {
+  background: #10b981;
+  color: #ffffff;
+}
+
+.quick-upload-btn:hover {
+  background: #059669;
+}
+
+/* 展开按钮增强样式 (来自 layout 第1276-1315行) */
+.toggle-details-btn {
+    background: linear-gradient(135deg,
+            var(--primary-500) 0%,
+            var(--primary-600) 100%) !important;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 12px;
+    font-weight: 600;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 按钮光晕效果 */
+.toggle-details-btn::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width 0.6s, height 0.6s;
+}
+
+.toggle-details-btn:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.toggle-details-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 20px rgba(157, 122, 84, 0.3) !important;
+}
+
+.toggle-details-btn:active {
+    transform: translateY(0) !important;
+}
+
+/* 卡片按钮样式 (来自 layout 第1764-1790行) */
+.supplier-card-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.supplier-card-btn.primary {
+    background-color: #3b82f6;
+    color: white;
+}
+
+.supplier-card-btn.primary:hover {
+    background-color: #2563eb;
+}
+
+.supplier-card-btn.secondary {
+    background-color: #f3f4f6;
+    color: var(--text-secondary);
+    border: 1px solid var(--border-default);
+}
+
+.supplier-card-btn.secondary:hover {
+    background-color: #e5e7eb;
 }
