@@ -1,0 +1,668 @@
+/**
+ * 供应商资料管理 - 表格视图样式 v3.1
+ */
+
+/* 成功按钮样式 */
+.btn-success {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.2s ease;
+}
+
+.btn-success:hover {
+    background-color: #059669;
+}
+
+.btn-success:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+/* ==================== 容器 ==================== */
+.supplier-table-container {
+    width: 100%;
+    overflow-x: auto;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ==================== 表格 ==================== */
+.supplier-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.supplier-table thead {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+}
+
+.supplier-table thead th {
+    padding: 16px 12px;
+    text-align: center;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.supplier-table tbody tr {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background-color 0.2s;
+}
+
+.supplier-table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.supplier-table tbody tr.expanded {
+    background-color: #f3f4f6;
+}
+
+.supplier-table tbody td {
+    padding: 12px;
+    vertical-align: middle;
+}
+
+/* ==================== 供应商名称 ==================== */
+.supplier-table tbody td.supplier-name {
+    font-weight: 600;
+    color: #1f2937;
+    min-width: 150px;
+    text-align: center !important;
+}
+
+/* ==================== 资料单元格 ==================== */
+.doc-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 100px;
+}
+
+.doc-date {
+    font-size: 13px;
+    color: #4b5563;
+    font-weight: 500;
+}
+
+.doc-status {
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    display: inline-block;
+    font-weight: 500;
+}
+
+/* 状态颜色 */
+.doc-status.normal,
+.doc-cell.normal {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.doc-status.warning,
+.doc-cell.warning {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+.doc-status.urgent,
+.doc-cell.urgent {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+.doc-status.expired,
+.doc-cell.expired {
+    background-color: #fecaca;
+    color: #7f1d1d;
+}
+
+.doc-cell.missing {
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* ==================== 物料数量 ==================== */
+.supplier-table tbody td.material-count {
+    color: #6b7280;
+    font-weight: 500;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* ==================== 操作按钮 ==================== */
+.supplier-table tbody td.toggle-cell {
+    text-align: center !important;
+}
+
+.toggle-details-btn {
+    padding: 6px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.toggle-details-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.toggle-details-btn:active {
+    transform: translateY(0);
+}
+
+/* ==================== 详情行 ==================== */
+.details-row {
+    background-color: #f9fafb;
+}
+
+.details-row td {
+    padding: 0 !important;
+}
+
+.details-container {
+    padding: 32px;
+    animation: slideDown 0.3s ease-out;
+    position: relative;
+    z-index: 1;
+    background: linear-gradient(135deg, #fafbfc 0%, #f8fafd 100%);
+    border-radius: 16px;
+    margin: 16px 0;
+    box-shadow:
+        0 4px 6px rgba(0, 0, 0, 0.07),
+        0 1px 3px rgba(0, 0, 0, 0.06);
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ==================== 详情区块 ==================== */
+.details-section {
+    margin-bottom: 32px;
+    background: linear-gradient(145deg, #ffffff 0%, #fdfdfd 100%);
+    border-radius: 12px;
+    padding: 20px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.03),
+        0 1px 2px rgba(0, 0, 0, 0.04);
+}
+
+.details-section:last-child {
+    margin-bottom: 0;
+}
+
+.details-section h4 {
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    position: relative;
+}
+
+.details-section h4::after {
+    content: '';
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    width: 60px;
+    height: 2px;
+    background: linear-gradient(90deg, #3b82f6 0%, #8b5cf6 100%);
+    border-radius: 1px;
+}
+
+/* ==================== 物料区域样式 ==================== */
+.materials-container {
+    padding-left: 0;
+}
+
+.material-section {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(145deg, #fefefe 0%, #f8fafc 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.04),
+        0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.material-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.material-section:hover {
+    transform: translateY(-2px);
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.12),
+        0 4px 10px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.08);
+}
+
+.material-section:hover::before {
+    opacity: 1;
+}
+
+.material-section:last-child {
+    margin-bottom: 0;
+}
+
+.material-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.material-header h5 {
+    font-weight: 600;
+    color: #374151;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.material-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.material-actions .btn {
+    padding: 4px 8px;
+    font-size: 12px;
+    border-radius: 4px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #6b7280;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.material-actions .btn:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+    color: #374151;
+}
+
+/* ==================== 物料操作按钮样式修复 ==================== */
+/* 确保删除物料按钮使用现代化样式 - 避免.action-btn圆形样式冲突 */
+.material-actions .delete-material-btn {
+    /* 覆盖.action-btn的圆形样式，保持现代化按钮外观 */
+    width: auto !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    /* 确保使用 supplier-interactions.css 中的现代化样式 */
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%) !important;
+    color: white !important;
+    border: none !important;
+    padding: 0.6rem 1.2rem !important;
+    border-radius: 10px !important;
+    font-weight: 600 !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2) !important;
+    transition: all 0.3s ease !important;
+    position: relative !important;
+    overflow: hidden !important;
+    cursor: pointer !important;
+}
+
+.material-actions .delete-material-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3) !important;
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%) !important;
+}
+
+/* 无物料提示样式 */
+.no-materials-hint {
+    text-align: center;
+    padding: 32px;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+.no-materials-hint .hint-icon {
+    font-size: 24px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.no-materials-hint .hint-text {
+    font-size: 14px;
+}
+
+/* ==================== 资料列表 ==================== */
+.document-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 16px;
+}
+
+.document-item {
+    display: flex;
+    align-items: center;
+    gap: 24px;
+    padding: 18px 24px;
+    background: linear-gradient(145deg, #ffffff 0%, #fafbfc 100%);
+    border-radius: 12px;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.04),
+        0 1px 2px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.document-item::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, var(--status-color) 0%, var(--status-color-light) 100%);
+    border-radius: 4px 0 0 4px;
+    opacity: 0.8;
+}
+
+.document-item:hover {
+    transform: translateY(-2px) translateX(4px);
+    box-shadow:
+        0 8px 25px rgba(0, 0, 0, 0.12),
+        0 4px 10px rgba(0, 0, 0, 0.08);
+    border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* 状态颜色变量 */
+.document-item.normal {
+    --status-color: #22c55e;
+    --status-color-light: #86efac;
+}
+
+.document-item.warning {
+    --status-color: #f59e0b;
+    --status-color-light: #fcd34d;
+}
+
+.document-item.urgent {
+    --status-color: #f97316;
+    --status-color-light: #fdba74;
+}
+
+.document-item.expired {
+    --status-color: #ef4444;
+    --status-color-light: #fca5a5;
+}
+
+/* 统一的状态图标样式 - 复制通用资料的好看样式 */
+.details-container .doc-icon,
+.document-item .doc-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+    margin-right: 8px;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 悬停时的动画效果 */
+.document-item:hover .doc-icon {
+    transform: scale(1.2) rotate(10deg) !important;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
+}
+
+.doc-type {
+    font-size: 11px;
+    color: #6b7280;
+    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 4px 10px;
+    border-radius: 8px;
+    min-width: 70px;
+    text-align: center;
+    flex-shrink: 0;
+    font-weight: 500;
+    letter-spacing: 0.025em;
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+.doc-name {
+    flex: 1;
+    font-size: 14px;
+    color: #1f2937;
+    font-weight: 500;
+    line-height: 1.4;
+}
+
+.doc-expiry {
+    font-size: 12px;
+    color: #6b7280;
+    white-space: nowrap;
+    background: rgba(0, 0, 0, 0.02);
+    padding: 4px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.doc-days {
+    font-size: 11px;
+    color: #059669;
+    margin-left: 6px;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-style: normal;
+}
+
+.no-documents {
+    color: #9ca3af;
+    font-style: italic;
+    padding: 12px;
+    text-align: center;
+}
+
+/* ==================== 加载状态 ==================== */
+.details-loading {
+    text-align: center;
+    padding: 24px;
+    color: #6b7280;
+    font-style: italic;
+}
+
+/* ==================== 响应式 ==================== */
+@media (max-width: 1024px) {
+    .supplier-table {
+        font-size: 13px;
+    }
+
+    .supplier-table thead th,
+    .supplier-table tbody td {
+        padding: 10px 8px;
+    }
+
+    .doc-cell {
+        min-width: 80px;
+    }
+}
+
+@media (max-width: 768px) {
+    .supplier-table-container {
+        border-radius: 0;
+    }
+
+    .supplier-table {
+        font-size: 12px;
+    }
+
+    .supplier-table thead th,
+    .supplier-table tbody td {
+        padding: 8px 6px;
+    }
+
+    .toggle-details-btn {
+        padding: 4px 12px;
+        font-size: 12px;
+    }
+
+    .details-container {
+        padding: 16px;
+    }
+
+    .document-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+    }
+
+    .doc-type {
+        min-width: auto;
+    }
+}
+
+/* ==================== 提示图标样式 ==================== */
+.section-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+    color: white;
+    border-radius: 50%;
+    margin-left: 4px;
+    cursor: help;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    flex-shrink: 0;
+    padding: 2px;
+}
+
+.section-tooltip svg {
+    width: 12px;
+    height: 12px;
+    stroke-width: 2;
+}
+
+/* 确保父容器允许tooltip溢出显示 */
+.section-header {
+    overflow: visible !important;
+    position: relative;
+    z-index: 10;
+}
+
+.details-section {
+    overflow: visible !important;
+    position: relative;
+    z-index: 5;
+}
+
+.section-tooltip:hover {
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    transform: translateY(-1px) scale(1.1);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.section-tooltip:hover svg {
+    transform: scale(1.1);
+    transition: transform 0.3s ease;
+}
+
+/* 现代化tooltip显示效果 */
+.section-tooltip[data-tooltip]:hover::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: calc(100% + 8px);
+    left: calc(100% + 8px);
+    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+    color: #1e293b;
+    padding: 16px 20px;
+    border-radius: 12px;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 380px;
+    max-width: 420px;
+    white-space: pre-line;
+    line-height: 1.6;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+    z-index: 99999;
+    border: 1px solid rgba(148, 163, 184, 0.2);
+    text-align: left;
+    animation: tooltipFadeIn 0.3s ease-out;
+}
+
+/* 添加淡入动画 */
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 添加小箭头指向图标 */
+.section-tooltip[data-tooltip]:hover::before {
+    content: '';
+    position: absolute;
+    top: calc(100% + 2px);
+    left: calc(100% - 4px);
+    width: 0;
+    height: 0;
+    border-top: 6px solid transparent;
+    border-right: 6px solid #f8fafc;
+    z-index: 100000;
+    transform: rotate(45deg);
+}

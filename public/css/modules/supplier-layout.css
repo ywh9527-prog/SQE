@@ -52,12 +52,8 @@
 
 .supplier-table tbody tr {
     border-bottom: 1px solid #e5e7eb;
-    transition: background-color 0.2s;
 }
 
-.supplier-table tbody tr:hover {
-    background-color: #f9fafb;
-}
 
 .supplier-table tbody tr.expanded {
     background-color: #f3f4f6;
@@ -139,25 +135,7 @@
     text-align: center !important;
 }
 
-.toggle-details-btn {
-    padding: 6px 16px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-}
-
-.toggle-details-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.toggle-details-btn:active {
-    transform: translateY(0);
-}
+/* toggle-details-btn 样式已移动到 supplier-interactions.css */
 
 /* ==================== 详情行 ==================== */
 .details-row {
@@ -181,17 +159,6 @@
         0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
 /* ==================== 详情区块 ==================== */
 .details-section {
@@ -260,17 +227,6 @@
     transition: opacity 0.3s ease;
 }
 
-.material-section:hover {
-    transform: translateY(-2px);
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.12),
-        0 4px 10px rgba(0, 0, 0, 0.08);
-    border-color: rgba(0, 0, 0, 0.08);
-}
-
-.material-section:hover::before {
-    opacity: 1;
-}
 
 .material-section:last-child {
     margin-bottom: 0;
@@ -309,41 +265,8 @@
     transition: all 0.2s ease;
 }
 
-.material-actions .btn:hover {
-    background: #f9fafb;
-    border-color: #9ca3af;
-    color: #374151;
-}
 
-/* ==================== 物料操作按钮样式修复 ==================== */
-/* 确保删除物料按钮使用现代化样式 - 避免.action-btn圆形样式冲突 */
-.material-actions .delete-material-btn {
-    /* 覆盖.action-btn的圆形样式，保持现代化按钮外观 */
-    width: auto !important;
-    height: auto !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-    /* 确保使用 supplier-interactions.css 中的现代化样式 */
-    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%) !important;
-    color: white !important;
-    border: none !important;
-    padding: 0.6rem 1.2rem !important;
-    border-radius: 10px !important;
-    font-weight: 600 !important;
-    font-size: 0.9rem !important;
-    box-shadow: 0 4px 6px rgba(239, 68, 68, 0.2) !important;
-    transition: all 0.3s ease !important;
-    position: relative !important;
-    overflow: hidden !important;
-    cursor: pointer !important;
-}
-
-.material-actions .delete-material-btn:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 15px rgba(157, 122, 84, 0.3) !important;
-    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%) !important;
-}
+/* 物料操作按钮样式已移动到 supplier-interactions.css */
 
 /* 无物料提示样式 */
 .no-materials-hint {
@@ -399,13 +322,6 @@
     opacity: 0.8;
 }
 
-.document-item:hover {
-    transform: translateY(-2px) translateX(4px);
-    box-shadow:
-        0 8px 25px rgba(0, 0, 0, 0.12),
-        0 4px 10px rgba(0, 0, 0, 0.08);
-    border-color: rgba(0, 0, 0, 0.1);
-}
 
 /* 状态颜色变量 */
 .document-item.normal {
@@ -446,11 +362,6 @@
     transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* 悬停时的动画效果 */
-.document-item:hover .doc-icon {
-    transform: scale(1.2) rotate(10deg) !important;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1) !important;
-}
 
 .doc-type {
     color: #6b7280;
@@ -544,16 +455,6 @@
     z-index: 5;
 }
 
-.section-tooltip:hover {
-    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
-    transform: translateY(-1px) scale(1.1);
-    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
-}
-
-.section-tooltip:hover svg {
-    transform: scale(1.1);
-    transition: transform 0.3s ease;
-}
 
 /* 现代化tooltip显示效果 */
 .section-tooltip[data-tooltip]:hover::after {
@@ -577,17 +478,6 @@
     animation: tooltipFadeIn 0.3s ease-out;
 }
 
-/* 添加淡入动画 */
-@keyframes tooltipFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-5px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
 
 /* 添加小箭头指向图标 */
 .section-tooltip[data-tooltip]:hover::before {
@@ -692,9 +582,6 @@
   transition: background 0.2s ease;
 }
 
-.supplier-tree__group-header:hover {
-  background: linear-gradient(to right, #f3f4f6, #f9fafb);
-}
 
 .supplier-tree__group-header .group-title {
   font-size: 1.125rem;
@@ -705,18 +592,7 @@
   gap: var(--spacing-sm);
 }
 
-.supplier-tree__group-header .group-toggle-btn {
-  background: none;
-  border: none;
-  padding: var(--spacing-xs);
-  cursor: pointer;
-  color: var(--text-secondary);
-  transition: transform 0.2s ease;
-}
-
-.supplier-tree__group-header .group-toggle-btn:hover {
-  color: var(--text-primary);
-}
+/* group-toggle-btn 样式已移动到 supplier-interactions.css (第662-673行) */
 
 /* 分组主体 */
 .supplier-tree__group-body {
@@ -743,10 +619,6 @@
   transition: all 0.2s ease;
 }
 
-.supplier-tree__card:hover {
-  box-shadow: var(--shadow-md);
-  transform: translateY(-2px);
-}
 
 .supplier-tree__card--urgent {
   border-left: 3px solid var(--color-urgent);
@@ -778,20 +650,7 @@
   flex: 1;
 }
 
-.supplier-tree__header .supplier-toggle {
-  background: none;
-  border: none;
-  padding: var(--spacing-xs);
-  cursor: pointer;
-  color: var(--text-secondary);
-  transition: all 0.2s ease;
-}
-
-.supplier-tree__header .supplier-toggle:hover {
-  color: var(--text-primary);
-  background: #f3f4f6;
-  border-radius: var(--radius-sm);
-}
+/* supplier-toggle 样式已移动到 supplier-interactions.css (第724-737行) */
 
 .supplier-tree__header .supplier-icon {
   font-size: 1.5rem;
@@ -916,17 +775,8 @@
   transition: background 0.2s ease;
 }
 
-.material-item__header:hover {
-  background: #f3f4f6;
-}
 
-.material-item__header .material-toggle {
-  background: none;
-  border: none;
-  padding: var(--spacing-xs);
-  cursor: pointer;
-  color: var(--text-secondary);
-}
+/* material-toggle 样式已移动到 supplier-interactions.css (第853-859行) */
 
 .material-item__header .material-icon {
   font-size: 1.25rem;
@@ -982,17 +832,8 @@
   transition: background 0.2s ease;
 }
 
-.component-item__header:hover {
-  background: #f5f5f5;
-}
 
-.component-item__header .component-toggle {
-  background: none;
-  border: none;
-  padding: var(--spacing-xs);
-  cursor: pointer;
-  color: var(--text-secondary);
-}
+/* component-toggle 样式已移动到 supplier-interactions.css (第913-919行) */
 
 .component-item__header .component-icon {
   font-size: 1rem;
@@ -1036,10 +877,6 @@
   transition: all 0.2s ease;
 }
 
-.document-item:hover {
-  background: #f9fafb;
-  border-color: var(--border-default);
-}
 
 .document-item--normal {
   border-left: 2px solid var(--color-normal);
@@ -1089,52 +926,7 @@
 }
 
 /* ==================== 按钮样式 ==================== */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: none;
-  border-radius: var(--radius-sm);
-  font-size: 0.875rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-decoration: none;
-}
-
-.btn--sm {
-  padding: var(--spacing-xs) var(--spacing-sm);
-  font-size: 0.75rem;
-}
-
-.btn--primary {
-  background: #3b82f6;
-  color: #ffffff;
-}
-
-.btn--primary:hover {
-  background: #2563eb;
-  box-shadow: var(--shadow-sm);
-}
-
-.btn--secondary {
-  background: #f3f4f6;
-  color: var(--text-primary);
-}
-
-.btn--secondary:hover {
-  background: #e5e7eb;
-}
-
-.quick-upload-btn {
-  background: #10b981;
-  color: #ffffff;
-}
-
-.quick-upload-btn:hover {
-  background: #059669;
-}
+/* .btn 通用按钮样式已移动到 supplier-interactions.css (第1010-1055行) */
 
 /* ==================== 空状态 ==================== */
 .no-materials,
@@ -1145,17 +937,7 @@
   font-size: 0.875rem;
 }
 
-/* ==================== 动画 ==================== */
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* ==================== 动画 (已移动到 supplier-interactions.css) ==================== */
 
 .supplier-tree__card,
 .material-item,
@@ -1333,19 +1115,7 @@
    ============================================ */
 
 .details-row {
-    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+    animation: slideDown-enhanced 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 详情内容渐变背景 */
@@ -1400,46 +1170,7 @@
    6. 展开按钮增强
    ============================================ */
 
-.toggle-details-btn {
-    background: linear-gradient(135deg,
-            var(--primary-500) 0%,
-            var(--primary-600) 100%) !important;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 12px;
-    font-weight: 600;
-    position: relative;
-    overflow: hidden;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* 按钮光晕效果 */
-.toggle-details-btn::before {
-    content: '';
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 0;
-    height: 0;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.3);
-    transform: translate(-50%, -50%);
-    transition: width 0.6s, height 0.6s;
-}
-
-.toggle-details-btn:hover::before {
-    width: 300px;
-    height: 300px;
-}
-
-.toggle-details-btn:hover {
-    transform: translateY(-2px) !important;
-    box-shadow: 0 8px 20px rgba(157, 122, 84, 0.3) !important;
-}
-
-.toggle-details-btn:active {
-    transform: translateY(0) !important;
-}
+/* toggle-details-btn 增强样式已移动到 supplier-interactions.css (第1276-1315行) */
 
 /* ============================================
    7. 表格头部优化 - 毛玻璃效果
@@ -1604,22 +1335,7 @@
    5. 动画效果 (合并所有动画)
    ============================================ */
 
-@keyframes slideDown {
-    from {
-        opacity: 0;
-        transform: translateY(-10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
 
-.supplier-tree__card,
-.material-item,
-.component-item {
-    animation: slideDown 0.3s ease;
-}
 
 /* ============================================
    7. 减少动画支持
@@ -1927,33 +1643,7 @@
     justify-content: flex-end;
 }
 
-.supplier-card-btn {
-    padding: 6px 12px;
-    border: none;
-    border-radius: var(--radius-sm);
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.supplier-card-btn.primary {
-    background-color: #3b82f6;
-    color: white;
-}
-
-.supplier-card-btn.primary:hover {
-    background-color: #2563eb;
-}
-
-.supplier-card-btn.secondary {
-    background-color: #f3f4f6;
-    color: var(--text-secondary);
-    border: 1px solid var(--border-default);
-}
-
-.supplier-card-btn.secondary:hover {
-    background-color: #e5e7eb;
-}
+/* supplier-card-btn 样式已移动到 supplier-interactions.css (第1764-1790行) */
 
 /* ==================== 响应式布局 ==================== */
 
