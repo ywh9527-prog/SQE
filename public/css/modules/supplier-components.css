@@ -515,3 +515,102 @@
         font-size: 0.65rem !important;
     }
 }
+
+/* ==================== 堆叠进度条样式 (从supplier-progress-bar.css整合) ==================== */
+
+/* 堆叠柱状图段 - 玻璃态风格 */
+.supplier-progress__stack-segment {
+    position: absolute;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: 0;
+    top: 0;
+    min-width: 2px; /* 稍微增加最小宽度 */
+    z-index: 1;
+    /* 玻璃态效果 */
+    border: none !important;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box !important;
+    /* 内发光效果 */
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.supplier-progress__stack-segment:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.supplier-progress__stack-segment:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+/* 如果只有一个段，让它成为完整的胶囊 */
+.supplier-progress__stack-segment:first-child:last-child {
+    border-radius: 12px;
+}
+
+.supplier-progress__stack-segment:hover {
+    transform: translateY(-2px) scaleY(1.1);
+    filter: brightness(1.2) saturate(1.2);
+    z-index: 10;
+}
+
+/* 空状态显示 */
+.supplier-progress__bar-empty {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #9ca3af;
+    font-size: 10px;
+    font-style: italic;
+}
+
+.supplier-progress__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.supplier-progress__bar-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    animation: progress-shine 2s infinite;
+}
+
+@keyframes progress-shine {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+.supplier-progress__bar-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    text-align: left;
+    white-space: nowrap; /* 防止换行 */
+}
+
+/* ==================== 状态统计区域 (从supplier-progress-bar.css整合) ==================== */
+.supplier-progress__status-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
