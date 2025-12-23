@@ -29,9 +29,7 @@
     <link rel="stylesheet" href="css/modules/supplier-interactions.css">
     <!-- 统一BEM模态框样式 (Phase 4.1: 已整合supplier-modal.css和supplier-modal-enhanced.css) -->
     <link rel="stylesheet" href="css/modules/supplier-modals.css?v=4.12-fix-file-preview">
-    <!-- 模态框修复样式 -->
-    <link rel="stylesheet" href="css/modal-fix.css?v=1.7">
-    <!-- 供应商字体层级统一管理样式 v1.0 -->
+        <!-- 供应商字体层级统一管理样式 v1.0 -->
     <link rel="stylesheet" href="css/modules/supplier-font-hierarchy.css?v=1.0">
     <!-- 供应商通用组件样式库 - Phase 4.2 -->
     <link rel="stylesheet" href="css/modules/supplier-components.css?v=1.0-phase4-2">
@@ -712,18 +710,18 @@
                     <!-- 检测类型 (仅物料资料上传时显示) -->
                     <div class="form-group" id="detectionTypeGroup" style="display: none;">
                         <label>🎯 检测类型</label>
-                        <div class="detection-type-options">
-                            <div class="detection-type-option">
-                                <label>
-                                    <input type="radio" name="detectionType" value="direct" checked>
-                                    <span>本体检测</span>
+                        <div class="supplier-detection-type__options">
+                            <div class="supplier-detection-type__option">
+                                <input type="radio" name="detectionType" value="direct" checked class="supplier-detection-type__radio">
+                                <label class="supplier-detection-type__label">
+                                    本体检测
                                 </label>
                                 <small>检测对象是供应商交付的物料本身</small>
                             </div>
-                            <div class="detection-type-option">
-                                <label>
-                                    <input type="radio" name="detectionType" value="referenced">
-                                    <span>引用检测</span>
+                            <div class="supplier-detection-type__option">
+                                <input type="radio" name="detectionType" value="referenced" class="supplier-detection-type__radio">
+                                <label class="supplier-detection-type__label">
+                                    引用检测
                                 </label>
                                 <small>检测对象是上游材料/零件的检测报告</small>
                             </div>
@@ -897,7 +895,7 @@
         <div class="supplier-modal__content supplier-modal__content--component-management">
             <div class="supplier-modal__header">
                 <h3 class="supplier-modal__title">🧪 构成管理</h3>
-                <button class="supplier-modal__close supplier-modal__close--component">&times;</button>
+                <button class="supplier-modal__close supplier-modal__close--component component-modal-close-btn">&times;</button>
             </div>
             <div class="supplier-modal__body">
                 <!-- 构成信息输入区域 -->
@@ -905,21 +903,21 @@
                     <h4>📝 构成信息</h4>
                     <div class="supplier-modal__form-row">
                         <div class="supplier-modal__form-group">
-                            <label>构成名称 <span class="supplier-modal__required">*</span></label>
-                            <input type="text" id="componentNameInput" placeholder="请输入构成名称" maxlength="50">
+                            <label class="supplier-modal__label">构成名称 <span class="supplier-modal__required">*</span></label>
+                            <input type="text" class="supplier-modal__input" id="componentNameInput" placeholder="请输入构成名称" maxlength="50">
                         </div>
                         <div class="supplier-modal__form-group">
-                            <label>构成编码</label>
-                            <input type="text" id="componentCodeInput" placeholder="自动生成或手动输入" maxlength="20">
+                            <label class="supplier-modal__label">构成编码</label>
+                            <input type="text" class="supplier-modal__input" id="componentCodeInput" placeholder="自动生成或手动输入" maxlength="20">
                         </div>
                     </div>
                     <div class="supplier-modal__form-group">
-                        <label>构成描述</label>
-                        <textarea id="componentDescriptionInput" placeholder="可选，描述构成的具体信息" rows="3" maxlength="200"></textarea>
+                        <label class="supplier-modal__label">构成描述</label>
+                        <textarea class="supplier-modal__textarea" id="componentDescriptionInput" placeholder="可选，描述构成的具体信息" rows="3" maxlength="200"></textarea>
                     </div>
                     <div class="supplier-modal__form-group">
-                        <label>所属供应商</label>
-                        <input type="text" id="componentSupplierInput" readonly>
+                        <label class="supplier-modal__label">所属供应商</label>
+                        <input type="text" class="supplier-modal__input supplier-modal__input--readonly" id="componentSupplierInput" readonly>
                     </div>
                 </div>
 
@@ -943,7 +941,7 @@
             <div class="supplier-modal__footer">
                 <button type="button" id="addComponentBtn" class="supplier-modal__btn supplier-modal__btn--primary">➕ 添加</button>
                 <button type="button" id="saveComponentBtn" class="supplier-modal__btn supplier-modal__btn--submit" style="display: none;">💾 保存</button>
-                <button type="button" class="supplier-modal__btn supplier-modal__btn--secondary supplier-modal__close--component">关闭</button>
+                <button type="button" class="supplier-modal__btn supplier-modal__btn--secondary supplier-modal__close--component component-modal-close-btn">关闭</button>
             </div>
         </div>
     </div>

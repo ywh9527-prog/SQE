@@ -1851,7 +1851,7 @@ ${certType}：
     const fileName = filePreview.querySelector('.file-name');
     if (fileName) {
       fileName.textContent = file.name;
-      filePreview.style.display = 'flex';
+      filePreview.classList.add('show');
       console.log('✅ 文件预览已显示');
     }
   }
@@ -1862,7 +1862,8 @@ ${certType}：
   removeSelectedFile() {
     // 清空UI工具层的selectedFile
     window.supplierUIUtils.selectedFile = null;
-    document.getElementById('filePreview').style.display = 'none';
+    const filePreview = document.getElementById('filePreview');
+    filePreview.classList.remove('show');
     document.getElementById('fileInput').value = '';
   }
 

@@ -38,10 +38,10 @@
 }
 
 .modal-content {
-  background: linear-gradient(135deg, #faf8f6 0%, #f5f2ed 100%);
-  border-radius: 12px;
+  background: #ffffff;
+  border-radius: 20px;
   box-shadow:
-    0 0 0 1px rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(0, 0, 0, 0.2),
     0 4px 6px rgba(0, 0, 0, 0.1),
     0 10px 15px rgba(0, 0, 0, 0.1),
     0 20px 25px rgba(0, 0, 0, 0.1),
@@ -56,6 +56,8 @@
   transform: scale(0.9) translateY(-20px);
   opacity: 0;
   transition: transform 0.3s ease, opacity 0.3s ease;
+  animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  position: relative;
 }
 
 .modal-overlay.show .modal-content {
@@ -70,14 +72,16 @@
 
 /* ==================== 模态框头部 ==================== */
 .modal-header {
-  padding: 20px 24px;
-  border-bottom: none;
+  padding: 24px 32px;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
-  color: white;
-  border-radius: 12px 12px 0 0;
+  background: #ffffff;
+  color: var(--primary-700);
+  border-radius: 20px 20px 0 0;
+  position: relative;
+  margin: -1px -1px 0 -1px;
 }
 
 .modal-header h3 {
@@ -490,4 +494,16 @@
 .document-type-settings-btn:focus {
   outline: none;
   box-shadow: 0 0 0 3px rgba(107, 114, 128, 0.2);
+}
+
+/* ==================== 统一的模态框动画 ==================== */
+@keyframes slideUpScale {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }

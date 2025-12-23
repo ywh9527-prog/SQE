@@ -222,6 +222,31 @@
     transform: translateY(-1px) !important;
 }
 
+/* ==================== 构成选择样式 ==================== */
+.component-select {
+    width: 100% !important;
+    padding: 8px 12px !important;
+    border: 1px solid #ddd !important;
+    border-radius: 4px !important;
+    font-size: 16px !important;
+    margin-bottom: 8px !important;
+}
+
+.add-component-btn {
+    background: #28a745 !important;
+    color: white !important;
+    border: none !important;
+    padding: 8px 16px !important;
+    border-radius: 4px !important;
+    cursor: pointer !important;
+    font-size: 16px !important;
+    transition: background 0.2s ease !important;
+}
+
+.add-component-btn:hover {
+    background: #218838 !important;
+}
+
 /* ==================== 模态框底部 ==================== */
 .supplier-modal__footer {
     padding: 1.5rem 2rem !important;
@@ -425,12 +450,11 @@
    来源: modal-fix.css
    ============================================ */
 
-/* 构成管理模态框修饰符 */
+/* 构成管理模态框修饰符 - 统一为邮件预览风格 */
 .supplier-modal--component-management .supplier-modal__content {
-    width: 900px !important;
-    max-width: 95vw !important;
-    height: 80vh !important;
-    max-height: 800px !important;
+    max-width: 600px !important;
+    width: 90% !important;
+    max-height: 85vh !important;
     display: flex !important;
     flex-direction: column !important;
 }
@@ -470,6 +494,71 @@
 
 .supplier-modal__form-row .supplier-modal__form-group {
     flex: 1 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+/* 构成管理模态框表单样式增强 - 使用最高优先级 */
+.supplier-modal--component-management .supplier-modal__form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.supplier-modal--component-management .supplier-modal__form-group .supplier-modal__label,
+.supplier-modal--component-management .supplier-modal__label {
+    display: block !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.supplier-modal--component-management .supplier-modal__form-group .supplier-modal__input,
+.supplier-modal--component-management .supplier-modal__form-group .supplier-modal__textarea,
+.supplier-modal--component-management .supplier-modal__input,
+.supplier-modal--component-management .supplier-modal__textarea {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    font-family: inherit !important;
+    box-sizing: border-box !important;
+}
+
+.supplier-modal--component-management .supplier-modal__form-group .supplier-modal__input:focus,
+.supplier-modal--component-management .supplier-modal__form-group .supplier-modal__textarea:focus,
+.supplier-modal--component-management .supplier-modal__input:focus,
+.supplier-modal--component-management .supplier-modal__textarea:focus {
+    outline: none !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+/* 构成管理模态框 - textarea特殊样式 */
+.supplier-modal--component-management .supplier-modal__textarea {
+    resize: vertical !important;
+    min-height: 80px !important;
+    line-height: 1.5 !important;
+}
+
+/* 构成管理模态框 - placeholder样式 */
+.supplier-modal--component-management .supplier-modal__input::placeholder,
+.supplier-modal--component-management .supplier-modal__textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+/* 构成管理模态框 - readonly样式 */
+.supplier-modal--component-management .supplier-modal__input--readonly {
+    background: #f9fafb !important;
+    color: #6b7280 !important;
+    cursor: not-allowed !important;
 }
 
 /* 构成列表区域 */
@@ -615,6 +704,55 @@
     }
 }
 
+/* ==================== 统一的表单样式 ==================== */
+.supplier-modal__form-group {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 0.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+
+.supplier-modal__label {
+    display: block !important;
+    font-size: 0.875rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 0.5rem !important;
+}
+
+.supplier-modal__input,
+.supplier-modal__textarea,
+.supplier-modal__select {
+    width: 100% !important;
+    padding: 0.75rem 1rem !important;
+    border: 2px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    font-size: 0.95rem !important;
+    transition: all 0.3s ease !important;
+    background: white !important;
+    font-family: inherit !important;
+    box-sizing: border-box !important;
+}
+
+.supplier-modal__input:focus,
+.supplier-modal__textarea:focus,
+.supplier-modal__select:focus {
+    outline: none !important;
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+}
+
+.supplier-modal__input::placeholder,
+.supplier-modal__textarea::placeholder {
+    color: #9ca3af !important;
+}
+
+.supplier-modal__textarea {
+    resize: vertical !important;
+    min-height: 80px !important;
+    line-height: 1.5 !important;
+}
+
 /* ============================================
    🎯 [CSS-MIGRATION] addMaterialModal专用样式
    迁移日期: 2025-12-20
@@ -634,81 +772,7 @@
     gap: 1.5rem !important;
 }
 
-/* 新增物料表单组 */
-.supplier-modal__form-group {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.5rem !important;
-}
-
-/* 表单输入框 */
-.supplier-modal__input,
-.supplier-modal__textarea {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 10px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s ease !important;
-    background: white !important;
-    font-family: inherit !important;
-}
-
-.supplier-modal__input:focus,
-.supplier-modal__textarea:focus {
-    outline: none !important;
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
-}
-
-.supplier-modal__input::placeholder,
-.supplier-modal__textarea::placeholder {
-    color: #9ca3af !important;
-}
-
-/* 文本域特殊样式 */
-.supplier-modal__textarea {
-    resize: vertical !important;
-    min-height: 80px !important;
-    line-height: 1.5 !important;
-}
-
-/* 邮件预览表单字段 */
-.supplier-modal__field {
-    margin-bottom: 1.5rem !important;
-}
-
-.supplier-modal__label {
-    display: block !important;
-    font-size: 0.875rem !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
-    margin-bottom: 0.5rem !important;
-}
-
-.supplier-modal__input {
-    width: 100% !important;
-    padding: 0.75rem !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 8px !important;
-    font-size: 0.875rem !important;
-    background: #f9fafb !important;
-    color: #374151 !important;
-}
-
-.supplier-modal__textarea {
-    width: 100% !important;
-    padding: 0.75rem !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 8px !important;
-    font-size: 0.875rem !important;
-    background: #f9fafb !important;
-    color: #374151 !important;
-    resize: vertical !important;
-    font-family: inherit !important;
-    line-height: 1.5 !important;
-}
-
+    
 /* 邮件预览按钮 */
 .supplier-modal__btn {
     padding: 0.625rem 1.25rem !important;
@@ -806,48 +870,10 @@
     gap: 1.5rem !important;
 }
 
-.supplier-modal--edit .supplier-modal__form-group {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.5rem !important;
-}
-
-.supplier-modal--edit .supplier-modal__label {
-    font-weight: 600 !important;
-    color: #374151 !important;
-    font-size: 0.9rem !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-}
-
+/* 编辑模态框的必填标记 */
 .supplier-modal--edit .supplier-modal__required {
     color: #ef4444 !important;
     font-weight: bold !important;
-}
-
-.supplier-modal--edit .supplier-modal__input,
-.supplier-modal--edit .supplier-modal__textarea {
-    padding: 0.75rem 1rem !important;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 8px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.2s ease !important;
-    background: white !important;
-    font-family: inherit !important;
-}
-
-.supplier-modal--edit .supplier-modal__input:focus,
-.supplier-modal--edit .supplier-modal__textarea:focus {
-    outline: none !important;
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
-}
-
-.supplier-modal--edit .supplier-modal__textarea {
-    resize: vertical !important;
-    min-height: 80px !important;
-    line-height: 1.5 !important;
 }
 
 /* 永久有效复选框特殊样式 */
@@ -979,50 +1005,11 @@
 /* ==================== Phase 4.1: 增强样式整合 ==================== */
 /* 🎯 [MERGE] 从 supplier-modal-enhanced.css 合并的优秀样式 */
 
-/* 增强的模态框内容动画 */
-@keyframes slideUpScale {
-    from {
-        opacity: 0;
-        transform: translateY(40px) scale(0.95);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
-}
-
 /* 应用增强动画到所有模态框内容 */
 .supplier-modal__content {
     animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
 }
 
-/* 增强的表单元素样式 */
-.supplier-modal__form-group label {
-    font-weight: 600 !important;
-    color: #374151 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-}
-
-.supplier-modal__input,
-.supplier-modal__textarea,
-.supplier-modal__select {
-    border: 2px solid #e5e7eb !important;
-    border-radius: 10px !important;
-    padding: 0.75rem 1rem !important;
-    transition: all 0.3s ease !important;
-    background: white !important;
-    width: 100% !important;
-    box-sizing: border-box !important;
-}
-
-.supplier-modal__input:focus,
-.supplier-modal__textarea:focus,
-.supplier-modal__select:focus {
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1) !important;
-    outline: none !important;
-}
 
 /* 增强的文件上传区域 */
 .supplier-modal__file-upload {
@@ -1070,15 +1057,9 @@
 }
 
 /* ==================== 上传模态框样式 ==================== */
+/* 使用与邮件预览模态框统一的样式 */
 .supplier-modal--upload .supplier-modal__content {
-    max-width: 700px !important;
-    width: 95% !important;
-    max-height: 85vh !important;
-}
-
-/* 上传模态框头部 */
-.supplier-modal--upload .supplier-modal__header {
-    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    max-width: 600px !important;
 }
 
 /* 文件上传区域 */
@@ -1129,13 +1110,18 @@
     font-size: 0.9rem !important;
 }
 
-/* 表单组样式 - 兼容原有.form-group */
-.supplier-modal__form-group,
+
+/* 只读输入框样式 */
+.supplier-modal__input--readonly {
+    background-color: #f9fafb !important;
+    color: #6b7280 !important;
+}
+
+/* ==================== 上传模态框专用表单样式 ==================== */
 .form-group {
     margin-bottom: 1.5rem !important;
 }
 
-.supplier-modal__form-group label,
 .form-group label {
     display: block !important;
     margin-bottom: 0.5rem !important;
@@ -1143,8 +1129,6 @@
     color: #374151 !important;
 }
 
-/* 表单控件样式 - 兼容原有表单元素 */
-.supplier-modal__form-control,
 .form-group input[type="text"],
 .form-group input[type="date"],
 .form-group select,
@@ -1159,7 +1143,6 @@
     box-sizing: border-box !important;
 }
 
-.supplier-modal__form-control:focus,
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -1168,16 +1151,10 @@
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
 }
 
-/* 只读输入框样式 */
-.form-group input[readonly],
-.supplier-modal__input--readonly {
+.form-group input[readonly] {
     background-color: #f9fafb !important;
     color: #6b7280 !important;
-}
-
-/* 复选框样式 */
-.form-group input[type="checkbox"] {
-    margin-right: 8px !important;
+    cursor: not-allowed !important;
 }
 
 /* 到期日期样式 */
@@ -1188,7 +1165,7 @@
 /* 🎯 [FIX] 文件预览区域样式 - Phase 4.2后修复 */
 .file-preview,
 .supplier-modal__file-preview {
-    display: flex !important;
+    display: none; /* 默认隐藏，由JavaScript控制显示 */
     align-items: center !important;
     justify-content: space-between !important;
     padding: 12px 16px !important;
@@ -1201,6 +1178,12 @@
     backdrop-filter: blur(8px) !important;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
     transition: all 0.3s ease !important;
+}
+
+/* 文件预览显示时的样式 */
+.file-preview.show,
+.supplier-modal__file-preview.show {
+    display: flex !important;
 }
 
 /* 文件名显示 */

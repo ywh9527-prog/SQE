@@ -566,7 +566,7 @@ class SupplierUIUtils {
     // 隐藏文件预览
     const filePreview = document.getElementById('filePreview');
     if (filePreview) {
-      filePreview.style.display = 'none';
+      filePreview.classList.remove('show');
     }
 
     // 同步数据回控制层（保持一致性）
@@ -652,7 +652,7 @@ class SupplierUIUtils {
     if (expiryDate) expiryDate.disabled = false;
 
     const filePreview = document.getElementById('filePreview');
-    if (filePreview) filePreview.style.display = 'none';
+    if (filePreview) filePreview.classList.remove('show');
 
     const fileInput = document.getElementById('fileInput');
     if (fileInput) fileInput.value = '';
@@ -683,7 +683,7 @@ class SupplierUIUtils {
     if (expiryDate) expiryDate.disabled = false;
 
     const filePreview = document.getElementById('filePreview');
-    if (filePreview) filePreview.style.display = 'none';
+    if (filePreview) filePreview.classList.remove('show');
 
     const fileInput = document.getElementById('fileInput');
     if (fileInput) fileInput.value = '';
@@ -750,11 +750,17 @@ class SupplierUIUtils {
    * 显示构成管理模态框
    */
   showComponentManagementModal() {
+    console.log('🎯 开始显示构成管理模态框...');
     const modal = document.getElementById('componentManagementModal');
-    if (!modal) return;
+    if (!modal) {
+      console.error('❌ 未找到构成管理模态框元素');
+      return;
+    }
 
     const materialId = this.uploadContext.materialId;
     const supplierId = this.uploadContext.supplierId;
+
+    console.log('🔍 检查上下文:', { materialId, supplierId });
 
     if (!materialId || !supplierId) {
       this.showError('缺少必要的信息，无法打开构成管理');
@@ -763,11 +769,15 @@ class SupplierUIUtils {
 
     // 设置供应商信息
     const supplierInput = document.getElementById('componentSupplierInput');
+    console.log('🔍 查找供应商输入框:', supplierInput);
     if (supplierInput) {
       const details = this.detailsCache[supplierId];
       if (details) {
         supplierInput.value = details.supplierName;
+        console.log('📝 设置供应商名称:', details.supplierName);
       }
+    } else {
+      console.warn('❌ 未找到供应商输入框');
     }
 
     // 重置表单
@@ -776,19 +786,58 @@ class SupplierUIUtils {
     // 加载构成列表
     this.loadComponentList();
 
-    // 显示模态框
+    // 显示模态框 - 强制覆盖内联样式
+    console.log('📝 显示模态框，添加active类...');
+    modal.classList.add('supplier-modal--active');
+    // 强制覆盖内联样式 display: none
     modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('z-index', '9999', 'important');
+    modal.style.setProperty('z-index', '99999', 'important');
+
+    // 重新绑定关闭按钮事件（确保DOM元素存在）
+    this.bindCloseButtons();
+
+    console.log('✅ 构成管理模态框已显示');
   }
 
   /**
    * 隐藏构成管理模态框
    */
   hideComponentManagementModal() {
+    console.log('🎯 开始隐藏构成管理模态框...');
     const modal = document.getElementById('componentManagementModal');
     if (modal) {
-      modal.style.display = 'none';
+      modal.classList.remove('supplier-modal--active');
+      // 强制设置回 display: none
+      modal.style.setProperty('display', 'none', 'important');
+      console.log('✅ 构成管理模态框已隐藏');
+    } else {
+      console.warn('❌ 未找到构成管理模态框元素');
     }
+  }
+
+  /**
+   * 绑定关闭按钮事件
+   */
+  bindCloseButtons() {
+    console.log('🔍 重新绑定关闭按钮事件...');
+    const closeButtons = document.querySelectorAll('.component-modal-close-btn');
+    console.log('🔍 找到关闭按钮:', closeButtons, '数量:', closeButtons.length);
+
+    closeButtons.forEach(btn => {
+      // 移除旧的事件监听器（如果存在）
+      btn.replaceWith(btn.cloneNode(true));
+    });
+
+    // 重新绑定事件
+    const newCloseButtons = document.querySelectorAll('.component-modal-close-btn');
+    newCloseButtons.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        console.log('🎯 点击了关闭按钮（重新绑定）');
+        e.preventDefault();
+        e.stopPropagation();
+        this.hideComponentManagementModal();
+      });
+    });
   }
 
   /**
@@ -1017,6 +1066,7 @@ class SupplierUIUtils {
       console.warn('❌ 构成名称为空');
       nameInput.classList.add('error');
       this.showError('构成名称不能为空');
+      this.isSaving = false; // 重置保存状态
       return;
     }
 
@@ -1047,6 +1097,7 @@ class SupplierUIUtils {
         if (!materialId || materialId <= 0) {
           console.error('❌ 物料ID无效:', materialId);
           this.showError('物料信息无效，请刷新页面重试');
+          this.isSaving = false; // 重置保存状态
           return;
         }
 
@@ -1113,6 +1164,8 @@ class SupplierUIUtils {
    * 绑定构成管理模态框事件
    */
   bindComponentManagementEvents() {
+    console.log('🎯 开始绑定构成管理模态框事件...');
+
     // 上传模态框中的"添加新构成"按钮
     const openComponentManagementBtn = document.getElementById('openComponentManagementBtn');
     console.log('🔍 查找"添加新构成"按钮:', openComponentManagementBtn);
@@ -1161,18 +1214,13 @@ class SupplierUIUtils {
       console.warn('❌ 未找到构成管理中的保存按钮');
     }
 
-    // 关闭按钮
-    const closeButtons = document.querySelectorAll('.component-modal-close-btn');
-    closeButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        this.hideComponentManagementModal();
-      });
-    });
+    // 关闭按钮现在在模态框显示时动态绑定
 
     // 点击模态框外部关闭
     const modal = document.getElementById('componentManagementModal');
     if (modal) {
       modal.addEventListener('click', (e) => {
+        console.log('🎯 点击了模态框区域，目标:', e.target, '是否为modal本身:', e.target === modal);
         if (e.target === modal) {
           this.hideComponentManagementModal();
         }

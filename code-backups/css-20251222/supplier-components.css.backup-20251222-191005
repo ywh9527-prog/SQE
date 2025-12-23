@@ -1,26 +1,26 @@
 /**
- * 供应商模块通用组件样式库 - Phase 3 清理版
+ * 供应商模块通用组件样式库 - Phase 2 修复版
  *
  * 设计原则：
  * 1. 组件化设计 - 可复用的UI组件
- * 2. 统一命名规范 - 清晰的类名结构
+ * 2. BEM命名规范 - 清晰的类名结构
  * 3. 模块隔离 - 避免全局选择器冲突
  * 4. 响应式适配 - 移动端友好
  * 5. 现代化视觉 - 玻璃态设计
  *
  * 整合内容：
  * - 状态徽章组件 (来自 supplier-status-badges.css) ✅
- * - 进度条组件 (统一使用 supplier-progress 命名) ✅
+ * - 进度条组件 (来自 supplier-progress-bar.css) ✅
  * - 动画效果组件 (内置) ✅
  * - 按钮交互组件 → 已移动到 supplier-interactions.css ✅
  *
  * 修复记录：
  * - Phase 2: 移除全局button选择器，解决007.md冲突问题
- * - Phase 3: 删除未使用的BEM命名版本，统一使用 supplier-progress 系列
+ * - 职责重新划分：组件库专注基础组件，交互样式独立管理
  *
  * 创建时间: 2025-12-20
  * 修复: 浮浮酱 (猫娘工程师)
- * 版本: 3.0.0 - Phase 3 清理版
+ * 版本: 2.0.0 - Phase 2 修复版
  */
 
 /* ============================================
@@ -67,7 +67,7 @@
             rgba(245, 158, 11, 0.08) 100%) !important;
     color: #d97706 !important;
     border: 1px solid rgba(245, 158, 11, 0.3) !important;
-    animation: supplier-warning-pulse 2s ease-in-out infinite;
+    animation: supplier-component__warning-pulse 2s ease-in-out infinite;
 }
 
 /* 紧急状态 - 红色渐变 + 快速脉冲 */
@@ -79,7 +79,7 @@
             rgba(239, 68, 68, 0.08) 100%) !important;
     color: #dc2626 !important;
     border: 1px solid rgba(239, 68, 68, 0.3) !important;
-    animation: supplier-urgent-pulse 1s ease-in-out infinite;
+    animation: supplier-component__urgent-pulse 1s ease-in-out infinite;
 }
 
 /* 过期状态 - 灰色渐变 */
@@ -119,10 +119,10 @@
 }
 
 /* ============================================
-   2. 进度条组件 (Progress Bar) - 统一命名版本
+   2. 进度条组件 (Progress Bar)
    ============================================ */
 
-/* 基础进度条容器 */
+/* 基础进度条容器 (从supplier-progress-bar.css迁移) */
 .supplier-progress {
     display: flex;
     flex-direction: column;
@@ -176,8 +176,122 @@
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
+/* 兼容性组件容器 */
+.supplier-component__progress {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border-radius: 12px;
+    min-height: 60px;
+    transition: all 0.3s ease;
+    justify-content: center;
+    width: 100%;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* 进度条主体 */
+.supplier-component__progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* 进度条填充 */
+.supplier-component__progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* 进度条光泽效果 */
+.supplier-component__progress-fill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.3) 50%,
+            transparent 100%);
+    animation: supplier-component__progress-shimmer 2s infinite;
+}
+
+/* 进度条文本 */
+.supplier-component__progress-text {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.9);
+    text-align: center;
+    margin-top: 4px;
+}
+
+/* ============================================
+   进度条扩展样式 (整合自 supplier-progress-bar.css)
+   ============================================ */
+
+/* 进度条行容器 */
+.supplier-component__progress__bar-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 30px;
+    width: 100%;
+}
+
+/* 信息行 */
+.supplier-component__progress__info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+/* 堆叠柱状图段 */
+.supplier-component__progress__stack-segment {
+    position: absolute;
+    height: 100%;
+    transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    border-radius: 0;
+    top: 0;
+    min-width: 2px;
+    z-index: 1;
+    border: none !important;
+    backdrop-filter: blur(5px);
+    box-sizing: border-box !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.supplier-component__progress__stack-segment:first-child {
+    border-radius: 12px 0 0 12px;
+}
+
+.supplier-component__progress__stack-segment:last-child {
+    border-radius: 0 12px 12px 0;
+}
+
+.supplier-component__progress__stack-segment:first-child:last-child {
+    border-radius: 12px;
+}
+
+.supplier-component__progress__stack-segment:hover {
+    transform: translateY(-2px) scaleY(1.1);
+    filter: brightness(1.2) saturate(1.2);
+    z-index: 10;
+}
+
 /* 空状态显示 */
-.supplier-progress__bar-empty {
+.supplier-component__progress__bar-empty {
     height: 100%;
     display: flex;
     align-items: center;
@@ -187,45 +301,262 @@
     font-style: italic;
 }
 
-/* 进度条填充 */
-.supplier-progress__bar-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
-    border-radius: 4px;
-    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
-    overflow: hidden;
+/* 状态统计区域 */
+.supplier-component__progress__status-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }
 
-/* 进度条光泽效果 */
-.supplier-progress__bar-fill::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(
-        90deg,
-        transparent 0%,
-        rgba(255, 255, 255, 0.3) 50%,
-        transparent 100%
-    );
-    animation: supplier-progress-shimmer 2s infinite;
+.supplier-component__progress__status-section--full {
+    flex: 1;
+    width: 100%;
+    justify-content: center;
 }
 
-/* 进度条文本 */
-.supplier-progress__bar-text {
+.supplier-component__progress__status-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
     font-size: 11px;
+    font-weight: 500;
+    padding: 2px 6px;
+    border-radius: 12px;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+}
+
+.supplier-component__progress__status-item:hover {
+    transform: scale(1.05);
+}
+
+.supplier-component__progress__status-icon {
+    font-size: 10px;
+    line-height: 1;
+}
+
+.supplier-component__progress__status-count {
     font-weight: 600;
-    color: #374151;
-    text-align: left;
-    white-space: nowrap; /* 防止换行 */
+}
+
+/* 小状态图标样式 */
+.supplier-component__progress__mini-status {
+    display: inline-flex;
+    align-items: center;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 4px;
+    border-radius: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    margin-right: 4px;
+    transition: all 0.2s ease;
+}
+
+.supplier-component__progress__mini-status:hover {
+    transform: scale(1.05);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* 状态修饰符 */
+.supplier-component__progress__status-item--normal {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #bbf7d0;
+}
+
+.supplier-component__progress__status-item--warning {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fde68a;
+}
+
+.supplier-component__progress__status-item--urgent {
+    background: #fed7aa;
+    color: #9a3412;
+    border: 1px solid #fdba74;
+}
+
+.supplier-component__progress__status-item--expired {
+    background: #f3f4f6;
+    color: #4b5563;
+    border: 1px solid #d1d5db;
+}
+
+/* 进度条状态修饰符 */
+.supplier-component__progress-fill--excellent {
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+}
+
+.supplier-component__progress-fill--good {
+    background: linear-gradient(90deg, #84cc16 0%, #65a30d 100%);
+}
+
+/* 不同状态的进度条颜色 */
+.supplier-component__progress-fill--normal {
+    background: linear-gradient(90deg, #10b981 0%, #059669 100%);
+}
+
+.supplier-component__progress-fill--warning {
+    background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%);
+}
+
+.supplier-component__progress-fill--urgent {
+    background: linear-gradient(90deg, #ef4444 0%, #dc2626 100%);
+}
+
+.supplier-component__progress-fill--expired {
+    background: linear-gradient(90deg, #6b7280 0%, #4b5563 100%);
 }
 
 /* ============================================
-   3. 堆叠进度条样式
+   3. 基础组件按钮 (Component Buttons - BEM Only)
    ============================================ */
+
+/* 注意：按钮交互样式已移动到 supplier-interactions.css
+    此处仅保留组件专用的按钮样式，不使用全局选择器 */
+
+/* ============================================
+   4. 详情部分标题样式
+   ============================================ */
+
+/* 为不同类型的标题添加特定颜色装饰 */
+.section-header h4 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.section-header h4::before {
+    content: '';
+    display: block;
+    width: 4px;
+    height: 16px;
+    border-radius: 2px;
+    background: var(--primary-500);
+    margin-right: 4px;
+}
+
+/* ============================================
+   5. 组件专用样式 (仅保留BEM规范的组件样式)
+   ============================================ */
+
+/* ============================================
+   4. 动画效果组件 (Animations)
+   ============================================ */
+
+/* 警告脉冲动画 */
+@keyframes supplier-component__warning-pulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
+    }
+    50% {
+        box-shadow: 0 2px 16px rgba(245, 158, 11, 0.3);
+    }
+}
+
+/* 紧急脉冲动画 */
+@keyframes supplier-component__urgent-pulse {
+    0%, 100% {
+        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
+        transform: scale(1);
+    }
+    50% {
+        box-shadow: 0 2px 20px rgba(239, 68, 68, 0.4);
+        transform: scale(1.02);
+    }
+}
+
+/* 进度条光泽动画 */
+@keyframes supplier-component__progress-shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* 淡入动画 */
+@keyframes supplier-component__fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 缩放动画 */
+@keyframes supplier-component__scale-in {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 滑入动画 */
+@keyframes supplier-component__slide-in-right {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 通用动画类 */
+.supplier-component__fade-in {
+    animation: supplier-component__fade-in 0.4s ease-out;
+}
+
+.supplier-component__scale-in {
+    animation: supplier-component__scale-in 0.3s ease-out;
+}
+
+.supplier-component__slide-in-right {
+    animation: supplier-component__slide-in-right 0.4s ease-out;
+}
+
+/* ============================================
+   5. 响应式适配
+   ============================================ */
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    .supplier-component__status-badge,
+    .doc-status,
+    .status-badge {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.7rem !important;
+    }
+
+    .supplier-component__progress {
+        padding: 6px 10px;
+        min-height: 50px;
+    }
+}
+
+/* 超小屏幕适配 */
+@media (max-width: 480px) {
+    .supplier-component__status-badge,
+    .doc-status,
+    .status-badge {
+        padding: 0.25rem 0.5rem !important;
+        font-size: 0.65rem !important;
+    }
+}
+
+/* ==================== 堆叠进度条样式 (从supplier-progress-bar.css整合) ==================== */
 
 /* 堆叠柱状图段 - 玻璃态风格 */
 .supplier-progress__stack-segment {
@@ -263,141 +594,43 @@
     z-index: 10;
 }
 
-/* ============================================
-   4. 状态统计区域
-   ============================================ */
-
-.supplier-progress__status-section {
+/* 空状态显示 */
+.supplier-progress__bar-empty {
+    height: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.supplier-progress__status-section--full {
-    flex: 1;
-    width: 100%;
     justify-content: center;
-}
-
-.supplier-progress__status-item {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 2px 6px;
-    border-radius: 12px;
-    white-space: nowrap;
-    transition: all 0.2s ease;
-}
-
-.supplier-progress__status-item:hover {
-    transform: scale(1.05);
-}
-
-.supplier-progress__status-icon {
+    color: #9ca3af;
     font-size: 10px;
-    line-height: 1;
+    font-style: italic;
 }
 
-.supplier-progress__status-count {
-    font-weight: 600;
+.supplier-progress__bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #22c55e 0%, #16a34a 100%);
+    border-radius: 4px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
 }
 
-/* 小状态图标样式 */
-.supplier-progress__mini-status {
-    display: inline-flex;
-    align-items: center;
-    font-size: 10px;
-    font-weight: 600;
-    padding: 2px 4px;
-    border-radius: 8px;
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
-    margin-right: 4px;
-    transition: all 0.2s ease;
-}
-
-.supplier-progress__mini-status:hover {
-    transform: scale(1.05);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* 状态修饰符 */
-.supplier-progress__status-item--normal {
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #bbf7d0;
-}
-
-.supplier-progress__status-item--warning {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fde68a;
-}
-
-.supplier-progress__status-item--urgent {
-    background: #fed7aa;
-    color: #9a3412;
-    border: 1px solid #fdba74;
-}
-
-.supplier-progress__status-item--expired {
-    background: #f3f4f6;
-    color: #4b5563;
-    border: 1px solid #d1d5db;
-}
-
-/* ============================================
-   5. 详情部分标题样式
-   ============================================ */
-
-/* 为不同类型的标题添加特定颜色装饰 */
-.section-header h4 {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.section-header h4::before {
+.supplier-progress__bar-fill::after {
     content: '';
-    display: block;
-    width: 4px;
-    height: 16px;
-    border-radius: 2px;
-    background: var(--primary-500);
-    margin-right: 4px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.3) 50%,
+        transparent 100%
+    );
+    animation: progress-shine 2s infinite;
 }
 
-/* ============================================
-   6. 动画效果组件 (Animations)
-   ============================================ */
-
-/* 警告脉冲动画 */
-@keyframes supplier-warning-pulse {
-    0%, 100% {
-        box-shadow: 0 2px 8px rgba(245, 158, 11, 0.15);
-    }
-    50% {
-        box-shadow: 0 2px 16px rgba(245, 158, 11, 0.3);
-    }
-}
-
-/* 紧急脉冲动画 */
-@keyframes supplier-urgent-pulse {
-    0%, 100% {
-        box-shadow: 0 2px 8px rgba(239, 68, 68, 0.15);
-        transform: scale(1);
-    }
-    50% {
-        box-shadow: 0 2px 20px rgba(239, 68, 68, 0.4);
-        transform: scale(1.02);
-    }
-}
-
-/* 进度条光泽动画 */
-@keyframes supplier-progress-shimmer {
+@keyframes progress-shine {
     0% {
         transform: translateX(-100%);
     }
@@ -406,80 +639,18 @@
     }
 }
 
-/* 淡入动画 */
-@keyframes supplier-fade-in {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
+.supplier-progress__bar-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #374151;
+    text-align: left;
+    white-space: nowrap; /* 防止换行 */
 }
 
-/* 缩放动画 */
-@keyframes supplier-scale-in {
-    from {
-        opacity: 0;
-        transform: scale(0.8);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
-}
-
-/* 滑入动画 */
-@keyframes supplier-slide-in-right {
-    from {
-        opacity: 0;
-        transform: translateX(30px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0);
-    }
-}
-
-/* 通用动画类 */
-.supplier-fade-in {
-    animation: supplier-fade-in 0.4s ease-out;
-}
-
-.supplier-scale-in {
-    animation: supplier-scale-in 0.3s ease-out;
-}
-
-.supplier-slide-in-right {
-    animation: supplier-slide-in-right 0.4s ease-out;
-}
-
-/* ============================================
-   7. 响应式适配
-   ============================================ */
-
-/* 移动端适配 */
-@media (max-width: 768px) {
-    .supplier-component__status-badge,
-    .doc-status,
-    .status-badge {
-        padding: 0.3rem 0.6rem !important;
-        font-size: 0.7rem !important;
-    }
-
-    .supplier-progress {
-        padding: 6px 10px;
-        min-height: 50px;
-    }
-}
-
-/* 超小屏幕适配 */
-@media (max-width: 480px) {
-    .supplier-component__status-badge,
-    .doc-status,
-    .status-badge {
-        padding: 0.25rem 0.5rem !important;
-        font-size: 0.65rem !important;
-    }
+/* ==================== 状态统计区域 (从supplier-progress-bar.css整合) ==================== */
+.supplier-progress__status-section {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
 }

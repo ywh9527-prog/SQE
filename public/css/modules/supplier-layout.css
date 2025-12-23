@@ -148,8 +148,7 @@
 
 .details-container {
     padding: 32px;
-    animation: slideDown 0.3s ease-out;
-    position: relative;
+        position: relative;
     z-index: 1;
     background: linear-gradient(135deg, #fafbfc 0%, #f8fafd 100%);
     border-radius: 16px;
@@ -210,8 +209,7 @@
     box-shadow:
         0 2px 4px rgba(0, 0, 0, 0.04),
         0 1px 2px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+        position: relative;
     overflow: hidden;
 }
 
@@ -224,8 +222,7 @@
     height: 3px;
     background: linear-gradient(90deg, #10b981 0%, #3b82f6 50%, #8b5cf6 100%);
     opacity: 0;
-    transition: opacity 0.3s ease;
-}
+    }
 
 
 .material-section:last-child {
@@ -262,8 +259,7 @@
     background: #fff;
     color: #6b7280;
     cursor: pointer;
-    transition: all 0.2s ease;
-}
+    }
 
 
 /* 物料操作按钮样式已移动到 supplier-interactions.css */
@@ -305,8 +301,7 @@
     box-shadow:
         0 2px 4px rgba(0, 0, 0, 0.04),
         0 1px 2px rgba(0, 0, 0, 0.06);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+        position: relative;
     overflow: hidden;
 }
 
@@ -359,8 +354,7 @@
     font-size: 1.1rem;
     flex-shrink: 0;
     filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.1));
-    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+    }
 
 
 .doc-type {
@@ -430,8 +424,7 @@
     border-radius: 50%;
     margin-left: 4px;
     cursor: help;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    position: relative;
+        position: relative;
     flex-shrink: 0;
     padding: 2px;
 }
@@ -456,42 +449,8 @@
 }
 
 
-/* 现代化tooltip显示效果 */
-.section-tooltip[data-tooltip]:hover::after {
-    content: attr(data-tooltip);
-    position: absolute;
-    top: calc(100% + 8px);
-    left: calc(100% + 8px);
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-    color: #1e293b;
-    padding: 16px 20px;
-    border-radius: 12px;
-    font-weight: 500;
-    min-width: 380px;
-    max-width: 420px;
-    white-space: pre-line;
-    line-height: 1.6;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    z-index: 99999;
-    border: 1px solid rgba(148, 163, 184, 0.2);
-    text-align: left;
-    animation: tooltipFadeIn 0.3s ease-out;
-}
 
 
-/* 添加小箭头指向图标 */
-.section-tooltip[data-tooltip]:hover::before {
-    content: '';
-    position: absolute;
-    top: calc(100% + 2px);
-    left: calc(100% - 4px);
-    width: 0;
-    height: 0;
-    border-top: 6px solid transparent;
-    border-right: 6px solid #f8fafc;
-    z-index: 100000;
-    transform: rotate(45deg);
-}
 
 /* ============================================
    2. 树形视图样式 (来自 supplier-tree.css)
@@ -579,8 +538,7 @@
   border-bottom: 1px solid var(--border-default);
   cursor: pointer;
   user-select: none;
-  transition: background 0.2s ease;
-}
+  }
 
 
 .supplier-tree__group-header .group-title {
@@ -602,8 +560,7 @@
   padding: var(--spacing-lg);
   max-height: 2000px;
   overflow: hidden;
-  transition: max-height 0.3s ease, padding 0.3s ease;
-}
+  }
 
 .supplier-tree__group.collapsed .supplier-tree__group-body {
   max-height: 0;
@@ -616,8 +573,7 @@
   border: 1px solid var(--border-default);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
-  transition: all 0.2s ease;
-}
+  }
 
 
 .supplier-tree__card--urgent {
@@ -772,8 +728,7 @@
   padding: var(--spacing-md);
   background: #f9fafb;
   cursor: pointer;
-  transition: background 0.2s ease;
-}
+  }
 
 
 /* material-toggle 样式已移动到 supplier-interactions.css (第853-859行) */
@@ -829,8 +784,7 @@
   padding: var(--spacing-sm) var(--spacing-md);
   background: #fafafa;
   cursor: pointer;
-  transition: background 0.2s ease;
-}
+  }
 
 
 /* component-toggle 样式已移动到 supplier-interactions.css (第913-919行) */
@@ -874,8 +828,7 @@
   background: #ffffff;
   border-radius: var(--radius-sm);
   border: 1px solid transparent;
-  transition: all 0.2s ease;
-}
+  }
 
 
 .document-item--normal {
@@ -942,8 +895,7 @@
 .supplier-tree__card,
 .material-item,
 .component-item {
-  animation: slideDown 0.3s ease;
-}
+  }
 
 /* ==================== 打印样式 ==================== */
 @media print {
@@ -1028,8 +980,7 @@
     border-radius: 16px !important;
 
     /* 过渡效果 */
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-
+    
     /* 相对定位用于伪元素 */
     position: relative;
     overflow: hidden;
@@ -1115,8 +1066,7 @@
    ============================================ */
 
 .details-row {
-    animation: slideDown-enhanced 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    }
 
 /* 详情内容渐变背景 */
 .details-container {
@@ -1136,8 +1086,7 @@
     background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     border: 1px solid var(--gray-200);
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
+    }
 
 .document-item:hover {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12) !important;
@@ -1416,7 +1365,7 @@
 
 .supplier-table thead th {
     padding: 12px 16px;
-    text-align: left;
+    text-align: center;
     font-weight: 600;
     border: none;
     white-space: nowrap;
@@ -1425,8 +1374,7 @@
 /* 表格主体 */
 .supplier-table tbody tr {
     border-bottom: 1px solid var(--border-default);
-    transition: background-color 0.2s ease;
-}
+    }
 
 .supplier-table tbody tr:hover {
     background-color: #f8fafc;
