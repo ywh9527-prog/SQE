@@ -500,9 +500,7 @@ class SupplierDocumentManager {
     }
 
     // 筛选数据
-    console.log('🎨 开始渲染，当前供应商数量:', this.suppliers.length);
     const filteredSuppliers = this.filterSuppliers();
-    console.log('🎨 筛选后供应商数量:', filteredSuppliers.length);
 
     // 渲染搜索和筛选控件 - 统计栏单独一行
     let html = `
@@ -651,20 +649,11 @@ class SupplierDocumentManager {
    * 筛选供应商数据
    */
   filterSuppliers() {
-    console.log('🎯 开始筛选供应商数据:', {
-      totalSuppliers: this.suppliers.length,
-      searchKeyword: this.searchKeyword,
-      statusFilter: this.statusFilter
-    });
-
-    const filtered = this.suppliers.filter((supplier, index) => {
-      console.log(`\n📝 [${index + 1}/${this.suppliers.length}] 处理供应商: ${supplier.supplierName}`);
-
+    const filtered = this.suppliers.filter((supplier) => {
       // 搜索关键词筛选
       if (this.searchKeyword) {
         const keyword = this.searchKeyword.toLowerCase();
         const matchesSearch = supplier.supplierName.toLowerCase().includes(keyword);
-        console.log(`🔍 搜索筛选 "${this.searchKeyword}": ${matchesSearch ? '✅ 通过' : '❌ 不通过'}`);
         if (!matchesSearch) {
           return false;
         }
@@ -673,19 +662,14 @@ class SupplierDocumentManager {
       // 状态筛选 - 借鉴搜索逻辑：空字符串也跳过筛选
       if (this.statusFilter) {
         const hasStatus = window.supplierServices.checkSupplierStatus(supplier, this.statusFilter);
-        console.log(`🎯 状态筛选 "${this.statusFilter}": ${hasStatus ? '✅ 通过' : '❌ 不通过'}`);
         if (!hasStatus) {
           return false;
         }
-      } else {
-        console.log(`🌐 状态筛选跳过 (statusFilter = '${this.statusFilter}')，显示所有供应商`);
       }
 
-      console.log(`✅ 供应商 ${supplier.supplierName} 通过所有筛选条件`);
       return true;
     });
 
-    console.log(`\n🎯 筛选完成: ${filtered.length}/${this.suppliers.length} 个供应商通过筛选`);
     return filtered;
   }
 
@@ -739,51 +723,28 @@ class SupplierDocumentManager {
    * 绑定筛选事件 - 🎯 新增方法确保事件正确绑定
    */
   bindFilterEvents() {
-    console.log('🎯 开始绑定筛选事件');
     const statusFilter = document.getElementById('statusFilter');
-    console.log('🎯 筛选下拉框查找结果:', statusFilter);
 
     if (statusFilter) {
-      console.log('✅ 筛选下拉框找到，开始绑定事件');
-
       // 移除可能存在的旧事件监听器
       statusFilter.onchange = null;
 
       // 绑定新的事件监听器
       statusFilter.onchange = () => {
-        console.log('🎯 筛选下拉框change事件触发');
         this.filterByStatus();
       };
-
-      console.log('✅ 筛选下拉框事件绑定完成');
-    } else {
-      console.error('❌ 筛选下拉框未找到，无法绑定事件');
     }
-
-    console.log('🎯 筛选事件绑定完成');
   }
 
   /**
    * 按状态筛选 - 借鉴搜索逻辑，使用空字符串代替null
    */
   filterByStatus() {
-    console.log('🎯 filterByStatus方法被调用了！');
     const statusFilter = document.getElementById('statusFilter');
     if (statusFilter) {
       // 🎯 [借鉴搜索逻辑] 使用空字符串，与搜索保持一致
       this.statusFilter = statusFilter.value;
-      console.log('🎯 状态筛选变更:', {
-        selectedValue: `'${statusFilter.value}'`,
-        statusFilter: this.statusFilter,
-        type: typeof this.statusFilter,
-        isEmptyString: this.statusFilter === '',
-        isNull: this.statusFilter === null,
-        isUndefined: this.statusFilter === undefined
-      });
-    } else {
-      console.error('❌ 找不到statusFilter元素');
     }
-    console.log('🔄 调用render()方法');
     this.render();
   }
 
@@ -791,16 +752,12 @@ class SupplierDocumentManager {
    * 执行搜索
    */
   performSearch() {
-    console.log('🔍 执行搜索方法被调用');
     const searchInput = document.getElementById('supplierManagerSearchInput');
-    console.log('🔍 搜索输入框元素:', searchInput);
 
     if (searchInput) {
       this.searchKeyword = searchInput.value.trim();
-      console.log('🔍 搜索关键词:', this.searchKeyword);
       this.render();
     } else {
-      console.error('❌ 搜索输入框未找到，DOM可能未完全加载');
       // 尝试重新绑定事件
       setTimeout(() => {
         this.bindSearchEvents();
@@ -824,7 +781,6 @@ class SupplierDocumentManager {
    * 清除所有筛选 - 借鉴搜索逻辑，统一使用空字符串
    */
   clearAllFilters() {
-    console.log('🧹 清除所有筛选条件');
     this.searchKeyword = '';
     this.statusFilter = ''; // 🎯 [借鉴搜索逻辑] 使用空字符串，与搜索保持一致
 
@@ -856,146 +812,7 @@ class SupplierDocumentManager {
     return statusMap[status] || status;
   }
 
-  /**
-   * 🧪 调试筛选状态 - 临时方法
-   */
-  debugFilterState() {
-    console.log('🔍 === 筛选状态调试信息 ===');
-    console.log('📊 当前状态:', {
-      statusFilter: this.statusFilter,
-      searchKeyword: this.searchKeyword,
-      totalSuppliers: this.suppliers.length,
-      typeStatusFilter: typeof this.statusFilter
-    });
-
-    const statusElement = document.getElementById('statusFilter');
-    if (statusElement) {
-      console.log('🎯 HTML元素状态:', {
-        value: `'${statusElement.value}'`,
-        selectedIndex: statusElement.selectedIndex,
-        selectedText: statusElement.options[statusElement.selectedIndex]?.text
-      });
-    } else {
-      console.error('❌ 找不到statusFilter元素');
-    }
-
-    console.log('🔍 =========================');
-  }
-
-  /**
-   * 🧪 手动触发筛选测试 - 借鉴搜索逻辑测试
-   */
-  testFilterChange(value) {
-    console.log('🧪 === 手动测试筛选变更 ===');
-    const statusElement = document.getElementById('statusFilter');
-    if (statusElement) {
-      statusElement.value = value;
-      console.log(`🎯 设置下拉框值为: '${value}'`);
-      this.filterByStatus();
-    } else {
-      console.error('❌ 找不到statusFilter元素');
-    }
-    console.log('🧪 =========================');
-  }
-
-  /**
-   * 🧪 最简单的测试方法 - 直接测试核心逻辑
-   */
-  simpleTest() {
-    console.log('🧪 === 最简单测试 ===');
-    console.log('1. 当前statusFilter:', this.statusFilter);
-    console.log('2. 总供应商数:', this.suppliers.length);
-
-    // 直接设置状态并重新渲染
-    this.statusFilter = '';
-    console.log('3. 设置statusFilter为空字符串');
-    this.render();
-    console.log('4. render()已调用');
-    console.log('🧪 ================');
-  }
-
-  /**
-   * 🧪 完整筛选流程测试
-   */
-  fullFilterTest() {
-    console.log('🧪 === 完整筛选流程测试 ===');
-
-    // 1. 检查依赖
-    console.log('1. 依赖检查:');
-    console.log('   - window.supplierServices存在:', !!window.supplierServices);
-    console.log('   - checkSupplierStatus方法存在:', !!(window.supplierServices && window.supplierServices.checkSupplierStatus));
-
-    // 2. 检查数据
-    console.log('2. 数据检查:');
-    console.log('   - 供应商总数:', this.suppliers.length);
-    console.log('   - 当前statusFilter:', `"${this.statusFilter}"`);
-    console.log('   - statusFilter类型:', typeof this.statusFilter);
-    console.log('   - statusFilter是否为真值:', !!this.statusFilter);
-
-    // 3. 手动执行筛选逻辑
-    console.log('3. 手动执行筛选:');
-    const filtered = this.suppliers.filter((supplier, index) => {
-      console.log(`   处理供应商 ${index + 1}: ${supplier.supplierName}`);
-
-      // 状态筛选逻辑
-      if (this.statusFilter) {
-        console.log(`   - statusFilter不为空，执行筛选`);
-        const hasStatus = window.supplierServices.checkSupplierStatus(supplier, this.statusFilter);
-        console.log(`   - 筛选结果: ${hasStatus}`);
-        return hasStatus;
-      } else {
-        console.log(`   - statusFilter为空，跳过筛选，通过`);
-        return true;
-      }
-    });
-
-    console.log('4. 筛选结果:');
-    console.log(`   - 通过筛选: ${filtered.length}/${this.suppliers.length}`);
-    console.log('   - 通过的供应商:', filtered.map(s => s.supplierName));
-
-    // 4. 直接设置并重新渲染
-    console.log('5. 设置状态并重新渲染:');
-    this.statusFilter = '';
-    this.render();
-
-    console.log('🧪 =========================');
-  }
-
-  /**
-   * 🧪 终极简单测试 - 绕过所有逻辑
-   */
-  ultimateSimpleTest() {
-    console.log('🧪 === 终极简单测试 ===');
-
-    // 直接检查供应商数据
-    console.log('1. 供应商数据:');
-    console.log('   - 数量:', this.suppliers.length);
-    if (this.suppliers.length > 0) {
-      console.log('   - 第一个供应商:', this.suppliers[0].supplierName);
-    }
-
-    // 强制设置为空并渲染
-    console.log('2. 强制设置状态:');
-    this.statusFilter = '';
-    this.searchKeyword = '';
-
-    console.log('3. 调用render:');
-    this.render();
-
-    console.log('4. 检查HTML元素:');
-    const select = document.getElementById('statusFilter');
-    if (select) {
-      console.log('   - 下拉框存在');
-      console.log('   - 当前值:', `'${select.value}'`);
-      console.log('   - 选中项索引:', select.selectedIndex);
-      console.log('   - 选中项文本:', select.options[select.selectedIndex]?.text);
-    } else {
-      console.log('   - 下拉框不存在！');
-    }
-
-    console.log('🧪 =======================');
-  }
-
+  
   /**
    * 🎯 [UI-EVENT] 渲染供应商行 - 双行显示 + 进度条设计
    */
@@ -2185,6 +2002,10 @@ ${certType}：
 
       const doc = data.data;
 
+      // 🎯 [BUG-FIX] 获取并存储供应商ID用于后续刷新
+      this.currentSupplierId = doc.supplierId;
+      console.log('📋 设置当前供应商ID:', this.currentSupplierId);
+
       // 填充表单
       const editName = document.getElementById('editDocumentName');
       const editPermanent = document.getElementById('editIsPermanent');
@@ -2199,8 +2020,11 @@ ${certType}：
       // 设置到期日期状态
       this.toggleEditPermanentDate();
 
-      // 存储编辑上下文
-      this.editContext = { documentId };
+      // 存储编辑上下文 - 包含供应商ID用于刷新
+      this.editContext = {
+        documentId,
+        supplierId: this.currentSupplierId
+      };
 
       console.log('✅ 编辑表单填充完成');
     } catch (error) {
@@ -2326,6 +2150,14 @@ ${certType}：
     try {
       window.supplierUIUtils.showLoading(true, '保存中...');
 
+      const requestData = {
+        documentName,
+        expiryDate: isPermanent ? null : expiryDate,
+        isPermanent,
+        remark: document.getElementById('editDocumentRemark').value
+      };
+
+      
       const token = localStorage.getItem('authToken');
       const response = await fetch(`/api/documents/${this.editContext.documentId}`, {
         method: 'PUT',
@@ -2333,12 +2165,7 @@ ${certType}：
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-          documentName,
-          expiryDate: isPermanent ? null : expiryDate,
-          isPermanent,
-          remark: document.getElementById('editDocumentRemark').value
-        })
+        body: JSON.stringify(requestData)
       });
 
       const data = await response.json();
@@ -2346,7 +2173,17 @@ ${certType}：
       if (data.success) {
         window.supplierUIUtils.showSuccess('资料信息已更新');
         this.hideEditModal();
-        await this.refresh(false, this.editContext?.documentId ? null : null); // 编辑操作需要重新加载详情
+
+        // 🎯 [BUG-FIX] 修复永久有效显示问题
+        // 使用editContext中存储的supplierId，确保正确刷新供应商详情
+        const supplierId = this.editContext?.supplierId;
+        if (supplierId) {
+          console.log('🔄 编辑完成，刷新供应商详情:', supplierId);
+          await this.refresh(false, supplierId); // 只刷新当前编辑的供应商
+        } else {
+          console.warn('⚠️ 无法获取供应商ID，执行全量刷新');
+          await this.refresh(false); // 降级到全量刷新
+        }
       } else {
         throw new Error(data.error || '更新失败');
       }
@@ -2561,217 +2398,6 @@ ${certType}：
   }
 }
 
-// 测试函数
-window.testSupplierManager = () => {
-  console.log('🧪 测试供应商管理模块:');
-  console.log('- supplierManager存在:', !!window.supplierManager);
-  console.log('- documentsContainer存在:', !!document.getElementById('documentsContainer'));
-  console.log('- uploadModal存在:', !!document.getElementById('uploadModal'));
-  console.log('- editModal存在:', !!document.getElementById('editModal'));
-  console.log('- addMaterialModal存在:', !!document.getElementById('addMaterialModal'));
-
-  if (window.supplierManager) {
-    console.log('- supplierManager方法:', Object.getOwnPropertyNames(Object.getPrototypeOf(window.supplierManager)));
-  }
-};
-
-// 测试API函数
-window.testDocumentAPI = async (documentId) => {
-  console.log('🧪 测试文档API:', documentId);
-  try {
-    const token = localStorage.getItem('authToken');
-    const response = await fetch(`/api/documents/${documentId}`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    console.log('📄 API响应状态:', response.status);
-    const data = await response.json();
-    console.log('📄 API响应数据:', data);
-  } catch (error) {
-    console.error('❌ API测试失败:', error);
-  }
-};
-
-// 测试模态框显示
-window.testModals = () => {
-  console.log('🧪 测试模态框显示:');
-
-  const uploadModal = document.getElementById('uploadModal');
-  const editModal = document.getElementById('editModal');
-  const addMaterialModal = document.getElementById('addMaterialModal');
-
-  console.log('- uploadModal:', uploadModal);
-  console.log('- editModal:', editModal);
-  console.log('- addMaterialModal:', addMaterialModal);
-
-  // 测试显示上传模态框
-  if (uploadModal) {
-    // 强制设置样式
-    uploadModal.style.cssText = `
-      display: flex !important;
-      position: fixed !important;
-      top: 0 !important;
-      left: 0 !important;
-      width: 100% !important;
-      height: 100% !important;
-      background-color: rgba(255, 0, 0, 0.8) !important;
-      z-index: 99999 !important;
-      align-items: center !important;
-      justify-content: center !important;
-    `;
-
-    console.log('✅ 上传模态框强制显示（红色背景）');
-    console.log('🔍 模态框最终样式:', uploadModal.style.cssText);
-    console.log('🔍 模态框计算样式:', window.getComputedStyle(uploadModal));
-
-    // 3秒后自动隐藏
-    setTimeout(() => {
-      uploadModal.style.display = 'none';
-      console.log('❌ 上传模态框已隐藏');
-    }, 3000);
-  }
-};
-
-// 强制显示上传模态框
-window.forceShowUploadModal = () => {
-  const modal = document.getElementById('uploadModal');
-  if (modal) {
-    modal.style.display = 'flex';
-    modal.style.zIndex = '99999';
-    modal.style.backgroundColor = 'rgba(0, 255, 0, 0.8)';
-    console.log('🟢 强制显示上传模态框（绿色背景）');
-    return true;
-  }
-  return false;
-};
-
-// 检查模态框是否存在并可访问
-window.checkModal = (modalId) => {
-  const modal = document.getElementById(modalId);
-  if (!modal) {
-    console.log(`❌ 模态框 ${modalId} 不存在`);
-    return false;
-  }
-
-  console.log(`✅ 模态框 ${modalId} 存在:`, {
-    tagName: modal.tagName,
-    className: modal.className,
-    id: modal.id,
-    display: window.getComputedStyle(modal).display,
-    visibility: window.getComputedStyle(modal).visibility,
-    opacity: window.getComputedStyle(modal).opacity,
-    zIndex: window.getComputedStyle(modal).zIndex,
-    position: window.getComputedStyle(modal).position,
-    offsetParent: modal.offsetParent,
-    offsetWidth: modal.offsetWidth,
-    offsetHeight: modal.offsetHeight
-  });
-
-  return true;
-};
-
-// 测试数据库连接
-window.testDatabaseConnection = async () => {
-  console.log('🧪 测试数据库连接...');
-
-  try {
-    const token = localStorage.getItem('authToken');
-    const response = await fetch('/api/materials/test-db', {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-
-    const data = await response.json();
-    console.log('🧪 数据库测试结果:', { status: response.status, data });
-
-    if (data.success) {
-      console.log('✅ 数据库连接正常');
-      console.log(`📊 当前物料数量: ${data.data.materialCount}`);
-      console.log(`📊 materials表字段数: ${data.data.tableColumns}`);
-    } else {
-      console.log('❌ 数据库连接失败:', data.error);
-    }
-
-  } catch (error) {
-    console.error('🧪 数据库测试失败:', error);
-  }
-};
-
-// 测试物料创建和删除
-window.testMaterialOperations = async (supplierId) => {
-  console.log('🧪 测试物料操作...');
-
-  const testMaterialName = `测试物料_${Date.now()}`;
-
-  try {
-    // 1. 测试创建
-    console.log('📝 测试创建物料:', testMaterialName);
-    const token = localStorage.getItem('authToken');
-    const createResponse = await fetch('/api/materials', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        supplierId: supplierId,
-        materialName: testMaterialName,
-        materialCode: 'TEST-001',
-        description: '测试物料描述'
-      })
-    });
-
-    const createData = await createResponse.json();
-    console.log('📝 创建响应:', { status: createResponse.status, data: createData });
-
-    if (createData.success) {
-      const materialId = createData.data.materialId;
-      console.log('✅ 创建成功，物料ID:', materialId);
-
-      // 2. 测试删除
-      console.log('🗑️ 测试删除物料:', materialId);
-      const deleteResponse = await fetch(`/api/materials/${materialId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ supplierId })
-      });
-
-      const deleteData = await deleteResponse.json();
-      console.log('🗑️ 删除响应:', { status: deleteResponse.status, data: deleteData });
-
-      // 3. 测试重复创建（应该成功）
-      console.log('📝 测试重复创建已删除的物料:', testMaterialName);
-      const recreateResponse = await fetch('/api/materials', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          supplierId: supplierId,
-          materialName: testMaterialName,
-          materialCode: 'TEST-002',
-          description: '重新创建的测试物料'
-        })
-      });
-
-      const recreateData = await recreateResponse.json();
-      console.log('📝 重新创建响应:', { status: recreateResponse.status, data: recreateData });
-
-    } else {
-      console.log('❌ 创建失败:', createData);
-    }
-
-  } catch (error) {
-    console.error('🧪 测试失败:', error);
-  }
-};
 
 // 初始化模块
 if (typeof window !== 'undefined') {
@@ -2784,12 +2410,6 @@ if (typeof window !== 'undefined') {
       if (!window.supplierManager) {
         window.supplierManager = new SupplierDocumentManager();
         console.log('✅ 供应商资料管理模块初始化完成');
-
-        // 延迟测试，确保所有元素都已加载
-        setTimeout(() => {
-          console.log('🧪 运行自动测试...');
-          window.testSupplierManager();
-        }, 2000);
       }
     } else {
       console.log('⏳ documentsContainer不存在，延迟初始化...');

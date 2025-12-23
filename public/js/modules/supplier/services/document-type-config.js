@@ -115,7 +115,7 @@ const DocumentTypeAPIRoutes = {
     response: {
       success: true,
       data: [DocumentTypeConfig],
-      total: number
+      total: 'number'
     }
   },
 
@@ -175,7 +175,7 @@ const DocumentTypeAPIRoutes = {
     },
     response: {
       success: true,
-      message: string
+      message: 'string'
     }
   },
 

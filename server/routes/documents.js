@@ -251,6 +251,7 @@ router.put('/:id', getUserInfo, async (req, res) => {
       'documentName',
       'documentNumber',
       'expiryDate',
+      'isPermanent',  // 🎯 [BUG-FIX] 添加isPermanent字段到允许更新列表
       'responsiblePerson',
       'issuingAuthority',
       'remarks',
