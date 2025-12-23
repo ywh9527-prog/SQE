@@ -1,0 +1,61 @@
+/* Sheet 选择区域 */
+.sheet-selection {
+    margin-top: 28px;
+    padding: 32px;
+    background: white;
+    border: 2px solid var(--primary-200);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    text-align: center;
+}
+
+.sheet-selection h5 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--primary-700);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.sheet-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+    justify-content: center;
+}
+
+.sheet-tab {
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--primary-50) 0%, white 100%);
+    border: 2px solid var(--gray-300);
+    border-radius: 24px;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    font-weight: 600;
+    font-size: 15px;
+    color: var(--gray-700);
+}
+
+.sheet-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
+    border-color: var(--primary-400);
+    background: linear-gradient(135deg, var(--primary-100) 0%, white 100%);
+}
+
+.sheet-tab.selected {
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    color: white;
+    border-color: var(--primary-600);
+    box-shadow: var(--shadow-md);
+}
+
+.sheet-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}

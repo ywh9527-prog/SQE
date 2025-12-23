@@ -49,9 +49,9 @@ class DocumentTypeSimpleUI {
       this.bindSimpleModalEvents(modalContainer, category);
 
       // 显示动画
-      const overlay = modalContainer.querySelector('.modal-overlay');
+      const overlay = modalContainer.querySelector('.supplier-modal__overlay');
       // 添加专用类确保层级正确
-      overlay.classList.add('document-type-settings-modal');
+      overlay.classList.add('supplier-modal--document-type-settings');
       requestAnimationFrame(() => {
         overlay.classList.add('show');
       });
@@ -76,20 +76,20 @@ class DocumentTypeSimpleUI {
     const categoryText = category === 'common' ? '通用资料' : '检测报告';
 
     return `
-      <div class="modal-overlay document-type-settings-modal" style="z-index: 1001000 !important;">
-        <div class="modal-content">
+      <div class="supplier-modal__overlay supplier-modal--document-type-settings" style="z-index: 1001000 !important;">
+        <div class="supplier-modal__content">
           <!-- 模态框头部 -->
-          <div class="modal-header">
+          <div class="supplier-modal__header">
             <h3>⚙️ ${categoryText}类型设置</h3>
-            <button class="modal-close-btn" onclick="documentTypeSimpleUI.closeModal(this)">✕</button>
+            <button class="supplier-modal__close-btn" onclick="documentTypeSimpleUI.closeModal(this)">✕</button>
           </div>
 
           <!-- 模态框主体 -->
-          <div class="modal-body">
+          <div class="supplier-modal__body">
             <!-- 当前资料类型列表 -->
-            <div class="document-type-list-container">
-              <div class="document-type-list-header">📋 当前资料类型列表</div>
-              <div class="document-type-list">
+            <div class="supplier-document-type__list-container">
+              <div class="supplier-document-type__list-header">📋 当前资料类型列表</div>
+              <div class="supplier-document-type__list">
                 ${documentTypes.map(docType => this.renderDocumentTypeItem(docType)).join('')}
               </div>
             </div>
@@ -142,19 +142,19 @@ class DocumentTypeSimpleUI {
     const canDelete = window.documentTypeService.canDelete(docType);
 
     return `
-      <div class="document-type-item" data-id="${docType.id}">
-        <div class="document-type-info">
-          <span class="document-type-icon">🏷️</span>
-          <div class="document-type-details">
-            <div class="document-type-name-row">
-              <span class="document-type-name">${docType.name}</span>
-              <span class="document-type-date">${createdDate}</span>
+      <div class="supplier-document-type__item" data-id="${docType.id}">
+        <div class="supplier-document-type__info">
+          <span class="supplier-document-type__icon">🏷️</span>
+          <div class="supplier-document-type__details">
+            <div class="supplier-document-type__name-row">
+              <span class="supplier-document-type__name">${docType.name}</span>
+              <span class="supplier-document-type__date">${createdDate}</span>
             </div>
           </div>
         </div>
-        <div class="document-type-actions">
+        <div class="supplier-document-type__actions">
           <button
-            class="document-type-delete-btn"
+            class="supplier-btn--delete"
             onclick="documentTypeSimpleUI.deleteDocumentType('${docType.id}')"
             ${!canDelete.canDelete ? 'disabled' : ''}
             title="${!canDelete.canDelete ? canDelete.reason : '删除此类型'}"
@@ -178,21 +178,21 @@ class DocumentTypeSimpleUI {
     modalContainer.addEventListener('click', (e) => {
       if (e.target === e.currentTarget) {
         // 点击遮罩层关闭 - 简化，不传递回调
-        this.closeModal(e.target.querySelector('.modal-close-btn'));
+        this.closeModal(e.target.querySelector('.supplier-modal__close-btn'));
       }
     });
 
     // ESC键关闭 - 简化，不传递回调
     const handleEscKey = (e) => {
       if (e.key === 'Escape') {
-        this.closeModal(modalContainer.querySelector('.modal-close-btn'));
+        this.closeModal(modalContainer.querySelector('.supplier-modal__close-btn'));
         document.removeEventListener('keydown', handleEscKey);
       }
     };
     document.addEventListener('keydown', handleEscKey);
 
     // 简化事件绑定，不传递复杂回调
-    const closeBtn = modalContainer.querySelector('.modal-close-btn');
+    const closeBtn = modalContainer.querySelector('.supplier-modal__close-btn');
     if (closeBtn) {
       closeBtn.onclick = () => this.closeModal(closeBtn);
     }
@@ -210,7 +210,7 @@ class DocumentTypeSimpleUI {
   closeModal(closeBtn) {
     console.log('🔒 关闭简洁版资料类型设置模态框');
 
-    const modalContainer = closeBtn.closest('.document-type-settings-modal');
+    const modalContainer = closeBtn.closest('.supplier-modal--document-type-settings');
     if (!modalContainer) {
       console.error('❌ 找不到模态框容器');
       return;
@@ -387,7 +387,7 @@ class DocumentTypeSimpleUI {
       });
 
       // 更新列表显示
-      const listContainer = document.querySelector('.document-type-list');
+      const listContainer = document.querySelector('.supplier-document-type__list');
       if (listContainer) {
         listContainer.innerHTML = documentTypes.map(docType => this.renderDocumentTypeItem(docType)).join('');
       }
@@ -467,14 +467,14 @@ class DocumentTypeSimpleUI {
    */
   showToast(message, type = 'info') {
     // 移除现有的toast
-    const existingToast = document.querySelector('.document-type-toast');
+    const existingToast = document.querySelector('.supplier-toast');
     if (existingToast) {
       document.body.removeChild(existingToast);
     }
 
     // 创建新的toast
     const toast = document.createElement('div');
-    toast.className = `document-type-toast ${type}`;
+    toast.className = `supplier-toast supplier-toast--${type}`;
     toast.textContent = message;
 
     // 添加到页面

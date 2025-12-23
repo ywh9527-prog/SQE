@@ -544,8 +544,19 @@
     <!-- UI工具层 - 依赖modal-manager -->
     <script src="js/modules/supplier/ui/ui-utils.js?v=3.5.0-add-material-complete"></script>
 
-    <!-- 供应商资料类型设置功能 -->
-    <link rel="stylesheet" href="css/modules/document-type-settings.css?v=1.2.7">
+    <!-- 供应商资料类型设置功能 - CSS架构优化完成 -->
+    <!-- 📋 架构优化总结：
+         ✅ document-type-settings.css 已合并到各模块
+         ✅ BEM命名规范化完成
+         ✅ 类名映射：
+           .document-type-settings-btn → .supplier-btn--document-type-settings
+           .document-type-delete-btn → .supplier-btn--delete
+           .document-type-toast → .supplier-toast
+         ✅ 样式分布：
+           - 按钮样式 → supplier-interactions.css
+           - 模态框样式 → supplier-modals.css
+           - 组件样式 → supplier-components.css
+           - 响应式样式 → supplier-layout.css -->
     <script src="js/modules/supplier/services/document-type-config.js?v=1.0.0"></script>
     <script src="js/modules/supplier/services/document-type-service.js?v=1.0.0"></script>
     <script src="js/modules/supplier/ui/document-type-simple-ui.js?v=1.2.7"></script>
@@ -753,7 +764,7 @@
                             <option value="csr">CSR</option>
                             <option value="other">其他</option>
                         </select>
-                        <button type="button" id="openDocumentTypeSettingsBtn" class="document-type-settings-btn" style="margin-top: 8px;">
+                        <button type="button" id="openDocumentTypeSettingsBtn" class="supplier-btn--document-type-settings" data-type="common" style="margin-top: 8px;">
                             ⚙️ 资料类型设置
                         </button>
                     </div>

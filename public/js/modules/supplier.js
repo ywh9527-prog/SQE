@@ -190,7 +190,7 @@ class SupplierDocumentManager {
         }
 
         // 资料类型设置按钮
-        const settingsBtn = e.target.closest('.document-type-settings-btn');
+        const settingsBtn = e.target.closest('.supplier-btn--document-type-settings');
         if (settingsBtn) {
           console.log('⚙️ 点击资料类型设置按钮', settingsBtn.dataset);
           e.preventDefault();
@@ -1240,7 +1240,7 @@ class SupplierDocumentManager {
             <button class="upload-btn" data-type="common" data-supplier-id="${supplierId}" title="上传通用资料">
               📤 上传
             </button>
-            <button class="settings-btn document-type-settings-btn" data-type="common" title="资料类型设置">
+            <button class="settings-btn supplier-btn--document-type-settings" data-type="common" title="资料类型设置">
               ⚙️ 资料类型设置
             </button>
           </div>
