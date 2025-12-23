@@ -178,9 +178,16 @@
                 return false;
             }
 
-            // 隐藏弹窗
+            console.log(`🎭 Modal Manager: 开始隐藏弹窗 "${modalName}"`);
+            console.log('- 隐藏前display:', modal.style.display);
+            console.log('- 隐藏前classList:', modal.className);
+
+            // 隐藏弹窗 - 移除所有可能的激活类
+            modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
             modal.style.display = 'none';
-            modal.classList.remove('modal-active');
+
+            console.log('- 隐藏后display:', modal.style.display);
+            console.log('- 隐藏后classList:', modal.className);
 
             // 清除当前弹窗
             if (this.currentModal === modalName) {
@@ -190,7 +197,7 @@
             // 触发隐藏事件
             this.dispatchEvent(modal, 'modal:hide', { modalName });
 
-            console.log(`🎭 Modal Manager: 隐藏弹窗 "${modalName}"`);
+            console.log(`🎭 Modal Manager: 隐藏弹窗 "${modalName}" 完成`);
             return true;
         }
 

@@ -314,9 +314,69 @@ class SupplierDocumentManager {
         return;
       }
 
-      // 编辑模态框关闭按钮
-      if (e.target.closest('.supplier-modal__close--edit')) {
-        this.hideEditModal();
+      // 统一模态框关闭按钮监听 - 支持所有类型的关闭按钮
+      const closeBtn = e.target.closest('.supplier-modal__close') ||
+                      e.target.closest('.supplier-modal__close--edit') ||
+                      e.target.closest('.supplier-modal__close--component') ||
+                      e.target.closest('.supplier-modal__close--add-material') ||
+                      e.target.closest('#componentManagementModal .supplier-modal__btn--secondary'); // 仅构成管理模态框的底部关闭按钮
+
+      if (closeBtn) {
+        console.log('🎯 检测到关闭按钮点击:', closeBtn.className);
+
+        // 判断是哪个模态框
+        const editModal = document.getElementById('editModal');
+        const componentModal = document.getElementById('componentManagementModal');
+        const addMaterialModal = document.getElementById('addMaterialModal');
+        const emailModal = document.getElementById('emailModal');
+
+        // 检查模态框的实际显示状态（包括通过modalManager显示的情况）
+        const editModalVisible = editModal && (
+          editModal.style.display !== 'none' ||
+          editModal.style.display === '' &&
+          getComputedStyle(editModal).display !== 'none'
+        );
+        const componentModalVisible = componentModal && (
+          componentModal.style.display !== 'none' ||
+          componentModal.style.display === '' &&
+          getComputedStyle(componentModal).display !== 'none'
+        );
+        const addMaterialModalVisible = addMaterialModal && (
+          addMaterialModal.style.display !== 'none' ||
+          addMaterialModal.style.display === '' &&
+          getComputedStyle(addMaterialModal).display !== 'none'
+        );
+        const emailModalVisible = emailModal && (
+          emailModal.style.display !== 'none' ||
+          emailModal.style.display === '' &&
+          getComputedStyle(emailModal).display !== 'none'
+        );
+
+        console.log('📊 编辑模态框显示状态:', editModalVisible);
+        console.log('📊 构成管理模态框显示状态:', componentModalVisible);
+        console.log('📊 新增物料模态框显示状态:', addMaterialModalVisible);
+        console.log('📊 邮件模态框显示状态:', emailModalVisible);
+
+        if (editModalVisible) {
+          console.log('✅ 关闭编辑模态框');
+          this.hideEditModal();
+        } else if (componentModalVisible) {
+          console.log('✅ 关闭构成管理模态框');
+          this.hideComponentManagementModal();
+        } else if (addMaterialModalVisible) {
+          console.log('✅ 关闭新增物料模态框');
+          window.supplierUIUtils.hideAddMaterialModal();
+        } else if (emailModalVisible) {
+          console.log('✅ 关闭邮件模态框');
+          window.supplierUIUtils.hideEmailModal();
+        } else {
+          console.log('❌ 无法确定要关闭的模态框');
+          // 如果无法确定，尝试关闭所有模态框
+          if (editModal) this.hideEditModal();
+          if (componentModal) this.hideComponentManagementModal();
+          if (addMaterialModal) window.supplierUIUtils.hideAddMaterialModal();
+          if (emailModal) window.supplierUIUtils.hideEmailModal();
+        }
         return;
       }
 
@@ -2159,17 +2219,75 @@ ${certType}：
    * 隐藏编辑模态框
    */
   hideEditModal() {
-    // 使用统一弹窗管理器隐藏模态框
-    if (window.supplierUIUtils?.modalManager) {
-      window.supplierUIUtils.modalManager.hide('edit');
-    } else {
-      // 降级方案
-      const modal = document.getElementById('editModal');
-      if (modal) {
-        modal.style.setProperty('display', 'none', 'important');
-      }
+    console.log('🎯 开始隐藏编辑模态框...');
+
+    const modal = document.getElementById('editModal');
+    if (!modal) {
+      console.error('❌ 找不到编辑模态框元素');
+      return;
     }
+
+    // 优先使用统一弹窗管理器隐藏模态框
+    if (window.supplierUIUtils?.modalManager) {
+      console.log('🎭 使用Modal Manager隐藏模态框');
+      const result = window.supplierUIUtils.modalManager.hide('edit');
+      console.log('🎭 Modal Manager隐藏结果:', result);
+    } else {
+      console.log('🚨 Modal Manager不可用，使用降级方案');
+    }
+
+    // 🔧 强制降级方案 - 确保模态框真正隐藏
+    console.log('🔧 执行强制隐藏操作...');
+    console.log('- 隐藏前display:', modal.style.display);
+    console.log('- 隐藏前classList:', modal.className);
+
+    // 移除所有可能的激活类
+    modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
+
+    // 强制设置隐藏样式
+    modal.style.setProperty('display', 'none', 'important');
+    modal.style.setProperty('visibility', 'hidden', 'important');
+    modal.style.setProperty('opacity', '0', 'important');
+    modal.style.setProperty('z-index', '-1', 'important');
+
+    console.log('- 隐藏后display:', modal.style.display);
+    console.log('- 隐藏后classList:', modal.className);
+
+    // 清理上下文
     this.editContext = null;
+
+    console.log('✅ 编辑模态框隐藏完成');
+  }
+
+  /**
+   * 隐藏构成管理模态框
+   */
+  hideComponentManagementModal() {
+    console.log('🎯 开始隐藏构成管理模态框...');
+
+    const modal = document.getElementById('componentManagementModal');
+    if (!modal) {
+      console.error('❌ 找不到构成管理模态框元素');
+      return;
+    }
+
+    console.log('🔧 执行强制隐藏操作...');
+    console.log('- 隐藏前display:', modal.style.display);
+    console.log('- 隐藏前classList:', modal.className);
+
+    // 移除所有可能的激活类
+    modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
+
+    // 强制设置隐藏样式
+    modal.style.setProperty('display', 'none', 'important');
+    modal.style.setProperty('visibility', 'hidden', 'important');
+    modal.style.setProperty('opacity', '0', 'important');
+    modal.style.setProperty('z-index', '-1', 'important');
+
+    console.log('- 隐藏后display:', modal.style.display);
+    console.log('- 隐藏后classList:', modal.className);
+
+    console.log('✅ 构成管理模态框隐藏完成');
   }
 
   /**

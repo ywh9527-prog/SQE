@@ -28,9 +28,8 @@
     <!-- supplier-animations.css 已完全迁移到supplier-interactions.css -->
     <link rel="stylesheet" href="css/modules/supplier-interactions.css?v=1.1-migrate-btn-success">
     <!-- 统一BEM模态框样式 (Phase 4.1: 已整合supplier-modal.css和supplier-modal-enhanced.css) -->
-    <link rel="stylesheet" href="css/modules/supplier-modals.css?v=4.12-fix-file-preview">
-    <!-- 模态框修复样式 -->
-    <link rel="stylesheet" href="css/modal-fix.css?v=1.7">
+    <link rel="stylesheet" href="css/modules/supplier-modals.css?v=4.17-fix-form-styles">
+    <!-- modal-fix.css 已移除 - 样式迁移到 supplier-modals.css -->
     <!-- 供应商字体层级统一管理样式 v1.0 -->
     <link rel="stylesheet" href="css/modules/supplier-font-hierarchy.css?v=1.0">
     <!-- 供应商通用组件样式库 - Phase 4.2 -->
@@ -904,21 +903,21 @@
                     <h4>📝 构成信息</h4>
                     <div class="supplier-modal__form-row">
                         <div class="supplier-modal__form-group">
-                            <label>构成名称 <span class="supplier-modal__required">*</span></label>
-                            <input type="text" id="componentNameInput" placeholder="请输入构成名称" maxlength="50">
+                            <label class="supplier-modal__label">构成名称 <span class="supplier-modal__required">*</span></label>
+                            <input type="text" class="supplier-modal__input" id="componentNameInput" placeholder="请输入构成名称" maxlength="50">
                         </div>
                         <div class="supplier-modal__form-group">
-                            <label>构成编码</label>
-                            <input type="text" id="componentCodeInput" placeholder="自动生成或手动输入" maxlength="20">
+                            <label class="supplier-modal__label">构成编码</label>
+                            <input type="text" class="supplier-modal__input" id="componentCodeInput" placeholder="自动生成或手动输入" maxlength="20">
                         </div>
                     </div>
                     <div class="supplier-modal__form-group">
-                        <label>构成描述</label>
-                        <textarea id="componentDescriptionInput" placeholder="可选，描述构成的具体信息" rows="3" maxlength="200"></textarea>
+                        <label class="supplier-modal__label">构成描述</label>
+                        <textarea class="supplier-modal__textarea" id="componentDescriptionInput" placeholder="可选，描述构成的具体信息" rows="3" maxlength="200"></textarea>
                     </div>
                     <div class="supplier-modal__form-group">
-                        <label>所属供应商</label>
-                        <input type="text" id="componentSupplierInput" readonly>
+                        <label class="supplier-modal__label">所属供应商</label>
+                        <input type="text" class="supplier-modal__input" id="componentSupplierInput" readonly>
                     </div>
                 </div>
 

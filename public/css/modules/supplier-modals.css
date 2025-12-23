@@ -562,11 +562,11 @@
 }
 
 /* 构成列表区域 */
-.supplier-modal__component-list {
+.supplier-modal--component-management .supplier-modal__component-list {
     flex: 1 !important;
 }
 
-.supplier-modal__component-list h4 {
+.supplier-modal--component-management .supplier-modal__component-list h4 {
     margin: 0 0 15px 0 !important;
     font-size: 16px !important;
     font-weight: 600 !important;
@@ -577,7 +577,7 @@
 }
 
 /* 构成列表容器 */
-.supplier-modal__list-container {
+.supplier-modal--component-management .supplier-modal__list-container {
     border: 1px solid #e5e7eb !important;
     border-radius: 8px !important;
     overflow: hidden !important;
@@ -585,7 +585,7 @@
 }
 
 /* 构成列表头部 */
-.supplier-modal__list-header {
+.supplier-modal--component-management .supplier-modal__list-header {
     display: grid !important;
     grid-template-columns: 2fr 1fr 1fr 1fr !important;
     gap: 15px !important;
@@ -598,13 +598,14 @@
 }
 
 /* 构成列表主体 */
-.supplier-modal__list-body {
+.supplier-modal--component-management .supplier-modal__list-body {
     max-height: 300px !important;
     overflow-y: auto !important;
 }
 
 /* 构成列表项 */
-.supplier-modal__list-item {
+.supplier-modal--component-management .supplier-modal__list-item,
+.supplier-modal--component-management .component-item { /* 兼容旧类名 */
     display: grid !important;
     grid-template-columns: 2fr 1fr 1fr 1fr !important;
     gap: 15px !important;
@@ -615,37 +616,44 @@
     transition: background-color 0.2s ease !important;
 }
 
-.supplier-modal__list-item:hover {
+.supplier-modal--component-management .supplier-modal__list-item:hover,
+.supplier-modal--component-management .component-item:hover { /* 兼容旧类名 */
     background-color: #f9fafb !important;
 }
 
-.supplier-modal__list-item:last-child {
+.supplier-modal--component-management .supplier-modal__list-item:last-child,
+.supplier-modal--component-management .component-item:last-child { /* 兼容旧类名 */
     border-bottom: none !important;
 }
 
 /* 构成项内容 */
-.supplier-modal__item-name {
+.supplier-modal--component-management .supplier-modal__item-name,
+.supplier-modal--component-management .component-name { /* 兼容旧类名 */
     font-weight: 500 !important;
     color: #374151 !important;
 }
 
-.supplier-modal__item-code {
+.supplier-modal--component-management .supplier-modal__item-code,
+.supplier-modal--component-management .component-code { /* 兼容旧类名 */
     color: #6b7280 !important;
     font-family: 'Courier New', monospace !important;
 }
 
-.supplier-modal__item-time {
+.supplier-modal--component-management .supplier-modal__item-time,
+.supplier-modal--component-management .component-time { /* 兼容旧类名 */
     color: #9ca3af !important;
     font-size: 12px !important;
 }
 
 /* 构成项操作 */
-.supplier-modal__item-actions {
+.supplier-modal--component-management .supplier-modal__item-actions,
+.supplier-modal--component-management .component-actions { /* 兼容旧类名 */
     display: flex !important;
     gap: 5px !important;
 }
 
-.supplier-modal__item-actions button {
+.supplier-modal--component-management .supplier-modal__item-actions button,
+.supplier-modal--component-management .component-actions button { /* 兼容旧类名 */
     padding: 4px 8px !important;
     font-size: 11px !important;
     border: none !important;
@@ -654,26 +662,31 @@
     transition: all 0.2s ease !important;
 }
 
-.supplier-modal__edit-btn {
+.supplier-modal--component-management .supplier-modal__edit-btn,
+.supplier-modal--component-management .edit-component-btn { /* 兼容旧类名 */
     background: #3b82f6 !important;
     color: white !important;
 }
 
-.supplier-modal__edit-btn:hover {
+.supplier-modal--component-management .supplier-modal__edit-btn:hover,
+.supplier-modal--component-management .edit-component-btn:hover { /* 兼容旧类名 */
     background: #2563eb !important;
 }
 
-.supplier-modal__delete-btn {
+.supplier-modal--component-management .supplier-modal__delete-btn,
+.supplier-modal--component-management .delete-component-btn { /* 兼容旧类名 */
     background: #ef4444 !important;
     color: white !important;
 }
 
-.supplier-modal__delete-btn:hover {
+.supplier-modal--component-management .supplier-modal__delete-btn:hover,
+.supplier-modal--component-management .delete-component-btn:hover { /* 兼容旧类名 */
     background: #dc2626 !important;
 }
 
 /* 空构成状态 */
-.supplier-modal__no-components {
+.supplier-modal--component-management .supplier-modal__no-components,
+.supplier-modal--component-management .no-components { /* 兼容旧类名 */
     padding: 40px 20px !important;
     text-align: center !important;
     color: #9ca3af !important;
@@ -1384,4 +1397,54 @@
 /* 如果还有其他section-actions，全部强制靠右 */
 div[class*="section"].section-actions {
     justify-content: flex-end !important;
+}
+
+/* ============================================
+   🎯 [CSS-MIGRATION] 检测类型选择器样式 (临时兼容)
+   迁移日期: 2025-12-23
+   注意：这些是临时兼容样式，后续需要更新HTML为BEM规范
+   ============================================ */
+
+/* 检测类型选择器样式 - HTML仍使用旧类名，临时兼容 */
+.detection-type-options {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.detection-type-option {
+    flex: 1;
+    padding: 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: all 0.2s ease;
+}
+
+.detection-type-option:hover {
+    border-color: #3498db;
+    background: #f8f9fa;
+}
+
+.detection-type-option input[type="radio"] {
+    margin-right: 8px;
+    margin-bottom: 5px;
+}
+
+.detection-type-option label {
+    display: block;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 5px;
+}
+
+.detection-type-option small {
+    display: block;
+    color: #7f8c8d;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.detection-type-option input[type="radio"]:checked + span {
+    color: #3498db;
 }
