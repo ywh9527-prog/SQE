@@ -61,4 +61,21 @@ const Supplier = sequelize.define('Supplier', {
     comment: '供应商基础信息表'
 });
 
+/**
+ * 定义关联关系
+ */
+Supplier.associate = (models) => {
+    // 一个供应商有多个物料
+    Supplier.hasMany(models.Material, {
+        foreignKey: 'supplier_id',
+        as: 'materials'
+    });
+
+    // 一个供应商有多个资料
+    Supplier.hasMany(models.SupplierDocument, {
+        foreignKey: 'supplier_id',
+        as: 'documents'
+    });
+};
+
 module.exports = Supplier;

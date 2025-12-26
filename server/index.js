@@ -47,8 +47,7 @@ const documentsUploadRoutes = require('./routes/documents-upload');
 console.log('✅ documentsUploadRoutes 加载完成');
 const suppliersSummaryRoutes = require('./routes/suppliers-summary');
 console.log('✅ suppliersSummaryRoutes 加载完成');
-
-
+const suppliersSyncRoutes = require('./routes/suppliers-sync');
 console.log('✅ suppliersSyncRoutes 加载完成');
 
 // 文档类型设置功能路由
@@ -79,7 +78,8 @@ app.use('/api/suppliers', suppliersTreeRoutes);
 console.log('✅ /api/suppliers/tree 路由已注册 (suppliers-tree)');
 app.use('/api/suppliers', suppliersSummaryRoutes);
 console.log('✅ /api/suppliers/summary 路由已注册 (suppliers-summary)');
-
+app.use('/api/suppliers', suppliersSyncRoutes);
+console.log('✅ /api/suppliers/sync-from-iqc 路由已注册 (suppliers-sync)');
 
 // 旧的 suppliers 路由 (包含 /:id 参数路由，必须放在后面)
 app.use('/api/suppliers', suppliersRoutes);

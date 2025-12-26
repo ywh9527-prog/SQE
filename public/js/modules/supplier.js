@@ -1900,33 +1900,45 @@ ${certType}：
       window.supplierUIUtils.showLoading(true, '正在同步供应商数据...');
 
       const token = localStorage.getItem('authToken');
-      const response = await fetch('/api/suppliers/import-from-iqc', {
+      const response = await fetch('/api/suppliers/sync-from-iqc', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
-        }
+        },
+        body: JSON.stringify({
+          mode: 'incremental' // 增量同步模式
+        })
       });
 
       const data = await response.json();
 
       if (data.success) {
-        const { newSuppliers, updatedSuppliers, totalSuppliers, folderSyncResults } = data.data;
+        const { stats, iqcFileName, iqcFileId } = data;
 
-        console.log('📊 同步返回数据:', data.data);
-        console.log('📁 文件夹同步结果:', folderSyncResults);
+        console.log('📊 同步结果:', stats);
+        console.log('📁 IQC数据源:', { fileName: iqcFileName, id: iqcFileId });
 
-        if (newSuppliers && newSuppliers.length > 0) {
-          window.supplierUIUtils.showSuccess(`同步完成！发现 ${newSuppliers.length} 个新供应商：${newSuppliers.slice(0, 5).join(', ')}${newSuppliers.length > 5 ? '...' : ''}，已为所有供应商创建文件夹结构`);
+        // 根据统计结果显示不同的消息
+        if (stats.created > 0) {
+          window.supplierUIUtils.showSuccess(
+            `同步完成！新增 ${stats.created} 个供应商` +
+            (stats.updated > 0 ? `，更新 ${stats.updated} 个` : '') +
+            (stats.skipped > 0 ? `，跳过 ${stats.skipped} 个已存在` : '')
+          );
+        } else if (stats.updated > 0) {
+          window.supplierUIUtils.showSuccess(`同步完成！更新 ${stats.updated} 个供应商`);
+        } else if (stats.skipped > 0) {
+          window.supplierUIUtils.showSuccess(`同步完成！所有供应商已是最新（跳过 ${stats.skipped} 个）`);
         } else {
-          window.supplierUIUtils.showSuccess(`同步完成！已为 ${totalSuppliers} 个供应商创建文件夹结构`);
+          window.supplierUIUtils.showSuccess('同步完成！未发现新的供应商数据');
         }
 
         // 刷新供应商列表
         await this.refresh(false);
 
       } else {
-        throw new Error(data.message || '同步失败');
+        throw new Error(data.error || '同步失败');
       }
     } catch (error) {
       console.error('同步供应商失败:', error);

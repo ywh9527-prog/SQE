@@ -21,10 +21,23 @@ const sequelize = new Sequelize({
 let models = {};
 const loadModels = () => {
     if (Object.keys(models).length === 0) {
+        // 加载所有模型
         models.User = require('../models/User');
+        models.Supplier = require('../models/Supplier');
+        models.Material = require('../models/Material');
+        models.MaterialComponent = require('../models/MaterialComponent');
         models.SupplierDocument = require('../models/SupplierDocument');
+        models.IQCData = require('../models/IQCData');
         models.EmailNotification = require('../models/EmailNotification');
         models.SystemLog = require('../models/SystemLog');
+        models.Certificate = require('../models/Certificate');
+
+        // 建立模型关联
+        Object.values(models).forEach(model => {
+            if (typeof model.associate === 'function') {
+                model.associate(models);
+            }
+        });
     }
     return models;
 };
@@ -52,5 +65,6 @@ const connectDB = async () => {
 
 module.exports = {
     sequelize,
-    connectDB
+    connectDB,
+    getModels: loadModels
 };
