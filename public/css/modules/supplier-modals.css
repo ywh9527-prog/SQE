@@ -1237,37 +1237,43 @@ body .supplier-modal.supplier-modal--active {
 }
 
 /* ==================== 上传模态框专用表单样式 ==================== */
-.form-group {
-    margin-bottom: 1.5rem !important;
+/* 🎯 [UI-EVENT] 表单组 - 修复主页面类名不匹配问题 */
+.supplier-modal .form-group {
+    margin-bottom: 1.5rem;
 }
 
-.form-group label {
-    display: block !important;
-    margin-bottom: 0.5rem !important;
-    font-weight: 600 !important;
-    color: #374151 !important;
+.supplier-modal .form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--color-text-primary);
 }
 
-.form-group input[type="text"],
-.form-group input[type="date"],
-.form-group select,
-.form-group textarea {
-    width: 100% !important;
-    padding: 10px 12px !important;
-    border: 1px solid #d1d5db !important;
-    border-radius: 6px !important;
-    font-size: 14px !important;
-    transition: border-color 0.2s !important;
-    background: white !important;
-    box-sizing: border-box !important;
+/* 🎯 [UI-EVENT] 表单输入控件 - 修复主页面类名不匹配问题 */
+.supplier-modal .form-group input[type="text"],
+.supplier-modal .form-group input[type="date"],
+.supplier-modal .form-group select,
+.supplier-modal .form-group textarea {
+    /* 尺寸和布局 */
+    width: 100%;
+    padding: 10px 12px;
+    box-sizing: border-box;
+
+    /* 样式属性 */
+    border: 1px solid var(--gray-300);
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color var(--duration-fast);
+    background: var(--color-bg-primary);
 }
 
-.form-group input:focus,
-.form-group select:focus,
-.form-group textarea:focus {
-    outline: none !important;
-    border-color: #3b82f6 !important;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1) !important;
+/* 🎯 [UI-EVENT] 表单聚焦状态 - 修复主页面类名不匹配问题 */
+.supplier-modal .form-group input:focus,
+.supplier-modal .form-group select:focus,
+.supplier-modal .form-group textarea:focus {
+    outline: none;
+    border-color: var(--info);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 .form-group input[readonly] {
