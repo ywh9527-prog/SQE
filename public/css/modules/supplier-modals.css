@@ -1,27 +1,98 @@
 /* ============================================
-   供应商资料管理 - BEM规范弹窗样式 v4.1
+   供应商资料管理 - BEM规范弹窗样式 v4.2
    符合 CLAUDE.md 命名规范
+
+   v4.2 更新内容：
+   - 添加模态框专用CSS变量系统
+   - 开始消除!important，提高可维护性
+   - 利用总系统style_v2.css的设计令牌
    ============================================ */
 
-/* ==================== 基础模态框样式 ==================== */
+/* ==================== 模态框专用变量系统 ==================== */
+/* 🎯 [CONFIG] 模态框变量 - 基于 style_v2.css 的设计令牌 */
+
+/* 模态框层级系统 - 解决 z-index !important 问题 */
+:root {
+  --modal-z-index-base: 99999;
+  --modal-z-index-backdrop: calc(var(--modal-z-index-base) - 1);
+  --modal-z-index-content: var(--modal-z-index-base);
+}
+
+/* 模态框布局变量 - 解决 position/width/height !important 问题 */
+:root {
+  --modal-position: fixed;
+  --modal-top: 0;
+  --modal-left: 0;
+  --modal-width-full: 100%;
+  --modal-height-full: 100%;
+  --modal-width-content: min(90%, 600px);
+  --modal-height-content: min(85vh, 800px);
+}
+
+/* 模态框显示变量 - 解决 display !important 问题 */
+:root {
+  --modal-display-hidden: none;
+  --modal-display-visible: flex;
+  --modal-display-content: block;
+}
+
+/* 模态框样式变量 - 解决 background/border !important 问题 */
+:root {
+  --modal-backdrop-color: rgba(0, 0, 0, 0.6);
+  --modal-backdrop-blur: blur(4px);
+  --modal-content-bg: var(--gray-50);
+  --modal-border-radius: 20px;
+  --modal-border: none;
+  --modal-border-header: 1px solid var(--gray-200);
+}
+
+/* 模态框阴影变量 - 解决 box-shadow !important 问题 */
+:root {
+  --modal-shadow:
+    0 0 0 2px rgba(0, 0, 0, 0.2),
+    0 4px 6px rgba(0, 0, 0, 0.1),
+    0 10px 15px rgba(0, 0, 0, 0.1),
+    0 20px 25px rgba(0, 0, 0, 0.1),
+    0 25px 50px rgba(0, 0, 0, 0.15);
+}
+
+/* 模态框内边距变量 - 解决 padding !important 问题 */
+:root {
+  --modal-padding-header: 1.5rem 2rem;
+  --modal-padding-body: 2rem;
+  --modal-padding-footer: 1.5rem 2rem;
+}
+
+/* ==================== 基础模态框样式 (重构第一批) ==================== */
+
+/* 🎯 [CORE-LOGIC] 模态框容器 - 使用变量替代 !important */
 .supplier-modal {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100% !important;
-    height: 100% !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(4px) !important;
-    display: none !important;
-    /* 注意：align-items和justify-content由JavaScript动态设置 */
-    z-index: 99999 !important;
+    /* 布局属性 - 使用变量系统 */
+    position: var(--modal-position);
+    top: var(--modal-top);
+    left: var(--modal-left);
+    width: var(--modal-width-full);
+    height: var(--modal-height-full);
+
+    /* 样式属性 - 使用变量系统 */
+    background: var(--modal-backdrop-color);
+    backdrop-filter: var(--modal-backdrop-blur);
+
+    /* 显示属性 - 使用变量系统 */
+    display: var(--modal-display-hidden);
+
+    /* 层级属性 - 使用变量系统 */
+    z-index: var(--modal-z-index-base);
+
+    /* 动画属性 */
     animation: fadeIn 0.3s ease-out forwards;
 }
 
-.supplier-modal--active {
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+/* 🎯 [UI-EVENT] 激活状态 - 使用更具体的选择器提高优先级 */
+body .supplier-modal.supplier-modal--active {
+    display: var(--modal-display-visible);
+    align-items: center;
+    justify-content: center;
 }
 
 /* 入场动画 */
@@ -36,23 +107,25 @@
     }
 }
 
-/* ==================== 模态框内容容器 ==================== */
-.supplier-modal__content {
-    background: #ffffff !important;
-    border-radius: 20px !important;
-    box-shadow:
-        0 0 0 2px rgba(0, 0, 0, 0.2),
-        0 4px 6px rgba(0, 0, 0, 0.1),
-        0 10px 15px rgba(0, 0, 0, 0.1),
-        0 20px 25px rgba(0, 0, 0, 0.1),
-        0 25px 50px rgba(0, 0, 0, 0.15) !important;
-    border: none !important;
-    max-width: 600px !important;
-    width: 90% !important;
-    max-height: 85vh !important;
-    overflow: hidden !important;
+/* ==================== 模态框内容容器 (重构第二批) ==================== */
+
+/* 🎯 [CORE-LOGIC] 模态框内容 - 使用变量和更具体选择器 */
+.supplier-modal--active .supplier-modal__content {
+    /* 样式属性 - 使用变量系统 */
+    background: var(--modal-content-bg);
+    border-radius: var(--modal-border-radius);
+    border: var(--modal-border);
+    box-shadow: var(--modal-shadow);
+
+    /* 尺寸属性 - 使用变量系统 */
+    max-width: 600px;
+    width: var(--modal-width-content);
+    max-height: var(--modal-height-content);
+
+    /* 其他属性 */
+    overflow: var(--modal-overflow);
     animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
-    position: relative !important;
+    position: relative;
 }
 
 /* 弹窗入场动画 */
@@ -67,30 +140,39 @@
     }
 }
 
-/* ==================== 模态框头部 ==================== */
-.supplier-modal__header {
-    background: #ffffff !important;
-    color: var(--primary-700) !important;
-    padding: 1.5rem 2rem !important;
-    border-bottom: 1px solid #e5e7eb !important;
-    border-radius: 20px 20px 0 0 !important;
-    position: relative !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: space-between !important;
-    /* 🎯 修复: 确保标题栏完全覆盖内容容器的倒角 */
-    margin: -1px -1px 0 -1px !important;
-    padding: 1.5rem 2rem 1.5rem 2rem !important;
+/* ==================== 模态框头部 (重构第三批) ==================== */
+
+/* 🎯 [CORE-LOGIC] 模态框头部 - 使用更具体的BEM选择器 */
+.supplier-modal--active .supplier-modal__content .supplier-modal__header {
+    /* 样式属性 - 使用变量系统和总系统令牌 */
+    background: var(--modal-content-bg);
+    color: var(--primary-700);
+    border-bottom: var(--modal-border-header);
+    border-radius: var(--modal-border-radius) var(--modal-border-radius) 0 0;
+
+    /* 布局属性 */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    /* 尺寸属性 - 使用变量系统 */
+    padding: var(--modal-padding-header);
+    margin: -1px -1px 0 -1px; /* 保持原有修复 */
 }
 
-.supplier-modal__title {
-    font-size: 1.25rem !important;
-    font-weight: 600 !important;
-    letter-spacing: 0.5px !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
+/* 🎯 [CORE-LOGIC] 模态框标题 - 使用更具体的选择器 */
+.supplier-modal--active .supplier-modal__content .supplier-modal__header .supplier-modal__title {
+    /* 字体属性 */
+    font-size: 1.25rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin: 0;
+
+    /* 布局属性 */
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /* 头部图标 */
