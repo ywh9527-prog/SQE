@@ -36,7 +36,14 @@
 .supplier-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed;
 }
+
+/* 表格列宽控制 */
+.supplier-table colgroup col:nth-child(1) { width: 20%; }  /* 供应商 */
+.supplier-table colgroup col:nth-child(2) { width: 70%; }  /* 资料状态 */
+.supplier-table colgroup col:nth-child(3) { width: 10%; }  /* 物料 */
+.supplier-table colgroup col:nth-child(4) { width: 10%; }  /* 操作 */
 
 .supplier-table thead {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
