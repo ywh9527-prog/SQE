@@ -306,6 +306,9 @@ const TYPE_CONFIG = {
                 // 上传成功后重新加载数据源统计，但不自动选择
                 await this.loadDataSourceStats(false);
 
+                // 重新初始化年份选择器，确保新上传的年份可用
+                await this.initializeYearSelector(true); // 强制重新初始化
+
             } catch (error) {
                 this.showError(error.message);
             }
@@ -979,8 +982,8 @@ const TYPE_CONFIG = {
         },
 
         // 新增：初始化年份选择器
-        async initializeYearSelector() {
-            if (state.yearSelection.isInitialized) return;
+        async initializeYearSelector(force = false) {
+            if (!force && state.yearSelection.isInitialized) return;
 
             try {
                 // 获取各数据类型的可用年份
