@@ -176,12 +176,7 @@
                 <button class="test-button" onclick="showDocTypeModal()">打开文档类型设置</button>
             </div>
 
-            <div class="test-card">
-                <h3>📊 统计信息模态框</h3>
-                <p>测试统计数据显示界面</p>
-                <button class="test-button" onclick="showStatsModal()">打开统计模态框</button>
-            </div>
-        </div>
+                    </div>
 
         <div class="test-results">
             <h3>🎯 测试结果记录</h3>
@@ -195,7 +190,7 @@
     </div>
 
     <!-- 模态框HTML结构 (从主页面复制) -->
-    <div id="uploadModal" class="supplier-modal supplier-modal--upload">
+    <div id="uploadModal" class="supplier-modal supplier-modal--upload" style="display: none;">
         <div class="supplier-modal__content">
             <div class="supplier-modal__header">
                 <h3 class="supplier-modal__title">📤 上传资料</h3>
@@ -214,7 +209,7 @@
         </div>
     </div>
 
-    <div id="editModal" class="supplier-modal supplier-modal--edit">
+    <div id="editModal" class="supplier-modal supplier-modal--edit" style="display: none;">
         <div class="supplier-modal__content">
             <div class="supplier-modal__header">
                 <h3 class="supplier-modal__title">✏️ 编辑资料</h3>
@@ -243,7 +238,7 @@
         </div>
     </div>
 
-    <div id="docTypeModal" class="supplier-modal supplier-modal--document-type-settings">
+    <div id="docTypeModal" class="supplier-modal supplier-modal--document-type-settings" style="display: none;">
         <div class="supplier-modal__content">
             <div class="supplier-modal__header">
                 <h3 class="supplier-modal__title">📋 文档类型设置</h3>
@@ -281,38 +276,7 @@
         </div>
     </div>
 
-    <div id="statsModal" class="supplier-modal supplier-modal--stats">
-        <div class="supplier-modal__content">
-            <div class="supplier-modal__header">
-                <h3 class="supplier-modal__title">📊 统计信息</h3>
-                <button class="supplier-modal__close" onclick="closeModal('statsModal')">&times;</button>
-            </div>
-            <div class="supplier-modal__body">
-                <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-value">156</div>
-                        <div class="stat-label">供应商总数</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">89%</div>
-                        <div class="stat-label">资料完整率</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">23</div>
-                        <div class="stat-label">待审核</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="stat-value">12</div>
-                        <div class="stat-label">即将过期</div>
-                    </div>
-                </div>
-            </div>
-            <div class="supplier-modal__footer">
-                <button class="supplier-modal__btn supplier-modal__btn--primary" onclick="closeModal('statsModal')">确定</button>
-            </div>
-        </div>
-    </div>
-
+    
     <script>
         // 模态框控制函数
         function showModal(modalId) {
@@ -343,10 +307,7 @@
             showModal('docTypeModal');
         }
 
-        function showStatsModal() {
-            showModal('statsModal');
-        }
-
+        
         // 测试结果记录
         function addTestResult(message, status) {
             const resultsContainer = document.getElementById('testResults');
@@ -380,13 +341,7 @@
                                 showDocTypeModal();
                                 setTimeout(() => {
                                     closeModal('docTypeModal');
-                                    setTimeout(() => {
-                                        showStatsModal();
-                                        setTimeout(() => {
-                                            closeModal('statsModal');
-                                            addTestResult('自动视觉回归测试完成', 'success');
-                                        }, 1000);
-                                    }, 1000);
+                                    addTestResult('自动视觉回归测试完成', 'success');
                                 }, 1000);
                             }, 1000);
                         }, 1000);
