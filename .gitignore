@@ -1,0 +1,23 @@
+# 数据库文件
+server/data/sqe_database.sqlite
+server/data/sqe_database_normal.sqlite
+server/data/sqe_database.sqlite.backup*
+server/data/*.sqlite
+server/data/*.sqlite3
+server/data/*.db
+
+# 日志文件
+logs/*.log
+logs/combined.log
+
+# 临时文件
+*.tmp
+*.temp
+*.lock
+
+# 依赖目录
+node_modules/
+
+# 备份文件
+*.backup
+*.bak
