@@ -157,6 +157,20 @@
             console.log('- 计算样式display:', window.getComputedStyle(modal).display);
             console.log('- 计算样式visibility:', window.getComputedStyle(modal).visibility);
 
+            // [修复-2025-12-27] 特殊处理编辑模态框的尺寸问题
+            if (modalName === 'edit') {
+                console.log('🔧 特殊处理编辑模态框尺寸...');
+                const content = modal.querySelector('.supplier-modal__content');
+                if (content) {
+                    // 确保编辑模态框内容容器有正确的尺寸
+                    content.style.setProperty('max-width', '600px', 'important');
+                    content.style.setProperty('width', 'min(90%, 600px)', 'important');
+                    content.style.setProperty('max-height', '80vh', 'important'); /* [修复-2025-12-27] 修复高度问题，恢复原始80vh */
+                    content.style.setProperty('min-height', 'auto', 'important');
+                    console.log('✅ 编辑模态框内容容器尺寸已修复');
+                }
+            }
+
             // 焦点管理
             this.manageFocus(modal);
 

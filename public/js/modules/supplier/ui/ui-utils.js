@@ -789,8 +789,10 @@ class SupplierUIUtils {
     // 显示模态框 - 强制覆盖内联样式
     console.log('📝 显示模态框，添加active类...');
     modal.classList.add('supplier-modal--active');
-    // 强制覆盖内联样式 display: none
+    // 强制覆盖所有隐藏样式
     modal.style.setProperty('display', 'flex', 'important');
+    modal.style.setProperty('visibility', 'visible', 'important');
+    modal.style.setProperty('opacity', '1', 'important');
     modal.style.setProperty('z-index', '99999', 'important');
 
     // 重新绑定关闭按钮事件（确保DOM元素存在）
@@ -805,14 +807,28 @@ class SupplierUIUtils {
   hideComponentManagementModal() {
     console.log('🎯 开始隐藏构成管理模态框...');
     const modal = document.getElementById('componentManagementModal');
-    if (modal) {
-      modal.classList.remove('supplier-modal--active');
-      // 强制设置回 display: none
-      modal.style.setProperty('display', 'none', 'important');
-      console.log('✅ 构成管理模态框已隐藏');
-    } else {
-      console.warn('❌ 未找到构成管理模态框元素');
+    if (!modal) {
+      console.error('❌ 找不到构成管理模态框元素');
+      return;
     }
+
+    console.log('🔧 执行强制隐藏操作...');
+    console.log('- 隐藏前display:', modal.style.display);
+    console.log('- 隐藏前classList:', modal.className);
+
+    // 移除所有可能的激活类
+    modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
+
+    // 强制设置隐藏样式
+    modal.style.setProperty('display', 'none', 'important');
+    modal.style.setProperty('visibility', 'hidden', 'important');
+    modal.style.setProperty('opacity', '0', 'important');
+    modal.style.setProperty('z-index', '-1', 'important');
+
+    console.log('- 隐藏后display:', modal.style.display);
+    console.log('- 隐藏后classList:', modal.className);
+
+    console.log('✅ 构成管理模态框隐藏完成');
   }
 
   /**

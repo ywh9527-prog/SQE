@@ -23,18 +23,18 @@
     <link rel="stylesheet" href="css/modules/documents.css">
 
     <!-- 供应商统一布局样式 (Phase 5: 整合table/tree/cards-enhanced) -->
-    <link rel="stylesheet" href="css/modules/supplier-layout.css?v=1.0-phase5">
-    <link rel="stylesheet" href="css/modules/supplier-status-badges.css">
-    <link rel="stylesheet" href="css/modules/supplier-animations.css">
-    <link rel="stylesheet" href="css/modules/supplier-interactions.css">
+    <link rel="stylesheet" href="css/modules/supplier-layout.css?v=1.1-remove-btn-success">
+    <!-- supplier-status-badges.css 已整合到 supplier-components.css -->
+    <!-- supplier-animations.css 已完全迁移到supplier-interactions.css -->
+    <link rel="stylesheet" href="css/modules/supplier-interactions.css?v=1.1-migrate-btn-success">
     <!-- 统一BEM模态框样式 (Phase 4.1: 已整合supplier-modal.css和supplier-modal-enhanced.css) -->
-    <link rel="stylesheet" href="css/modules/supplier-modals.css?v=4.12-fix-file-preview">
-        <!-- 供应商字体层级统一管理样式 v1.0 -->
+    <link rel="stylesheet" href="css/modules/supplier-modals.css?v=4.17-fix-form-styles">
+    <!-- modal-fix.css 已移除 - 样式迁移到 supplier-modals.css -->
+    <!-- 供应商字体层级统一管理样式 v1.0 -->
     <link rel="stylesheet" href="css/modules/supplier-font-hierarchy.css?v=1.0">
     <!-- 供应商通用组件样式库 - Phase 4.2 -->
-    <link rel="stylesheet" href="css/modules/supplier-components.css?v=1.0-phase4-2">
-    <!-- 🎨 供应商进度条组件样式 - BEM规范设计 -->
-    <link rel="stylesheet" href="css/modules/supplier-progress-bar.css?v=1.0">
+    <link rel="stylesheet" href="css/modules/supplier-components.css?v=1.0-phase5-progress-complete">
+    <!-- supplier-progress-bar.css 已完全迁移到supplier-components.css -->
     <!-- 🎯 供应商搜索筛选界面 - 专业版UI设计 -->
     <link rel="stylesheet" href="css/modules/supplier-search-professional.css?v=1.3">
     <!-- 📊 供应商图表样式 - Phase 7整合完成 -->
@@ -429,7 +429,7 @@
                     <div class="module-header">
                         <h3>供应商资料管理</h3>
                         <div class="module-actions">
-                            <button class="btn btn-success" id="importBtn">
+                            <button class="btn btn-primary" id="importBtn">
                                 <span class="btn-icon">🔄</span>
                                 同步供应商
                             </button>
@@ -544,13 +544,24 @@
     <!-- UI工具层 - 依赖modal-manager -->
     <script src="js/modules/supplier/ui/ui-utils.js?v=3.5.0-add-material-complete"></script>
 
-    <!-- 供应商资料类型设置功能 -->
-    <link rel="stylesheet" href="css/modules/document-type-settings.css?v=1.2.7">
+    <!-- 供应商资料类型设置功能 - CSS架构优化完成 -->
+    <!-- 📋 架构优化总结：
+         ✅ document-type-settings.css 已合并到各模块
+         ✅ BEM命名规范化完成
+         ✅ 类名映射：
+           .document-type-settings-btn → .supplier-btn--document-type-settings
+           .document-type-delete-btn → .supplier-btn--delete
+           .document-type-toast → .supplier-toast
+         ✅ 样式分布：
+           - 按钮样式 → supplier-interactions.css
+           - 模态框样式 → supplier-modals.css
+           - 组件样式 → supplier-components.css
+           - 响应式样式 → supplier-layout.css -->
     <script src="js/modules/supplier/services/document-type-config.js?v=1.0.0"></script>
     <script src="js/modules/supplier/services/document-type-service.js?v=1.0.0"></script>
     <script src="js/modules/supplier/ui/document-type-simple-ui.js?v=1.2.7"></script>
 
-    <script src="js/modules/supplier.js?v=3.2.9-bem-add-material"></script>
+    <script src="js/modules/supplier.js?v=3.2.10-fix-add-material-buttons"></script>
 
     <!-- 供应商资料管理初始化脚本 -->
     <script>
@@ -710,18 +721,18 @@
                     <!-- 检测类型 (仅物料资料上传时显示) -->
                     <div class="form-group" id="detectionTypeGroup" style="display: none;">
                         <label>🎯 检测类型</label>
-                        <div class="supplier-detection-type__options">
-                            <div class="supplier-detection-type__option">
-                                <input type="radio" name="detectionType" value="direct" checked class="supplier-detection-type__radio">
-                                <label class="supplier-detection-type__label">
-                                    本体检测
+                        <div class="detection-type-options">
+                            <div class="detection-type-option">
+                                <label>
+                                    <input type="radio" name="detectionType" value="direct" checked>
+                                    <span>本体检测</span>
                                 </label>
                                 <small>检测对象是供应商交付的物料本身</small>
                             </div>
-                            <div class="supplier-detection-type__option">
-                                <input type="radio" name="detectionType" value="referenced" class="supplier-detection-type__radio">
-                                <label class="supplier-detection-type__label">
-                                    引用检测
+                            <div class="detection-type-option">
+                                <label>
+                                    <input type="radio" name="detectionType" value="referenced">
+                                    <span>引用检测</span>
                                 </label>
                                 <small>检测对象是上游材料/零件的检测报告</small>
                             </div>
@@ -753,7 +764,7 @@
                             <option value="csr">CSR</option>
                             <option value="other">其他</option>
                         </select>
-                        <button type="button" id="openDocumentTypeSettingsBtn" class="document-type-settings-btn" style="margin-top: 8px;">
+                        <button type="button" id="openDocumentTypeSettingsBtn" class="supplier-btn--document-type-settings" data-type="common" style="margin-top: 8px;">
                             ⚙️ 资料类型设置
                         </button>
                     </div>
@@ -840,7 +851,7 @@
     <div id="addMaterialModal" class="supplier-modal supplier-modal--add-material" style="display: none;">
         <div class="supplier-modal__content">
             <div class="supplier-modal__header">
-                <h3 class="supplier-modal__title">➕ 新增物料</h3>
+                <h3 class="supplier-modal__title">新增物料</h3>
                 <button class="supplier-modal__close supplier-modal__close--add-material">&times;</button>
             </div>
             <div class="supplier-modal__body">
@@ -895,7 +906,7 @@
         <div class="supplier-modal__content supplier-modal__content--component-management">
             <div class="supplier-modal__header">
                 <h3 class="supplier-modal__title">🧪 构成管理</h3>
-                <button class="supplier-modal__close supplier-modal__close--component component-modal-close-btn">&times;</button>
+                <button class="supplier-modal__close supplier-modal__close--component">&times;</button>
             </div>
             <div class="supplier-modal__body">
                 <!-- 构成信息输入区域 -->
@@ -917,7 +928,7 @@
                     </div>
                     <div class="supplier-modal__form-group">
                         <label class="supplier-modal__label">所属供应商</label>
-                        <input type="text" class="supplier-modal__input supplier-modal__input--readonly" id="componentSupplierInput" readonly>
+                        <input type="text" class="supplier-modal__input" id="componentSupplierInput" readonly>
                     </div>
                 </div>
 
@@ -941,7 +952,7 @@
             <div class="supplier-modal__footer">
                 <button type="button" id="addComponentBtn" class="supplier-modal__btn supplier-modal__btn--primary">➕ 添加</button>
                 <button type="button" id="saveComponentBtn" class="supplier-modal__btn supplier-modal__btn--submit" style="display: none;">💾 保存</button>
-                <button type="button" class="supplier-modal__btn supplier-modal__btn--secondary supplier-modal__close--component component-modal-close-btn">关闭</button>
+                <button type="button" class="supplier-modal__btn supplier-modal__btn--secondary supplier-modal__close--component">关闭</button>
             </div>
         </div>
     </div>

@@ -102,31 +102,5 @@
     "createdBy": "system",
     "createdAt": "2025-12-12T11:53:48.127Z",
     "usageCount": 0
-  },
-  {
-    "id": "doc_type_1765912858716_322",
-    "name": "哈哈哈！！",
-    "description": "",
-    "category": "material",
-    "isRequired": false,
-    "isSystemDefault": false,
-    "sortOrder": 104,
-    "isActive": true,
-    "createdBy": "user",
-    "createdAt": "2025-12-16T19:20:58.716Z",
-    "usageCount": 0
-  },
-  {
-    "id": "doc_type_1766488235582_775",
-    "name": "ga",
-    "description": "",
-    "category": "common",
-    "isRequired": false,
-    "isSystemDefault": false,
-    "sortOrder": 6,
-    "isActive": true,
-    "createdBy": "user",
-    "createdAt": "2025-12-23T11:10:35.582Z",
-    "usageCount": 0
   }
 ]

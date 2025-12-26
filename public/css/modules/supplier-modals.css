@@ -46,6 +46,60 @@
   --modal-border-header: 1px solid var(--gray-200);
 }
 
+/* 模态框动画变量 - 解决 transition/transform !important 问题 */
+:root {
+  --duration-fast: 0.2s;
+  --duration-normal: 0.3s;
+  --duration-slow: 0.4s;
+
+  --ease-out: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-in-out: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  --transform-hover-lift: translateY(-2px);
+  --transform-hover-lift-small: translateY(-1px);
+  --transform-hover-scale: scale(1.1);
+  --transform-hover-rotate: rotate(90deg);
+  --transform-disabled: none;
+  --transform-drag-over: scale(1.02);
+  --transform-active-press: scale(0.95);
+}
+
+/* 模态框布局变量 - 解决 flexbox/grid/position !important 问题 */
+:root {
+  --display-flex: flex;
+  --display-block: block;
+  --display-none: none;
+
+  --position-static: static;
+  --position-relative: relative;
+  --position-absolute: absolute;
+  --position-fixed: fixed;
+
+  --flex-direction-row: row;
+  --flex-direction-column: column;
+  --flex-direction-row-reverse: row-reverse;
+
+  --justify-content-start: flex-start;
+  --justify-content-center: center;
+  --justify-content-end: flex-end;
+  --justify-content-between: space-between;
+  --justify-content-around: space-around;
+
+  --align-items-start: flex-start;
+  --align-items-center: center;
+  --align-items-end: flex-end;
+  --align-items-stretch: stretch;
+
+  --flex-zero: 0;
+  --flex-one: 1;
+  --flex-auto: auto;
+
+  --grid-template-columns-table: 2fr 1fr 1fr 1fr;
+  --grid-template-columns-single: 1fr;
+  --display-grid: grid;
+}
+
 /* 模态框阴影变量 - 解决 box-shadow !important 问题 */
 :root {
   --modal-shadow:
@@ -61,6 +115,141 @@
   --modal-padding-header: 1.5rem 2rem;
   --modal-padding-body: 2rem;
   --modal-padding-footer: 1.5rem 2rem;
+}
+
+/* ==================== 尺寸和间距变量系统 - 第五批重构 ==================== */
+
+/* 基础尺寸变量 - 解决 width/height !important 问题 */
+:root {
+  /* 通用尺寸 */
+  --size-full: 100%;
+  --size-auto: auto;
+  --size-zero: 0;
+
+  /* 宽度尺寸 */
+  --width-full: 100%;
+  --width-auto: auto;
+  --width-content: min(90%, 600px);
+  --width-large: 95%;
+  --width-medium: 90vw;
+  --width-small: 95%;
+  --width-button-mini: 80px;
+  --width-button-small: 100px;
+  --width-close-large: 36px;
+  --width-close-medium: 32px;
+  --width-close-small: 24px;
+  --width-icon-large: 40px;
+  --width-icon-medium: 32px;
+  --width-icon-small: 24px;
+  --width-switch: 1.2rem;
+
+  /* 高度尺寸 */
+  --height-full: 100%;
+  --height-auto: auto;
+  --height-content: min(85vh, 800px);
+  --height-medium: 90vh;
+  --height-large: 90vh;
+  --height-close-large: 36px;
+  --height-close-medium: 32px;
+  --height-close-small: 24px;
+  --height-icon-large: 40px;
+  --height-icon-medium: 32px;
+  --height-icon-small: 24px;
+  --height-switch: 1.2rem;
+  --height-textarea-large: 200px;
+  --height-textarea-medium: 80px;
+  --height-textarea-small: 40px;
+  --height-modal-large: 300px;
+  --height-modal-medium: 85vh;
+  --height-modal-small: 80vh;
+  --height-upload-min: 100px;
+  --height-upload-large: 200px;
+
+  /* 最小/最大尺寸 */
+  --min-width-button: 80px;
+  --min-width-small: 100px;
+  --min-width-medium: 500px;
+  --min-width-large: 600px;
+  --min-height-textarea: 80px;
+  --min-height-small: 40px;
+  --min-height-medium: 100px;
+  --min-height-large: 200px;
+
+  --max-width-content: 600px;
+  --max-width-medium: 500px;
+  --max-width-small: 500px;
+  --max-height-modal: 85vh;
+  --max-height-medium: 300px;
+  --max-height-small: 300px;
+}
+
+/* 间距变量系统 - 解决 padding/margin !important 问题 */
+:root {
+  /* 内边距 - 基础 */
+  --padding-zero: 0;
+  --padding-xs: 4px 8px;
+  --padding-sm: 8px 12px;
+  --padding-md: 12px 16px;
+  --padding-md-horizontal: 8px 16px;
+  --padding-lg: 1rem;
+  --padding-xl: 1.5rem 2rem;
+  --padding-xxl: 2rem;
+  --padding-xxxl: 2rem;
+  --padding-modal-large: 40px 20px;
+  --padding-modal-medium: 32px 16px;
+  --padding-btn-small: 0.75rem 1rem;
+  --padding-btn-medium: 0.75rem 1.5rem;
+  --padding-btn-large: 1rem 1.5rem;
+  --padding-form: 1rem;
+  --padding-form-horizontal: 1rem 1.5rem;
+  --padding-upload: 1rem;
+  --padding-upload-large: 1.5rem;
+
+  /* 外边距 - 基础 */
+  --margin-zero: 0;
+  --margin-sm: 1rem;
+  --margin-md: 0 0 15px 0;
+  --margin-form: 0 0 15px 0;
+  --margin-auto: auto;
+
+  /* 复合间距 */
+  --spacing-form-group: 0 0 15px 0;
+  --spacing-modal-section: 1.5rem 2rem;
+  --spacing-button-group: 0.75rem 1.5rem;
+  --spacing-card: 1rem 1.5rem;
+  --spacing-list-item: 1rem;
+  --spacing-tight: 1rem 1.5rem;
+  --spacing-loose: 1.5rem;
+  --spacing-header: 1.5rem 2rem;
+  --spacing-body: 2rem;
+  --spacing-footer: 1.5rem 2rem;
+}
+
+/* 字体大小变量系统 - 解决 font-size !important 问题 */
+:root {
+  --font-size-xs: 0.8rem;
+  --font-size-xs-alt: 11px;
+  --font-size-sm: 0.85rem;
+  --font-size-sm-alt: 12px;
+  --font-size-sm-alt-2: 13px;
+  --font-size-base: 0.875rem;
+  --font-size-base-alt: 16px;
+  --font-size-md: 0.9rem;
+  --font-size-md-alt: 0.95rem;
+  --font-size-lg: 1rem;
+  --font-size-lg-alt: 1.1rem;
+  --font-size-xl: 1.25rem;
+  --font-size-xxl: 1.5rem;
+  --font-size-xxxl: 3rem;
+  --font-size-title: 1.2rem;
+  --font-size-icon: 16px;
+  --font-size-close: 24px;
+}
+
+/* 行高变量系统 - 解决 line-height !important 问题 */
+:root {
+  --line-height-tight: 1;
+  --line-height-base: 1.5;
 }
 
 /* ==================== 基础模态框样式 (重构第一批) ==================== */
@@ -142,37 +331,45 @@ body .supplier-modal.supplier-modal--active {
 
 /* ==================== 模态框头部 (重构第三批) ==================== */
 
-/* 🎯 [CORE-LOGIC] 模态框头部 - 使用更具体的BEM选择器 */
-.supplier-modal--active .supplier-modal__content .supplier-modal__header {
+/* 🎯 [CORE-LOGIC] 模态框头部 - 使用更直接的选择器确保优先级 */
+.supplier-modal__header {
     /* 样式属性 - 使用变量系统和总系统令牌 */
-    background: var(--modal-content-bg);
-    color: var(--primary-700);
-    border-bottom: var(--modal-border-header);
-    border-radius: var(--modal-border-radius) var(--modal-border-radius) 0 0;
+    background: var(--modal-content-bg) !important; /* [修复-2025-12-27] 确保头部背景色不被覆盖 */
+    color: var(--primary-700) !important; /* [修复-2025-12-27] 确保头部文字颜色正确显示 */
+    border-bottom: var(--modal-border-header) !important; /* [修复-2025-12-27] 确保头部边框显示 */
+    border-radius: var(--modal-border-radius) var(--modal-border-radius) 0 0 !important; /* [修复-2025-12-27] 确保头部圆角正确 */
 
     /* 布局属性 */
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    position: relative !important; /* [修复-2025-12-27] 确保头部定位正确 */
+    display: var(--display-flex) !important; /* [修复-2025-12-27] 确保头部flex布局生效 */
+    align-items: var(--align-items-center) !important; /* [修复-2025-12-27] 确保头部垂直居中 */
+    justify-content: var(--justify-content-between) !important; /* [修复-2025-12-27] 确保头部元素分布 */
 
     /* 尺寸属性 - 使用变量系统 */
-    padding: var(--modal-padding-header);
-    margin: -1px -1px 0 -1px; /* 保持原有修复 */
+    padding: var(--modal-padding-header) !important; /* [修复-2025-12-27] 确保头部内边距正确 - 解决标题贴边问题 */
+    margin: var(--margin-zero) !important; /* [修复-2025-12-27] 移除负margin - 解决标题位置偏移问题 */
 }
 
-/* 🎯 [CORE-LOGIC] 模态框标题 - 使用更具体的选择器 */
-.supplier-modal--active .supplier-modal__content .supplier-modal__header .supplier-modal__title {
-    /* 字体属性 */
-    font-size: 1.25rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    margin: 0;
+/* 确保模态框激活时头部样式正确 */
+.supplier-modal--active .supplier-modal__header {
+    background: var(--modal-content-bg) !important; /* [修复-2025-12-27] 激活状态背景色保护 */
+    color: var(--primary-700) !important; /* [修复-2025-12-27] 激活状态文字颜色保护 */
+    padding: var(--modal-padding-header) !important; /* [修复-2025-12-27] 激活状态内边距保护 */
+}
+
+/* 🎯 [CORE-LOGIC] 模态框标题 - 使用更直接的选择器 */
+.supplier-modal__title {
+    /* 字体属性 - 确保样式生效 */
+    font-size: var(--font-size-xl) !important; /* [修复-2025-12-27] 确保标题字体大小正确 */
+    font-weight: 600 !important; /* [修复-2025-12-27] 确保标题字体粗细正确 */
+    letter-spacing: 0.5px !important; /* [修复-2025-12-27] 确保标题字间距正确 */
+    margin: var(--margin-zero) !important; /* [修复-2025-12-27] 确保标题外边距正确 */
+    color: var(--primary-700) !important; /* [修复-2025-12-27] 确保标题颜色正确显示 */
 
     /* 布局属性 */
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    display: var(--display-flex) !important; /* [修复-2025-12-27] 确保标题flex布局生效 */
+    align-items: var(--align-items-center) !important; /* [修复-2025-12-27] 确保标题垂直居中 */
+    gap: 0.5rem !important; /* [修复-2025-12-27] 确保标题与图标间距正确 */
 }
 
 /* 头部图标 */
@@ -222,6 +419,36 @@ body .supplier-modal.supplier-modal--active {
     transform: rotate(90deg);
 }
 
+/* 🎯 [UI-EVENT] 通用关闭按钮样式 - 确保所有关闭按钮都有样式 */
+.supplier-modal .supplier-modal__close,
+.upload-modal-close,
+.supplier-modal__close,
+.modal__close {
+    /* 基础样式 - 继承重构后的样式 */
+    background: rgba(255, 255, 255, 0.2) !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.8);
+    font-size: var(--font-size-xxl);
+    width: var(--width-close-large);
+    height: var(--height-close-large);
+    border-radius: 50%;
+    cursor: pointer;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-center);
+    transition: all var(--duration-normal) var(--ease-out);
+}
+
+/* 🎯 [UI-EVENT] 通用关闭按钮悬停效果 */
+.supplier-modal .supplier-modal__close:hover,
+.upload-modal-close:hover,
+.supplier-modal__close:hover,
+.modal__close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: var(--transform-hover-rotate);
+}
+
 /* ==================== 模态框主体 (第二批重构) ==================== */
 
 /* 🎯 [CORE-LOGIC] 模态框主体内容 */
@@ -240,34 +467,40 @@ body .supplier-modal.supplier-modal--active {
 /* ==================== 表单样式增强 (第二批重构) ==================== */
 
 /* 🎯 [UI-EVENT] 表单组 */
-.supplier-modal__form .supplier-form__group {
-    margin-bottom: 1.5rem;
+.supplier-modal .supplier-form__group {
+    margin-bottom: calc(var(--spacing-loose) * 1.5); /* 增加与下方form-group的距离 */
 }
 
 /* 🎯 [UI-EVENT] 表单标签 */
 .supplier-modal__form .supplier-form__label {
     font-weight: 600;
     color: var(--color-text-primary);
-    margin-bottom: 0.5rem;
+    margin-bottom: var(--spacing-loose);
     display: block;
-    font-size: 0.95rem;
+    font-size: var(--font-size-md-alt);
 }
 
 /* 🎯 [UI-EVENT] 表单输入控件 */
 .supplier-modal__form .supplier-form__input,
 .supplier-modal__form .supplier-form__select,
-.supplier-modal__form .supplier-form__textarea {
+.supplier-modal__form .supplier-form__textarea,
+.supplier-form__input,
+.supplier-form__select,
+.supplier-form__textarea {
     /* 尺寸和布局 */
-    width: 100%;
-    padding: 0.75rem 1rem;
+    width: var(--width-full);
+    padding: var(--padding-btn-small);
+    margin-top: 0;
 
     /* 样式属性 */
-    border: 2px solid var(--gray-200);
-    border-radius: 10px;
+    border: 2px solid var(--gray-200) !important; /* [第五批重构] 添加!important */
+    border-radius: 10px !important; /* [第五批重构] 添加!important */
+    background: white !important; /* [第五批重构] 添加!important */
+    color: var(--color-text-primary) !important; /* [第五批重构] 添加!important */
+    font-size: var(--font-size-md-alt) !important; /* [第五批重构] 添加!important */
+
     /* 字体和动画 */
-    font-size: 0.95rem;
-    transition: all var(--duration-normal) var(--ease-out);
-    background: var(--color-bg-primary);
+    transition: all var(--duration-normal) var(--ease-out) !important; /* [第五批重构] 添加!important */
 }
 
 /* 🎯 [UI-EVENT] 表单聚焦状态 */
@@ -280,37 +513,41 @@ body .supplier-modal.supplier-modal--active {
 }
 
 /* 🎯 [UI-EVENT] 只读输入框特殊样式 */
-.supplier-modal__form .supplier-form__input--readonly {
-    background: var(--gray-50);
-    color: var(--color-text-muted);
-    cursor: not-allowed;
+.supplier-modal__form .supplier-form__input--readonly,
+.supplier-modal .form-group input[readonly],
+.supplier-form__input--readonly,
+.form-group input[readonly] {
+    background: var(--gray-50) !important;
+    color: var(--color-text-muted) !important;
+    cursor: not-allowed !important;
+    border-color: var(--gray-300) !important;
 }
 
 /* ==================== 检测类型选项样式 ==================== */
 .supplier-detection-type__options {
-    display: flex !important;
+    display: var(--display-flex);
     gap: 1rem !important;
     margin-top: 0.5rem !important;
 }
 
 .supplier-detection-type__option {
-    flex: 1 !important;
-    position: relative !important;
+    flex: var(--flex-one);
+    position: var(--position-relative);
 }
 
 .supplier-detection-type__radio {
-    position: absolute !important;
+    position: var(--position-absolute);
     opacity: 0 !important;
 }
 
 .supplier-detection-type__label {
-    display: block !important;
-    padding: 1rem !important;
+    display: var(--display-block);
+    padding: var(--spacing-list-item) !important;
     text-align: center !important;
     border: 2px solid #e5e7eb !important;
     border-radius: 10px !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
     background: white !important;
     font-weight: 500 !important;
 }
@@ -319,71 +556,99 @@ body .supplier-modal.supplier-modal--active {
     background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%) !important;
     color: white !important;
     border-color: #4f46e5 !important;
-    transform: translateY(-2px) !important;
+    transform: var(--transform-hover-lift);
     box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3) !important;
 }
 
 .supplier-detection-type__label:hover {
     border-color: #6366f1 !important;
-    transform: translateY(-1px) !important;
+    transform: var(--transform-hover-lift-small);
 }
 
 /* ==================== 构成选择样式 ==================== */
 .component-select {
-    width: 100% !important;
-    padding: 8px 12px !important;
+    width: var(--width-full);
+    padding: var(--padding-sm) !important;
     border: 1px solid #ddd !important;
     border-radius: 4px !important;
-    font-size: 16px !important;
+    font-size: var(--font-size-base-alt) !important;
     margin-bottom: 8px !important;
 }
 
-.add-component-btn {
-    background: #28a745 !important;
-    color: white !important;
-    border: none !important;
-    padding: 8px 16px !important;
-    border-radius: 4px !important;
-    cursor: pointer !important;
-    font-size: 16px !important;
-    transition: background 0.2s ease !important;
-}
 
-.add-component-btn:hover {
-    background: #218838 !important;
-}
 
 /* ==================== 模态框底部 ==================== */
 .supplier-modal__footer {
-    padding: 1.5rem 2rem !important;
+    padding: var(--spacing-button-group) !important;
     background: #f9fafb !important;
     border-top: 1px solid #e5e7eb !important;
-    display: flex !important;
-    justify-content: flex-end !important;
+    display: var(--display-flex);
+    justify-content: var(--justify-content-end);
     gap: 1rem !important;
 }
 
 /* ==================== 按钮样式 ==================== */
-.supplier-modal__btn {
-    padding: 0.75rem 1.5rem !important;
+
+/* 资料类型设置按钮样式 - 蓝色主题 */
+.document-type-settings-btn,
+.add-component-btn {
+  background: linear-gradient(135deg,
+          var(--primary-500) 0%,
+          var(--primary-600) 100%);
+  color: white;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: 0 4px 6px rgba(157, 122, 84, 0.2);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.document-type-settings-btn:hover,
+.add-component-btn:hover {
+  background: linear-gradient(135deg,
+          var(--primary-600) 0%,
+          var(--primary-700) 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(157, 122, 84, 0.3);
+}
+
+.document-type-settings-btn:active,
+.add-component-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(157, 122, 84, 0.2);
+}
+.supplier-modal__btn,
+.supplier-modal .supplier-modal__btn {
+    padding: var(--padding-btn-medium) !important;
     border-radius: 10px !important;
     font-weight: 600 !important;
-    font-size: 0.95rem !important;
+    font-size: var(--font-size-md-alt) !important;
     border: none !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
-    min-width: 100px !important;
+    transition: all var(--duration-normal) var(--ease-out);
+    min-width: var(--min-width-small);
 }
 
 /* 取消按钮 */
-.supplier-modal__btn--secondary {
+.supplier-modal__btn--secondary,
+.supplier-modal .supplier-modal__btn--secondary {
     background: #6b7280 !important;
     color: white !important;
 }
 
-.supplier-modal__btn--secondary:hover {
+.supplier-modal__btn--secondary:hover,
+.supplier-modal .supplier-modal__btn--secondary:hover {
     background: #4b5563 !important;
-    transform: translateY(-2px) !important;
+    transform: var(--transform-hover-lift);
     box-shadow: 0 4px 12px rgba(107, 114, 128, 0.3) !important;
 }
 
@@ -395,14 +660,14 @@ body .supplier-modal.supplier-modal--active {
 }
 
 .supplier-modal__btn--primary:hover {
-    transform: translateY(-2px) !important;
+    transform: var(--transform-hover-lift);
     box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4) !important;
 }
 
 .supplier-modal__btn--primary:disabled {
     opacity: 0.6 !important;
     cursor: not-allowed !important;
-    transform: none !important;
+    transform: var(--transform-disabled);
 }
 
 /* 提交按钮特殊样式 */
@@ -418,10 +683,10 @@ body .supplier-modal.supplier-modal--active {
 .supplier-upload__area {
     border: 2px dashed #d1d5db !important;
     border-radius: 12px !important;
-    padding: 2rem !important;
+    padding: var(--spacing-body) !important;
     text-align: center !important;
     background: #f9fafb !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
     cursor: pointer !important;
 }
 
@@ -432,69 +697,69 @@ body .supplier-modal.supplier-modal--active {
 }
 
 .supplier-upload__icon {
-    font-size: 3rem !important;
+    font-size: var(--font-size-xxxl) !important;
     margin-bottom: 1rem !important;
     opacity: 0.6 !important;
 }
 
 .supplier-upload__text {
     color: #6b7280 !important;
-    font-size: 0.95rem !important;
+    font-size: var(--font-size-md-alt) !important;
     margin-bottom: 0.5rem !important;
 }
 
 .supplier-upload__hint {
     color: #9ca3af !important;
-    font-size: 0.85rem !important;
+    font-size: var(--font-size-sm) !important;
 }
 
 /* ==================== 响应式设计 ==================== */
 @media (max-width: 768px) {
     .supplier-modal__content {
-        width: 95% !important;
-        margin: 1rem !important;
+        width: var(--width-large) !important;
+        margin: var(--margin-sm) !important;
     }
 
     .supplier-modal__header {
-        padding: 1rem 1.5rem !important;
+        padding: var(--spacing-card) !important;
     }
 
     .supplier-modal__body {
-        padding: 1.5rem !important;
+        padding: var(--spacing-loose) !important;
     }
 
     .supplier-modal__footer {
-        padding: 1rem 1.5rem !important;
-        flex-direction: column !important;
+        padding: var(--spacing-card) !important;
+        flex-direction: var(--flex-direction-column);
     }
 
     .supplier-modal__btn {
-        width: 100% !important;
+        width: var(--width-full) !important;
     }
 
     .supplier-detection-type__options {
-        flex-direction: column !important;
+        flex-direction: var(--flex-direction-column);
     }
 }
 
 /* ==================== 加载状态 ==================== */
 .supplier-modal__loading {
-    position: absolute !important;
+    position: var(--position-absolute);
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
     background: rgba(255, 255, 255, 0.9) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-center);
     z-index: 10 !important;
     border-radius: 20px !important;
 }
 
 .supplier-modal__loading-spinner {
-    width: 40px !important;
-    height: 40px !important;
+    width: var(--width-icon-large);
+    height: var(--height-icon-large);
     border: 4px solid #f3f4f6 !important;
     border-top: 4px solid #6366f1 !important;
     border-radius: 50% !important;
@@ -523,19 +788,19 @@ body .supplier-modal.supplier-modal--active {
 
 .supplier-form__message--error {
     color: #ef4444 !important;
-    font-size: 0.85rem !important;
+    font-size: var(--font-size-sm) !important;
     margin-top: 0.25rem !important;
-    display: flex !important;
-    align-items: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
     gap: 0.25rem !important;
 }
 
 .supplier-form__message--success {
     color: #10b981 !important;
-    font-size: 0.85rem !important;
+    font-size: var(--font-size-sm) !important;
     margin-top: 0.25rem !important;
-    display: flex !important;
-    align-items: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
     gap: 0.25rem !important;
 }
 
@@ -547,7 +812,7 @@ body .supplier-modal.supplier-modal--active {
 
 /* 邮件预览模态框修饰符 */
 .supplier-modal--email-preview .supplier-modal__content {
-    max-width: 600px !important;
+    max-width: var(--max-width-content);
 }
 
 /* ============================================
@@ -558,16 +823,16 @@ body .supplier-modal.supplier-modal--active {
 
 /* 构成管理模态框修饰符 - 统一为邮件预览风格 */
 .supplier-modal--component-management .supplier-modal__content {
-    max-width: 600px !important;
-    width: 90% !important;
-    max-height: 85vh !important;
-    display: flex !important;
-    flex-direction: column !important;
+    max-width: var(--max-width-content);
+    width: var(--width-content);
+    max-height: var(--max-height-modal) !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
 }
 
 /* 构成管理模态框主体 */
 .supplier-modal--component-management .supplier-modal__body {
-    flex: 1 !important;
+    flex: var(--flex-one);
     overflow-y: auto !important;
     padding: 20px !important;
 }
@@ -582,42 +847,42 @@ body .supplier-modal.supplier-modal--active {
 }
 
 .supplier-modal__component-input h4 {
-    margin: 0 0 15px 0 !important;
-    font-size: 16px !important;
+    margin: var(--margin-form) !important;
+    font-size: var(--font-size-base-alt) !important;
     font-weight: 600 !important;
     color: #374151 !important;
-    display: flex !important;
-    align-items: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
     gap: 8px !important;
 }
 
 /* 构成表单行 */
 .supplier-modal__form-row {
-    display: flex !important;
+    display: var(--display-flex);
     gap: 15px !important;
     margin-bottom: 15px !important;
 }
 
 .supplier-modal__form-row .supplier-modal__form-group {
-    flex: 1 !important;
-    display: flex !important;
-    flex-direction: column !important;
+    flex: var(--flex-one);
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
     gap: 0.5rem !important;
     margin-bottom: 1.5rem !important;
 }
 
 /* 构成管理模态框表单样式增强 - 使用最高优先级 */
 .supplier-modal--component-management .supplier-modal__form-group {
-    display: flex !important;
-    flex-direction: column !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
     gap: 0.5rem !important;
     margin-bottom: 1.5rem !important;
 }
 
 .supplier-modal--component-management .supplier-modal__form-group .supplier-modal__label,
 .supplier-modal--component-management .supplier-modal__label {
-    display: block !important;
-    font-size: 0.875rem !important;
+    display: var(--display-block);
+    font-size: var(--font-size-base) !important;
     font-weight: 600 !important;
     color: #374151 !important;
     margin-bottom: 0.5rem !important;
@@ -627,12 +892,12 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal--component-management .supplier-modal__form-group .supplier-modal__textarea,
 .supplier-modal--component-management .supplier-modal__input,
 .supplier-modal--component-management .supplier-modal__textarea {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
+    width: var(--width-full) !important;
+    padding: var(--padding-btn-small) !important;
     border: 2px solid #e5e7eb !important;
     border-radius: 10px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s ease !important;
+    font-size: var(--font-size-md-alt) !important;
+    transition: all var(--duration-normal) var(--ease-out);
     background: white !important;
     font-family: inherit !important;
     box-sizing: border-box !important;
@@ -650,8 +915,8 @@ body .supplier-modal.supplier-modal--active {
 /* 构成管理模态框 - textarea特殊样式 */
 .supplier-modal--component-management .supplier-modal__textarea {
     resize: vertical !important;
-    min-height: 80px !important;
-    line-height: 1.5 !important;
+    min-height: var(--min-height-textarea) !important;
+    line-height: var(--line-height-base);
 }
 
 /* 构成管理模态框 - placeholder样式 */
@@ -669,16 +934,16 @@ body .supplier-modal.supplier-modal--active {
 
 /* 构成列表区域 */
 .supplier-modal--component-management .supplier-modal__component-list {
-    flex: 1 !important;
+    flex: var(--flex-one);
 }
 
 .supplier-modal--component-management .supplier-modal__component-list h4 {
-    margin: 0 0 15px 0 !important;
-    font-size: 16px !important;
+    margin: var(--margin-form) !important;
+    font-size: var(--font-size-base-alt) !important;
     font-weight: 600 !important;
     color: #374151 !important;
-    display: flex !important;
-    align-items: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
     gap: 8px !important;
 }
 
@@ -692,34 +957,34 @@ body .supplier-modal.supplier-modal--active {
 
 /* 构成列表头部 */
 .supplier-modal--component-management .supplier-modal__list-header {
-    display: grid !important;
-    grid-template-columns: 2fr 1fr 1fr 1fr !important;
+    display: var(--display-grid);
+    grid-template-columns: var(--grid-template-columns-table);
     gap: 15px !important;
-    padding: 12px 20px !important;
+    padding: var(--padding-md) !important;
     background: #f3f4f6 !important;
     border-bottom: 1px solid #e5e7eb !important;
     font-weight: 600 !important;
-    font-size: 13px !important;
+    font-size: var(--font-size-sm-alt-2) !important;
     color: #374151 !important;
 }
 
 /* 构成列表主体 */
 .supplier-modal--component-management .supplier-modal__list-body {
-    max-height: 300px !important;
+    max-height: var(--max-height-medium) !important;
     overflow-y: auto !important;
 }
 
 /* 构成列表项 */
 .supplier-modal--component-management .supplier-modal__list-item,
 .supplier-modal--component-management .component-item { /* 兼容旧类名 */
-    display: grid !important;
-    grid-template-columns: 2fr 1fr 1fr 1fr !important;
+    display: var(--display-grid);
+    grid-template-columns: var(--grid-template-columns-table);
     gap: 15px !important;
-    padding: 12px 20px !important;
+    padding: var(--padding-md) !important;
     border-bottom: 1px solid #f0f0f0 !important;
-    align-items: center !important;
-    font-size: 13px !important;
-    transition: background-color 0.2s ease !important;
+    align-items: var(--align-items-center);
+    font-size: var(--font-size-sm-alt-2) !important;
+    transition: background-color var(--duration-fast) var(--ease-out);
 }
 
 .supplier-modal--component-management .supplier-modal__list-item:hover,
@@ -748,24 +1013,24 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal--component-management .supplier-modal__item-time,
 .supplier-modal--component-management .component-time { /* 兼容旧类名 */
     color: #9ca3af !important;
-    font-size: 12px !important;
+    font-size: var(--font-size-sm-alt) !important;
 }
 
 /* 构成项操作 */
 .supplier-modal--component-management .supplier-modal__item-actions,
 .supplier-modal--component-management .component-actions { /* 兼容旧类名 */
-    display: flex !important;
+    display: var(--display-flex);
     gap: 5px !important;
 }
 
 .supplier-modal--component-management .supplier-modal__item-actions button,
 .supplier-modal--component-management .component-actions button { /* 兼容旧类名 */
-    padding: 4px 8px !important;
-    font-size: 11px !important;
+    padding: var(--padding-xs) !important;
+    font-size: var(--font-size-xs-alt) !important;
     border: none !important;
     border-radius: 4px !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--duration-fast) var(--ease-out);
 }
 
 .supplier-modal--component-management .supplier-modal__edit-btn,
@@ -793,10 +1058,10 @@ body .supplier-modal.supplier-modal--active {
 /* 空构成状态 */
 .supplier-modal--component-management .supplier-modal__no-components,
 .supplier-modal--component-management .no-components { /* 兼容旧类名 */
-    padding: 40px 20px !important;
+    padding: var(--padding-modal-large) !important;
     text-align: center !important;
     color: #9ca3af !important;
-    font-size: 16px !important;
+    font-size: var(--font-size-base-alt) !important;
 }
 
 /* 必填标识 */
@@ -807,33 +1072,33 @@ body .supplier-modal.supplier-modal--active {
 /* 响应式设计 */
 @media (max-width: 768px) {
     .supplier-modal--component-management .supplier-modal__content {
-        width: 95vw !important;
-        height: 90vh !important;
+        width: var(--width-medium) !important;
+        height: var(--height-medium) !important;
     }
 
     .supplier-modal__form-row {
-        flex-direction: column !important;
+        flex-direction: var(--flex-direction-column);
         gap: 10px !important;
     }
 
     .supplier-modal__list-header,
     .supplier-modal__list-item {
-        grid-template-columns: 1fr !important;
+        grid-template-columns: var(--grid-template-columns-single);
         gap: 5px !important;
     }
 }
 
 /* ==================== 统一的表单样式 ==================== */
 .supplier-modal__form-group {
-    display: flex !important;
-    flex-direction: column !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
     gap: 0.5rem !important;
     margin-bottom: 1.5rem !important;
 }
 
 .supplier-modal__label {
-    display: block !important;
-    font-size: 0.875rem !important;
+    display: var(--display-block);
+    font-size: var(--font-size-base) !important;
     font-weight: 600 !important;
     color: #374151 !important;
     margin-bottom: 0.5rem !important;
@@ -842,12 +1107,12 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal__input,
 .supplier-modal__textarea,
 .supplier-modal__select {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
+    width: var(--width-full) !important;
+    padding: var(--padding-btn-small) !important;
     border: 2px solid #e5e7eb !important;
     border-radius: 10px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s ease !important;
+    font-size: var(--font-size-md-alt) !important;
+    transition: all var(--duration-normal) var(--ease-out);
     background: white !important;
     font-family: inherit !important;
     box-sizing: border-box !important;
@@ -868,8 +1133,8 @@ body .supplier-modal.supplier-modal--active {
 
 .supplier-modal__textarea {
     resize: vertical !important;
-    min-height: 80px !important;
-    line-height: 1.5 !important;
+    min-height: var(--min-height-textarea) !important;
+    line-height: var(--line-height-base);
 }
 
 /* ============================================
@@ -880,27 +1145,27 @@ body .supplier-modal.supplier-modal--active {
 
 /* 新增物料模态框修饰符 */
 .supplier-modal--add-material .supplier-modal__content {
-    max-width: 500px !important;
-    width: 90% !important;
+    max-width: var(--max-width-content);
+    width: var(--width-content);
 }
 
 /* 新增物料表单 */
 .supplier-modal__form {
-    display: flex !important;
-    flex-direction: column !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
     gap: 1.5rem !important;
 }
 
     
 /* 邮件预览按钮 */
 .supplier-modal__btn {
-    padding: 0.625rem 1.25rem !important;
+    padding: var(--padding-btn-large) !important;
     border: none !important;
     border-radius: 8px !important;
-    font-size: 0.875rem !important;
+    font-size: var(--font-size-base) !important;
     font-weight: 500 !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
+    transition: all var(--duration-fast) var(--ease-out);
     margin-right: 0.5rem !important;
 }
 
@@ -911,7 +1176,7 @@ body .supplier-modal.supplier-modal--active {
 
 .supplier-modal__btn--primary:hover {
     background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
-    transform: translateY(-1px) !important;
+    transform: var(--transform-hover-lift-small);
     box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3) !important;
 }
 
@@ -932,60 +1197,45 @@ body .supplier-modal.supplier-modal--active {
 }
 
 .supplier-modal--edit .supplier-modal__content {
-    max-width: 500px !important;
-    width: 90% !important;
-    max-height: 80vh !important;
-    overflow-y: auto !important;
+    max-width: var(--max-width-content);
+    width: var(--width-content);
+    max-height: var(--max-height-modal);
+    overflow-y: auto;
 }
 
-.supplier-modal--edit .supplier-modal__header {
-    background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
-    padding: 1.5rem !important;
-    border-radius: 16px 16px 0 0 !important;
-    border-bottom: none !important;
-}
-
-.supplier-modal--edit .supplier-modal__title {
-    color: white !important;
-    font-size: 1.25rem !important;
-    font-weight: 600 !important;
-    margin: 0 !important;
-    display: flex !important;
-    align-items: center !important;
-    gap: 0.5rem !important;
-}
+/* 编辑模态框使用统一的头部样式，无需特殊覆盖 */
 
 .supplier-modal--edit .supplier-modal__title::before {
     content: "✏️" !important;
-    font-size: 1.1rem !important;
+    font-size: var(--font-size-lg-alt) !important;
 }
 
 .supplier-modal--edit .supplier-modal__close {
     background: rgba(255, 255, 255, 0.2) !important;
     color: white !important;
     border: none !important;
-    width: 32px !important;
-    height: 32px !important;
+    width: var(--width-close-medium) !important;
+    height: var(--height-close-medium) !important;
     border-radius: 50% !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    font-size: 1.2rem !important;
-    transition: all 0.2s ease !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-center);
+    font-size: var(--font-size-title) !important;
+    transition: all var(--duration-fast) var(--ease-out);
 }
 
 .supplier-modal--edit .supplier-modal__close:hover {
     background: rgba(255, 255, 255, 0.3) !important;
-    transform: scale(1.1) !important;
+    transform: var(--transform-hover-scale);
 }
 
 .supplier-modal--edit .supplier-modal__body {
-    padding: 2rem !important;
+    padding: var(--spacing-body) !important; /* [修复-2025-12-27] 恢复正常padding */
 }
 
 .supplier-modal--edit .supplier-modal__form {
-    display: flex !important;
-    flex-direction: column !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
     gap: 1.5rem !important;
 }
 
@@ -997,18 +1247,18 @@ body .supplier-modal.supplier-modal--active {
 
 /* 永久有效复选框特殊样式 */
 .supplier-modal--edit .supplier-modal__checkbox-group {
-    display: flex !important;
-    align-items: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
     gap: 0.75rem !important;
-    padding: 1rem !important;
+    padding: var(--spacing-list-item) !important;
     background: #f8fafc !important;
     border-radius: 8px !important;
     border: 2px solid #e2e8f0 !important;
 }
 
 .supplier-modal--edit .supplier-modal__checkbox {
-    width: 1.2rem !important;
-    height: 1.2rem !important;
+    width: var(--width-switch) !important;
+    height: var(--height-switch) !important;
     accent-color: #6366f1 !important;
     cursor: pointer !important;
 }
@@ -1018,18 +1268,18 @@ body .supplier-modal.supplier-modal--active {
     user-select: none !important;
     font-weight: 500 !important;
     color: #374151 !important;
-    display: flex !important;
-    align-items: center !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
     gap: 0.5rem !important;
 }
 
 .supplier-modal--edit .supplier-modal__checkbox-label::before {
     content: "🔒" !important;
-    font-size: 1rem !important;
+    font-size: var(--font-size-lg) !important;
 }
 
 .supplier-modal--edit .supplier-modal__expiry-input {
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .supplier-modal--edit .supplier-modal__expiry-input:disabled {
@@ -1040,24 +1290,24 @@ body .supplier-modal.supplier-modal--active {
 }
 
 .supplier-modal--edit .supplier-modal__footer {
-    padding: 1.5rem 2rem !important;
+    padding: var(--spacing-button-group) !important;
     background: #f9fafb !important;
     border-top: 1px solid #e5e7eb !important;
     border-radius: 0 0 16px 16px !important;
-    display: flex !important;
+    display: var(--display-flex);
     gap: 1rem !important;
-    justify-content: flex-end !important;
+    justify-content: var(--justify-content-end);
 }
 
 .supplier-modal--edit .supplier-modal__btn {
-    padding: 0.75rem 1.5rem !important;
+    padding: var(--padding-btn-medium) !important;
     border-radius: 8px !important;
     font-weight: 500 !important;
-    font-size: 0.95rem !important;
+    font-size: var(--font-size-md-alt) !important;
     border: none !important;
     cursor: pointer !important;
-    transition: all 0.2s ease !important;
-    min-width: 80px !important;
+    transition: all var(--duration-fast) var(--ease-out);
+    min-width: var(--min-width-button);
 }
 
 .supplier-modal--edit .supplier-modal__btn--cancel {
@@ -1069,7 +1319,7 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal--edit .supplier-modal__btn--cancel:hover {
     background: #e5e7eb !important;
     color: #111827 !important;
-    transform: translateY(-1px) !important;
+    transform: var(--transform-hover-lift-small);
 }
 
 .supplier-modal--edit .supplier-modal__btn--submit {
@@ -1079,7 +1329,7 @@ body .supplier-modal.supplier-modal--active {
 
 .supplier-modal--edit .supplier-modal__btn--submit:hover {
     background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 100%) !important;
-    transform: translateY(-1px) !important;
+    transform: var(--transform-hover-lift-small);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3) !important;
 }
 
@@ -1087,32 +1337,33 @@ body .supplier-modal.supplier-modal--active {
     background: #d1d5db !important;
     color: #9ca3af !important;
     cursor: not-allowed !important;
-    transform: none !important;
+    transform: var(--transform-disabled);
     box-shadow: none !important;
 }
 
 /* 响应式适配 */
 @media (max-width: 768px) {
     .supplier-modal--edit .supplier-modal__content {
-        width: 95% !important;
-        margin: 1rem !important;
+        width: var(--width-large) !important;
+        max-width: var(--max-width-content) !important;
+        margin: var(--margin-sm) !important;
     }
 
     .supplier-modal--edit .supplier-modal__header {
-        padding: 1rem !important;
+        padding: var(--spacing-list-item) !important;
     }
 
     .supplier-modal--edit .supplier-modal__body {
-        padding: 1.5rem !important;
+        padding: var(--spacing-loose) !important;
     }
 
     .supplier-modal--edit .supplier-modal__footer {
-        padding: 1rem 1.5rem !important;
-        flex-direction: column !important;
+        padding: var(--spacing-card) !important;
+        flex-direction: var(--flex-direction-column);
     }
 
     .supplier-modal--edit .supplier-modal__btn {
-        width: 100% !important;
+        width: var(--width-full) !important;
         order: 2 !important;
     }
 
@@ -1135,9 +1386,9 @@ body .supplier-modal.supplier-modal--active {
     border: 2px dashed #d1d5db !important;
     border-radius: 16px !important;
     background: #f9fafb !important;
-    padding: 2rem !important;
+    padding: var(--spacing-body) !important;
     text-align: center !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
     cursor: pointer !important;
 }
 
@@ -1145,40 +1396,40 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal__file-upload.drag-over {
     border-color: #6366f1 !important;
     background: rgba(99, 102, 241, 0.05) !important;
-    transform: scale(1.02) !important;
+    transform: var(--transform-drag-over);
 }
 
 /* 增强的按钮悬停效果 */
 .supplier-modal__btn--primary {
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .supplier-modal__btn--primary:hover {
-    transform: translateY(-2px) !important;
+    transform: var(--transform-hover-lift);
     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.4) !important;
 }
 
 .supplier-modal__btn--secondary {
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .supplier-modal__btn--secondary:hover {
-    transform: translateY(-1px) !important;
+    transform: var(--transform-hover-lift-small);
 }
 
 /* 增强的关闭按钮旋转效果 */
 .supplier-modal__close {
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 .supplier-modal__close:hover {
-    transform: rotate(90deg) !important;
+    transform: var(--transform-hover-rotate);
 }
 
 /* ==================== 上传模态框样式 ==================== */
 /* 使用与邮件预览模态框统一的样式 */
 .supplier-modal--upload .supplier-modal__content {
-    max-width: 600px !important;
+    max-width: var(--max-width-content);
 }
 
 /* 文件上传区域 */
@@ -1187,15 +1438,15 @@ body .supplier-modal.supplier-modal--active {
     border: 3px dashed #d1d5db !important;
     border-radius: 16px !important;
     background: #f9fafb !important;
-    padding: 3rem 2rem !important;
+    padding: var(--spacing-modal-section) !important;
     text-align: center !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
     cursor: pointer !important;
-    min-height: 200px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    min-height: var(--min-height-large) !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-center);
 }
 
 .supplier-modal__file-upload:hover,
@@ -1204,29 +1455,29 @@ body .supplier-modal.supplier-modal--active {
 .upload-drop-zone.drag-over {
     border-color: #10b981 !important;
     background: rgba(16, 185, 129, 0.05) !important;
-    transform: scale(1.02) !important;
+    transform: var(--transform-drag-over);
 }
 
 /* 上传区域图标 */
 .supplier-modal__file-upload::before,
 .upload-drop-zone .upload-icon {
-    font-size: 3rem !important;
+    font-size: var(--font-size-xxxl) !important;
     margin-bottom: 1rem !important;
-    display: block !important;
+    display: var(--display-block);
 }
 
 /* 上传提示文本 */
 .supplier-modal__file-upload-text,
 .upload-drop-zone p {
     color: #6b7280 !important;
-    font-size: 1.1rem !important;
+    font-size: var(--font-size-lg-alt) !important;
     margin-bottom: 0.5rem !important;
 }
 
 .supplier-modal__file-upload-subtext,
 .upload-drop-zone .upload-subtext {
     color: #9ca3af !important;
-    font-size: 0.9rem !important;
+    font-size: var(--font-size-md) !important;
 }
 
 
@@ -1239,15 +1490,29 @@ body .supplier-modal.supplier-modal--active {
 /* ==================== 上传模态框专用表单样式 ==================== */
 /* 🎯 [UI-EVENT] 表单组 - 修复主页面类名不匹配问题 */
 .supplier-modal .form-group {
-    margin-bottom: 1.5rem;
+    display: block; /* 覆盖documents.css中的flex布局 */
+    margin-bottom: var(--spacing-loose); /* 恢复原始的1.5rem间距 */
 }
 
 .supplier-modal .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.5rem; /* 恢复原始的0.5rem */
     font-weight: 600;
     color: var(--color-text-primary);
 }
+
+/* 🎯 [UI-EVENT] 邮件模态框字段样式 */
+.supplier-modal__field {
+    margin-bottom: var(--spacing-loose); /* 字段组间距 */
+}
+
+.supplier-modal__field .supplier-modal__label {
+    display: block;
+    margin-bottom: 0.5rem; /* 标签到输入框的间距 */
+    font-weight: 600;
+    color: var(--color-text-primary);
+}
+
 
 /* 🎯 [UI-EVENT] 表单输入控件 - 修复主页面类名不匹配问题 */
 .supplier-modal .form-group input[type="text"],
@@ -1255,16 +1520,17 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal .form-group select,
 .supplier-modal .form-group textarea {
     /* 尺寸和布局 */
-    width: 100%;
-    padding: 10px 12px;
-    box-sizing: border-box;
+    width: var(--width-full);
+    padding: var(--padding-md);
+    box-sizing: border-box !important; /* 确保盒子模型正确 */
+    margin-top: 0;
 
     /* 样式属性 */
-    border: 1px solid var(--gray-300);
-    border-radius: 6px;
-    font-size: 14px;
-    transition: border-color var(--duration-fast);
-    background: var(--color-bg-primary);
+    border: 1px solid var(--gray-300) !important;
+    border-radius: 6px !important;
+    font-size: var(--font-size-sm-alt-2) !important;
+    transition: border-color var(--duration-fast) !important;
+    background: white !important; /* 确保白色背景 */
 }
 
 /* 🎯 [UI-EVENT] 表单聚焦状态 - 修复主页面类名不匹配问题 */
@@ -1290,9 +1556,9 @@ body .supplier-modal.supplier-modal--active {
 /* 🎯 [FIX] 文件预览区域样式 - Phase 4.2后修复 */
 .file-preview,
 .supplier-modal__file-preview {
-    display: none; /* 默认隐藏，由JavaScript控制显示 */
-    align-items: center !important;
-    justify-content: space-between !important;
+    display: var(--display-none) !important; /* 默认隐藏，由JavaScript控制显示 */
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-between);
     padding: 12px 16px !important;
     background: linear-gradient(135deg,
             rgba(16, 185, 129, 0.1) 0%,
@@ -1302,20 +1568,20 @@ body .supplier-modal.supplier-modal--active {
     margin-top: 12px !important;
     backdrop-filter: blur(8px) !important;
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15) !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
 /* 文件预览显示时的样式 */
 .file-preview.show,
 .supplier-modal__file-preview.show {
-    display: flex !important;
+    display: var(--display-flex) !important; /* [修复-2025-12-27] 需要覆盖隐藏时的!important */
 }
 
 /* 文件名显示 */
 .file-name,
 .supplier-modal__file-name {
-    flex: 1 !important;
-    font-size: 0.875rem !important;
+    flex: var(--flex-one);
+    font-size: var(--font-size-base) !important;
     font-weight: 500 !important;
     color: #059669 !important;
     white-space: nowrap !important;
@@ -1327,34 +1593,34 @@ body .supplier-modal.supplier-modal--active {
 /* 移除文件按钮 */
 .remove-file,
 .supplier-modal__remove-file {
-    width: 24px !important;
-    height: 24px !important;
+    width: var(--width-close-small) !important;
+    height: var(--height-close-small) !important;
     border-radius: 50% !important;
     border: none !important;
     background: rgba(239, 68, 68, 0.9) !important;
     color: white !important;
-    font-size: 16px !important;
+    font-size: var(--font-size-base-alt) !important;
     font-weight: bold !important;
     cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.3s ease !important;
-    line-height: 1 !important;
+    display: var(--display-flex);
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-center);
+    transition: all var(--duration-normal) var(--ease-out);
+    line-height: var(--line-height-tight);
 }
 
 /* 移除按钮悬停效果 */
 .remove-file:hover,
 .supplier-modal__remove-file:hover {
     background: #dc2626 !important;
-    transform: scale(1.1) !important;
+    transform: var(--transform-hover-scale);
     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
 }
 
 /* 移除按钮点击效果 */
 .remove-file:active,
 .supplier-modal__remove-file:active {
-    transform: scale(0.95) !important;
+    transform: var(--transform-active-press);
 }
 
 /* 文件上传区域 - 与预览区域协调 */
@@ -1362,42 +1628,42 @@ body .supplier-modal.supplier-modal--active {
 .supplier-modal__upload-drop-zone {
     border: 2px dashed rgba(16, 185, 129, 0.3) !important;
     border-radius: 12px !important;
-    padding: 32px 16px !important;
+    padding: var(--padding-modal-medium) !important;
     text-align: center !important;
     background: rgba(16, 185, 129, 0.05) !important;
     backdrop-filter: blur(8px) !important;
-    transition: all 0.3s ease !important;
-    position: relative !important;
+    transition: all var(--duration-normal) var(--ease-out);
+    position: var(--position-relative);
     cursor: pointer !important;
-    min-height: 100px !important;
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
+    min-height: var(--min-height-medium) !important;
+    display: var(--display-flex);
+    flex-direction: var(--flex-direction-column);
+    align-items: var(--align-items-center);
+    justify-content: var(--justify-content-center);
 }
 
 .upload-drop-zone:hover,
 .supplier-modal__upload-drop-zone:hover {
     border-color: rgba(16, 185, 129, 0.5) !important;
     background: rgba(16, 185, 129, 0.08) !important;
-    transform: translateY(-1px) !important;
+    transform: var(--transform-hover-lift-small);
 }
 
 .upload-icon,
 .supplier-modal__upload-icon {
-    font-size: 2rem !important;
+    font-size: var(--font-size-xxl) !important;
     margin-bottom: 1rem !important;
     opacity: 0.8 !important;
 }
 
 /* 选择器和输入框 */
 .supplier-modal__form-control {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
+    width: var(--width-full) !important;
+    padding: var(--padding-btn-small) !important;
     border: 2px solid #e5e7eb !important;
     border-radius: 10px !important;
-    font-size: 1rem !important;
-    transition: all 0.3s ease !important;
+    font-size: var(--font-size-lg) !important;
+    transition: all var(--duration-normal) var(--ease-out);
     background: white !important;
     box-sizing: border-box !important;
 }
@@ -1415,27 +1681,27 @@ body .supplier-modal.supplier-modal--active {
     border: none !important;
     padding: 0.875rem 2rem !important;
     border-radius: 10px !important;
-    font-size: 1rem !important;
+    font-size: var(--font-size-lg) !important;
     font-weight: 600 !important;
     cursor: pointer !important;
-    transition: all 0.3s ease !important;
+    transition: all var(--duration-normal) var(--ease-out);
     box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3) !important;
 }
 
 .supplier-modal__upload-btn:hover {
-    transform: translateY(-2px) !important;
+    transform: var(--transform-hover-lift);
     box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4) !important;
 }
 
 .supplier-modal__upload-btn:disabled {
     opacity: 0.6 !important;
     cursor: not-allowed !important;
-    transform: none !important;
+    transform: var(--transform-disabled);
 }
 
 /* 隐藏的文件输入 */
 .supplier-modal__hidden-input {
-    display: none !important;
+    display: var(--display-none);
 }
 
 /* 🎯 [FIX] 通用资料按钮右对齐修复 - 2025-12-20 */
@@ -1445,11 +1711,11 @@ body .supplier-modal.supplier-modal--active {
 .details-section .section-actions,
 .supplier-detail-view .section-actions,
 .common-documents .section-actions {
-    display: flex !important;
+    display: var(--display-flex);
     gap: 8px !important;
-    justify-content: flex-end !important; /* 强制按钮靠右对齐 */
-    align-items: center !important;
-    width: 100% !important;
+    justify-content: var(--justify-content-end); /* 强制按钮靠右对齐 */
+    align-items: var(--align-items-center);
+    width: var(--width-full) !important;
     margin-left: auto !important;
     margin-right: 0 !important;
 }
@@ -1458,12 +1724,12 @@ body .supplier-modal.supplier-modal--active {
 .details-section .section-header,
 .supplier-detail-view .section-header,
 .common-documents .section-header {
-    display: flex !important;
-    justify-content: space-between !important;
-    align-items: center !important;
-    width: 100% !important;
+    display: var(--display-flex);
+    justify-content: var(--justify-content-between);
+    align-items: var(--align-items-center);
+    width: var(--width-full) !important;
     flex-wrap: nowrap !important; /* 防止换行 */
-    min-height: 40px !important; /* 确保有足够高度 */
+    min-height: var(--min-height-small) !important; /* 确保有足够高度 */
 }
 
 /* 标题不换行 - 修复通用资料和检测报告换行问题 */
@@ -1472,7 +1738,7 @@ body .supplier-modal.supplier-modal--active {
 .common-documents .section-header h4 {
     white-space: nowrap !important;
     flex-shrink: 0 !important; /* 防止标题被压缩 */
-    margin: 0 !important;
+    margin: var(--margin-zero) !important;
     margin-right: 20px !important; /* 与按钮保持间距 */
 }
 
@@ -1480,18 +1746,18 @@ body .supplier-modal.supplier-modal--active {
 .details-section .section-actions,
 .supplier-detail-view .section-actions,
 .common-documents .section-actions {
-    display: flex !important;
+    display: var(--display-flex);
     gap: 8px !important;
-    justify-content: flex-end !important; /* 强制靠右，不是平均分布 */
-    align-items: center !important;
-    width: auto !important; /* 自动宽度，不占满整行 */
+    justify-content: var(--justify-content-end); /* 强制靠右，不是平均分布 */
+    align-items: var(--align-items-center);
+    width: var(--width-auto) !important; /* 自动宽度，不占满整行 */
     margin-left: auto !important; /* 自动左边距推到右边 */
     flex-shrink: 0 !important; /* 防止按钮被压缩 */
 }
 
 /* 针对通用资料区域的特殊样式 */
 .details-section.common-documents .section-actions {
-    justify-content: flex-end !important;
+    justify-content: var(--justify-content-end);
     flex-direction: row !important;
 }
 
@@ -1508,7 +1774,7 @@ body .supplier-modal.supplier-modal--active {
 
 /* 如果还有其他section-actions，全部强制靠右 */
 div[class*="section"].section-actions {
-    justify-content: flex-end !important;
+    justify-content: var(--justify-content-end);
 }
 
 /* ============================================
@@ -1648,39 +1914,7 @@ div[class*="section"].section-actions {
   opacity: 0;
 }
 
-/* ==================== 模态框头部样式 ==================== */
-/* 🎯 [UI-EVENT] 模态框标题栏 - 从document-type-settings.css迁移 */
-.supplier-modal__header {
-  padding: 24px 32px;
-  border-bottom: 1px solid #e5e7eb;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: #ffffff;
-  color: var(--primary-700);
-  border-radius: 20px 20px 0 0;
-  position: relative;
-  margin: -1px -1px 0 -1px;
-}
-
-/* 🎯 [UI-EVENT] 模态框标题文字 */
-.supplier-modal__header h3 {
-  margin: 0;
-  font-size: 18px;
-  font-weight: 600;
-}
-
-/* 🎯 [UI-EVENT] 模态框关闭按钮 */
-.supplier-modal__close-btn {
-  background: none;
-  border: none;
-  color: white;
-  font-size: 20px;
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: background-color 0.2s ease;
-}
+/* 重复的模态框头部样式已删除 - 使用重构后的统一样式 */
 
 /* 🎯 [UI-EVENT] 关闭按钮悬停效果 */
 .supplier-modal__close-btn:hover {

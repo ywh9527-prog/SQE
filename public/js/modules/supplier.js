@@ -362,7 +362,7 @@ class SupplierDocumentManager {
           this.hideEditModal();
         } else if (componentModalVisible) {
           console.log('✅ 关闭构成管理模态框');
-          this.hideComponentManagementModal();
+          window.supplierUIUtils.hideComponentManagementModal();
         } else if (addMaterialModalVisible) {
           console.log('✅ 关闭新增物料模态框');
           window.supplierUIUtils.hideAddMaterialModal();
@@ -373,7 +373,7 @@ class SupplierDocumentManager {
           console.log('❌ 无法确定要关闭的模态框');
           // 如果无法确定，尝试关闭所有模态框
           if (editModal) this.hideEditModal();
-          if (componentModal) this.hideComponentManagementModal();
+          if (componentModal) window.supplierUIUtils.hideComponentManagementModal();
           if (addMaterialModal) window.supplierUIUtils.hideAddMaterialModal();
           if (emailModal) window.supplierUIUtils.hideEmailModal();
         }
@@ -1995,6 +1995,7 @@ ${certType}：
         return;
       }
 
+      
       console.log('✅ 编辑模态框已显示');
 
       // 获取文档详情
@@ -2017,6 +2018,18 @@ ${certType}：
       // 🎯 [BUG-FIX] 获取并存储供应商ID用于后续刷新
       this.currentSupplierId = doc.supplierId;
       console.log('📋 设置当前供应商ID:', this.currentSupplierId);
+
+      // 🎯 [新增] 动态添加"有效期"标题（解决HTML缓存问题）
+      const expiryField = document.getElementById('editIsPermanent')?.closest('.supplier-modal__form-group');
+      if (expiryField) {
+        const existingLabel = expiryField.querySelector('.supplier-modal__label');
+        if (!existingLabel) {
+          const titleLabel = document.createElement('label');
+          titleLabel.className = 'supplier-modal__label';
+          titleLabel.textContent = '有效期';
+          expiryField.insertBefore(titleLabel, expiryField.firstChild);
+        }
+      }
 
       // 填充表单
       const editName = document.getElementById('editDocumentName');
@@ -2095,37 +2108,7 @@ ${certType}：
     console.log('✅ 编辑模态框隐藏完成');
   }
 
-  /**
-   * 隐藏构成管理模态框
-   */
-  hideComponentManagementModal() {
-    console.log('🎯 开始隐藏构成管理模态框...');
-
-    const modal = document.getElementById('componentManagementModal');
-    if (!modal) {
-      console.error('❌ 找不到构成管理模态框元素');
-      return;
-    }
-
-    console.log('🔧 执行强制隐藏操作...');
-    console.log('- 隐藏前display:', modal.style.display);
-    console.log('- 隐藏前classList:', modal.className);
-
-    // 移除所有可能的激活类
-    modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
-
-    // 强制设置隐藏样式
-    modal.style.setProperty('display', 'none', 'important');
-    modal.style.setProperty('visibility', 'hidden', 'important');
-    modal.style.setProperty('opacity', '0', 'important');
-    modal.style.setProperty('z-index', '-1', 'important');
-
-    console.log('- 隐藏后display:', modal.style.display);
-    console.log('- 隐藏后classList:', modal.className);
-
-    console.log('✅ 构成管理模态框隐藏完成');
-  }
-
+  
   /**
    * 切换编辑模态框的永久有效状态
    */
