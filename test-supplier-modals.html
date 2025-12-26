@@ -20,6 +20,92 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         }
 
+        /* 临时修复：确保模态框基础样式工作 */
+        .supplier-modal {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            background: rgba(0, 0, 0, 0.6) !important;
+            display: none !important;
+            z-index: 99999 !important;
+        }
+
+        .supplier-modal--active {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+
+        .supplier-modal__content {
+            background: #ffffff !important;
+            border-radius: 20px !important;
+            max-width: 600px !important;
+            width: 90% !important;
+            padding: 0 !important;
+            position: relative !important;
+        }
+
+        .supplier-modal__header {
+            background: #ffffff !important;
+            color: #6d5439 !important;
+            padding: 1.5rem 2rem !important;
+            border-bottom: 1px solid #e5e7eb !important;
+            border-radius: 20px 20px 0 0 !important;
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+
+        .supplier-modal__title {
+            font-size: 1.25rem !important;
+            font-weight: 600 !important;
+            margin: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 0.5rem !important;
+        }
+
+        .supplier-modal__close {
+            background: none !important;
+            border: none !important;
+            font-size: 24px !important;
+            cursor: pointer !important;
+            color: #666 !important;
+        }
+
+        .supplier-modal__body {
+            padding: 2rem !important;
+        }
+
+        .supplier-modal__footer {
+            padding: 1.5rem 2rem !important;
+            border-top: 1px solid #e5e7eb !important;
+            display: flex !important;
+            gap: 1rem !important;
+            justify-content: flex-end !important;
+        }
+
+        .supplier-modal__btn {
+            padding: 0.75rem 1.5rem !important;
+            border-radius: 8px !important;
+            border: none !important;
+            cursor: pointer !important;
+            font-size: 1rem !important;
+        }
+
+        .supplier-modal__btn--primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            color: white !important;
+        }
+
+        .supplier-modal__btn--secondary {
+            background: #f3f4f6 !important;
+            color: #374151 !important;
+        }
+
         .test-container {
             max-width: 1200px;
             margin: 0 auto;
