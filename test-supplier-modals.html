@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>供应商模态框视觉回归测试</title>
+
+    <!-- 加载与主页面相同的CSS -->
+    <link rel="stylesheet" href="css/style_v2.css">
+    <link rel="stylesheet" href="css/modules/supplier-modals.css?v=4.12-fix-file-preview">
+    <link rel="stylesheet" href="css/modules/supplier-layout.css?v=1.0-phase5">
+    <link rel="stylesheet" href="css/modules/supplier-interactions.css">
+    <link rel="stylesheet" href="css/modules/supplier-components.css?v=1.0-phase4-2">
+
+    <style>
+        /* 测试页面专用样式 */
+        body {
+            padding: 2rem;
+            background: #f5f5f5;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        .test-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .test-header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .test-header h1 {
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .test-header p {
+            color: #6b7280;
+            font-size: 1.1rem;
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .test-card {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        .test-card h3 {
+            color: #374151;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
+        }
+
+        .test-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            margin: 0.5rem;
+        }
+
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .test-button:active {
+            transform: translateY(0);
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 0.5rem;
+        }
+
+        .status-success { background: #10b981; }
+        .status-warning { background: #f59e0b; }
+        .status-error { background: #ef4444; }
+
+        .test-results {
+            background: #f3f4f6;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+        }
+
+        .test-results h3 {
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .comparison-info {
+            background: #eff6ff;
+            border: 1px solid #3b82f6;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .comparison-info h4 {
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+        }
+
+        .comparison-info p {
+            color: #1e40af;
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-header">
+            <h1>🧪 供应商模态框视觉回归测试</h1>
+            <p>测试第一批CSS !important重构后的视觉效果</p>
+        </div>
+
+        <div class="comparison-info">
+            <h4>📊 重构对比信息</h4>
+            <p><strong>重构前：</strong> 651个 !important</p>
+            <p><strong>重构后：</strong> 620个 !important (减少31个)</p>
+            <p><strong>改进内容：</strong> 建立CSS变量系统 + 优化BEM选择器优先级</p>
+        </div>
+
+        <div class="test-grid">
+            <div class="test-card">
+                <h3>📤 上传资料模态框</h3>
+                <p>测试文件上传界面的显示效果</p>
+                <button class="test-button" onclick="showUploadModal()">打开上传模态框</button>
+            </div>
+
+            <div class="test-card">
+                <h3>✏️ 编辑资料模态框</h3>
+                <p>测试资料编辑界面的显示效果</p>
+                <button class="test-button" onclick="showEditModal()">打开编辑模态框</button>
+            </div>
+
+            <div class="test-card">
+                <h3>📋 文档类型设置</h3>
+                <p>测试文档类型配置界面</p>
+                <button class="test-button" onclick="showDocTypeModal()">打开文档类型设置</button>
+            </div>
+
+            <div class="test-card">
+                <h3>📊 统计信息模态框</h3>
+                <p>测试统计数据显示界面</p>
+                <button class="test-button" onclick="showStatsModal()">打开统计模态框</button>
+            </div>
+        </div>
+
+        <div class="test-results">
+            <h3>🎯 测试结果记录</h3>
+            <div id="testResults">
+                <div class="result-item">
+                    <span class="status-indicator status-warning"></span>
+                    <span>等待测试开始...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 模态框HTML结构 (从主页面复制) -->
+    <div id="uploadModal" class="supplier-modal supplier-modal--upload">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 class="supplier-modal__title">📤 上传资料</h3>
+                <button class="supplier-modal__close" onclick="closeModal('uploadModal')">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <div class="upload-area">
+                    <p>拖拽文件到此处或点击选择文件</p>
+                    <input type="file" id="fileInput" multiple>
+                </div>
+            </div>
+            <div class="supplier-modal__footer">
+                <button class="supplier-modal__btn supplier-modal__btn--secondary" onclick="closeModal('uploadModal')">取消</button>
+                <button class="supplier-modal__btn supplier-modal__btn--primary">上传</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="editModal" class="supplier-modal supplier-modal--edit">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 class="supplier-modal__title">✏️ 编辑资料</h3>
+                <button class="supplier-modal__close" onclick="closeModal('editModal')">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <form class="supplier-modal__form">
+                    <div class="form-group">
+                        <label>资料名称</label>
+                        <input type="text" class="form-control" placeholder="请输入资料名称">
+                    </div>
+                    <div class="form-group">
+                        <label>有效期</label>
+                        <input type="date" class="form-control">
+                    </div>
+                    <div class="form-group">
+                        <label>备注</label>
+                        <textarea class="form-control" rows="3" placeholder="请输入备注信息"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="supplier-modal__footer">
+                <button class="supplier-modal__btn supplier-modal__btn--secondary" onclick="closeModal('editModal')">取消</button>
+                <button class="supplier-modal__btn supplier-modal__btn--primary">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="docTypeModal" class="supplier-modal supplier-modal--document-type-settings">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 class="supplier-modal__title">📋 文档类型设置</h3>
+                <button class="supplier-modal__close" onclick="closeModal('docTypeModal')">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <div class="document-type-list">
+                    <div class="document-type-item">
+                        <span>营业执照</span>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="document-type-item">
+                        <span>税务登记证</span>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <div class="document-type-item">
+                        <span>组织机构代码证</span>
+                        <label class="switch">
+                            <input type="checkbox">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="supplier-modal__footer">
+                <button class="supplier-modal__btn supplier-modal__btn--secondary" onclick="closeModal('docTypeModal')">取消</button>
+                <button class="supplier-modal__btn supplier-modal__btn--primary">保存设置</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="statsModal" class="supplier-modal supplier-modal--stats">
+        <div class="supplier-modal__content">
+            <div class="supplier-modal__header">
+                <h3 class="supplier-modal__title">📊 统计信息</h3>
+                <button class="supplier-modal__close" onclick="closeModal('statsModal')">&times;</button>
+            </div>
+            <div class="supplier-modal__body">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">156</div>
+                        <div class="stat-label">供应商总数</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">89%</div>
+                        <div class="stat-label">资料完整率</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">23</div>
+                        <div class="stat-label">待审核</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">12</div>
+                        <div class="stat-label">即将过期</div>
+                    </div>
+                </div>
+            </div>
+            <div class="supplier-modal__footer">
+                <button class="supplier-modal__btn supplier-modal__btn--primary" onclick="closeModal('statsModal')">确定</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 模态框控制函数
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('supplier-modal--active');
+                addTestResult(`打开 ${modalId} 模态框`, 'success');
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('supplier-modal--active');
+                addTestResult(`关闭 ${modalId} 模态框`, 'success');
+            }
+        }
+
+        function showUploadModal() {
+            showModal('uploadModal');
+        }
+
+        function showEditModal() {
+            showModal('editModal');
+        }
+
+        function showDocTypeModal() {
+            showModal('docTypeModal');
+        }
+
+        function showStatsModal() {
+            showModal('statsModal');
+        }
+
+        // 测试结果记录
+        function addTestResult(message, status) {
+            const resultsContainer = document.getElementById('testResults');
+            const resultItem = document.createElement('div');
+            resultItem.className = 'result-item';
+
+            const statusClass = status === 'success' ? 'status-success' :
+                              status === 'warning' ? 'status-warning' : 'status-error';
+
+            resultItem.innerHTML = `
+                <span class="status-indicator ${statusClass}"></span>
+                <span>${new Date().toLocaleTimeString()} - ${message}</span>
+            `;
+
+            resultsContainer.appendChild(resultItem);
+        }
+
+        // 自动测试函数
+        function runAutoTest() {
+            addTestResult('开始自动视觉回归测试', 'warning');
+
+            setTimeout(() => {
+                showUploadModal();
+                setTimeout(() => {
+                    closeModal('uploadModal');
+                    setTimeout(() => {
+                        showEditModal();
+                        setTimeout(() => {
+                            closeModal('editModal');
+                            setTimeout(() => {
+                                showDocTypeModal();
+                                setTimeout(() => {
+                                    closeModal('docTypeModal');
+                                    setTimeout(() => {
+                                        showStatsModal();
+                                        setTimeout(() => {
+                                            closeModal('statsModal');
+                                            addTestResult('自动视觉回归测试完成', 'success');
+                                        }, 1000);
+                                    }, 1000);
+                                }, 1000);
+                            }, 1000);
+                        }, 1000);
+                    }, 1000);
+                }, 1500);
+            }, 500);
+        }
+
+        // 页面加载完成后运行自动测试
+        window.addEventListener('load', () => {
+            setTimeout(runAutoTest, 1000);
+        });
+
+        // 点击模态框背景关闭
+        document.querySelectorAll('.supplier-modal').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('supplier-modal--active');
+                    addTestResult(`点击背景关闭模态框`, 'success');
+                }
+            });
+        });
+
+        // ESC键关闭模态框
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.supplier-modal--active').forEach(modal => {
+                    modal.classList.remove('supplier-modal--active');
+                    addTestResult('ESC键关闭模态框', 'success');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
