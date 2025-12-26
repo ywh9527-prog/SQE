@@ -192,74 +192,98 @@ body .supplier-modal.supplier-modal--active {
     content: '➕';
 }
 
-/* ==================== 关闭按钮 ==================== */
-.supplier-modal__close {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border: none !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-    font-size: 1.5rem !important;
-    width: 36px !important;
-    height: 36px !important;
-    border-radius: 50% !important;
-    cursor: pointer !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    transition: all 0.3s ease !important;
+/* ==================== 关闭按钮 (第二批重构) ==================== */
+
+/* 🎯 [UI-EVENT] 关闭按钮 - 使用更具体的选择器 */
+.supplier-modal--active .supplier-modal__content .supplier-modal__header .supplier-modal__close {
+    /* 样式属性 - 使用变量和更具体的选择器 */
+    background: rgba(255, 255, 255, 0.2);
+    border: var(--modal-border);
+    color: rgba(255, 255, 255, 0.8);
+
+    /* 尺寸属性 */
+    font-size: 1.5rem;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+
+    /* 交互属性 */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--duration-normal) var(--ease-out);
 }
 
-.supplier-modal__close:hover {
-    background: rgba(255, 255, 255, 0.3) !important;
-    color: white !important;
-    transform: rotate(90deg) !important;
+/* 🎯 [UI-EVENT] 关闭按钮悬停状态 */
+.supplier-modal--active .supplier-modal__content .supplier-modal__header .supplier-modal__close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: white;
+    transform: rotate(90deg);
 }
 
-/* ==================== 模态框主体 ==================== */
-.supplier-modal__body {
-    padding: 2rem !important;
-    color: #374151 !important;
-    overflow-y: auto !important;
-    max-height: calc(85vh - 140px) !important;
+/* ==================== 模态框主体 (第二批重构) ==================== */
+
+/* 🎯 [CORE-LOGIC] 模态框主体内容 */
+.supplier-modal--active .supplier-modal__content .supplier-modal__body {
+    /* 内边距 - 使用变量系统 */
+    padding: var(--modal-padding-body);
+
+    /* 样式属性 */
+    color: var(--color-text-primary);
+
+    /* 滚动和尺寸 */
+    overflow-y: auto;
+    max-height: calc(85vh - 140px);
 }
 
-/* ==================== 表单样式增强 ==================== */
-.supplier-form__group {
-    margin-bottom: 1.5rem !important;
+/* ==================== 表单样式增强 (第二批重构) ==================== */
+
+/* 🎯 [UI-EVENT] 表单组 */
+.supplier-modal__form .supplier-form__group {
+    margin-bottom: 1.5rem;
 }
 
-.supplier-form__label {
-    font-weight: 600 !important;
-    color: #374151 !important;
-    margin-bottom: 0.5rem !important;
-    display: block !important;
-    font-size: 0.95rem !important;
+/* 🎯 [UI-EVENT] 表单标签 */
+.supplier-modal__form .supplier-form__label {
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-bottom: 0.5rem;
+    display: block;
+    font-size: 0.95rem;
 }
 
-.supplier-form__input,
-.supplier-form__select,
-.supplier-form__textarea {
-    width: 100% !important;
-    padding: 0.75rem 1rem !important;
-    border: 2px solid #e5e7eb !important;
-    border-radius: 10px !important;
-    font-size: 0.95rem !important;
-    transition: all 0.3s ease !important;
-    background: white !important;
+/* 🎯 [UI-EVENT] 表单输入控件 */
+.supplier-modal__form .supplier-form__input,
+.supplier-modal__form .supplier-form__select,
+.supplier-modal__form .supplier-form__textarea {
+    /* 尺寸和布局 */
+    width: 100%;
+    padding: 0.75rem 1rem;
+
+    /* 样式属性 */
+    border: 2px solid var(--gray-200);
+    border-radius: 10px;
+    /* 字体和动画 */
+    font-size: 0.95rem;
+    transition: all var(--duration-normal) var(--ease-out);
+    background: var(--color-bg-primary);
 }
 
-.supplier-form__input:focus,
-.supplier-form__select:focus,
-.supplier-form__textarea:focus {
-    outline: none !important;
-    border-color: #6366f1 !important;
-    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+/* 🎯 [UI-EVENT] 表单聚焦状态 */
+.supplier-modal__form .supplier-form__input:focus,
+.supplier-modal__form .supplier-form__select:focus,
+.supplier-modal__form .supplier-form__textarea:focus {
+    outline: none;
+    border-color: var(--info);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-/* 只读输入框特殊样式 */
-.supplier-form__input--readonly {
-    background: #f9fafb !important;
-    color: #6b7280 !important;
-    cursor: not-allowed !important;
+/* 🎯 [UI-EVENT] 只读输入框特殊样式 */
+.supplier-modal__form .supplier-form__input--readonly {
+    background: var(--gray-50);
+    color: var(--color-text-muted);
+    cursor: not-allowed;
 }
 
 /* ==================== 检测类型选项样式 ==================== */
