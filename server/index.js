@@ -54,6 +54,10 @@ console.log('✅ suppliersSyncRoutes 加载完成');
 const documentTypesRoutes = require('./routes/document-types');
 console.log('✅ documentTypesRoutes 加载完成');
 
+// 系统功能路由
+const systemRoutes = require('./routes/system');
+console.log('✅ systemRoutes 加载完成');
+
 // 路由注册
 console.log('🔧 开始注册API路由...');
 
@@ -93,6 +97,10 @@ console.log('✅ /api/documents/* 路由已注册 (documents)');
 // 文档类型设置功能路由
 app.use('/api/document-types', documentTypesRoutes);
 console.log('✅ /api/document-types/* 路由已注册 (document-types)');
+
+// 系统功能路由
+app.use('/api/system', systemRoutes);
+console.log('✅ /api/system/* 路由已注册 (system)');
 
 console.log('🎉 所有API路由注册完成');
 
