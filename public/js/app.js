@@ -73,6 +73,14 @@ function initializeApp() {
         }
     });
 
+    window.App.Router.register('vendor-config', () => {
+        console.log('供应商配置中心模块已激活');
+        // 重新绑定事件
+        if (window.vendorConfigManager) {
+            window.vendorConfigManager.rebindEvents();
+        }
+    });
+
     
 
     // 手动触发一次路由处理，确保直接访问带 hash 的 URL 时能正确渲染

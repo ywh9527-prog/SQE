@@ -1,0 +1,205 @@
+/**
+ * 供应商配置中心 - 组件样式
+ * 包含按钮、复选框、状态徽章等可复用组件
+ */
+
+/* 颜色变量 */
+:root {
+    --vendor-color-primary: #2563eb;
+    --vendor-color-success: #10b981;
+    --vendor-color-warning: #f59e0b;
+    --vendor-color-danger: #ef4444;
+    --vendor-color-info: #3b82f6;
+    --vendor-color-gray: #6b7280;
+    --vendor-color-gray-light: #e5e7eb;
+    --vendor-color-white: #ffffff;
+    --vendor-color-black: #000000;
+}
+
+/* 间距变量 */
+:root {
+    --vendor-spacing-xs: 4px;
+    --vendor-spacing-sm: 8px;
+    --vendor-spacing-md: 16px;
+    --vendor-spacing-lg: 24px;
+    --vendor-spacing-xl: 32px;
+}
+
+/* 字体变量 */
+:root {
+    --vendor-font-size-xs: 12px;
+    --vendor-font-size-sm: 14px;
+    --vendor-font-size-md: 16px;
+    --vendor-font-size-lg: 18px;
+    --vendor-font-size-xl: 20px;
+    --vendor-font-weight-normal: 400;
+    --vendor-font-weight-medium: 500;
+    --vendor-font-weight-bold: 600;
+}
+
+/* 边框圆角变量 */
+:root {
+    --vendor-border-radius-sm: 4px;
+    --vendor-border-radius-md: 8px;
+    --vendor-border-radius-lg: 12px;
+}
+
+/* 阴影变量 */
+:root {
+    --vendor-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --vendor-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --vendor-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* 按钮组件 */
+.vendor-config__btn {
+    padding: var(--vendor-spacing-sm) var(--vendor-spacing-md);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vendor-config__btn:hover {
+    background-color: var(--vendor-color-gray-light);
+}
+
+.vendor-config__btn--primary {
+    background-color: var(--vendor-color-primary);
+    color: var(--vendor-color-white);
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__btn--primary:hover {
+    background-color: #1d4ed8;
+}
+
+.vendor-config__btn--secondary {
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-gray);
+}
+
+.vendor-config__btn--danger {
+    background-color: var(--vendor-color-danger);
+    color: var(--vendor-color-white);
+    border-color: var(--vendor-color-danger);
+}
+
+.vendor-config__btn--danger:hover {
+    background-color: #dc2626;
+}
+
+.vendor-config__btn--edit {
+    padding: var(--vendor-spacing-xs) var(--vendor-spacing-sm);
+    font-size: var(--vendor-font-size-xs);
+}
+
+.vendor-config__btn--delete {
+    padding: var(--vendor-spacing-xs) var(--vendor-spacing-sm);
+    font-size: var(--vendor-font-size-xs);
+}
+
+/* 复选框组件 */
+.vendor-config__checkbox {
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+    accent-color: var(--vendor-color-primary);
+}
+
+/* 状态徽章组件 */
+.vendor-config__status-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-xs);
+    font-weight: var(--vendor-font-weight-medium);
+}
+
+.vendor-config__status-badge--active {
+    background-color: #d1fae5;
+    color: #065f46;
+}
+
+.vendor-config__status-badge--inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* 来源徽章组件 */
+.vendor-config__source-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-xs);
+    font-weight: var(--vendor-font-weight-medium);
+}
+
+.vendor-config__source-badge--iqc {
+    background-color: #dbeafe;
+    color: #1e40af;
+}
+
+.vendor-config__source-badge--manual {
+    background-color: #fef3c7;
+    color: #92400e;
+}
+
+/* 表单组件 */
+.vendor-config__form-group {
+    margin-bottom: var(--vendor-spacing-md);
+}
+
+.vendor-config__form-group label {
+    display: block;
+    margin-bottom: var(--vendor-spacing-sm);
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    color: var(--vendor-color-gray);
+}
+
+.vendor-config__form-group input[type="text"],
+.vendor-config__form-group select {
+    width: 100%;
+    padding: var(--vendor-spacing-sm);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+}
+
+.vendor-config__form-group input[type="text"]:focus,
+.vendor-config__form-group select:focus {
+    outline: none;
+    border-color: var(--vendor-color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.vendor-config__form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: var(--vendor-spacing-sm);
+}
+
+/* 加载状态 */
+.vendor-config__loading {
+    text-align: center;
+    padding: var(--vendor-spacing-xl);
+    color: var(--vendor-color-gray);
+}
+
+/* 空状态 */
+.vendor-config__empty {
+    text-align: center;
+    padding: var(--vendor-spacing-xl);
+    color: var(--vendor-color-gray);
+}
+
+/* 错误状态 */
+.vendor-config__error {
+    text-align: center;
+    padding: var(--vendor-spacing-xl);
+    color: var(--vendor-color-danger);
+}

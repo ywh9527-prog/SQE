@@ -1,0 +1,307 @@
+/**
+ * 供应商配置中心 - 筛选界面样式
+ * 包含筛选区域、搜索框等筛选相关样式
+ */
+
+/* 筛选区域 */
+.vendor-config__filter {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vendor-spacing-md);
+    padding: var(--vendor-spacing-md);
+    background-color: var(--vendor-color-white);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-md);
+    align-items: center;
+}
+
+/* 筛选组 */
+.vendor-config__filter-group {
+    display: flex;
+    align-items: center;
+    gap: var(--vendor-spacing-sm);
+}
+
+/* 筛选标签 */
+.vendor-config__filter-label {
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    color: var(--vendor-color-gray);
+    white-space: nowrap;
+}
+
+/* 筛选下拉框 */
+.vendor-config__filter select {
+    padding: var(--vendor-spacing-sm);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 120px;
+}
+
+.vendor-config__filter select:hover {
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__filter select:focus {
+    outline: none;
+    border-color: var(--vendor-color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* 筛选搜索框 */
+.vendor-config__filter input[type="text"] {
+    flex: 1;
+    min-width: 200px;
+    padding: var(--vendor-spacing-sm);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    transition: all 0.2s ease;
+}
+
+.vendor-config__filter input[type="text"]:hover {
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__filter input[type="text"]:focus {
+    outline: none;
+    border-color: var(--vendor-color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* 筛选搜索框占位符 */
+.vendor-config__filter input[type="text"]::placeholder {
+    color: var(--vendor-color-gray);
+}
+
+/* 筛选按钮 */
+.vendor-config__filter__btn {
+    padding: var(--vendor-spacing-sm) var(--vendor-spacing-md);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.vendor-config__filter__btn:hover {
+    background-color: var(--vendor-color-gray-light);
+    transform: translateY(-1px);
+    box-shadow: var(--vendor-shadow-sm);
+}
+
+.vendor-config__filter__btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.vendor-config__filter__btn--primary {
+    background-color: var(--vendor-color-primary);
+    color: var(--vendor-color-white);
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__filter__btn--primary:hover {
+    background-color: #1d4ed8;
+}
+
+.vendor-config__filter__btn--secondary {
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-gray);
+}
+
+/* 筛选标签 */
+.vendor-config__filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vendor-spacing-sm);
+    margin-top: var(--vendor-spacing-sm);
+}
+
+.vendor-config__filter-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--vendor-spacing-xs);
+    padding: 2px 8px;
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-xs);
+    font-weight: var(--vendor-font-weight-medium);
+}
+
+.vendor-config__filter-tag__remove {
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vendor-config__filter-tag__remove:hover {
+    color: #1e3a8a;
+    transform: scale(1.1);
+}
+
+/* 筛选结果计数 */
+.vendor-config__filter__count {
+    font-size: var(--vendor-font-size-xs);
+    color: var(--vendor-color-gray);
+    margin-left: auto;
+}
+
+/* 筛选清除按钮 */
+.vendor-config__filter__clear {
+    font-size: var(--vendor-font-size-xs);
+    color: var(--vendor-color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--vendor-spacing-xs);
+    transition: all 0.2s ease;
+}
+
+.vendor-config__filter__clear:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* 筛选高级选项 */
+.vendor-config__filter__advanced {
+    display: none;
+    flex-direction: column;
+    gap: var(--vendor-spacing-md);
+    padding-top: var(--vendor-spacing-md);
+    border-top: 1px solid var(--vendor-color-gray-light);
+    margin-top: var(--vendor-spacing-md);
+}
+
+.vendor-config__filter__advanced--visible {
+    display: flex;
+}
+
+/* 筛选折叠/展开按钮 */
+.vendor-config__filter__toggle {
+    font-size: var(--vendor-font-size-xs);
+    color: var(--vendor-color-primary);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: var(--vendor-spacing-xs);
+    transition: all 0.2s ease;
+}
+
+.vendor-config__filter__toggle:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+/* 筛选日期范围 */
+.vendor-config__filter__date-range {
+    display: flex;
+    align-items: center;
+    gap: var(--vendor-spacing-sm);
+}
+
+.vendor-config__filter__date-range input[type="date"] {
+    padding: var(--vendor-spacing-sm);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vendor-config__filter__date-range input[type="date"]:hover {
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__filter__date-range input[type="date"]:focus {
+    outline: none;
+    border-color: var(--vendor-color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+/* 筛选复选框组 */
+.vendor-config__filter__checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--vendor-spacing-md);
+}
+
+.vendor-config__filter__checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: var(--vendor-spacing-xs);
+    font-size: var(--vendor-font-size-sm);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__filter__checkbox-item input[type="checkbox"] {
+    cursor: pointer;
+    accent-color: var(--vendor-color-primary);
+}
+
+/* 筛选禁用状态 */
+.vendor-config__filter select:disabled,
+.vendor-config__filter input[type="text"]:disabled,
+.vendor-config__filter__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 筛选加载状态 */
+.vendor-config__filter--loading {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.vendor-config__filter--loading::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--vendor-color-primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    transform: translate(-50%, -50%);
+}
+
+@keyframes spin {
+    to {
+        transform: translate(-50%, -50%) rotate(360deg);
+    }
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+    .vendor-config__filter {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .vendor-config__filter select,
+    .vendor-config__filter input[type="text"] {
+        width: 100%;
+        min-width: unset;
+    }
+
+    .vendor-config__filter__count {
+        margin-left: 0;
+        text-align: center;
+    }
+}

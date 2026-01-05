@@ -1,0 +1,289 @@
+/**
+ * 供应商配置中心 - 模态框样式
+ * 包含添加/编辑供应商的模态框样式
+ */
+
+/* 模态框容器 */
+.vendor-config__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/* 模态框内容 */
+.vendor-config__modal__content {
+    background-color: var(--vendor-color-white);
+    border-radius: var(--vendor-border-radius-lg);
+    box-shadow: var(--vendor-shadow-lg);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    animation: scaleIn 0.3s ease;
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 模态框头部 */
+.vendor-config__modal__header {
+    padding: var(--vendor-spacing-lg);
+    border-bottom: 1px solid var(--vendor-color-gray-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vendor-config__modal__header h3 {
+    margin: 0;
+    font-size: var(--vendor-font-size-lg);
+    font-weight: var(--vendor-font-weight-bold);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__modal__close {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: var(--vendor-color-gray);
+    cursor: pointer;
+    padding: 0;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--vendor-border-radius-sm);
+    transition: all 0.2s ease;
+}
+
+.vendor-config__modal__close:hover {
+    background-color: var(--vendor-color-gray-light);
+    color: var(--vendor-color-black);
+}
+
+/* 模态框主体 */
+.vendor-config__modal__body {
+    padding: var(--vendor-spacing-lg);
+}
+
+/* 模态框底部 */
+.vendor-config__modal__footer {
+    padding: var(--vendor-spacing-lg);
+    border-top: 1px solid var(--vendor-color-gray-light);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--vendor-spacing-sm);
+}
+
+/* 模态框按钮 */
+.vendor-config__modal-btn {
+    padding: var(--vendor-spacing-sm) var(--vendor-spacing-md);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vendor-config__modal-btn:hover {
+    background-color: var(--vendor-color-gray-light);
+    transform: translateY(-1px);
+    box-shadow: var(--vendor-shadow-sm);
+}
+
+.vendor-config__modal-btn:active {
+    transform: translateY(0);
+    box-shadow: none;
+}
+
+.vendor-config__modal-btn--primary {
+    background-color: var(--vendor-color-primary);
+    color: var(--vendor-color-white);
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__modal-btn--primary:hover {
+    background-color: #1d4ed8;
+}
+
+.vendor-config__modal-btn--secondary {
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-gray);
+}
+
+.vendor-config__modal-btn--danger {
+    background-color: var(--vendor-color-danger);
+    color: var(--vendor-color-white);
+    border-color: var(--vendor-color-danger);
+}
+
+.vendor-config__modal-btn--danger:hover {
+    background-color: #dc2626;
+}
+
+/* 模态框表单 */
+.vendor-config__modal__form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vendor-spacing-md);
+}
+
+/* 模态框表单组 */
+.vendor-config__modal__form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--vendor-spacing-sm);
+}
+
+.vendor-config__modal__form-group label {
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    color: var(--vendor-color-gray);
+}
+
+.vendor-config__modal__form-group input[type="text"],
+.vendor-config__modal__form-group select {
+    padding: var(--vendor-spacing-sm);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    transition: all 0.2s ease;
+}
+
+.vendor-config__modal__form-group input[type="text"]:focus,
+.vendor-config__modal__form-group select:focus {
+    outline: none;
+    border-color: var(--vendor-color-primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.vendor-config__modal__form-group input[type="checkbox"] {
+    width: auto;
+    margin-right: var(--vendor-spacing-sm);
+}
+
+/* 模态框错误提示 */
+.vendor-config__modal__error {
+    padding: var(--vendor-spacing-sm);
+    background-color: #fee2e2;
+    color: #991b1b;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* 模态框成功提示 */
+.vendor-config__modal__success {
+    padding: var(--vendor-spacing-sm);
+    background-color: #d1fae5;
+    color: #065f46;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    animation: fadeIn 0.5s ease;
+}
+
+/* 模态框警告提示 */
+.vendor-config__modal__warning {
+    padding: var(--vendor-spacing-sm);
+    background-color: #fef3c7;
+    color: #92400e;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    animation: fadeIn 0.5s ease;
+}
+
+/* 模态框信息提示 */
+.vendor-config__modal__info {
+    padding: var(--vendor-spacing-sm);
+    background-color: #dbeafe;
+    color: #1e40af;
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    animation: fadeIn 0.5s ease;
+}
+
+/* 模态框帮助文本 */
+.vendor-config__modal__help-text {
+    font-size: var(--vendor-font-size-xs);
+    color: var(--vendor-color-gray);
+    margin-top: var(--vendor-spacing-xs);
+}
+
+/* 模态框必填标记 */
+.vendor-config__modal__required {
+    color: var(--vendor-color-danger);
+    margin-left: 2px;
+}
+
+/* 模态框禁用状态 */
+.vendor-config__modal__form-group input:disabled,
+.vendor-config__modal__form-group select:disabled {
+    background-color: var(--vendor-color-gray-light);
+    color: var(--vendor-color-gray);
+    cursor: not-allowed;
+}
+
+/* 模态框加载状态 */
+.vendor-config__modal__loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: var(--vendor-spacing-xl);
+}
+
+.vendor-config__modal__loading::before {
+    content: '';
+    width: 32px;
+    height: 32px;
+    border: 3px solid var(--vendor-color-primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}

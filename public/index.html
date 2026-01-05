@@ -39,6 +39,13 @@
     <link rel="stylesheet" href="css/modules/supplier-search-professional.css?v=1.3">
     <!-- 📊 供应商图表样式 - Phase 7整合完成 -->
     <link rel="stylesheet" href="css/modules/supplier-chart.css?v=1.0-phase7">
+    <!-- 供应商配置中心样式 -->
+    <link rel="stylesheet" href="css/modules/vendor-config-components.css">
+    <link rel="stylesheet" href="css/modules/vendor-config-layout.css">
+    <link rel="stylesheet" href="css/modules/vendor-config-interactions.css">
+    <link rel="stylesheet" href="css/modules/vendor-config-modals.css">
+    <link rel="stylesheet" href="css/modules/vendor-config-font-hierarchy.css">
+    <link rel="stylesheet" href="css/modules/vendor-config-filter.css">
     <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -69,6 +76,10 @@
                 <a href="#documents" class="nav-item" data-module="documents">
                     <i class="ph ph-folder-open"></i>
                     <span>供应商资料管理</span>
+                </a>
+                <a href="#vendor-config" class="nav-item" data-module="vendor-config">
+                    <i class="ph ph-gear"></i>
+                    <span>供应商配置中心</span>
                 </a>
                 <a href="#performance" class="nav-item" data-module="performance">
                     <i class="ph ph-trend-up"></i>
@@ -513,6 +524,73 @@
                 <div id="module-performance" class="module-view hidden">
                     <h3>绩效评价 (开发中)</h3>
                 </div>
+                <div id="module-vendor-config" class="module-view hidden">
+                    <div class="module-header">
+                        <h3>供应商配置中心</h3>
+                        <div class="module-actions">
+                            <button class="btn btn-primary" id="syncFromIQCBtn">
+                                <span class="btn-icon">🔄</span>
+                                从IQC同步
+                            </button>
+                            <button class="btn btn-secondary" id="addVendorBtn">
+                                <span class="btn-icon">➕</span>
+                                添加供应商
+                            </button>
+                            <button class="btn btn-secondary" id="refreshBtn">
+                                <span class="btn-icon">🔄</span>
+                                刷新
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 筛选区域 -->
+                    <div class="vendor-config__filter">
+                        <select id="sourceFilter">
+                            <option value="">全部来源</option>
+                            <option value="IQC">IQC数据</option>
+                            <option value="MANUAL">手动添加</option>
+                        </select>
+                        <select id="statusFilter">
+                            <option value="">全部状态</option>
+                            <option value="Active">启用</option>
+                            <option value="Inactive">停用</option>
+                        </select>
+                        <input type="text" id="searchInput" placeholder="搜索供应商名称">
+                    </div>
+
+                    <!-- 表格区域 -->
+                    <div class="vendor-config__table-container">
+                        <table class="vendor-config__table">
+                            <thead>
+                                <tr>
+                                    <th><input type="checkbox" id="selectAll"></th>
+                                    <th>供应商名称</th>
+                                    <th>来源</th>
+                                    <th>资料管理</th>
+                                    <th>绩效评价</th>
+                                    <th>状态</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="vendorTableBody">
+                                <!-- 动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- 批量操作栏 -->
+                    <div class="vendor-config__batch-actions hidden">
+                        <button class="btn btn-primary" id="batchEnableDocument">
+                            批量启用资料管理
+                        </button>
+                        <button class="btn btn-primary" id="batchEnablePerformance">
+                            批量启用绩效评价
+                        </button>
+                        <button class="btn btn-danger" id="batchDelete">
+                            批量删除
+                        </button>
+                    </div>
+                </div>
             </div>
         </main>
     </div>
@@ -562,6 +640,11 @@
     <script src="js/modules/supplier/ui/document-type-simple-ui.js?v=1.2.7"></script>
 
     <script src="js/modules/supplier.js?v=3.2.10-fix-add-material-buttons"></script>
+
+    <!-- 供应商配置中心脚本 -->
+    <script src="js/modules/vendor-config-services.js"></script>
+    <script src="js/modules/vendor-config-ui-utils.js"></script>
+    <script src="js/modules/vendor-config.js"></script>
 
     <!-- 供应商资料管理初始化脚本 -->
     <script>

@@ -1,0 +1,205 @@
+/**
+ * 供应商配置中心 - 布局样式
+ * 包含容器、表格、筛选区域等布局样式
+ */
+
+/* 模块容器 */
+#module-vendor-config {
+    padding: var(--vendor-spacing-lg);
+}
+
+/* 模块头部 */
+.vendor-config__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--vendor-spacing-lg);
+}
+
+.vendor-config__header h3 {
+    margin: 0;
+    font-size: var(--vendor-font-size-xl);
+    font-weight: var(--vendor-font-weight-bold);
+    color: var(--vendor-color-black);
+}
+
+/* 模块操作按钮 */
+.module-actions {
+    display: flex;
+    gap: var(--vendor-spacing-sm);
+}
+
+/* 筛选区域 */
+.vendor-config__filter {
+    display: flex;
+    gap: var(--vendor-spacing-md);
+    margin-bottom: var(--vendor-spacing-lg);
+    padding: var(--vendor-spacing-md);
+    background-color: var(--vendor-color-white);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-md);
+}
+
+.vendor-config__filter select,
+.vendor-config__filter input[type="text"] {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* 表格容器 */
+.vendor-config__table-container {
+    overflow-x: auto;
+    background-color: var(--vendor-color-white);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-md);
+}
+
+/* 表格 */
+.vendor-config__table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.vendor-config__table thead {
+    background-color: #f9fafb;
+    border-bottom: 2px solid var(--vendor-color-gray-light);
+}
+
+.vendor-config__table th {
+    padding: var(--vendor-spacing-md);
+    text-align: left;
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-bold);
+    color: var(--vendor-color-gray);
+    border-bottom: 1px solid var(--vendor-color-gray-light);
+}
+
+.vendor-config__table tbody tr {
+    border-bottom: 1px solid var(--vendor-color-gray-light);
+}
+
+.vendor-config__table tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+.vendor-config__table td {
+    padding: var(--vendor-spacing-md);
+    font-size: var(--vendor-font-size-sm);
+    color: var(--vendor-color-black);
+}
+
+/* 表格单元格 */
+.vendor-config__cell {
+    vertical-align: middle;
+}
+
+.vendor-config__cell--name {
+    font-weight: var(--vendor-font-weight-medium);
+}
+
+.vendor-config__cell--source,
+.vendor-config__cell--document,
+.vendor-config__cell--performance,
+.vendor-config__cell--status {
+    text-align: center;
+}
+
+.vendor-config__cell--actions {
+    text-align: center;
+}
+
+/* 批量操作栏 */
+.vendor-config__batch-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--vendor-spacing-md);
+    margin-top: var(--vendor-spacing-md);
+    padding: var(--vendor-spacing-md);
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    border-radius: var(--vendor-border-radius-md);
+}
+
+.vendor-config__batch-info {
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    color: #166534;
+}
+
+/* 模态框 */
+.vendor-config__modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 9999;
+}
+
+.vendor-config__modal__content {
+    background-color: var(--vendor-color-white);
+    border-radius: var(--vendor-border-radius-md);
+    box-shadow: var(--vendor-shadow-lg);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.vendor-config__modal__header {
+    padding: var(--vendor-spacing-lg);
+    border-bottom: 1px solid var(--vendor-color-gray-light);
+}
+
+.vendor-config__modal__header h3 {
+    margin: 0;
+    font-size: var(--vendor-font-size-lg);
+    font-weight: var(--vendor-font-weight-bold);
+}
+
+.vendor-config__modal__body {
+    padding: var(--vendor-spacing-lg);
+}
+
+.vendor-config__modal__footer {
+    padding: var(--vendor-spacing-lg);
+    border-top: 1px solid var(--vendor-color-gray-light);
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--vendor-spacing-sm);
+}
+
+.vendor-config__modal-btn {
+    padding: var(--vendor-spacing-sm) var(--vendor-spacing-md);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.vendor-config__modal-btn:hover {
+    background-color: var(--vendor-color-gray-light);
+}
+
+.vendor-config__modal-btn--primary {
+    background-color: var(--vendor-color-primary);
+    color: var(--vendor-color-white);
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__modal-btn--primary:hover {
+    background-color: #1d4ed8;
+}
+
+.vendor-config__modal-btn--secondary {
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-gray);
+}

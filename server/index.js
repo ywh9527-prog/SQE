@@ -50,6 +50,10 @@ console.log('✅ suppliersSummaryRoutes 加载完成');
 const suppliersSyncRoutes = require('./routes/suppliers-sync');
 console.log('✅ suppliersSyncRoutes 加载完成');
 
+// 供应商配置中心路由
+const vendorsRoutes = require('./routes/vendors');
+console.log('✅ vendorsRoutes 加载完成');
+
 // 文档类型设置功能路由
 const documentTypesRoutes = require('./routes/document-types');
 console.log('✅ documentTypesRoutes 加载完成');
@@ -84,6 +88,10 @@ app.use('/api/suppliers', suppliersSummaryRoutes);
 console.log('✅ /api/suppliers/summary 路由已注册 (suppliers-summary)');
 app.use('/api/suppliers', suppliersSyncRoutes);
 console.log('✅ /api/suppliers/sync-from-iqc 路由已注册 (suppliers-sync)');
+
+// 供应商配置中心路由
+app.use('/api/vendors', vendorsRoutes);
+console.log('✅ /api/vendors/* 路由已注册 (vendors)');
 
 // 旧的 suppliers 路由 (包含 /:id 参数路由，必须放在后面)
 app.use('/api/suppliers', suppliersRoutes);

@@ -75,11 +75,16 @@ const authenticateToken = (req, res, next) => {
 // 路由: GET /api/suppliers
 // 用途: 为上传资料页面的供应商选择下拉框提供数据
 // 前端调用: supplier.js 中的 loadSuppliers() 方法
+// 🎯 [修改] 数据源已从suppliers表改为vendor_config表
 router.get('/', authenticateToken, async (req, res) => {
   try {
-    // 优先从suppliers表获取供应商
+    // 从vendor_config表获取已启用资料管理的供应商
     const [suppliers] = await sequelize.query(`
-      SELECT id, name FROM suppliers WHERE status = 'active' ORDER BY name ASC
+      SELECT vc.id, vc.supplier_name as name
+      FROM vendor_config vc
+      WHERE vc.enable_document_mgmt = 1 
+        AND vc.status = 'Active'
+      ORDER BY vc.supplier_name ASC
     `);
 
     let supplierList = suppliers.map(item => ({
@@ -87,37 +92,7 @@ router.get('/', authenticateToken, async (req, res) => {
       name: item.name
     }));
 
-    console.log(`📋 从suppliers表获取到 ${supplierList.length} 个供应商`);
-
-    // 如果suppliers表为空，从IQC数据导入
-    if (supplierList.length === 0) {
-      console.log('⚠️ suppliers表为空，从IQC数据导入供应商');
-      
-      const [iqcSuppliers] = await sequelize.query(`
-        SELECT DISTINCT json_extract(raw_data, '$[0].供应商名称') as supplier
-        FROM iqc_data 
-        WHERE json_extract(raw_data, '$[0].供应商名称') IS NOT NULL
-        ORDER BY supplier ASC
-      `);
-
-      for (const iqcSupplier of iqcSuppliers) {
-        if (iqcSupplier.supplier && iqcSupplier.supplier.trim()) {
-          const [result] = await sequelize.query(`
-            INSERT INTO suppliers (name, status, created_at, updated_at)
-            VALUES (:name, 'active', datetime('now'), datetime('now'))
-          `, {
-            replacements: { name: iqcSupplier.supplier }
-          });
-          
-          supplierList.push({
-            id: result.insertId,
-            name: iqcSupplier.supplier
-          });
-        }
-      }
-
-      console.log(`✅ 从IQC数据导入了 ${supplierList.length} 个供应商`);
-    }
+    console.log(`📋 从vendor_config表获取到 ${supplierList.length} 个已启用资料管理的供应商`);
 
     res.json({
       success: true,
@@ -131,7 +106,6 @@ router.get('/', authenticateToken, async (req, res) => {
     });
   }
 });
-
 // 获取供应商资料汇总表格数据
 // 路由: GET /api/suppliers/documents-summary
 // 用途: 为表格展示提供按供应商分组的资料汇总数据
@@ -140,60 +114,30 @@ router.get('/', authenticateToken, async (req, res) => {
 // ⚠️ 关键路由: 这是供应商资料管理页面的核心API
 // 🔧 调试经验: 必须放在 router.get('/:id') 之前，否则会被当作ID参数处理
 // 📊 返回格式: [{supplierId, supplierName, documents: {type: {expiryDate, status, hasDocument}}}]
+// 🎯 [修改] 数据源已从suppliers表改为vendor_config表
 router.get('/documents-summary', authenticateToken, async (req, res) => {
   try {
     console.log('🎯 [DEBUG] documents-summary 路由被调用！');
     console.log('📊 获取供应商资料汇总数据...');
     console.log('👤 请求用户:', req.user ? req.user.username : 'unknown');
     
-    // 1. 从suppliers表获取所有供应商
+    // 1. 从vendor_config表获取已启用资料管理的供应商
     const [suppliers] = await sequelize.query(`
-      SELECT id, name FROM suppliers WHERE status = 'active' ORDER BY name ASC
+      SELECT vc.id, vc.supplier_name as name
+      FROM vendor_config vc
+      WHERE vc.enable_document_mgmt = 1 
+        AND vc.status = 'Active'
+      ORDER BY vc.supplier_name ASC
     `);
     
-    console.log(`📋 找到 ${suppliers.length} 个供应商在suppliers表中`);
+    console.log(`📋 找到 ${suppliers.length} 个已启用资料管理的供应商`);
     
     if (suppliers.length === 0) {
-      console.log('⚠️ suppliers表为空，尝试从IQC数据导入供应商');
-      
-      // 自动从IQC数据导入供应商
-      const [iqcSuppliers] = await sequelize.query(`
-        SELECT DISTINCT json_extract(raw_data, '$[0].供应商名称') as supplier
-        FROM iqc_data 
-        WHERE json_extract(raw_data, '$[0].供应商名称') IS NOT NULL
-        ORDER BY supplier ASC
-      `);
-      
-      let importCount = 0;
-      for (const iqcSupplier of iqcSuppliers) {
-        if (iqcSupplier.supplier && iqcSupplier.supplier.trim()) {
-          await sequelize.query(`
-            INSERT OR IGNORE INTO suppliers (name, status, created_at, updated_at)
-            VALUES (:name, 'active', datetime('now'), datetime('now'))
-          `, {
-            replacements: { name: iqcSupplier.supplier }
-          });
-          importCount++;
-        }
-      }
-      
-      console.log(`✅ 自动导入了 ${importCount} 个供应商`);
-      
-      // 重新获取供应商列表
-      const [newSuppliers] = await sequelize.query(`
-        SELECT id, name FROM suppliers WHERE status = 'active' ORDER BY name ASC
-      `);
-      
-      if (newSuppliers.length === 0) {
-        return res.json({
-          success: true,
-          data: [],
-          message: '没有找到供应商数据'
-        });
-      }
-      
-      // 使用新导入的供应商
-      suppliers.push(...newSuppliers);
+      return res.json({
+        success: true,
+        data: [],
+        message: '没有找到已启用资料管理的供应商'
+      });
     }
     
     // 2. 获取每个供应商的资料
@@ -563,168 +507,6 @@ router.delete('/:id', authenticateToken, async (req, res) => {
     });
   }
 });
-
-// 从IQC数据导入供应商
-// 路由: POST /api/suppliers/import-from-iqc
-// 用途: 点击刷新按钮时，自动从IQC检验数据中提取供应商信息并导入到suppliers表
-// 前端调用: supplier.js 中的 importSuppliersFromIQC() 方法
-router.post('/import-from-iqc', async (req, res) => {
-  try {
-    console.log('🔄 开始从IQC数据导入供应商...');
-    
-    // 1. 检查IQC数据表
-    const [iqcData] = await sequelize.query(`
-      SELECT id, file_name, data_type, record_count FROM iqc_data 
-      ORDER BY created_at DESC
-    `);
-    
-    console.log(`📊 找到 ${iqcData.length} 个IQC数据文件`);
-    iqcData.forEach(data => {
-      console.log(`  - 文件: ${data.file_name}, 类型: ${data.data_type}, 记录数: ${data.record_count}`);
-    });
-    
-    if (iqcData.length === 0) {
-      console.log('⚠️ IQC数据表为空');
-      return res.json({
-        success: true,
-        message: 'IQC数据表为空，没有供应商可导入',
-        importedCount: 0
-      });
-    }
-    
-    // 2. 提取供应商名称
-    const suppliers = new Set();
-    let totalRecords = 0;
-    
-    for (const data of iqcData) {
-      try {
-        const [rawData] = await sequelize.query(`
-          SELECT raw_data FROM iqc_data WHERE id = :id
-        `, {
-          replacements: { id: data.id }
-        });
-        
-        if (rawData.length > 0 && rawData[0].raw_data) {
-          const records = JSON.parse(rawData[0].raw_data);
-          totalRecords += records.length;
-          console.log(`📄 处理文件 ${data.file_name}，包含 ${records.length} 条记录`);
-          
-          // 从不同字段名提取供应商名称
-          records.forEach(record => {
-            const supplierName = record['供应商名称'] || record['供应商'] || record['supplier'] || record['name'];
-            if (supplierName && supplierName.trim()) {
-              suppliers.add(supplierName.trim());
-            }
-          });
-        }
-      } catch (error) {
-        console.error(`处理数据ID ${data.id} 时出错:`, error.message);
-      }
-    }
-    
-    console.log(`🔍 从 ${totalRecords} 条记录中找到 ${suppliers.size} 个唯一供应商`);
-    if (suppliers.size > 0) {
-      console.log('📋 供应商列表:');
-      Array.from(suppliers).forEach((supplier, index) => {
-        console.log(`  ${index + 1}. ${supplier}`);
-      });
-    }
-    
-    // 3. 导入供应商到suppliers表
-    let importCount = 0;
-    
-    for (const supplierName of suppliers) {
-      try {
-        // 检查是否已存在
-        const [existing] = await sequelize.query(`
-          SELECT id FROM suppliers WHERE name = :name
-        `, {
-          replacements: { name: supplierName }
-        });
-        
-        if (existing.length === 0) {
-          await sequelize.query(`
-            INSERT INTO suppliers (name, status, created_at, updated_at)
-            VALUES (:name, 'active', datetime('now'), datetime('now'))
-          `, {
-            replacements: { name: supplierName }
-          });
-          
-          importCount++;
-        }
-      } catch (error) {
-        console.error(`导入供应商 ${supplierName} 失败:`, error.message);
-      }
-    }
-    
-    // 4. 为所有供应商创建文件夹结构（无论是否有新供应商都要执行）
-    console.log('📁 开始为供应商创建文件夹结构...');
-    const [allSuppliers] = await sequelize.query(
-      'SELECT id, name FROM suppliers WHERE status = "active" OR status = "Active" ORDER BY name'
-    );
-    
-    let folderSuccessCount = 0;
-    const folderSyncResults = [];
-    
-    for (const supplier of allSuppliers) {
-      try {
-        console.log(`📁 为供应商 ${supplier.name} 创建文件夹结构...`);
-        
-        // 创建供应商基础文件夹结构
-        const folderStructure = await localFileSyncService.createFolderStructureV31(
-          supplier.name,
-          '', // 空物料名称，只创建基础结构
-          '', // 空文档类型，只创建基础结构
-          ''  // 空构成名称，只创建基础结构
-        );
-        
-        folderSyncResults.push({
-          supplierId: supplier.id,
-          supplierName: supplier.name,
-          folderStructure: folderStructure,
-          status: 'success'
-        });
-        
-        folderSuccessCount++;
-      } catch (error) {
-        console.error(`❌ 为供应商 ${supplier.name} 创建文件夹失败:`, error);
-        folderSyncResults.push({
-          supplierId: supplier.id,
-          supplierName: supplier.name,
-          status: 'failed',
-          error: error.message
-        });
-      }
-    }
-    
-    console.log(`✅ 供应商导入完成，导入数量: ${importCount}`);
-    console.log(`📁 文件夹结构创建完成，成功: ${folderSuccessCount}/${allSuppliers.length}`);
-    
-    const message = importCount > 0 
-      ? `成功导入 ${importCount} 个供应商，并为 ${folderSuccessCount} 个供应商创建文件夹结构`
-      : `已为 ${folderSuccessCount} 个供应商创建文件夹结构`;
-    
-    res.json({
-      success: true,
-      message: message,
-      data: {
-        newSuppliers: Array.from(suppliers),
-        updatedSuppliers: [],
-        totalSuppliers: allSuppliers.length,
-        folderSyncResults: folderSyncResults
-      }
-    });
-    
-  } catch (error) {
-    console.error('导入供应商失败:', error);
-    res.status(500).json({
-      success: false,
-      error: '导入供应商失败'
-    });
-  }
-});
-
-
 
 
 

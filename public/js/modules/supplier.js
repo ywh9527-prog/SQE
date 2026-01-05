@@ -1902,7 +1902,7 @@ ${certType}：
       window.supplierUIUtils.showLoading(true, '正在同步供应商数据...');
 
       const token = localStorage.getItem('authToken');
-      const response = await fetch('/api/suppliers/sync-from-iqc', {
+      const response = await fetch('/api/vendors/sync-from-iqc', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -1916,7 +1916,7 @@ ${certType}：
       const data = await response.json();
 
       if (data.success) {
-        const { stats, iqcFileName, iqcFileId } = data;
+        const { stats } = data;
 
         console.log('📊 同步结果:', stats);
         console.log('📁 IQC数据源:', { fileName: iqcFileName, id: iqcFileId });

@@ -31,6 +31,7 @@ const loadModels = () => {
         models.EmailNotification = require('../models/EmailNotification');
         models.SystemLog = require('../models/SystemLog');
         models.Certificate = require('../models/Certificate');
+        models.VendorConfig = require('../models/VendorConfig');
 
         // 建立模型关联
         Object.values(models).forEach(model => {

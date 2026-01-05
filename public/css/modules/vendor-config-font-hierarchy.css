@@ -1,0 +1,252 @@
+/**
+ * 供应商配置中心 - 字体层级管理
+ * 统一管理字体大小、行高、颜色等排版样式
+ */
+
+/* 字体大小层级 */
+.vendor-config__font-size--xs {
+    font-size: var(--vendor-font-size-xs);
+}
+
+.vendor-config__font-size--sm {
+    font-size: var(--vendor-font-size-sm);
+}
+
+.vendor-config__font-size--md {
+    font-size: var(--vendor-font-size-md);
+}
+
+.vendor-config__font-size--lg {
+    font-size: var(--vendor-font-size-lg);
+}
+
+.vendor-config__font-size--xl {
+    font-size: var(--vendor-font-size-xl);
+}
+
+/* 字体粗细层级 */
+.vendor-config__font-weight--normal {
+    font-weight: var(--vendor-font-weight-normal);
+}
+
+.vendor-config__font-weight--medium {
+    font-weight: var(--vendor-font-weight-medium);
+}
+
+.vendor-config__font-weight--bold {
+    font-weight: var(--vendor-font-weight-bold);
+}
+
+/* 行高层级 */
+.vendor-config__line-height--tight {
+    line-height: 1.2;
+}
+
+.vendor-config__line-height--normal {
+    line-height: 1.5;
+}
+
+.vendor-config__line-height--relaxed {
+    line-height: 1.75;
+}
+
+/* 文本颜色层级 */
+.vendor-config__text--primary {
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__text--secondary {
+    color: var(--vendor-color-gray);
+}
+
+.vendor-config__text--success {
+    color: var(--vendor-color-success);
+}
+
+.vendor-config__text--warning {
+    color: var(--vendor-color-warning);
+}
+
+.vendor-config__text--danger {
+    color: var(--vendor-color-danger);
+}
+
+.vendor-config__text--info {
+    color: var(--vendor-color-info);
+}
+
+/* 文本对齐 */
+.vendor-config__text--left {
+    text-align: left;
+}
+
+.vendor-config__text--center {
+    text-align: center;
+}
+
+.vendor-config__text--right {
+    text-align: right;
+}
+
+/* 文本转换 */
+.vendor-config__text--uppercase {
+    text-transform: uppercase;
+}
+
+.vendor-config__text--lowercase {
+    text-transform: lowercase;
+}
+
+.vendor-config__text--capitalize {
+    text-transform: capitalize;
+}
+
+/* 文本装饰 */
+.vendor-config__text--underline {
+    text-decoration: underline;
+}
+
+.vendor-config__text--line-through {
+    text-decoration: line-through;
+}
+
+.vendor-config__text--no-decoration {
+    text-decoration: none;
+}
+
+/* 文本溢出处理 */
+.vendor-config__text--truncate {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.vendor-config__text--break-word {
+    word-wrap: break-word;
+    word-break: break-word;
+}
+
+/* 标题样式 */
+.vendor-config__h1 {
+    font-size: 24px;
+    font-weight: var(--vendor-font-weight-bold);
+    line-height: var(--vendor-config__line-height--tight);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__h2 {
+    font-size: 20px;
+    font-weight: var(--vendor-font-weight-bold);
+    line-height: var(--vendor-config__line-height--tight);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__h3 {
+    font-size: 18px;
+    font-weight: var(--vendor-font-weight-bold);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__h4 {
+    font-size: 16px;
+    font-weight: var(--vendor-font-weight-medium);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__h5 {
+    font-size: 14px;
+    font-weight: var(--vendor-font-weight-medium);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__h6 {
+    font-size: 12px;
+    font-weight: var(--vendor-font-weight-normal);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-gray);
+}
+
+/* 正文样式 */
+.vendor-config__body {
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-normal);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__body--small {
+    font-size: var(--vendor-font-size-xs);
+}
+
+.vendor-config__body--large {
+    font-size: var(--vendor-font-size-md);
+}
+
+/* 辅助文本样式 */
+.vendor-config__caption {
+    font-size: var(--vendor-font-size-xs);
+    font-weight: var(--vendor-font-weight-normal);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-gray);
+}
+
+.vendor-config__label {
+    font-size: var(--vendor-font-size-sm);
+    font-weight: var(--vendor-font-weight-medium);
+    line-height: var(--vendor-config__line-height--normal);
+    color: var(--vendor-color-gray);
+}
+
+/* 链接样式 */
+.vendor-config__link {
+    color: var(--vendor-color-primary);
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.vendor-config__link:hover {
+    color: #1d4ed8;
+    text-decoration: underline;
+}
+
+.vendor-config__link--visited {
+    color: #6366f1;
+}
+
+/* 代码样式 */
+.vendor-config__code {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: var(--vendor-font-size-xs);
+    background-color: var(--vendor-color-gray-light);
+    padding: 2px 4px;
+    border-radius: var(--vendor-border-radius-sm);
+}
+
+/* 引用样式 */
+.vendor-config__blockquote {
+    margin: var(--vendor-spacing-md) 0;
+    padding-left: var(--vendor-spacing-md);
+    border-left: 4px solid var(--vendor-color-primary);
+    color: var(--vendor-color-gray);
+    font-style: italic;
+}
+
+/* 列表样式 */
+.vendor-config__list {
+    margin: var(--vendor-spacing-md) 0;
+    padding-left: var(--vendor-spacing-lg);
+}
+
+.vendor-config__list-item {
+    margin-bottom: var(--vendor-spacing-sm);
+}
+
+/* 分隔线 */
+.vendor-config__divider {
+    height: 1px;
+    background-color: var(--vendor-color-gray-light);
+    margin: var(--vendor-spacing-lg) 0;
+}

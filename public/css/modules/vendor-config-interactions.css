@@ -1,0 +1,213 @@
+/**
+ * 供应商配置中心 - 交互样式
+ * 包含悬停效果、点击反馈、动画等交互样式
+ */
+
+/* 按钮悬停效果 */
+.vendor-config__btn {
+    transition: all 0.2s ease;
+}
+
+.vendor-config__btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--vendor-shadow-md);
+}
+
+.vendor-config__btn:active {
+    transform: translateY(0);
+    box-shadow: var(--vendor-shadow-sm);
+}
+
+/* 表格行悬停效果 */
+.vendor-config__row {
+    transition: background-color 0.2s ease;
+}
+
+.vendor-config__row:hover {
+    background-color: #f9fafb;
+}
+
+/* 复选框悬停效果 */
+.vendor-config__checkbox:hover {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+}
+
+/* 状态徽章悬停效果 */
+.vendor-config__status-badge {
+    transition: transform 0.2s ease;
+}
+
+.vendor-config__status-badge:hover {
+    transform: scale(1.05);
+}
+
+/* 来源徽章悬停效果 */
+.vendor-config__source-badge {
+    transition: transform 0.2s ease;
+}
+
+.vendor-config__source-badge:hover {
+    transform: scale(1.05);
+}
+
+/* 批量操作栏动画 */
+.vendor-config__batch-actions {
+    animation: slideDown 0.3s ease;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 模态框动画 */
+.vendor-config__modal {
+    animation: fadeIn 0.3s ease;
+}
+
+.vendor-config__modal__content {
+    animation: scaleIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* 输入框聚焦效果 */
+.vendor-config__form-group input[type="text"]:focus,
+.vendor-config__form-group select:focus {
+    transition: all 0.2s ease;
+}
+
+/* 加载动画 */
+.vendor-config__loading {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* 错误状态动画 */
+.vendor-config__error {
+    animation: shake 0.5s ease;
+}
+
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25% {
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
+    }
+}
+
+/* 禁用状态 */
+.vendor-config__btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* 选中状态 */
+.vendor-config__row--selected {
+    background-color: #e0f2fe;
+}
+
+/* 过渡效果 */
+.vendor-config__table-container,
+.vendor-config__filter,
+.vendor-config__batch-actions {
+    transition: all 0.3s ease;
+}
+
+/* 工具提示 */
+.vendor-config__btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 4px 8px;
+    background-color: #1f2937;
+    color: #ffffff;
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+}
+
+/* 按钮组 */
+.module-actions {
+    display: flex;
+    gap: var(--vendor-spacing-sm);
+    animation: fadeIn 0.5s ease;
+}
+
+/* 加载状态指示器 */
+.vendor-config__loading::before {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--vendor-color-primary);
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-right: var(--vendor-spacing-sm);
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* 成功状态指示器 */
+.vendor-config__success {
+    color: var(--vendor-color-success);
+    animation: fadeIn 0.5s ease;
+}
+
+/* 警告状态指示器 */
+.vendor-config__warning {
+    color: var(--vendor-color-warning);
+    animation: fadeIn 0.5s ease;
+}
+
+/* 错误状态指示器 */
+.vendor-config__danger {
+    color: var(--vendor-color-danger);
+    animation: shake 0.5s ease;
+}
