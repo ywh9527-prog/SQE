@@ -29,10 +29,38 @@ class VendorConfigUIUtils {
      * @param {Array} buttons - 按钮数组
      */
     showModal(title, content, buttons = []) {
-        if (window.showModal) {
-            window.showModal(title, content, buttons);
+        // 使用App.Modal显示模态框
+        if (window.App && window.App.Modal) {
+            const footerButtons = buttons.map(btn => {
+                const btnStyle = btn.class.includes('primary') ?
+                    'padding: 8px 16px; border: none; background: #2563eb; color: white; border-radius: 6px; cursor: pointer; font-weight: 500;' :
+                    'padding: 8px 16px; border: 1px solid #d1d5db; background: white; color: #374151; border-radius: 6px; cursor: pointer; font-weight: 500;';
+
+                return `<button class="vendor-config__modal-btn" style="${btnStyle}">${btn.text}</button>`;
+            }).join('');
+
+            const modalEl = window.App.Modal.show({
+                title: title,
+                content: content,
+                width: '500px',
+                footer: footerButtons
+            });
+
+            // 绑定按钮事件
+            const btnElements = modalEl.querySelectorAll('.vendor-config__modal-btn');
+            buttons.forEach((btn, index) => {
+                if (btnElements[index]) {
+                    btnElements[index].addEventListener('click', () => {
+                        if (btn.onClick) btn.onClick();
+                        window.App.Modal.close();
+                    });
+                }
+            });
+
+            return modalEl;
         } else {
-            alert(`${title}\n\n${content}`);
+            console.error('window.App.Modal 未找到');
+            return null;
         }
     }
 
@@ -112,18 +140,25 @@ class VendorConfigUIUtils {
      */
     async confirm(message) {
         return new Promise((resolve) => {
-            this.showModal('确认', message, [
-                {
-                    text: '取消',
-                    class: 'vendor-config__modal-btn vendor-config__modal-btn--secondary',
-                    onClick: () => resolve(false)
-                },
-                {
-                    text: '确认',
-                    class: 'vendor-config__modal-btn vendor-config__modal-btn--primary',
-                    onClick: () => resolve(true)
+            if (window.App && window.App.Modal) {
+                window.App.Modal.confirm(message, () => {
+                    resolve(true);
+                });
+
+                // 点击取消按钮时resolve(false)
+                const modalEl = document.querySelector('.modal');
+                if (modalEl) {
+                    const cancelBtn = modalEl.querySelector('.btn-cancel');
+                    if (cancelBtn) {
+                        cancelBtn.addEventListener('click', () => {
+                            resolve(false);
+                        }, { once: true });
+                    }
                 }
-            ]);
+            } else {
+                console.error('window.App.Modal 未找到');
+                resolve(false);
+            }
         });
     }
 
