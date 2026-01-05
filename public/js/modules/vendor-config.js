@@ -22,9 +22,9 @@ class VendorConfigManager {
         window.vendorConfigManager = this;
         console.log('🚀 供应商配置中心模块初始化...');
 
-        await this.loadVendors();
+        // 先绑定事件，再加载数据，最后渲染
         this.bindEvents();
-        this.render();
+        await this.loadVendors();
     }
 
     /**
@@ -49,7 +49,101 @@ class VendorConfigManager {
      */
     rebindEvents() {
         console.log('🔄 重新绑定事件...');
-        this.bindEvents();
+
+        // 从IQC同步按钮
+        const syncFromIQCBtn = document.getElementById('syncFromIQCBtn');
+        if (syncFromIQCBtn) {
+            syncFromIQCBtn.removeEventListener('click', this.syncFromIQCHandler);
+            this.syncFromIQCHandler = () => this.syncFromIQC();
+            syncFromIQCBtn.addEventListener('click', this.syncFromIQCHandler);
+            console.log('✅ syncFromIQCBtn 事件绑定成功');
+        }
+
+        // 添加供应商按钮
+        const addVendorBtn = document.getElementById('addVendorBtn');
+        if (addVendorBtn) {
+            addVendorBtn.removeEventListener('click', this.addVendorHandler);
+            this.addVendorHandler = () => this.showAddVendorModal();
+            addVendorBtn.addEventListener('click', this.addVendorHandler);
+            console.log('✅ addVendorBtn 事件绑定成功');
+        }
+
+        // 刷新按钮
+        const refreshBtn = document.getElementById('refreshBtn');
+        if (refreshBtn) {
+            refreshBtn.removeEventListener('click', this.refreshHandler);
+            this.refreshHandler = () => this.loadVendors();
+            refreshBtn.addEventListener('click', this.refreshHandler);
+            console.log('✅ refreshBtn 事件绑定成功');
+        }
+
+        // 重新绑定表格和批量操作事件
+        this.bindTableEvents();
+        this.bindBatchEvents();
+    }
+
+    /**
+     * 绑定表格内的事件
+     */
+    bindTableEvents() {
+        console.log('🔗 绑定表格内事件...');
+
+        // 全选复选框
+        const selectAll = document.getElementById('selectAll');
+        if (selectAll) {
+            selectAll.removeEventListener('change', this.selectAllHandler);
+            this.selectAllHandler = (e) => this.toggleSelectAll(e.target.checked);
+            selectAll.addEventListener('change', this.selectAllHandler);
+            console.log('✅ selectAll 事件绑定成功');
+        }
+
+        // 表格点击事件（使用事件委托）
+        const tableBody = document.getElementById('vendorTableBody');
+        if (tableBody) {
+            tableBody.removeEventListener('click', this.tableBodyHandler);
+            this.tableBodyHandler = (e) => {
+                // 复选框点击
+                if (e.target.matches('.vendor-config__checkbox')) {
+                    this.toggleSelectVendor(parseInt(e.target.dataset.id));
+                }
+                // 编辑按钮点击
+                if (e.target.matches('.vendor-config__btn--edit')) {
+                    this.showEditVendorModal(parseInt(e.target.dataset.id));
+                }
+                // 删除按钮点击
+                if (e.target.matches('.vendor-config__btn--delete')) {
+                    this.deleteVendor(parseInt(e.target.dataset.id));
+                }
+            };
+            tableBody.addEventListener('click', this.tableBodyHandler);
+            console.log('✅ tableBody 事件绑定成功');
+        }
+    }
+
+    /**
+     * 绑定批量操作事件
+     */
+    bindBatchEvents() {
+        console.log('🔗 绑定批量操作事件...');
+
+        // 批量操作按钮（事件委托）
+        const batchActions = document.querySelector('.vendor-config__batch-actions');
+        if (batchActions) {
+            batchActions.removeEventListener('click', this.batchActionsHandler);
+            this.batchActionsHandler = (e) => {
+                if (e.target.id === 'batchEnableDocument') {
+                    this.batchUpdateConfig({ enable_document_mgmt: 1 });
+                } else if (e.target.id === 'batchEnablePerformance') {
+                    this.batchUpdateConfig({ enable_performance_mgmt: 1 });
+                } else if (e.target.id === 'batchDelete') {
+                    this.batchDeleteVendors();
+                } else if (e.target.id === 'batchCancel') {
+                    this.clearSelection();
+                }
+            };
+            batchActions.addEventListener('click', this.batchActionsHandler);
+            console.log('✅ batchActions 事件绑定成功');
+        }
     }
 
     /**
@@ -92,6 +186,12 @@ class VendorConfigManager {
         } else {
             console.error('❌ refreshBtn 未找到');
         }
+
+        // 绑定表格内的事件
+        this.bindTableEvents();
+
+        // 绑定批量操作事件
+        this.bindBatchEvents();
 
         // 筛选器
         const sourceFilter = document.getElementById('sourceFilter');
@@ -468,6 +568,9 @@ class VendorConfigManager {
         `).join('');
 
         container.innerHTML = html;
+
+        // 重新绑定表格内的事件（因为HTML被重新生成了）
+        this.bindTableEvents();
 
         // 更新全选复选框状态
         const selectAll = document.getElementById('selectAll');
