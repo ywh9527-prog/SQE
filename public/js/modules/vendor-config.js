@@ -296,6 +296,11 @@ class VendorConfigManager {
             if (result.success) {
                 window.vendorConfigUIUtils.showToast(`${action}成功`, 'success');
                 await this.loadVendors();
+
+                // 通知资料管理模块刷新
+                window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                    detail: { field, value }
+                }));
             } else {
                 window.vendorConfigUIUtils.showToast(result.error, 'error');
                 // 失败后恢复复选框状态
@@ -330,6 +335,11 @@ class VendorConfigManager {
             if (result.success) {
                 window.vendorConfigUIUtils.showToast(result.message, 'success');
                 await this.loadVendors();
+
+                // 通知资料管理模块刷新
+                window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                    detail: { action: 'sync-from-iqc' }
+                }));
             } else {
                 window.vendorConfigUIUtils.showToast(result.error, 'error');
             }
@@ -397,6 +407,11 @@ class VendorConfigManager {
         if (result.success) {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
             await this.loadVendors();
+
+            // 通知资料管理模块刷新
+            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                detail: { action: 'add' }
+            }));
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
         }
@@ -488,6 +503,11 @@ class VendorConfigManager {
         if (result.success) {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
             await this.loadVendors();
+
+            // 通知资料管理模块刷新
+            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                detail: { action: 'delete', id }
+            }));
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
         }
@@ -556,6 +576,11 @@ class VendorConfigManager {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
             this.clearSelection();
             await this.loadVendors();
+
+            // 通知资料管理模块刷新
+            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                detail: { config }
+            }));
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
         }
@@ -581,6 +606,11 @@ class VendorConfigManager {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
             this.clearSelection();
             await this.loadVendors();
+
+            // 通知资料管理模块刷新
+            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                detail: { action: 'batch-delete', ids }
+            }));
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
         }

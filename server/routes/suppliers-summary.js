@@ -157,15 +157,15 @@ router.get('/summary', authenticateToken, async (req, res) => {
         const { supplierId } = req.query;
 
         // 构建查询条件
-        let whereClause = '';
+        let whereClause = 'WHERE s.status = \'Active\'';
         if (supplierId) {
-            whereClause = `WHERE s.id = ${parseInt(supplierId)}`;
+            whereClause += ` AND s.id = ${parseInt(supplierId)}`;
         }
 
         // 查询供应商及其资料
         // 注意：此查询可能产生重复数据行，需要在后续处理中去重
         const [results] = await sequelize.query(`
-            SELECT 
+            SELECT
                 s.id as supplier_id,
                 s.name as supplier_name,
                 s.contact_person,

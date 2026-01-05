@@ -17,6 +17,7 @@ const express = require('express');
 const router = express.Router();
 const VendorConfig = require('../models/VendorConfig');
 const VendorSyncService = require('../services/vendor-sync-service');
+const vendorToSupplierSyncService = require('../services/vendor-to-supplier-sync-service');
 const logger = require('../utils/logger');
 
 // 创建供应商同步服务实例
@@ -129,7 +130,7 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
         const { enable_document_mgmt, enable_performance_mgmt, status } = req.body;
 
         const config = await VendorConfig.findByPk(id);
-        
+
         if (!config) {
             return res.status(404).json({
                 success: false,
@@ -137,12 +138,27 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
             });
         }
 
+        // 保存旧的 enable_document_mgmt 值
+        const oldEnableDocumentMgmt = config.enable_document_mgmt;
+
         await config.update({
             enable_document_mgmt: enable_document_mgmt !== undefined ? enable_document_mgmt : config.enable_document_mgmt,
             enable_performance_mgmt: enable_performance_mgmt !== undefined ? enable_performance_mgmt : config.enable_performance_mgmt,
             status: status || config.status,
             updated_at: new Date()
         });
+
+        // 如果修改了 enable_document_mgmt，自动同步到 suppliers 表
+        if (enable_document_mgmt !== undefined && enable_document_mgmt !== oldEnableDocumentMgmt) {
+            logger.info(`检测到资料管理配置变更，自动同步到 suppliers 表...`);
+            const syncResult = await vendorToSupplierSyncService.syncToSuppliers();
+
+            if (syncResult.success) {
+                logger.info(`自动同步成功: 新增 ${syncResult.stats.added}，更新 ${syncResult.stats.updated}，停用 ${syncResult.stats.deactivated}`);
+            } else {
+                logger.error(`自动同步失败: ${syncResult.message}`);
+            }
+        }
 
         res.json({
             success: true,

@@ -51,6 +51,12 @@ class SupplierDocumentManager {
       // 渲染界面
       this.render();
 
+      // 监听配置中心更新事件
+      window.addEventListener('vendor-config-updated', () => {
+        console.log('📢 收到配置中心更新通知，刷新供应商列表...');
+        this.refresh(false);
+      });
+
       console.log('✅ 供应商资料管理模块初始化完成');
     } catch (error) {
       console.error('❌ 初始化失败:', error);
@@ -151,7 +157,7 @@ class SupplierDocumentManager {
     const importBtn = document.getElementById('importBtn');
     if (importBtn) {
       importBtn.addEventListener('click', () => {
-        this.syncSuppliersFromIQC();
+        this.syncFromVendorConfig();
       });
     }
 
@@ -1934,6 +1940,58 @@ ${certType}：
           window.supplierUIUtils.showSuccess(`同步完成！所有供应商已是最新（跳过 ${stats.skipped} 个）`);
         } else {
           window.supplierUIUtils.showSuccess('同步完成！未发现新的供应商数据');
+        }
+
+        // 刷新供应商列表
+        await this.refresh(false);
+
+      } else {
+        throw new Error(data.error || '同步失败');
+      }
+    } catch (error) {
+      console.error('同步供应商失败:', error);
+      window.supplierUIUtils.showError(error.message || '同步供应商失败，请重试');
+    } finally {
+      window.supplierUIUtils.hideLoading();
+    }
+  }
+
+  /**
+   * 从配置中心同步供应商到资料管理表
+   */
+  async syncFromVendorConfig() {
+    try {
+      window.supplierUIUtils.showLoading(true, '正在同步供应商...');
+
+      const token = localStorage.getItem('authToken');
+      const response = await fetch('/api/suppliers/sync-from-vendor-config', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        const { stats } = data;
+
+        console.log('📊 同步结果:', stats);
+
+        // 根据统计结果显示不同的消息
+        if (stats.added > 0) {
+          window.supplierUIUtils.showSuccess(
+            `同步完成！新增 ${stats.added} 个供应商` +
+            (stats.updated > 0 ? `，更新 ${stats.updated} 个` : '') +
+            (stats.deactivated > 0 ? `，停用 ${stats.deactivated} 个` : '')
+          );
+        } else if (stats.updated > 0) {
+          window.supplierUIUtils.showSuccess(`同步完成！更新 ${stats.updated} 个供应商`);
+        } else if (stats.deactivated > 0) {
+          window.supplierUIUtils.showSuccess(`同步完成！停用 ${stats.deactivated} 个供应商`);
+        } else {
+          window.supplierUIUtils.showSuccess('同步完成！供应商列表已是最新');
         }
 
         // 刷新供应商列表

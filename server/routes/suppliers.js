@@ -502,12 +502,75 @@ router.delete('/:id', authenticateToken, async (req, res) => {
   } catch (error) {
     console.error('删除供应商失败:', error);
     res.status(500).json({
-      success: false,
-      error: '删除供应商失败'
+          success: false,
+          error: '删除供应商失败'
+        });
+      }
     });
-  }
-});
-
-
-
-module.exports = router;
+    
+    /**
+     * 手动同步供应商（从配置中心到资料管理表）
+     * POST /api/suppliers/sync-from-vendor-config
+     */
+    router.post('/sync-from-vendor-config', authenticateToken, async (req, res) => {
+      try {
+        const vendorToSupplierSyncService = require('../services/vendor-to-supplier-sync-service');
+        const result = await vendorToSupplierSyncService.syncToSuppliers();
+    
+        if (result.success) {
+          res.json({
+            success: true,
+            message: result.message,
+            stats: result.stats
+          });
+        } else {
+          res.status(500).json({
+            success: false,
+            error: result.message
+          });
+        }
+      } catch (error) {
+        console.error('同步供应商失败:', error);
+        res.status(500).json({
+          success: false,
+          error: '同步供应商失败',
+          message: error.message
+        });
+      }
+    });
+    
+    /**
+     * 获取同步状态
+     * GET /api/suppliers/sync-status
+     */
+    router.get('/sync-status', authenticateToken, async (req, res) => {
+      try {
+        const vendorToSupplierSyncService = require('../services/vendor-to-supplier-sync-service');
+        const result = await vendorToSupplierSyncService.getSyncStatus();
+    
+        if (result.success) {
+          res.json({
+            success: true,
+            data: {
+              enabledCount: result.enabledCount,
+              activeCount: result.activeCount,
+              needsSync: result.needsSync
+            }
+          });
+        } else {
+          res.status(500).json({
+            success: false,
+            error: result.message
+          });
+        }
+      } catch (error) {
+        console.error('获取同步状态失败:', error);
+        res.status(500).json({
+          success: false,
+          error: '获取同步状态失败',
+          message: error.message
+        });
+      }
+    });
+    
+    module.exports = router;
