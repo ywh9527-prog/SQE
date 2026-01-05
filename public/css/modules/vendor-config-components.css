@@ -203,3 +203,29 @@
     padding: var(--vendor-spacing-xl);
     color: var(--vendor-color-danger);
 }
+
+/* 切换复选框（用于启用/禁用功能） */
+.vendor-config__toggle-checkbox {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--vendor-color-primary);
+    border: 2px solid var(--vendor-color-gray-light);
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.vendor-config__toggle-checkbox:hover {
+    border-color: var(--vendor-color-primary);
+    transform: scale(1.1);
+}
+
+.vendor-config__toggle-checkbox:checked {
+    accent-color: var(--vendor-color-primary);
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__toggle-checkbox:checked:hover {
+    accent-color: var(--vendor-color-success);
+    border-color: var(--vendor-color-success);
+}

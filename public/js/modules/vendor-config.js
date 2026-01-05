@@ -102,9 +102,13 @@ class VendorConfigManager {
         if (tableBody) {
             tableBody.removeEventListener('click', this.tableBodyHandler);
             this.tableBodyHandler = (e) => {
-                // 复选框点击
+                // 复选框点击（用于批量选择）
                 if (e.target.matches('.vendor-config__checkbox')) {
                     this.toggleSelectVendor(parseInt(e.target.dataset.id));
+                }
+                // 切换复选框点击（用于启用/禁用功能）
+                if (e.target.matches('.vendor-config__toggle-checkbox')) {
+                    this.toggleVendorConfig(parseInt(e.target.dataset.vendorId), e.target.dataset.field, e.target.checked);
                 }
                 // 编辑按钮点击
                 if (e.target.matches('.vendor-config__btn--edit')) {
@@ -263,6 +267,45 @@ class VendorConfigManager {
                     this.clearSelection();
                 }
             });
+        }
+    }
+
+    /**
+     * 切换供应商配置（启用/禁用）
+     * @param {number} id - 供应商ID
+     * @param {string} field - 字段名（enable_document_mgmt 或 enable_performance_mgmt）
+     * @param {boolean} value - 新值
+     */
+    async toggleVendorConfig(id, field, value) {
+        const vendor = this.vendors.find(v => v.id === id);
+        if (!vendor) return;
+
+        const fieldName = field === 'enable_document_mgmt' ? '资料管理' : '绩效评价';
+        const action = value ? '启用' : '禁用';
+        const message = `确定要${action}供应商"${vendor.supplier_name}"的${fieldName}功能吗？`;
+
+        if (!await window.vendorConfigUIUtils.confirm(message)) {
+            // 如果用户取消，恢复复选框状态
+            await this.loadVendors();
+            return;
+        }
+
+        try {
+            const result = await window.vendorConfigServices.updateConfig(id, { [field]: value ? 1 : 0 });
+
+            if (result.success) {
+                window.vendorConfigUIUtils.showToast(`${action}成功`, 'success');
+                await this.loadVendors();
+            } else {
+                window.vendorConfigUIUtils.showToast(result.error, 'error');
+                // 失败后恢复复选框状态
+                await this.loadVendors();
+            }
+        } catch (error) {
+            console.error('切换配置失败:', error);
+            window.vendorConfigUIUtils.showToast('操作失败', 'error');
+            // 失败后恢复复选框状态
+            await this.loadVendors();
         }
     }
 
@@ -560,8 +603,20 @@ class VendorConfigManager {
                 <td>${window.vendorConfigUIUtils.renderCheckbox(this.selectedVendors.has(vendor.id), vendor.id)}</td>
                 <td class="vendor-config__cell vendor-config__cell--name">${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
-                <td class="vendor-config__cell vendor-config__cell--document">${vendor.enable_document_mgmt ? '✅' : '❌'}</td>
-                <td class="vendor-config__cell vendor-config__cell--performance">${vendor.enable_performance_mgmt ? '✅' : '❌'}</td>
+                <td class="vendor-config__cell vendor-config__cell--document">
+                    <input type="checkbox" 
+                           class="vendor-config__toggle-checkbox" 
+                           data-vendor-id="${vendor.id}" 
+                           data-field="enable_document_mgmt"
+                           ${vendor.enable_document_mgmt ? 'checked' : ''}>
+                </td>
+                <td class="vendor-config__cell vendor-config__cell--performance">
+                    <input type="checkbox" 
+                           class="vendor-config__toggle-checkbox" 
+                           data-vendor-id="${vendor.id}" 
+                           data-field="enable_performance_mgmt"
+                           ${vendor.enable_performance_mgmt ? 'checked' : ''}>
+                </td>
                 <td class="vendor-config__cell vendor-config__cell--status">${window.vendorConfigUIUtils.renderStatusBadge(vendor.status)}</td>
                 <td class="vendor-config__cell vendor-config__cell--actions">${window.vendorConfigUIUtils.renderActionButtons(vendor.id, vendor.status)}</td>
             </tr>
