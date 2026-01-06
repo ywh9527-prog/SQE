@@ -3,60 +3,94 @@
  * 包含按钮、复选框、状态徽章等可复用组件
  */
 
-/* 颜色变量 */
+/* 颜色变量 - SaaS标准配色系统 */
 :root {
-    /* 主色调 */
+    /* 主色调 - SaaS标准蓝色 */
     --vendor-color-primary: #2563eb;
     --vendor-color-primary-light: #3b82f6;
+    --vendor-color-primary-lighter: #60a5fa;
     --vendor-color-primary-dark: #1d4ed8;
+    --vendor-color-primary-darker: #1e40af;
 
-    /* 状态色 */
+    /* 辅助色 - 浅蓝色 */
+    --vendor-color-secondary: #3b82f6;
+    --vendor-color-secondary-light: #60a5fa;
+    --vendor-color-secondary-lighter: #93c5fd;
+    --vendor-color-secondary-dark: #2563eb;
+    --vendor-color-secondary-darker: #1d4ed8;
+
+    /* CTA色 - 橙色 */
+    --vendor-color-cta: #f97316;
+    --vendor-color-cta-light: #fb923c;
+    --vendor-color-cta-lighter: #fdba74;
+    --vendor-color-cta-dark: #ea580c;
+    --vendor-color-cta-darker: #c2410c;
+
+    /* 状态色 - 优化对比度 */
     --vendor-color-success: #10b981;
     --vendor-color-success-light: #34d399;
+    --vendor-color-success-lighter: #6ee7b7;
     --vendor-color-success-dark: #059669;
+    --vendor-color-success-darker: #047857;
 
     --vendor-color-warning: #f59e0b;
     --vendor-color-warning-light: #fbbf24;
+    --vendor-color-warning-lighter: #fcd34d;
     --vendor-color-warning-dark: #d97706;
+    --vendor-color-warning-darker: #b45309;
 
     --vendor-color-danger: #ef4444;
     --vendor-color-danger-light: #f87171;
+    --vendor-color-danger-lighter: #fca5a5;
     --vendor-color-danger-dark: #dc2626;
+    --vendor-color-danger-darker: #b91c1c;
 
     --vendor-color-info: #6366f1;
     --vendor-color-info-light: #818cf8;
+    --vendor-color-info-lighter: #a5b4fc;
     --vendor-color-info-dark: #4f46e5;
+    --vendor-color-info-darker: #4338ca;
 
-    /* 中性色 */
-    --vendor-color-gray-50: #f9fafb;
-    --vendor-color-gray-100: #f3f4f6;
-    --vendor-color-gray-200: #e5e7eb;
-    --vendor-color-gray-300: #d1d5db;
-    --vendor-color-gray-400: #9ca3af;
-    --vendor-color-gray-500: #6b7280;
-    --vendor-color-gray-600: #4b5563;
-    --vendor-color-gray-700: #374151;
-    --vendor-color-gray-800: #1f2937;
-    --vendor-color-gray-900: #111827;
+    /* 中性色 - SaaS标准灰度系统 */
+    --vendor-color-gray-50: #f8fafc;
+    --vendor-color-gray-100: #f1f5f9;
+    --vendor-color-gray-200: #e2e8f0;
+    --vendor-color-gray-300: #cbd5e1;
+    --vendor-color-gray-400: #94a3b8;
+    --vendor-color-gray-500: #64748b;
+    --vendor-color-gray-600: #475569;
+    --vendor-color-gray-700: #334155;
+    --vendor-color-gray-800: #1e293b;
+    --vendor-color-gray-900: #0f172a;
 
-    /* 语义化颜色 */
-    --vendor-color-text-primary: #1f2937;
-    --vendor-color-text-secondary: #6b7280;
-    --vendor-color-text-tertiary: #9ca3af;
-    --vendor-color-text-disabled: #d1d5db;
+    /* 语义化颜色 - SaaS标准，增强对比度（4.5:1） */
+    --vendor-color-text-primary: #1e293b;
+    --vendor-color-text-secondary: #475569;
+    --vendor-color-text-tertiary: #64748b;
+    --vendor-color-text-disabled: #94a3b8;
+    --vendor-color-text-inverse: #ffffff;
 
     --vendor-color-bg-primary: #ffffff;
-    --vendor-color-bg-secondary: #f9fafb;
-    --vendor-color-bg-tertiary: #f3f4f6;
-    --vendor-color-bg-disabled: #e5e7eb;
+    --vendor-color-bg-secondary: #f8fafc;
+    --vendor-color-bg-tertiary: #f1f5f9;
+    --vendor-color-bg-disabled: #e2e8f0;
+    --vendor-color-bg-overlay: rgba(0, 0, 0, 0.6);
 
-    --vendor-color-border-primary: #e5e7eb;
-    --vendor-color-border-secondary: #d1d5db;
-    --vendor-color-border-focus: #3b82f6;
+    --vendor-color-border-primary: #e2e8f0;
+    --vendor-color-border-secondary: #cbd5e1;
+    --vendor-color-border-focus: #2563eb;
+    --vendor-color-border-focus-light: rgba(37, 99, 235, 0.3);
+
+    /* 玻璃态效果颜色 - 优化透明度和边框可见性 */
+    --vendor-glass-bg-light: rgba(255, 255, 255, 0.9);
+    --vendor-glass-bg-medium: rgba(255, 255, 255, 0.85);
+    --vendor-glass-bg-dark: rgba(255, 255, 255, 0.8);
+    --vendor-glass-border: rgba(226, 232, 240, 0.8);
+    --vendor-glass-shadow: rgba(0, 0, 0, 0.1);
 
     /* 保留旧变量以兼容 */
-    --vendor-color-gray: #6b7280;
-    --vendor-color-gray-light: #e5e7eb;
+    --vendor-color-gray: #666666;
+    --vendor-color-gray-light: #e0e0e0;
     --vendor-color-white: #ffffff;
     --vendor-color-black: #000000;
 }
@@ -82,9 +116,12 @@
     --vendor-spacing-xl: 32px;
 }
 
-/* 字体变量 */
+/* 字体变量 - Google Fonts优化 */
 :root {
-    --vendor-font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    /* 字体家族 - Poppins（标题）+ Open Sans（正文） */
+    --vendor-font-family-heading: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --vendor-font-family-body: 'Open Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --vendor-font-family: var(--vendor-font-family-body);
 
     /* 字号 */
     --vendor-font-size-xs: 12px;
@@ -134,24 +171,26 @@
     --vendor-shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.05);
 }
 
-/* 过渡动画变量 */
+/* 过渡动画变量 - 优化缓动函数 */
 :root {
-    --vendor-transition-fast: 150ms ease;
-    --vendor-transition-base: 200ms ease;
-    --vendor-transition-slow: 300ms ease;
+    --vendor-transition-fast: 150ms ease-out;
+    --vendor-transition-base: 200ms ease-out;
+    --vendor-transition-slow: 300ms ease-out;
+    --vendor-transition-in: 200ms ease-in;
 }
 
-/* 按钮组件（玻璃态 - 控制面板优化版） */
+/* 按钮组件（玻璃态 - 优化版） */
 .vendor-config__btn {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     gap: var(--vendor-spacing-2);
-    padding: var(--vendor-spacing-2) var(--vendor-spacing-4);
+    padding: var(--vendor-spacing-3) var(--vendor-spacing-5);
     border: 1px solid transparent;
     border-radius: var(--vendor-border-radius-xl);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(249, 250, 251, 0.85) 100%);
-    backdrop-filter: blur(5px);
+    background: var(--vendor-glass-bg-medium);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     color: var(--vendor-color-text-primary);
     font-size: var(--vendor-font-size-sm);
     font-weight: var(--vendor-font-weight-medium);
@@ -159,12 +198,15 @@
     cursor: pointer;
     transition: all var(--vendor-transition-base);
     box-shadow:
-        0 1px 2px 0 rgba(0, 0, 0, 0.05),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+        0 2px 8px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
     position: relative;
     overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
 }
 
+/* 按钮光效动画 */
 .vendor-config__btn::before {
     content: '';
     position: absolute;
@@ -172,27 +214,31 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
-    transition: left 0.5s ease;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.5),
+        transparent
+    );
+    transition: left 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .vendor-config__btn:hover::before {
     left: 100%;
 }
 
+/* 按钮悬停效果 - 优化：避免布局移动 */
 .vendor-config__btn:hover {
     box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.1),
-        0 2px 4px -2px rgba(0, 0, 0, 0.1),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-    transform: translateY(-1px);
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
 }
 
 .vendor-config__btn:active {
-    transform: translateY(0);
+    transform: scale(0.98);
     box-shadow:
-        0 1px 2px 0 rgba(0, 0, 0, 0.05),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
+        0 2px 6px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
 }
 
 .vendor-config__btn:disabled {
@@ -202,64 +248,181 @@
     transform: none;
 }
 
+/* 主按钮 */
 .vendor-config__btn--primary {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%);
-    backdrop-filter: blur(5px);
+    background: var(--vendor-glass-bg-light);
     color: var(--vendor-color-primary-dark);
-    border: 1px solid rgba(37, 99, 235, 0.3);
+    border: 1px solid rgba(59, 130, 246, 0.3);
     box-shadow:
-        0 1px 2px 0 rgba(0, 0, 0, 0.05),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
-}
-
-.vendor-config__btn--primary:hover {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
-    border-color: var(--vendor-color-primary);
-    box-shadow:
-        0 2px 4px -1px rgba(37, 99, 235, 0.2),
-        0 1px 2px -2px rgba(37, 99, 235, 0.1),
+        0 2px 8px rgba(59, 130, 246, 0.1),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
 }
 
+.vendor-config__btn--primary:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.1) 0%,
+        rgba(59, 130, 246, 0.05) 100%
+    );
+    border-color: var(--vendor-color-primary);
+    box-shadow:
+        0 4px 16px rgba(59, 130, 246, 0.2),
+        0 2px 8px rgba(59, 130, 246, 0.1),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+/* 次要按钮 */
 .vendor-config__btn--secondary {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.85) 0%, rgba(249, 250, 251, 0.85) 100%);
-    backdrop-filter: blur(5px);
+    background: var(--vendor-glass-bg-medium);
     color: var(--vendor-color-text-primary);
     border: 1px solid var(--vendor-color-border-primary);
 }
 
 .vendor-config__btn--secondary:hover {
-    background: linear-gradient(135deg, rgba(249, 250, 251, 0.9) 0%, rgba(243, 244, 246, 0.9) 100%);
+    background: var(--vendor-glass-bg-light);
     border-color: var(--vendor-color-border-secondary);
 }
 
+/* 危险按钮 */
 .vendor-config__btn--danger {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(249, 250, 251, 0.9) 100%);
-    backdrop-filter: blur(5px);
+    background: var(--vendor-glass-bg-light);
     color: var(--vendor-color-danger-dark);
     border: 1px solid rgba(239, 68, 68, 0.3);
     box-shadow:
-        0 1px 2px 0 rgba(0, 0, 0, 0.05),
-        inset 0 1px 0 0 rgba(255, 255, 255, 0.5);
-}
-
-.vendor-config__btn--danger:hover {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(239, 68, 68, 0.05) 100%);
-    border-color: var(--vendor-color-danger);
-    box-shadow:
-        0 2px 4px -1px rgba(239, 68, 68, 0.2),
-        0 1px 2px -2px rgba(239, 68, 68, 0.1),
+        0 2px 8px rgba(239, 68, 68, 0.1),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
 }
 
+.vendor-config__btn--danger:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(239, 68, 68, 0.1) 0%,
+        rgba(239, 68, 68, 0.05) 100%
+    );
+    border-color: var(--vendor-color-danger);
+    box-shadow:
+        0 4px 16px rgba(239, 68, 68, 0.2),
+        0 2px 8px rgba(239, 68, 68, 0.1),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+    transform: translateY(-2px);
+}
+
+/* 删除按钮（小尺寸） */
 .vendor-config__btn--delete {
-    padding: var(--vendor-spacing-1) var(--vendor-spacing-2);
+    padding: var(--vendor-spacing-2) var(--vendor-spacing-3);
     font-size: var(--vendor-font-size-xs);
     border-radius: var(--vendor-border-radius-lg);
 }
 
+/* 图标按钮 */
 .vendor-config__btn .btn-icon {
     font-size: var(--vendor-font-size-base);
+    transition: transform var(--vendor-transition-base);
+}
+
+.vendor-config__btn:hover .btn-icon {
+    transform: scale(1.1);
+}
+
+/* 状态徽章组件（玻璃态 - 优化版） */
+.vendor-config__status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--vendor-spacing-2) var(--vendor-spacing-4);
+    border-radius: var(--vendor-border-radius-full);
+    font-size: var(--vendor-font-size-xs);
+    font-weight: var(--vendor-font-weight-semibold);
+    line-height: var(--vendor-line-height-tight);
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+    transition: all var(--vendor-transition-base);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.vendor-config__status-badge:hover {
+    transform: scale(1.05);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+/* 启用状态 */
+.vendor-config__status-badge--active {
+    background: linear-gradient(
+        135deg,
+        rgba(16, 185, 129, 0.15) 0%,
+        rgba(16, 185, 129, 0.08) 100%
+    );
+    color: var(--vendor-color-success-dark);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+/* 停用状态 */
+.vendor-config__status-badge--inactive {
+    background: linear-gradient(
+        135deg,
+        rgba(239, 68, 68, 0.15) 0%,
+        rgba(239, 68, 68, 0.08) 100%
+    );
+    color: var(--vendor-color-danger-dark);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+/* 来源徽章组件（玻璃态 - 优化版） */
+.vendor-config__source-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--vendor-spacing-2) var(--vendor-spacing-4);
+    border-radius: var(--vendor-border-radius-full);
+    font-size: var(--vendor-font-size-xs);
+    font-weight: var(--vendor-font-weight-semibold);
+    line-height: var(--vendor-line-height-tight);
+    white-space: nowrap;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+    transition: all var(--vendor-transition-base);
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+.vendor-config__source-badge:hover {
+    transform: scale(1.05);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
+}
+
+/* IQC来源 */
+.vendor-config__source-badge--iqc {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.15) 0%,
+        rgba(59, 130, 246, 0.08) 100%
+    );
+    color: var(--vendor-color-primary-dark);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+/* 手动添加来源 */
+.vendor-config__source-badge--manual {
+    background: linear-gradient(
+        135deg,
+        rgba(245, 158, 11, 0.15) 0%,
+        rgba(245, 158, 11, 0.08) 100%
+    );
+    color: var(--vendor-color-warning-dark);
+    border: 1px solid rgba(245, 158, 11, 0.3);
 }
 
 /* 复选框组件（玻璃态） */

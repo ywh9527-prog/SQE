@@ -1,65 +1,108 @@
 /**
- * 供应商配置中心 - 交互样式
+ * 供应商配置中心 - 交互样式（优化版）
  * 包含悬停效果、点击反馈、动画等交互样式
  */
 
-/* 按钮悬停效果 */
+/* 全局过渡效果 - 使用贝塞尔曲线实现更流畅的动画 */
+.vendor-config__btn,
+.vendor-config__status-badge,
+.vendor-config__source-badge,
+.vendor-config__table tbody tr,
+.vendor-config__stat-card,
+.vendor-config__filter select,
+.vendor-config__filter input[type="text"],
+.vendor-config__checkbox,
+.vendor-config__toggle-checkbox,
+.vendor-config__status-select {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 按钮交互效果 */
 .vendor-config__btn {
-    transition: all 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .vendor-config__btn:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--vendor-shadow-md);
+    transform: translateY(-2px);
+    box-shadow: var(--vendor-shadow-lg);
 }
 
 .vendor-config__btn:active {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.98);
     box-shadow: var(--vendor-shadow-sm);
 }
 
-/* 表格行悬停效果 */
-.vendor-config__row {
-    transition: background-color 0.2s ease;
+/* 表格行交互效果 */
+.vendor-config__table tbody tr {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.vendor-config__row:hover {
-    background-color: #f9fafb;
+.vendor-config__table tbody tr:hover {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.08) 0%,
+        rgba(99, 102, 241, 0.08) 100%
+    );
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transform: scale(1.005);
+    z-index: 5;
 }
 
-/* 复选框悬停效果 */
-.vendor-config__checkbox:hover {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
+/* 复选框交互效果 */
+.vendor-config__checkbox,
+.vendor-config__toggle-checkbox {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 状态徽章悬停效果 */
-.vendor-config__status-badge {
-    transition: transform 0.2s ease;
+.vendor-config__checkbox:hover,
+.vendor-config__toggle-checkbox:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.vendor-config__status-badge:hover {
-    transform: scale(1.05);
+.vendor-config__checkbox:active,
+.vendor-config__toggle-checkbox:active {
+    transform: scale(0.95);
 }
 
-/* 来源徽章悬停效果 */
+/* 状态徽章交互效果 */
+.vendor-config__status-badge,
 .vendor-config__source-badge {
-    transition: transform 0.2s ease;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+.vendor-config__status-badge:hover,
 .vendor-config__source-badge:hover {
-    transform: scale(1.05);
+    transform: scale(1.08);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+/* 统计卡片交互效果 */
+.vendor-config__stat-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.vendor-config__stat-card:hover {
+    box-shadow:
+        0 12px 40px var(--vendor-glass-shadow),
+        0 8px 20px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+    transform: translateY(-6px) scale(1.02);
+}
+
+.vendor-config__stat-card:active {
+    transform: translateY(-4px) scale(1.01);
 }
 
 /* 批量操作栏动画 */
 .vendor-config__batch-actions {
-    animation: slideDown 0.3s ease;
+    animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @keyframes slideDown {
     from {
         opacity: 0;
-        transform: translateY(-10px);
+        transform: translateY(-15px);
     }
     to {
         opacity: 1;
@@ -69,14 +112,14 @@
 
 /* 模态框动画 */
 .vendor-config__modal {
-    animation: fadeIn 0.3s ease;
+    animation: modalFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .vendor-config__modal__content {
-    animation: scaleIn 0.3s ease;
+    animation: modalScaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes fadeIn {
+@keyframes modalFadeIn {
     from {
         opacity: 0;
     }
@@ -85,29 +128,31 @@
     }
 }
 
-@keyframes scaleIn {
+@keyframes modalScaleIn {
     from {
         opacity: 0;
-        transform: scale(0.9);
+        transform: scale(0.9) translateY(-20px);
     }
     to {
         opacity: 1;
-        transform: scale(1);
+        transform: scale(1) translateY(0);
     }
 }
 
 /* 输入框聚焦效果 */
-.vendor-config__form-group input[type="text"]:focus,
-.vendor-config__form-group select:focus {
-    transition: all 0.2s ease;
+.vendor-config__filter input[type="text"]:focus,
+.vendor-config__filter select:focus,
+.vendor-config__modal__form-group input[type="text"]:focus,
+.vendor-config__modal__form-group select:focus {
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 加载动画 */
 .vendor-config__loading {
-    animation: pulse 1.5s ease-in-out infinite;
+    animation: loadingPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
 }
 
-@keyframes pulse {
+@keyframes loadingPulse {
     0%, 100% {
         opacity: 1;
     }
@@ -118,17 +163,17 @@
 
 /* 错误状态动画 */
 .vendor-config__error {
-    animation: shake 0.5s ease;
+    animation: errorShake 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-@keyframes shake {
+@keyframes errorShake {
     0%, 100% {
         transform: translateX(0);
     }
-    25% {
+    10%, 30%, 50%, 70%, 90% {
         transform: translateX(-5px);
     }
-    75% {
+    20%, 40%, 60%, 80% {
         transform: translateX(5px);
     }
 }
@@ -138,54 +183,57 @@
     opacity: 0.5;
     cursor: not-allowed;
     pointer-events: none;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 /* 选中状态 */
-.vendor-config__row--selected {
-    background-color: #e0f2fe;
+.vendor-config__table tbody tr--selected {
+    background: linear-gradient(
+        135deg,
+        rgba(59, 130, 246, 0.12) 0%,
+        rgba(99, 102, 241, 0.12) 100%
+    );
+    box-shadow: inset 0 0 0 2px var(--vendor-color-primary-lighter);
 }
 
 /* 过渡效果 */
 .vendor-config__table-container,
 .vendor-config__filter,
-.vendor-config__batch-actions {
-    transition: all 0.3s ease;
+.vendor-config__batch-actions,
+.vendor-config__control-panel {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* 工具提示 */
-.vendor-config__btn[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 100%;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 4px 8px;
-    background-color: #1f2937;
-    color: #ffffff;
-    font-size: 12px;
-    border-radius: 4px;
-    white-space: nowrap;
-    z-index: 10;
-}
-
-/* 按钮组 */
+/* 按钮组动画 */
 .module-actions {
     display: flex;
-    gap: var(--vendor-spacing-sm);
-    animation: fadeIn 0.5s ease;
+    gap: var(--vendor-spacing-3);
+    animation: fadeInUp 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* 加载状态指示器 */
 .vendor-config__loading::before {
     content: '';
     display: inline-block;
-    width: 16px;
-    height: 16px;
-    border: 2px solid var(--vendor-color-primary);
-    border-top-color: transparent;
+    width: 18px;
+    height: 18px;
+    border: 3px solid var(--vendor-color-border-primary);
+    border-top-color: var(--vendor-color-primary);
     border-radius: 50%;
-    animation: spin 0.8s linear infinite;
-    margin-right: var(--vendor-spacing-sm);
+    animation: spin 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+    margin-right: var(--vendor-spacing-2);
 }
 
 @keyframes spin {
@@ -197,17 +245,160 @@
 /* 成功状态指示器 */
 .vendor-config__success {
     color: var(--vendor-color-success);
-    animation: fadeIn 0.5s ease;
+    animation: successPulse 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(0.95);
+        opacity: 0.5;
+    }
+    50% {
+        transform: scale(1.05);
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
 }
 
 /* 警告状态指示器 */
 .vendor-config__warning {
     color: var(--vendor-color-warning);
-    animation: fadeIn 0.5s ease;
+    animation: warningBlink 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes warningBlink {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
 }
 
 /* 错误状态指示器 */
 .vendor-config__danger {
     color: var(--vendor-color-danger);
-    animation: shake 0.5s ease;
+    animation: errorShake 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* 工具提示动画 */
+.vendor-config__btn[title] {
+    position: relative;
+}
+
+.vendor-config__btn[title]:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%) translateY(5px);
+    padding: 6px 12px;
+    background-color: var(--vendor-color-gray-800);
+    color: var(--vendor-color-white);
+    font-size: 12px;
+    font-weight: var(--vendor-font-weight-medium);
+    border-radius: var(--vendor-border-radius-lg);
+    white-space: nowrap;
+    z-index: 100;
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.vendor-config__btn[title]:hover::before {
+    content: '';
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--vendor-color-gray-800);
+    opacity: 0;
+    animation: tooltipFadeIn 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(5px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+/* 卡片进入动画 */
+.vendor-config__stat-card {
+    animation: cardFadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+.vendor-config__stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.vendor-config__stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.vendor-config__stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.vendor-config__stat-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* 表格行进入动画 */
+.vendor-config__table tbody tr {
+    animation: rowFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1) backwards;
+}
+
+@keyframes rowFadeIn {
+    from {
+        opacity: 0;
+        transform: translateX(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* 波纹效果 */
+.vendor-config__btn {
+    position: relative;
+    overflow: hidden;
+}
+
+.vendor-config__btn::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+}
+
+.vendor-config__btn:active::after {
+    width: 200px;
+    height: 200px;
 }
