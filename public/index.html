@@ -543,27 +543,72 @@
                         </div>
                     </div>
 
-                    <!-- 筛选区域 -->
-                    <div class="vendor-config__filter">
-                        <select id="sourceFilter">
-                            <option value="">全部来源</option>
-                            <option value="IQC">IQC数据</option>
-                            <option value="MANUAL">手动添加</option>
-                        </select>
-                        <select id="statusFilter">
-                            <option value="">全部状态</option>
-                            <option value="Active">启用</option>
-                            <option value="Inactive">停用</option>
-                        </select>
-                        <input type="text" id="searchInput" placeholder="搜索供应商名称">
+                    <!-- 统计卡片区域 -->
+                    <div class="vendor-config__stats-container">
+                        <div class="vendor-config__stat-card vendor-config__stat-card--total">
+                            <div class="vendor-config__stat-icon">📊</div>
+                            <div class="vendor-config__stat-content">
+                                <div class="vendor-config__stat-value" id="statTotal">0</div>
+                                <div class="vendor-config__stat-label">总供应商数</div>
+                            </div>
+                        </div>
+                        <div class="vendor-config__stat-card vendor-config__stat-card--document">
+                            <div class="vendor-config__stat-icon">📁</div>
+                            <div class="vendor-config__stat-content">
+                                <div class="vendor-config__stat-value" id="statDocument">0</div>
+                                <div class="vendor-config__stat-label">资料管理启用</div>
+                            </div>
+                        </div>
+                        <div class="vendor-config__stat-card vendor-config__stat-card--performance">
+                            <div class="vendor-config__stat-icon">📈</div>
+                            <div class="vendor-config__stat-content">
+                                <div class="vendor-config__stat-value" id="statPerformance">0</div>
+                                <div class="vendor-config__stat-label">绩效管理启用</div>
+                            </div>
+                        </div>
+                        <div class="vendor-config__stat-card vendor-config__stat-card--sync">
+                            <div class="vendor-config__stat-icon">🔄</div>
+                            <div class="vendor-config__stat-content">
+                                <div class="vendor-config__stat-value" id="statSyncTime">-</div>
+                                <div class="vendor-config__stat-label">最后同步时间</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 控制面板 -->
+                    <div class="vendor-config__control-panel">
+                        <div class="vendor-config__filter">
+                            <input type="text" id="searchInput" placeholder="🔍 搜索供应商名称">
+                            <select id="sourceFilter">
+                                <option value="">全部来源</option>
+                                <option value="IQC">IQC数据</option>
+                                <option value="MANUAL">手动添加</option>
+                            </select>
+                            <select id="statusFilter">
+                                <option value="">全部状态</option>
+                                <option value="Active">启用</option>
+                                <option value="Inactive">停用</option>
+                            </select>
+                        </div>
+                        <div class="vendor-config__batch-actions">
+                            <button class="btn btn-primary" id="batchEnableDocument">
+                                📁 批量启用资料管理
+                            </button>
+                            <button class="btn btn-primary" id="batchEnablePerformance">
+                                📈 批量启用绩效评价
+                            </button>
+                            <button class="btn btn-danger" id="batchDisable">
+                                🗑️ 批量禁用
+                            </button>
+                        </div>
                     </div>
 
                     <!-- 表格区域 -->
+                    <div class="vendor-config__table-title">📋 供应商配置表格</div>
                     <div class="vendor-config__table-container">
                         <table class="vendor-config__table">
                             <thead>
                                 <tr>
-                                    <th><input type="checkbox" id="selectAll"></th>
                                     <th>供应商名称</th>
                                     <th>来源</th>
                                     <th>资料管理</th>
@@ -576,19 +621,6 @@
                                 <!-- 动态生成 -->
                             </tbody>
                         </table>
-                    </div>
-
-                    <!-- 批量操作栏 -->
-                    <div class="vendor-config__batch-actions hidden">
-                        <button class="btn btn-primary" id="batchEnableDocument">
-                            批量启用资料管理
-                        </button>
-                        <button class="btn btn-primary" id="batchEnablePerformance">
-                            批量启用绩效评价
-                        </button>
-                        <button class="btn btn-danger" id="batchDelete">
-                            批量删除
-                        </button>
                     </div>
                 </div>
             </div>

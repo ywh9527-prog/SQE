@@ -46,6 +46,69 @@
     min-width: 150px;
 }
 
+/* 统计卡片容器 */
+.vendor-config__stats-container {
+    display: flex;
+    gap: var(--vendor-spacing-md);
+    margin-bottom: var(--vendor-spacing-lg);
+}
+
+/* 统计卡片 */
+.vendor-config__stat-card {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: var(--vendor-spacing-md);
+    padding: var(--vendor-spacing-md);
+    background-color: var(--vendor-color-white);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-md);
+    min-width: 200px;
+}
+
+.vendor-config__stat-icon {
+    font-size: 32px;
+    line-height: 1;
+}
+
+.vendor-config__stat-content {
+    flex: 1;
+}
+
+.vendor-config__stat-value {
+    font-size: 24px;
+    font-weight: var(--vendor-font-weight-bold);
+    color: var(--vendor-color-black);
+    line-height: 1.2;
+}
+
+.vendor-config__stat-label {
+    font-size: var(--vendor-font-size-sm);
+    color: var(--vendor-color-gray);
+    margin-top: 4px;
+}
+
+/* 控制面板 */
+.vendor-config__control-panel {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--vendor-spacing-md);
+    margin-bottom: var(--vendor-spacing-lg);
+    padding: var(--vendor-spacing-md);
+    background-color: var(--vendor-color-white);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-md);
+}
+
+/* 表格标题 */
+.vendor-config__table-title {
+    font-size: var(--vendor-font-size-lg);
+    font-weight: var(--vendor-font-weight-bold);
+    color: var(--vendor-color-black);
+    margin-bottom: var(--vendor-spacing-md);
+}
+
 /* 表格容器 */
 .vendor-config__table-container {
     overflow-x: auto;

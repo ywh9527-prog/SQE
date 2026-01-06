@@ -408,4 +408,71 @@ router.delete('/config/batch', authenticateToken, async (req, res) => {
     }
 });
 
+/**
+ * 11. 获取统计数据
+ * GET /api/vendors/config/statistics
+ */
+router.get('/config/statistics', authenticateToken, async (req, res) => {
+    try {
+        // 获取总供应商数
+        const totalCount = await VendorConfig.count();
+
+        // 获取启用资料管理的供应商数
+        const documentCount = await VendorConfig.count({
+            where: {
+                enable_document_mgmt: true,
+                status: 'Active'
+            }
+        });
+
+        // 获取启用绩效管理的供应商数
+        const performanceCount = await VendorConfig.count({
+            where: {
+                enable_performance_mgmt: true,
+                status: 'Active'
+            }
+        });
+
+        // 获取最后更新时间
+        const latestUpdate = await VendorConfig.findOne({
+            order: [['updated_at', 'DESC']],
+            attributes: ['updated_at']
+        });
+
+        let syncTime = '-';
+        if (latestUpdate && latestUpdate.updated_at) {
+            const now = new Date();
+            const lastUpdate = new Date(latestUpdate.updated_at);
+            const diffMs = now - lastUpdate;
+            const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+            if (diffMinutes < 1) {
+                syncTime = '刚刚';
+            } else if (diffMinutes < 60) {
+                syncTime = `${diffMinutes}分钟前`;
+            } else if (diffMinutes < 1440) {
+                syncTime = `${Math.floor(diffMinutes / 60)}小时前`;
+            } else {
+                syncTime = `${Math.floor(diffMinutes / 1440)}天前`;
+            }
+        }
+
+        res.json({
+            success: true,
+            data: {
+                total: totalCount,
+                document: documentCount,
+                performance: performanceCount,
+                syncTime: syncTime
+            }
+        });
+    } catch (error) {
+        logger.error('获取统计数据失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '获取统计数据失败'
+        });
+    }
+});
+
 module.exports = router;

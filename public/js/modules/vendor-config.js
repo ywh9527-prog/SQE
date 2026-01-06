@@ -42,6 +42,41 @@ class VendorConfigManager {
             window.vendorConfigUIUtils.showErrorState(result.error);
             window.vendorConfigUIUtils.showToast(result.error, 'error');
         }
+
+        // 加载统计数据
+        await this.loadStatistics();
+    }
+
+    /**
+     * 加载统计数据
+     */
+    async loadStatistics() {
+        try {
+            const result = await window.vendorConfigServices.getStatistics();
+
+            if (result.success) {
+                this.renderStatistics(result.data);
+            } else {
+                console.error('加载统计数据失败:', result.error);
+            }
+        } catch (error) {
+            console.error('加载统计数据异常:', error);
+        }
+    }
+
+    /**
+     * 渲染统计数据
+     */
+    renderStatistics(data) {
+        const statTotal = document.getElementById('statTotal');
+        const statDocument = document.getElementById('statDocument');
+        const statPerformance = document.getElementById('statPerformance');
+        const statSyncTime = document.getElementById('statSyncTime');
+
+        if (statTotal) statTotal.textContent = data.total || 0;
+        if (statDocument) statDocument.textContent = data.document || 0;
+        if (statPerformance) statPerformance.textContent = data.performance || 0;
+        if (statSyncTime) statSyncTime.textContent = data.syncTime || '-';
     }
 
     /**
@@ -189,8 +224,8 @@ class VendorConfigManager {
                     this.batchUpdateConfig({ enable_document_mgmt: 1 });
                 } else if (e.target.id === 'batchEnablePerformance') {
                     this.batchUpdateConfig({ enable_performance_mgmt: 1 });
-                } else if (e.target.id === 'batchDelete') {
-                    this.batchDeleteVendors();
+                } else if (e.target.id === 'batchDisable') {
+                    this.batchDisableVendors();
                 } else if (e.target.id === 'batchCancel') {
                     this.clearSelection();
                 }
@@ -307,8 +342,8 @@ class VendorConfigManager {
                     this.batchUpdateConfig({ enable_document_mgmt: 1 });
                 } else if (e.target.id === 'batchEnablePerformance') {
                     this.batchUpdateConfig({ enable_performance_mgmt: 1 });
-                } else if (e.target.id === 'batchDelete') {
-                    this.batchDeleteVendors();
+                } else if (e.target.id === 'batchDisable') {
+                    this.batchDisableVendors();
                 } else if (e.target.id === 'batchCancel') {
                     this.clearSelection();
                 }
@@ -599,21 +634,25 @@ class VendorConfigManager {
     }
 
     /**
-     * 批量更新配置
+     * 批量更新配置（对当前筛选结果中的所有供应商生效）
      * @param {Object} config - 配置数据
      */
     async batchUpdateConfig(config) {
-        if (this.selectedVendors.size === 0) {
-            window.vendorConfigUIUtils.showToast('请先选择要操作的供应商', 'warning');
+        if (this.vendors.length === 0) {
+            window.vendorConfigUIUtils.showToast('当前没有供应商可操作', 'warning');
             return;
         }
 
-        const ids = Array.from(this.selectedVendors);
+        const action = config.status === 'Active' ? '启用' : '停用';
+        if (!await window.vendorConfigUIUtils.confirm(`确定要${action}当前筛选结果中的所有 ${this.vendors.length} 个供应商吗？`)) {
+            return;
+        }
+
+        const ids = this.vendors.map(v => v.id);
         const result = await window.vendorConfigServices.batchUpdateConfig(ids, config);
 
         if (result.success) {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
-            this.clearSelection();
             await this.loadVendorsWithScrollPosition();
 
             // 通知资料管理模块刷新
@@ -626,29 +665,34 @@ class VendorConfigManager {
     }
 
     /**
-     * 批量删除供应商
+     * 批量禁用供应商（对当前筛选结果中的所有供应商生效）
      */
-    async batchDeleteVendors() {
-        if (this.selectedVendors.size === 0) {
-            window.vendorConfigUIUtils.showToast('请先选择要删除的供应商', 'warning');
+    async batchDisableVendors() {
+        if (this.vendors.length === 0) {
+            window.vendorConfigUIUtils.showToast('当前没有供应商可操作', 'warning');
             return;
         }
 
-        if (!await window.vendorConfigUIUtils.confirm(`确定要删除选中的 ${this.selectedVendors.size} 个供应商吗？`)) {
+        if (!await window.vendorConfigUIUtils.confirm(`确定要停用当前筛选结果中的所有 ${this.vendors.length} 个供应商吗？`)) {
             return;
         }
 
-        const ids = Array.from(this.selectedVendors);
-        const result = await window.vendorConfigServices.batchDeleteVendors(ids);
+        const ids = this.vendors.map(v => v.id);
+        const config = {
+            status: 'Inactive',
+            enable_document_mgmt: false,
+            enable_performance_mgmt: false
+        };
+
+        const result = await window.vendorConfigServices.batchUpdateConfig(ids, config);
 
         if (result.success) {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
-            this.clearSelection();
-            await this.loadVendors();
+            await this.loadVendorsWithScrollPosition();
 
             // 通知资料管理模块刷新
             window.dispatchEvent(new CustomEvent('vendor-config-updated', {
-                detail: { action: 'batch-delete', ids }
+                detail: { config }
             }));
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
@@ -669,20 +713,19 @@ class VendorConfigManager {
 
         const html = this.vendors.map(vendor => `
             <tr class="vendor-config__row" data-vendor-id="${vendor.id}">
-                <td>${window.vendorConfigUIUtils.renderCheckbox(this.selectedVendors.has(vendor.id), vendor.id)}</td>
                 <td class="vendor-config__cell vendor-config__cell--name">${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
                 <td class="vendor-config__cell vendor-config__cell--document">
-                    <input type="checkbox" 
-                           class="vendor-config__toggle-checkbox" 
-                           data-vendor-id="${vendor.id}" 
+                    <input type="checkbox"
+                           class="vendor-config__toggle-checkbox"
+                           data-vendor-id="${vendor.id}"
                            data-field="enable_document_mgmt"
                            ${vendor.enable_document_mgmt ? 'checked' : ''}>
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--performance">
-                    <input type="checkbox" 
-                           class="vendor-config__toggle-checkbox" 
-                           data-vendor-id="${vendor.id}" 
+                    <input type="checkbox"
+                           class="vendor-config__toggle-checkbox"
+                           data-vendor-id="${vendor.id}"
                            data-field="enable_performance_mgmt"
                            ${vendor.enable_performance_mgmt ? 'checked' : ''}>
                 </td>
@@ -700,12 +743,6 @@ class VendorConfigManager {
 
         // 重新绑定表格内的事件（因为HTML被重新生成了）
         this.bindTableEvents();
-
-        // 更新全选复选框状态
-        const selectAll = document.getElementById('selectAll');
-        if (selectAll) {
-            selectAll.checked = this.selectedVendors.size === this.vendors.length && this.vendors.length > 0;
-        }
     }
 }
 

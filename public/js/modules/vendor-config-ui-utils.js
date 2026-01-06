@@ -537,19 +537,8 @@ class VendorConfigUIUtils {
      * @param {number} count - 选中的数量
      */
     updateBatchActions(visible, count = 0) {
-        const batchActions = document.querySelector('.vendor-config__batch-actions');
-        if (visible) {
-            batchActions.classList.remove('hidden');
-            batchActions.innerHTML = `
-                <span class="vendor-config__batch-info">已选择 ${count} 项</span>
-                <button class="btn btn-primary" id="batchEnableDocument">批量启用资料管理</button>
-                <button class="btn btn-primary" id="batchEnablePerformance">批量启用绩效评价</button>
-                <button class="btn btn-danger" id="batchDelete">批量删除</button>
-                <button class="btn btn-secondary" id="batchCancel">取消选择</button>
-            `;
-        } else {
-            batchActions.classList.add('hidden');
-        }
+        // 批量操作按钮现在在控制面板中静态显示，不再需要动态控制
+        // 保留此方法以保持向后兼容性
     }
 
     /**

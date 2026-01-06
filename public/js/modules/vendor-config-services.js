@@ -204,6 +204,30 @@ class VendorConfigServices {
             return { success: false, error: '批量删除供应商失败' };
         }
     }
+
+    /**
+     * 获取统计数据
+     * @returns {Promise<Object>} 统计数据
+     */
+    async getStatistics() {
+        try {
+            const response = await fetch(`${this.baseURL}/config/statistics`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            const data = await response.json();
+            if (data.success) {
+                return { success: true, data: data.data };
+            } else {
+                return { success: false, error: data.error };
+            }
+        } catch (error) {
+            console.error('获取统计数据失败:', error);
+            return { success: false, error: '获取统计数据失败' };
+        }
+    }
 }
 
 // 创建全局服务实例
