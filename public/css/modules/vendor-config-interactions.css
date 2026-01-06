@@ -44,7 +44,6 @@
         rgba(99, 102, 241, 0.08) 100%
     );
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    transform: scale(1.005);
     z-index: 5;
 }
 

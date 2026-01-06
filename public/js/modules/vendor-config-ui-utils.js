@@ -519,7 +519,16 @@ class VendorConfigUIUtils {
      */
     showEmptyState() {
         const container = document.getElementById('vendorTableBody');
-        container.innerHTML = '<tr><td colspan="7" class="vendor-config__empty">暂无数据</td></tr>';
+        container.innerHTML = `
+          <tr>
+            <td colspan="7" class="vendor-config__empty">
+              <div class="no-data-content">
+                <div class="no-data-icon">📭</div>
+                <p>暂无数据</p>
+              </div>
+            </td>
+          </tr>
+        `;
     }
 
     /**

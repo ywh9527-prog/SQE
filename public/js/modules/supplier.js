@@ -510,94 +510,176 @@ class SupplierDocumentManager {
     // 筛选数据
     const filteredSuppliers = this.filterSuppliers();
 
+    // 获取状态汇总
+    const statusSummary = this.getSupplierStatusSummary();
+
     // 渲染搜索和筛选控件 - 统计栏单独一行
     let html = `
       <div class="supplier-controls-container">
-        <!-- 统计信息栏 -->
-        <div class="stats-bar">
-          <div class="stats-info">
-            <div class="stats-item-simple">
-              <span class="stats-label-simple">总供应商</span>
-              <span class="stats-value-simple">${this.suppliers.length}</span>
-            </div>
-            <div class="stats-divider-simple"></div>
-            <div class="stats-item-simple">
-              <span class="stats-label-simple">当前显示</span>
-              <span class="stats-value-simple">${filteredSuppliers.length}</span>
-            </div>
+        <!-- 统计概览卡片 -->
+        <div class="supplier-stats-wrapper">
+          <div class="supplier-stats-header">
+            <h4 class="supplier-stats-title">📊 数据概览</h4>
           </div>
-          <div>
-            ${(this.searchKeyword || this.statusFilter) ?
-              `<button onclick="supplierManager.clearAllFilters()" class="btn btn-secondary">
-                重置筛选
-              </button>` : ''}
-          </div>
-        </div>
-
-        <!-- 搜索和筛选区域 -->
-        <div class="supplier-controls-row">
-          <!-- 搜索区域 -->
-          <div class="search-section">
-            <div class="search-section__header">
-              <svg class="search-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <h3 class="search-section__title">搜索供应商</h3>
-            </div>
-            <div class="search-input-wrapper">
-              <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <path d="m21 21-4.35-4.35"></path>
-              </svg>
-              <input type="text"
-                     id="supplierManagerSearchInput"
-                     placeholder="输入供应商名称..."
-                     value="${this.searchKeyword}"
-                     class="search-input"
-                     autocomplete="off">
-              <div class="search-actions">
-                <button onclick="supplierManager.performSearch()" class="search-submit-btn" title="搜索">
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <path d="m21 21-4.35-4.35"></path>
-                  </svg>
-                </button>
+          <div class="supplier-stats-grid">
+            <div class="supplier-stats-card supplier-stats-card--total">
+              <div class="supplier-stats-icon">📊</div>
+              <div class="supplier-stats-content">
+                <div class="supplier-stats-value">${this.suppliers.length}</div>
+                <div class="supplier-stats-label">总供应商</div>
               </div>
             </div>
-            <div class="search-status ${this.searchKeyword ? 'search-status--active' : ''}">
-              ${this.searchKeyword ?
-                `正在搜索: ${this.searchKeyword}` :
-                '输入供应商名称进行搜索'}
+            <div class="supplier-stats-card supplier-stats-card--normal">
+              <div class="supplier-stats-icon">🟢</div>
+              <div class="supplier-stats-content">
+                <div class="supplier-stats-value">${statusSummary.normal}</div>
+                <div class="supplier-stats-label">正常状态</div>
+                <div class="supplier-stats-progress">
+                  <div class="supplier-stats-progress-bar" style="width: ${this.suppliers.length > 0 ? (statusSummary.normal / this.suppliers.length * 100).toFixed(0) : 0}%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="supplier-stats-card supplier-stats-card--warning">
+              <div class="supplier-stats-icon">🟡</div>
+              <div class="supplier-stats-content">
+                <div class="supplier-stats-value">${statusSummary.warning}</div>
+                <div class="supplier-stats-label">即将到期</div>
+                <div class="supplier-stats-progress">
+                  <div class="supplier-stats-progress-bar" style="width: ${this.suppliers.length > 0 ? (statusSummary.warning / this.suppliers.length * 100).toFixed(0) : 0}%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="supplier-stats-card supplier-stats-card--urgent">
+              <div class="supplier-stats-icon">🟠</div>
+              <div class="supplier-stats-content">
+                <div class="supplier-stats-value">${statusSummary.urgent}</div>
+                <div class="supplier-stats-label">紧急状态</div>
+                <div class="supplier-stats-progress">
+                  <div class="supplier-stats-progress-bar" style="width: ${this.suppliers.length > 0 ? (statusSummary.urgent / this.suppliers.length * 100).toFixed(0) : 0}%"></div>
+                </div>
+              </div>
+            </div>
+            <div class="supplier-stats-card supplier-stats-card--expired">
+              <div class="supplier-stats-icon">🔴</div>
+              <div class="supplier-stats-content">
+                <div class="supplier-stats-value">${statusSummary.expired}</div>
+                <div class="supplier-stats-label">已过期</div>
+                <div class="supplier-stats-progress">
+                  <div class="supplier-stats-progress-bar" style="width: ${this.suppliers.length > 0 ? (statusSummary.expired / this.suppliers.length * 100).toFixed(0) : 0}%"></div>
+                </div>
+              </div>
             </div>
           </div>
+          ${(this.searchKeyword || this.statusFilter) ?
+            `<div class="supplier-stats-filter-info">
+              当前筛选显示: <span class="highlight">${filteredSuppliers.length}</span> 个供应商
+              <button onclick="supplierManager.clearAllFilters()" class="btn btn-secondary btn-sm">
+                重置筛选
+              </button>
+            </div>` : ''}
+        </div>
 
-          <!-- 筛选区域 -->
-          <div class="filter-section">
-            <div class="filter-section__header">
-              <svg class="filter-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
-              </svg>
-              <h3 class="filter-section__title">状态筛选</h3>
+        <!-- 第二部分：搜索和筛选 -->
+        <div class="supplier-search-filter-wrapper">
+          <div class="supplier-search-filter-header">
+            <h4 class="supplier-search-filter-title">🔍 搜索和筛选</h4>
+          </div>
+          <div class="supplier-controls-row">
+            <!-- 搜索区域 -->
+            <div class="search-section">
+              <div class="search-section__header">
+                <svg class="search-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <h3 class="search-section__title">搜索供应商</h3>
+              </div>
+              <div class="search-input-wrapper">
+                <svg class="search-input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <path d="m21 21-4.35-4.35"></path>
+                </svg>
+                <input type="text"
+                       id="supplierManagerSearchInput"
+                       placeholder="输入供应商名称..."
+                       value="${this.searchKeyword}"
+                       class="search-input"
+                       autocomplete="off">
+                <div class="search-actions">
+                  <button onclick="supplierManager.performSearch()" class="search-submit-btn" title="搜索">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <circle cx="11" cy="11" r="8"></circle>
+                      <path d="m21 21-4.35-4.35"></path>
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div class="search-status ${this.searchKeyword ? 'search-status--active' : ''}">
+                ${this.searchKeyword ?
+                  `正在搜索: ${this.searchKeyword}` :
+                  '输入供应商名称进行搜索'}
+              </div>
             </div>
-            <select id="statusFilter"
-                    onchange="window.supplierManager?.filterByStatus()"
-                    class="filter-select">
-              <option value="" ${this.statusFilter === '' ? 'selected' : ''}>全部供应商</option>
-              <option value="normal" ${this.statusFilter === 'normal' ? 'selected' : ''}>正常状态</option>
-              <option value="warning" ${this.statusFilter === 'warning' ? 'selected' : ''}>即将到期</option>
-              <option value="urgent" ${this.statusFilter === 'urgent' ? 'selected' : ''}>紧急状态</option>
-              <option value="expired" ${this.statusFilter === 'expired' ? 'selected' : ''}>已过期</option>
-            </select>
-            <div class="filter-info ${this.statusFilter ? 'filter-info--active' : ''}">
-              ${this.statusFilter ?
-                `当前筛选: ${this.getStatusFilterText(this.statusFilter)}` :
-                '显示所有供应商'}
+
+            <!-- 筛选区域 -->
+            <div class="filter-section">
+              <div class="filter-section__header">
+                <svg class="filter-section__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
+                </svg>
+                <h3 class="filter-section__title">状态筛选</h3>
+              </div>
+              <select id="statusFilter"
+                      onchange="window.supplierManager?.filterByStatus()"
+                      class="filter-select">
+                <option value="" ${this.statusFilter === '' ? 'selected' : ''}>全部供应商</option>
+                <option value="normal" ${this.statusFilter === 'normal' ? 'selected' : ''}>正常状态</option>
+                <option value="warning" ${this.statusFilter === 'warning' ? 'selected' : ''}>即将到期</option>
+                <option value="urgent" ${this.statusFilter === 'urgent' ? 'selected' : ''}>紧急状态</option>
+                <option value="expired" ${this.statusFilter === 'expired' ? 'selected' : ''}>已过期</option>
+              </select>
+              <div class="filter-info ${this.statusFilter ? 'filter-info--active' : ''}">
+                ${this.statusFilter ?
+                  `当前筛选: ${this.getStatusFilterText(this.statusFilter)}` :
+                  '显示所有供应商'}
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="supplier-table-container">
+
+        <!-- 筛选信息提示 -->
+        ${(this.searchKeyword || this.statusFilter) ?
+          `<div class="supplier-search-filter-info">
+            <div class="filter-info-content">
+              <span class="filter-info-icon">🔍</span>
+              <span class="filter-info-text">
+                ${this.searchKeyword ? `搜索: "${this.searchKeyword}"` : ''}
+                ${this.searchKeyword && this.statusFilter ? ' | ' : ''}
+                ${this.statusFilter ? `筛选: ${this.getStatusFilterText(this.statusFilter)}` : ''}
+              </span>
+              <span class="filter-info-count">找到 ${filteredSuppliers.length} 个供应商</span>
+            </div>
+            <button onclick="supplierManager.clearAllFilters()" class="btn btn-secondary btn-sm">
+              <span class="btn-icon">✕</span>
+              清除筛选
+            </button>
+          </div>` : ''}
+      </div>  <!-- 关闭 supplier-search-filter-wrapper -->
+
+        <!-- 第三部分：资料列表 -->
+        <div class="supplier-list-wrapper">
+          <!-- 资料列表标题 -->
+          <div class="supplier-list-header">
+            <h3 class="supplier-list-title">📋 资料列表</h3>
+            <div class="supplier-list-info">
+              显示 <span class="highlight">${filteredSuppliers.length}</span> 个供应商
+              ${this.searchKeyword ? `（搜索："${this.searchKeyword}"）` : ''}
+              ${this.statusFilter ? `（状态：${this.getStatusFilterText(this.statusFilter)}）` : ''}
+            </div>
+          </div>
+
+          <!-- 表格 -->
+          <div class="supplier-table-container">
         <table class="supplier-table">
           <thead>
             <tr>
@@ -637,11 +719,8 @@ class SupplierDocumentManager {
           </tbody>
         </table>
       </div>
-      <div class="supplier-summary">
-        共找到 <span class="highlight">${filteredSuppliers.length}</span> 个供应商
-        ${this.searchKeyword ? `（搜索："${this.searchKeyword}"）` : ''}
-        ${this.statusFilter ? `（状态：${this.getStatusFilterText(this.statusFilter)}）` : ''}
-      </div>
+      </div>  <!-- 关闭 supplier-list-wrapper -->
+      </div>  <!-- 关闭 supplier-controls-container -->
     `;
 
     container.innerHTML = html;
@@ -820,20 +899,77 @@ class SupplierDocumentManager {
     return statusMap[status] || status;
   }
 
-  
+  /**
+   * 统计指定状态的供应商数量（基于最差状态）
+   * @param {string} status - 状态类型（normal/warning/urgent/expired）
+   * @return {number} 该状态的供应商数量
+   */
+  countSuppliersByStatus(status) {
+    return this.suppliers.filter(supplier => {
+      const worstStatus = this.getSupplierWorstStatus(supplier);
+      
+      // 如果没有文档数据，不计入任何状态
+      if (worstStatus === 'unknown') {
+        return false;
+      }
+      
+      return worstStatus === status;
+    }).length;
+  }
+
+  /**
+   * 获取供应商的最差状态
+   * @param {Object} supplier - 供应商数据
+   * @return {string} 最差状态
+   */
+  getSupplierWorstStatus(supplier) {
+    // 兼容多种数据结构：progressBar.statusStats（新）、statusStats（旧）和 statusDetails（新）
+    const docStats = supplier.documentStats?.progressBar?.statusStats || supplier.documentStats?.statusStats || supplier.documentStats?.statusDetails;
+
+    if (!docStats) {
+      return 'unknown';
+    }
+
+    // 状态优先级：expired > urgent > warning > normal
+    if (docStats.expired > 0) return 'expired';
+    if (docStats.urgent > 0) return 'urgent';
+    if (docStats.warning > 0) return 'warning';
+    if (docStats.normal > 0) return 'normal';
+
+    return 'unknown';
+  }
+
+  /**
+   * 获取所有供应商的状态汇总（用于数据概览）
+   * @return {Object} 各状态的供应商数量
+   */
+  getSupplierStatusSummary() {
+    return {
+      normal: this.countSuppliersByStatus('normal'),
+      warning: this.countSuppliersByStatus('warning'),
+      urgent: this.countSuppliersByStatus('urgent'),
+      expired: this.countSuppliersByStatus('expired'),
+      unknown: this.suppliers.filter(s => this.getSupplierWorstStatus(s) === 'unknown').length
+    };
+  }
+
+
   /**
    * 🎯 [UI-EVENT] 渲染供应商行 - 双行显示 + 进度条设计
    */
   renderSupplierRow(supplier) {
     const isExpanded = this.expandedSuppliers.has(supplier.supplierId);
 
-    // 🎯 [DATA-FLOW] 获取进度条数据（新的动态统计数据）
+    // 🎨 [UI-EVENT] 获取进度条数据（新的动态统计数据）
     const progressBarData = supplier.documentStats?.progressBar || {
       totalDocuments: 0,
       completionRate: 0,
       statusStats: { normal: 0, warning: 0, urgent: 0, expired: 0 },
       statusText: '暂无文档'
     };
+    
+    // 兼容两种数据结构
+    const statusStats = supplier.documentStats?.statusStats || supplier.documentStats?.statusDetails || { normal: 0, warning: 0, urgent: 0, expired: 0 };
 
     
     // 🎨 [UI-EVENT] 渲染进度条组件

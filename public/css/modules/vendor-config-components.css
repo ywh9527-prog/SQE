@@ -573,30 +573,56 @@
 
 /* 空状态 */
 .vendor-config__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: var(--vendor-spacing-8);
-    color: var(--vendor-color-text-secondary);
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--vendor-color-border);
+  border-radius: var(--vendor-border-radius-lg);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  vertical-align: middle;
 }
 
-.vendor-config__empty::before {
-    content: '📭';
-    font-size: var(--vendor-font-size-3xl);
-    margin-bottom: var(--vendor-spacing-4);
-    opacity: 0.5;
+/* 空状态内容容器 */
+.vendor-config__empty .no-data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 20px;
 }
 
-.vendor-config__empty-text {
-    font-size: var(--vendor-font-size-base);
-    font-weight: var(--vendor-font-weight-medium);
-    margin-bottom: var(--vendor-spacing-2);
+/* 空状态图标 */
+.vendor-config__empty .no-data-icon {
+  font-size: 64px;
+  line-height: 1;
+  opacity: 0.6;
+  filter: grayscale(0.3);
+  animation: vendor-float 3s ease-in-out infinite;
 }
 
-.vendor-config__empty-subtext {
-    font-size: var(--vendor-font-size-sm);
-    color: var(--vendor-color-text-tertiary);
+/* 空状态文字 */
+.vendor-config__empty .no-data-content p {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--vendor-color-text-secondary);
+  text-align: center;
+  line-height: 1.6;
+}
+
+/* 浮动动画 */
+@keyframes vendor-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
 }
 
 /* 错误状态 */
