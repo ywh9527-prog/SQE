@@ -1,9 +1,9 @@
 /**
  * 供应商配置中心API路由
- * 
+ *
  * 路由: /api/vendors/*
  * 功能: 提供供应商配置的CRUD操作接口
- * 
+ *
  * 主要功能:
  * 1. 获取配置列表
  * 2. 更新配置
@@ -22,6 +22,25 @@ const logger = require('../utils/logger');
 
 // 创建供应商同步服务实例
 const vendorSyncService = new VendorSyncService();
+
+// 📋 定义所有管理模块字段
+// 新增模块时，只需在此处添加字段名即可，无需修改其他逻辑
+const MANAGEMENT_FIELDS = [
+    'enable_document_mgmt',      // 资料管理
+    'enable_performance_mgmt'    // 绩效评价
+    // 未来新增模块，例如：
+    // 'enable_monthly_performance',  // 月度绩效评价
+    // 'enable_quality_tracking',     // 质量追踪
+];
+
+/**
+ * 检查是否有任何一个管理模块被启用
+ * @param {Object} vendor - 供应商数据
+ * @returns {boolean} 是否有任何一个模块被启用
+ */
+function hasAnyManagementEnabled(vendor) {
+    return MANAGEMENT_FIELDS.some(field => vendor[field] === 1 || vendor[field] === true);
+}
 
 // 认证中间件
 const authenticateToken = (req, res, next) => {
@@ -91,7 +110,171 @@ router.get('/config', authenticateToken, async (req, res) => {
 });
 
 /**
- * 2. 获取单个配置
+ * 2. 获取统计数据
+ * GET /api/vendors/config/statistics
+ * 注意：必须放在 /config/:id 之前，否则会被 :id 参数匹配
+ */
+router.get('/config/statistics', authenticateToken, async (req, res) => {
+    try {
+        // 获取总供应商数
+        const totalCount = await VendorConfig.count();
+
+        // 获取启用资料管理的供应商数
+        const documentCount = await VendorConfig.count({
+            where: {
+                enable_document_mgmt: true,
+                status: 'Active'
+            }
+        });
+
+        // 获取启用绩效管理的供应商数
+        const performanceCount = await VendorConfig.count({
+            where: {
+                enable_performance_mgmt: true,
+                status: 'Active'
+            }
+        });
+
+        // 获取最后更新时间
+        const latestUpdate = await VendorConfig.findOne({
+            order: [['updated_at', 'DESC']],
+            attributes: ['updated_at']
+        });
+
+        let syncTime = '-';
+        if (latestUpdate && latestUpdate.updated_at) {
+            const now = new Date();
+            const lastUpdate = new Date(latestUpdate.updated_at);
+            const diffMs = now - lastUpdate;
+            const diffMinutes = Math.floor(diffMs / (1000 * 60));
+
+            if (diffMinutes < 1) {
+                syncTime = '刚刚';
+            } else if (diffMinutes < 60) {
+                syncTime = `${diffMinutes}分钟前`;
+            } else if (diffMinutes < 1440) {
+                syncTime = `${Math.floor(diffMinutes / 60)}小时前`;
+            } else {
+                syncTime = `${Math.floor(diffMinutes / 1440)}天前`;
+            }
+        }
+
+        res.json({
+            success: true,
+            data: {
+                total: totalCount,
+                document: documentCount,
+                performance: performanceCount,
+                syncTime: syncTime
+            }
+        });
+    } catch (error) {
+        logger.error('获取统计数据失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '获取统计数据失败'
+        });
+    }
+});
+
+/**
+ * 3. 批量更新配置
+ * PUT /api/vendors/config/batch
+ * 注意：必须放在 /config/:id 之前，否则会被 :id 参数匹配
+ */
+router.put('/config/batch', authenticateToken, async (req, res) => {
+    try {
+        const { ids, updates } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: '供应商ID列表不能为空'
+            });
+        }
+
+        // 如果没有明确指定status，则自动判断
+        let finalUpdates = { ...updates };
+        if (finalUpdates.status === undefined) {
+            // 获取所有供应商的当前数据
+            const vendors = await VendorConfig.findAll({
+                where: { id: ids }
+            });
+
+            // 检查是否有任何一个供应商启用了管理模块
+            const hasAnyEnabled = vendors.some(vendor => {
+                const tempVendor = { ...vendor.dataValues, ...updates };
+                return hasAnyManagementEnabled(tempVendor);
+            });
+
+            // 如果有任何一个模块被启用，状态应该为"Active"
+            if (hasAnyEnabled) {
+                finalUpdates.status = 'Active';
+            }
+        }
+
+        const result = await VendorConfig.update(
+            {
+                ...finalUpdates,
+                updated_at: new Date()
+            },
+            {
+                where: {
+                    id: ids
+                }
+            }
+        );
+
+        res.json({
+            success: true,
+            message: `批量更新成功，影响 ${result[0]} 条记录`
+        });
+    } catch (error) {
+        logger.error('批量更新配置失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '批量更新配置失败'
+        });
+    }
+});
+
+/**
+ * 4. 批量删除配置
+ * DELETE /api/vendors/config/batch
+ * 注意：必须放在 /config/:id 之前，否则会被 :id 参数匹配
+ */
+router.delete('/config/batch', authenticateToken, async (req, res) => {
+    try {
+        const { ids } = req.body;
+
+        if (!Array.isArray(ids) || ids.length === 0) {
+            return res.status(400).json({
+                success: false,
+                error: '供应商ID列表不能为空'
+            });
+        }
+
+        const result = await VendorConfig.destroy({
+            where: {
+                id: ids
+            }
+        });
+
+        res.json({
+            success: true,
+            message: `批量删除成功，删除 ${result} 条记录`
+        });
+    } catch (error) {
+        logger.error('批量删除配置失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '批量删除配置失败'
+        });
+    }
+});
+
+/**
+ * 5. 获取单个配置
  * GET /api/vendors/config/:id
  */
 router.get('/config/:id', authenticateToken, async (req, res) => {
@@ -141,10 +324,28 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
         // 保存旧的 enable_document_mgmt 值
         const oldEnableDocumentMgmt = config.enable_document_mgmt;
 
+        // 如果没有明确指定status，则自动判断
+        let finalStatus = status;
+        if (finalStatus === undefined) {
+            // 临时更新数据以进行判断
+            const tempConfig = {
+                ...config.dataValues,
+                enable_document_mgmt: enable_document_mgmt !== undefined ? enable_document_mgmt : config.enable_document_mgmt,
+                enable_performance_mgmt: enable_performance_mgmt !== undefined ? enable_performance_mgmt : config.enable_performance_mgmt
+            };
+
+            // 如果有任何一个模块被启用，状态应该为"Active"
+            if (hasAnyManagementEnabled(tempConfig)) {
+                finalStatus = 'Active';
+            } else {
+                finalStatus = config.status;
+            }
+        }
+
         await config.update({
             enable_document_mgmt: enable_document_mgmt !== undefined ? enable_document_mgmt : config.enable_document_mgmt,
             enable_performance_mgmt: enable_performance_mgmt !== undefined ? enable_performance_mgmt : config.enable_performance_mgmt,
-            status: status || config.status,
+            status: finalStatus,
             updated_at: new Date()
         });
 
@@ -330,147 +531,6 @@ router.get('/active/performance', authenticateToken, async (req, res) => {
         res.status(500).json({
             success: false,
             error: '获取供应商列表失败'
-        });
-    }
-});
-
-/**
- * 9. 批量更新配置
- * PUT /api/vendors/config/batch
- */
-router.put('/config/batch', authenticateToken, async (req, res) => {
-    try {
-        const { ids, updates } = req.body;
-
-        if (!Array.isArray(ids) || ids.length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: '供应商ID列表不能为空'
-            });
-        }
-
-        const result = await VendorConfig.update(
-            {
-                ...updates,
-                updated_at: new Date()
-            },
-            {
-                where: {
-                    id: ids
-                }
-            }
-        );
-
-        res.json({
-            success: true,
-            message: `批量更新成功，影响 ${result[0]} 条记录`
-        });
-    } catch (error) {
-        logger.error('批量更新配置失败:', error);
-        res.status(500).json({
-            success: false,
-            error: '批量更新配置失败'
-        });
-    }
-});
-
-/**
- * 10. 批量删除配置
- * DELETE /api/vendors/config/batch
- */
-router.delete('/config/batch', authenticateToken, async (req, res) => {
-    try {
-        const { ids } = req.body;
-
-        if (!Array.isArray(ids) || ids.length === 0) {
-            return res.status(400).json({
-                success: false,
-                error: '供应商ID列表不能为空'
-            });
-        }
-
-        const result = await VendorConfig.destroy({
-            where: {
-                id: ids
-            }
-        });
-
-        res.json({
-            success: true,
-            message: `批量删除成功，删除 ${result} 条记录`
-        });
-    } catch (error) {
-        logger.error('批量删除配置失败:', error);
-        res.status(500).json({
-            success: false,
-            error: '批量删除配置失败'
-        });
-    }
-});
-
-/**
- * 11. 获取统计数据
- * GET /api/vendors/config/statistics
- */
-router.get('/config/statistics', authenticateToken, async (req, res) => {
-    try {
-        // 获取总供应商数
-        const totalCount = await VendorConfig.count();
-
-        // 获取启用资料管理的供应商数
-        const documentCount = await VendorConfig.count({
-            where: {
-                enable_document_mgmt: true,
-                status: 'Active'
-            }
-        });
-
-        // 获取启用绩效管理的供应商数
-        const performanceCount = await VendorConfig.count({
-            where: {
-                enable_performance_mgmt: true,
-                status: 'Active'
-            }
-        });
-
-        // 获取最后更新时间
-        const latestUpdate = await VendorConfig.findOne({
-            order: [['updated_at', 'DESC']],
-            attributes: ['updated_at']
-        });
-
-        let syncTime = '-';
-        if (latestUpdate && latestUpdate.updated_at) {
-            const now = new Date();
-            const lastUpdate = new Date(latestUpdate.updated_at);
-            const diffMs = now - lastUpdate;
-            const diffMinutes = Math.floor(diffMs / (1000 * 60));
-
-            if (diffMinutes < 1) {
-                syncTime = '刚刚';
-            } else if (diffMinutes < 60) {
-                syncTime = `${diffMinutes}分钟前`;
-            } else if (diffMinutes < 1440) {
-                syncTime = `${Math.floor(diffMinutes / 60)}小时前`;
-            } else {
-                syncTime = `${Math.floor(diffMinutes / 1440)}天前`;
-            }
-        }
-
-        res.json({
-            success: true,
-            data: {
-                total: totalCount,
-                document: documentCount,
-                performance: performanceCount,
-                syncTime: syncTime
-            }
-        });
-    } catch (error) {
-        logger.error('获取统计数据失败:', error);
-        res.status(500).json({
-            success: false,
-            error: '获取统计数据失败'
         });
     }
 });

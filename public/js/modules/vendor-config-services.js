@@ -162,7 +162,7 @@ class VendorConfigServices {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ ids, config })
+                body: JSON.stringify({ ids, updates: config })
             });
 
             const data = await response.json();

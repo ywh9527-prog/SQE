@@ -906,38 +906,29 @@
 /* 工具提示显示效果 - 来自 layout 第466行 */
 .section-tooltip[data-tooltip]:hover::after {
     content: attr(data-tooltip);
-    position: absolute;
-    top: calc(100% + 8px);
-    left: calc(100% + 8px);
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
     color: #1e293b;
     padding: 16px 20px;
     border-radius: 12px;
     font-weight: 500;
     min-width: 380px;
-    max-width: 420px;
-    white-space: pre-line;
+    max-width: 500px;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    word-break: break-word;
     line-height: 1.6;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    z-index: 99999;
+    z-index: 9999;
     border: 1px solid rgba(148, 163, 184, 0.2);
     text-align: left;
     animation: tooltipFadeIn 0.3s ease-out;
 }
 
-/* 添加小箭头指向图标 - 来自 layout 第477行 */
-.section-tooltip[data-tooltip]:hover::before {
-    content: '';
-    position: absolute;
-    top: calc(100% + 2px);
-    left: calc(100% - 4px);
-    width: 0;
-    height: 0;
-    border-top: 6px solid transparent;
-    border-right: 6px solid #f8fafc;
-    z-index: 100000;
-    transform: rotate(45deg);
-}
+/* 小箭头已移除 - tooltip现在使用fixed定位居中显示 */
 
 /* 树形视图hover动画 - 来自 layout 第627行 */
 .supplier-tree__group-header:hover {

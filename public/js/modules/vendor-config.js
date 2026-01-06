@@ -13,6 +13,16 @@ class VendorConfigManager {
         };
         this.currentPage = 1;
         this.pageSize = 20;
+
+        // 📋 定义所有管理模块字段
+        // 新增模块时，只需在此处添加字段名即可，无需修改其他逻辑
+        this.managementFields = [
+            'enable_document_mgmt',      // 资料管理
+            'enable_performance_mgmt'    // 绩效评价
+            // 未来新增模块，例如：
+            // 'enable_monthly_performance',  // 月度绩效评价
+            // 'enable_quality_tracking',     // 质量追踪
+        ];
     }
 
     /**
@@ -52,15 +62,18 @@ class VendorConfigManager {
      */
     async loadStatistics() {
         try {
+            console.log('📊 开始加载统计数据...');
             const result = await window.vendorConfigServices.getStatistics();
+            console.log('📊 统计数据API返回:', result);
 
             if (result.success) {
+                console.log('📊 统计数据:', result.data);
                 this.renderStatistics(result.data);
             } else {
-                console.error('加载统计数据失败:', result.error);
+                console.error('❌ 加载统计数据失败:', result.error);
             }
         } catch (error) {
-            console.error('加载统计数据异常:', error);
+            console.error('❌ 加载统计数据异常:', error);
         }
     }
 
@@ -101,24 +114,42 @@ class VendorConfigManager {
     }
 
     /**
+     * 检查是否有任何一个管理模块被启用
+     * @param {Object} vendor - 供应商数据
+     * @returns {boolean} 是否有任何一个模块被启用
+     */
+    hasAnyManagementEnabled(vendor) {
+        return this.managementFields.some(field => vendor[field] === 1 || vendor[field] === true);
+    }
+
+    /**
      * 更新单个供应商行的状态（不刷新整个列表）
      * @param {number} id - 供应商ID
      * @param {string} field - 字段名
-     * @param {boolean} value - 新值
+     * @param {*} value - 新值
      */
     updateVendorRow(id, field, value) {
         // 更新数据
         const vendor = this.vendors.find(v => v.id === id);
         if (vendor) {
-            vendor[field] = value ? 1 : 0;
+            vendor[field] = value;
         }
 
         // 更新DOM
         const row = document.querySelector(`tr[data-vendor-id="${id}"]`);
         if (row) {
+            // 更新复选框
             const checkbox = row.querySelector(`input[data-field="${field}"]`);
             if (checkbox) {
                 checkbox.checked = value;
+            }
+
+            // 更新状态选择器
+            if (field === 'status') {
+                const statusSelect = row.querySelector('.vendor-config__status-select');
+                if (statusSelect) {
+                    statusSelect.value = value;
+                }
             }
         }
     }
@@ -372,12 +403,29 @@ class VendorConfigManager {
         }
 
         try {
-            const result = await window.vendorConfigServices.updateConfig(id, { [field]: value ? 1 : 0 });
+            // 先更新要修改的字段
+            const updateData = { [field]: value ? 1 : 0 };
+
+            // 检查是否有任何一个管理模块被启用
+            // 临时更新数据以进行判断
+            const tempVendor = { ...vendor, [field]: value ? 1 : 0 };
+            const hasAnyEnabled = this.hasAnyManagementEnabled(tempVendor);
+
+            // 如果有任何一个模块被启用，状态应该为"Active"
+            if (hasAnyEnabled) {
+                updateData.status = 'Active';
+            }
+
+            const result = await window.vendorConfigServices.updateConfig(id, updateData);
 
             if (result.success) {
                 window.vendorConfigUIUtils.showToast(`${action}成功`, 'success');
                 // 只更新单个供应商行，不刷新整个列表
                 this.updateVendorRow(id, field, value);
+                // 如果状态改变了，也要更新状态选择器
+                if (hasAnyEnabled) {
+                    this.updateVendorRow(id, 'status', 'Active');
+                }
 
                 // 通知资料管理模块刷新
                 window.dispatchEvent(new CustomEvent('vendor-config-updated', {
@@ -641,6 +689,18 @@ class VendorConfigManager {
         if (this.vendors.length === 0) {
             window.vendorConfigUIUtils.showToast('当前没有供应商可操作', 'warning');
             return;
+        }
+
+        // 检查是否有任何一个供应商启用了管理模块
+        // 临时更新数据以进行判断
+        const hasAnyEnabled = this.vendors.some(vendor => {
+            const tempVendor = { ...vendor, ...config };
+            return this.hasAnyManagementEnabled(tempVendor);
+        });
+
+        // 如果有任何一个模块被启用，状态应该为"Active"
+        if (hasAnyEnabled) {
+            config.status = 'Active';
         }
 
         const action = config.status === 'Active' ? '启用' : '停用';

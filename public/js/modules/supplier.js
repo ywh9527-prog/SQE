@@ -1405,7 +1405,26 @@ class SupplierDocumentManager {
       html += `
         <div class="details-section">
           <div class="section-header">
-            <h4>🏭 检测报告</h4>
+            <div style="display: flex; align-items: center; gap: 4px;">
+              <h4 style="margin: 0;">🏭 检测报告</h4>
+              <span class="section-tooltip" data-tooltip="🏭 检测报告
+
+针对特定物料的检测和认证文件：
+
+🔸 本体检测：材料成分、性能等检测报告
+🔸 构成检测：零部件构成明细表
+🔸 ROHS/REACH环保认证
+🔸 HF有害物质检测
+🔸 物料规格书等
+
+特点：与具体物料一一对应，确保符合技术要求">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <path d="M12 16v-4"></path>
+                <path d="M12 8h.01"></path>
+              </svg>
+            </span>
+            </div>
             <div class="section-actions">
               <button class="add-material-btn" data-supplier-id="${supplierId}" title="新增物料">
                 ➕ 新增物料
