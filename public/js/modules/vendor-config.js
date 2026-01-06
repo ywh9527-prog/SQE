@@ -154,10 +154,6 @@ class VendorConfigManager {
                 if (e.target.matches('.vendor-config__toggle-checkbox')) {
                     this.toggleVendorConfig(parseInt(e.target.dataset.vendorId), e.target.dataset.field, e.target.checked);
                 }
-                // 编辑按钮点击
-                if (e.target.matches('.vendor-config__btn--edit')) {
-                    this.showEditVendorModal(parseInt(e.target.dataset.id));
-                }
                 // 删除按钮点击
                 if (e.target.matches('.vendor-config__btn--delete')) {
                     this.deleteVendor(parseInt(e.target.dataset.id));
@@ -166,6 +162,16 @@ class VendorConfigManager {
             tableBody.addEventListener('click', this.tableBodyHandler);
             console.log('✅ tableBody 事件绑定成功');
         }
+
+        // 状态下拉框变化事件
+        const statusSelects = document.querySelectorAll('.vendor-config__status-select');
+        statusSelects.forEach(select => {
+            select.removeEventListener('change', this.statusChangeHandler);
+            this.statusChangeHandler = (e) => {
+                this.updateVendorStatus(parseInt(e.target.dataset.vendorId), e.target.value);
+            };
+            select.addEventListener('change', this.statusChangeHandler);
+        });
     }
 
     /**
@@ -282,13 +288,9 @@ class VendorConfigManager {
         const tableBody = document.getElementById('vendorTableBody');
         if (tableBody) {
             tableBody.addEventListener('click', (e) => {
-                // 复选框点击
+                // 复选框点击（用于批量选择）
                 if (e.target.matches('.vendor-config__checkbox')) {
                     this.toggleSelectVendor(parseInt(e.target.dataset.id));
-                }
-                // 编辑按钮点击
-                if (e.target.matches('.vendor-config__btn--edit')) {
-                    this.showEditVendorModal(parseInt(e.target.dataset.id));
                 }
                 // 删除按钮点击
                 if (e.target.matches('.vendor-config__btn--delete')) {
@@ -463,74 +465,66 @@ class VendorConfigManager {
     }
 
     /**
-     * 显示编辑供应商模态框
+     * 更新供应商状态
      * @param {number} id - 供应商ID
+     * @param {string} newStatus - 新状态
      */
-    showEditVendorModal(id) {
+    async updateVendorStatus(id, newStatus) {
         const vendor = this.vendors.find(v => v.id === id);
         if (!vendor) return;
 
-        const content = `
-            <form id="editVendorForm">
-                <div class="vendor-config__form-group">
-                    <label for="editSupplierName">供应商名称</label>
-                    <input type="text" id="editSupplierName" name="supplierName" value="${vendor.supplier_name}" readonly>
-                </div>
-                <div class="vendor-config__form-group">
-                    <label>
-                        <input type="checkbox" id="enableDocumentMgmt" name="enableDocumentMgmt" ${vendor.enable_document_mgmt ? 'checked' : ''}>
-                        启用资料管理
-                    </label>
-                </div>
-                <div class="vendor-config__form-group">
-                    <label>
-                        <input type="checkbox" id="enablePerformanceMgmt" name="enablePerformanceMgmt" ${vendor.enable_performance_mgmt ? 'checked' : ''}>
-                        启用绩效评价
-                    </label>
-                </div>
-                <div class="vendor-config__form-group">
-                    <label for="status">状态</label>
-                    <select id="status" name="status">
-                        <option value="Active" ${vendor.status === 'Active' ? 'selected' : ''}>启用</option>
-                        <option value="Inactive" ${vendor.status === 'Inactive' ? 'selected' : ''}>停用</option>
-                    </select>
-                </div>
-            </form>
-        `;
+        const action = newStatus === 'Active' ? '启用' : '停用';
+        const message = `确定要${action}供应商"${vendor.supplier_name}"吗？`;
 
-        window.vendorConfigUIUtils.showModal('编辑供应商配置', content, [
-            {
-                text: '取消',
-                class: 'vendor-config__modal-btn vendor-config__modal-btn--secondary',
-                onClick: () => {}
-            },
-            {
-                text: '保存',
-                class: 'vendor-config__modal-btn vendor-config__modal-btn--primary',
-                onClick: () => this.updateVendorConfig(id)
+        if (!await window.vendorConfigUIUtils.confirm(message)) {
+            // 恢复下拉框状态
+            const select = document.querySelector(`.vendor-config__status-select[data-vendor-id="${id}"]`);
+            if (select) {
+                select.value = vendor.status;
             }
-        ]);
-    }
+            return;
+        }
 
-    /**
-     * 更新供应商配置
-     * @param {number} id - 供应商ID
-     */
-    async updateVendorConfig(id) {
-        const form = document.getElementById('editVendorForm');
+        // 根据状态自动启用/禁用功能
         const config = {
-            enable_document_mgmt: form.enableDocumentMgmt.checked ? 1 : 0,
-            enable_performance_mgmt: form.enablePerformanceMgmt.checked ? 1 : 0,
-            status: form.status.value
+            status: newStatus,
+            enable_document_mgmt: newStatus === 'Active' ? 1 : 0,
+            enable_performance_mgmt: newStatus === 'Active' ? 1 : 0
         };
 
         const result = await window.vendorConfigServices.updateConfig(id, config);
 
         if (result.success) {
-            window.vendorConfigUIUtils.showToast(result.message, 'success');
-            await this.loadVendors();
+            window.vendorConfigUIUtils.showToast(`${action}成功`, 'success');
+            // 更新本地数据
+            vendor.status = newStatus;
+            vendor.enable_document_mgmt = config.enable_document_mgmt;
+            vendor.enable_performance_mgmt = config.enable_performance_mgmt;
+
+            // 更新复选框状态
+            const row = document.querySelector(`tr[data-vendor-id="${id}"]`);
+            if (row) {
+                const docCheckbox = row.querySelector('[data-field="enable_document_mgmt"]');
+                const perfCheckbox = row.querySelector('[data-field="enable_performance_mgmt"]');
+                if (docCheckbox) {
+                    docCheckbox.checked = config.enable_document_mgmt === 1;
+                }
+                if (perfCheckbox) {
+                    perfCheckbox.checked = config.enable_performance_mgmt === 1;
+                }
+            }
+
+            // 通知资料管理模块刷新
+            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                detail: { status: newStatus }
+            }));
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
+            // 恢复下拉框状态
+            const select = document.querySelector(`.vendor-config__status-select[data-vendor-id="${id}"]`);
+            if (select) {
+                select.value = vendor.status;
+            }
         }
     }
 
@@ -692,7 +686,12 @@ class VendorConfigManager {
                            data-field="enable_performance_mgmt"
                            ${vendor.enable_performance_mgmt ? 'checked' : ''}>
                 </td>
-                <td class="vendor-config__cell vendor-config__cell--status">${window.vendorConfigUIUtils.renderStatusBadge(vendor.status)}</td>
+                <td class="vendor-config__cell vendor-config__cell--status">
+                    <select class="vendor-config__status-select" data-vendor-id="${vendor.id}">
+                        <option value="Active" ${vendor.status === 'Active' ? 'selected' : ''}>启用</option>
+                        <option value="Inactive" ${vendor.status === 'Inactive' ? 'selected' : ''}>停用</option>
+                    </select>
+                </td>
                 <td class="vendor-config__cell vendor-config__cell--actions">${window.vendorConfigUIUtils.renderActionButtons(vendor.id, vendor.status)}</td>
             </tr>
         `).join('');

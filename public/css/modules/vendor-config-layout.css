@@ -74,6 +74,35 @@
     border-bottom: 1px solid var(--vendor-color-gray-light);
 }
 
+/* 表格标题对齐 */
+.vendor-config__table th:nth-child(1) {
+    text-align: center; /* 全选复选框 */
+}
+
+.vendor-config__table th:nth-child(2) {
+    text-align: left; /* 供应商名称 */
+}
+
+.vendor-config__table th:nth-child(3) {
+    text-align: center; /* 来源 */
+}
+
+.vendor-config__table th:nth-child(4) {
+    text-align: center; /* 资料管理 */
+}
+
+.vendor-config__table th:nth-child(5) {
+    text-align: center; /* 绩效评价 */
+}
+
+.vendor-config__table th:nth-child(6) {
+    text-align: center; /* 状态 */
+}
+
+.vendor-config__table th:nth-child(7) {
+    text-align: center; /* 操作 */
+}
+
 .vendor-config__table tbody tr {
     border-bottom: 1px solid var(--vendor-color-gray-light);
 }

@@ -292,7 +292,6 @@ class VendorConfigUIUtils {
      */
     renderActionButtons(id, status) {
         const buttons = [
-            `<button class="vendor-config__btn vendor-config__btn--edit" data-id="${id}" title="编辑">✏️</button>`,
             `<button class="vendor-config__btn vendor-config__btn--delete" data-id="${id}" title="删除">🗑️</button>`
         ];
         return buttons.join('');

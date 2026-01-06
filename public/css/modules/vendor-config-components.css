@@ -93,11 +93,6 @@
     background-color: #dc2626;
 }
 
-.vendor-config__btn--edit {
-    padding: var(--vendor-spacing-xs) var(--vendor-spacing-sm);
-    font-size: var(--vendor-font-size-xs);
-}
-
 .vendor-config__btn--delete {
     padding: var(--vendor-spacing-xs) var(--vendor-spacing-sm);
     font-size: var(--vendor-font-size-xs);
@@ -228,4 +223,34 @@
 .vendor-config__toggle-checkbox:checked:hover {
     accent-color: var(--vendor-color-success);
     border-color: var(--vendor-color-success);
+}
+
+/* 状态下拉框 */
+.vendor-config__status-select {
+    padding: 4px 8px;
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    font-size: var(--vendor-font-size-sm);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background-color: var(--vendor-color-white);
+    color: var(--vendor-color-black);
+}
+
+.vendor-config__status-select:hover {
+    border-color: var(--vendor-color-primary);
+}
+
+.vendor-config__status-select:focus {
+    outline: none;
+    border-color: var(--vendor-color-primary);
+    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
+}
+
+.vendor-config__status-select option[value="Active"] {
+    color: #065f46;
+}
+
+.vendor-config__status-select option[value="Inactive"] {
+    color: #991b1b;
 }
