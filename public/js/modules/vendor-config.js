@@ -45,6 +45,50 @@ class VendorConfigManager {
     }
 
     /**
+     * 加载供应商列表（保存和恢复滚动位置）
+     */
+    async loadVendorsWithScrollPosition() {
+        // 保存滚动位置
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+
+        console.log('📌 保存滚动位置:', scrollTop);
+
+        // 加载列表
+        await this.loadVendors();
+
+        // 使用setTimeout确保DOM完全渲染后再恢复滚动位置
+        setTimeout(() => {
+            console.log('📍 恢复滚动位置:', scrollTop);
+            window.scrollTo(0, scrollTop);
+            document.documentElement.scrollTop = scrollTop;
+            document.body.scrollTop = scrollTop;
+        }, 100);
+    }
+
+    /**
+     * 更新单个供应商行的状态（不刷新整个列表）
+     * @param {number} id - 供应商ID
+     * @param {string} field - 字段名
+     * @param {boolean} value - 新值
+     */
+    updateVendorRow(id, field, value) {
+        // 更新数据
+        const vendor = this.vendors.find(v => v.id === id);
+        if (vendor) {
+            vendor[field] = value ? 1 : 0;
+        }
+
+        // 更新DOM
+        const row = document.querySelector(`tr[data-vendor-id="${id}"]`);
+        if (row) {
+            const checkbox = row.querySelector(`input[data-field="${field}"]`);
+            if (checkbox) {
+                checkbox.checked = value;
+            }
+        }
+    }
+
+    /**
      * 重新绑定事件（在模块切换时调用）
      */
     rebindEvents() {
@@ -286,7 +330,7 @@ class VendorConfigManager {
 
         if (!await window.vendorConfigUIUtils.confirm(message)) {
             // 如果用户取消，恢复复选框状态
-            await this.loadVendors();
+            this.updateVendorRow(id, field, !value);
             return;
         }
 
@@ -295,7 +339,8 @@ class VendorConfigManager {
 
             if (result.success) {
                 window.vendorConfigUIUtils.showToast(`${action}成功`, 'success');
-                await this.loadVendors();
+                // 只更新单个供应商行，不刷新整个列表
+                this.updateVendorRow(id, field, value);
 
                 // 通知资料管理模块刷新
                 window.dispatchEvent(new CustomEvent('vendor-config-updated', {
@@ -304,13 +349,13 @@ class VendorConfigManager {
             } else {
                 window.vendorConfigUIUtils.showToast(result.error, 'error');
                 // 失败后恢复复选框状态
-                await this.loadVendors();
+                this.updateVendorRow(id, field, !value);
             }
         } catch (error) {
             console.error('切换配置失败:', error);
             window.vendorConfigUIUtils.showToast('操作失败', 'error');
             // 失败后恢复复选框状态
-            await this.loadVendors();
+            this.updateVendorRow(id, field, !value);
         }
     }
 
@@ -575,7 +620,7 @@ class VendorConfigManager {
         if (result.success) {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
             this.clearSelection();
-            await this.loadVendors();
+            await this.loadVendorsWithScrollPosition();
 
             // 通知资料管理模块刷新
             window.dispatchEvent(new CustomEvent('vendor-config-updated', {
@@ -629,7 +674,7 @@ class VendorConfigManager {
         }
 
         const html = this.vendors.map(vendor => `
-            <tr class="vendor-config__row">
+            <tr class="vendor-config__row" data-vendor-id="${vendor.id}">
                 <td>${window.vendorConfigUIUtils.renderCheckbox(this.selectedVendors.has(vendor.id), vendor.id)}</td>
                 <td class="vendor-config__cell vendor-config__cell--name">${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
