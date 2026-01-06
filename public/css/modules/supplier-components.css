@@ -687,50 +687,6 @@
   content: "💡 ";
 }
 
-/* ==================== 通用按钮组件 ==================== */
-/* 🧩 [HELPER] 基础按钮样式 - 从document-type-settings.css迁移 */
-/* 说明: 提供通用的按钮基础样式，支持多种变体 */
-.btn {
-  padding: 8px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-/* 🧩 [HELPER] 主要按钮样式 */
-.btn-primary {
-  background: #3b82f6;
-  color: white;
-}
-
-/* 🧩 [HELPER] 主要按钮悬停效果 */
-.btn-primary:hover:not(:disabled) {
-  background: #2563eb;
-}
-
-/* 🧩 [HELPER] 次要按钮样式 */
-.btn-secondary {
-  background: #6b7280;
-  color: white;
-}
-
-/* 🧩 [HELPER] 次要按钮悬停效果 */
-.btn-secondary:hover:not(:disabled) {
-  background: #4b5563;
-}
-
-/* 🧩 [HELPER] 按钮禁用状态 */
-.btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
 /* ==================== 统计信息组件 ==================== */
 /* 🧩 [HELPER] 统计信息区域 - 从document-type-settings.css迁移 */
 /* 用途: 显示资料类型的统计数据 */
