@@ -595,7 +595,7 @@
 
 /* 表格标题对齐 */
 .vendor-config__table th:nth-child(1) {
-    text-align: left; /* 供应商名称 */
+    text-align: center; /* 供应商名称 */
 }
 
 .vendor-config__table th:nth-child(2) {
@@ -681,6 +681,7 @@
 .vendor-config__cell--name {
     font-weight: var(--vendor-font-weight-medium);
     color: var(--vendor-color-text-primary);
+    text-align: center;
 }
 
 .vendor-config__cell--source,

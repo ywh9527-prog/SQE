@@ -47,6 +47,20 @@ class VendorConfigManager {
 
         if (result.success) {
             this.vendors = result.data || [];
+            // 中文拼音排序：先按来源排序（手动添加在前，IQC导入在后），然后按供应商名称拼音A-Z排序
+            this.vendors.sort((a, b) => {
+                // 第一级排序：按来源
+                const sourceOrder = { 'MANUAL': 0, 'IQC': 1 };
+                const sourceA = sourceOrder[a.source] ?? 2;
+                const sourceB = sourceOrder[b.source] ?? 2;
+                
+                if (sourceA !== sourceB) {
+                    return sourceA - sourceB;
+                }
+                
+                // 第二级排序：按供应商名称拼音排序
+                return a.supplier_name.localeCompare(b.supplier_name, 'zh-CN');
+            });
             this.render();
         } else {
             window.vendorConfigUIUtils.showErrorState(result.error);
@@ -590,7 +604,7 @@ class VendorConfigManager {
             source: source,
             enable_document_mgmt: 0,
             enable_performance_mgmt: 0,
-            status: 'Active'
+            status: 'Inactive'
         });
 
         if (result.success) {
@@ -615,7 +629,7 @@ class VendorConfigManager {
         const vendor = this.vendors.find(v => v.id === id);
         if (!vendor) return;
 
-        const action = newStatus === 'Active' ? '启用' : '停用';
+        const action = newStatus === 'Active' ? '启用' : '禁用';
         const message = `确定要${action}供应商"${vendor.supplier_name}"吗？`;
 
         if (!await window.vendorConfigUIUtils.confirm(message)) {
@@ -769,7 +783,7 @@ class VendorConfigManager {
         } else if (config.enable_performance_mgmt !== undefined) {
             actionText = config.enable_performance_mgmt ? '为所有供应商启用绩效评价' : '为所有供应商禁用绩效评价';
         } else if (config.status !== undefined) {
-            actionText = config.status === 'Active' ? '启用所有供应商' : '停用所有供应商';
+            actionText = config.status === 'Active' ? '启用所有供应商' : '禁用所有供应商';
         }
 
         if (!await window.vendorConfigUIUtils.confirm(`确定要${actionText}吗？当前筛选结果中共有 ${this.vendors.length} 个供应商。`)) {
@@ -801,7 +815,7 @@ class VendorConfigManager {
             return;
         }
 
-        if (!await window.vendorConfigUIUtils.confirm(`确定要停用当前筛选结果中的所有 ${this.vendors.length} 个供应商吗？`)) {
+        if (!await window.vendorConfigUIUtils.confirm(`确定要禁用所有供应商吗？当前筛选结果中共有 ${this.vendors.length} 个供应商。`)) {
             return;
         }
 
@@ -841,7 +855,7 @@ class VendorConfigManager {
 
         const html = this.vendors.map(vendor => `
             <tr class="vendor-config__row" data-vendor-id="${vendor.id}">
-                <td class="vendor-config__cell vendor-config__cell--name">${vendor.supplier_name}</td>
+                <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
                 <td class="vendor-config__cell vendor-config__cell--document">
                     <input type="checkbox"
@@ -860,7 +874,7 @@ class VendorConfigManager {
                 <td class="vendor-config__cell vendor-config__cell--status">
                     <select class="vendor-config__status-select" data-vendor-id="${vendor.id}">
                         <option value="Active" ${vendor.status === 'Active' ? 'selected' : ''}>启用</option>
-                        <option value="Inactive" ${vendor.status === 'Inactive' ? 'selected' : ''}>停用</option>
+                        <option value="Inactive" ${vendor.status === 'Inactive' ? 'selected' : ''}>禁用</option>
                     </select>
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--actions">${window.vendorConfigUIUtils.renderActionButtons(vendor.id, vendor.status)}</td>
@@ -899,7 +913,7 @@ class VendorConfigManager {
                     <span class="vendor-config__search-suggestion-item__name">${vendor.supplier_name}</span>
                     <div class="vendor-config__search-suggestion-item__tags">
                         <span class="vendor-config__search-suggestion-item__tag vendor-config__search-suggestion-item__tag--source">${vendor.source}</span>
-                        <span class="vendor-config__search-suggestion-item__tag vendor-config__search-suggestion-item__tag--${vendor.status.toLowerCase()}">${vendor.status === 'Active' ? '启用' : '停用'}</span>
+                        <span class="vendor-config__search-suggestion-item__tag vendor-config__search-suggestion-item__tag--${vendor.status.toLowerCase()}">${vendor.status === 'Active' ? '启用' : '禁用'}</span>
                     </div>
                 </div>
             `).join('');

@@ -410,7 +410,7 @@ router.post('/sync-from-iqc', authenticateToken, async (req, res) => {
  */
 router.post('/config', authenticateToken, async (req, res) => {
     try {
-        const { supplier_name, source, enable_document_mgmt, enable_performance_mgmt } = req.body;
+        const { supplier_name, source, enable_document_mgmt, enable_performance_mgmt, status } = req.body;
 
         if (!supplier_name) {
             return res.status(400).json({
@@ -424,7 +424,7 @@ router.post('/config', authenticateToken, async (req, res) => {
             source: source || 'MANUAL',
             enable_document_mgmt: enable_document_mgmt || false,
             enable_performance_mgmt: enable_performance_mgmt || false,
-            status: 'Active'
+            status: status || 'Inactive'
         });
 
         res.json({

@@ -123,7 +123,7 @@ router.get('/documents-summary', authenticateToken, async (req, res) => {
     
     // 1. 从vendor_config表获取已启用资料管理的供应商
     const [suppliers] = await sequelize.query(`
-      SELECT vc.id, vc.supplier_name as name
+      SELECT vc.id, vc.supplier_name as name, vc.source
       FROM vendor_config vc
       WHERE vc.enable_document_mgmt = 1 
         AND vc.status = 'Active'

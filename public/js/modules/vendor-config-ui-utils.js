@@ -254,7 +254,7 @@ class VendorConfigUIUtils {
     renderStatusBadge(status) {
         const statusMap = {
             'Active': { text: '启用', class: 'vendor-config__status-badge--active' },
-            'Inactive': { text: '停用', class: 'vendor-config__status-badge--inactive' }
+            'Inactive': { text: '禁用', class: 'vendor-config__status-badge--inactive' }
         };
         const badge = statusMap[status] || { text: status, class: '' };
         return `<span class="vendor-config__status-badge ${badge.class}">${badge.text}</span>`;

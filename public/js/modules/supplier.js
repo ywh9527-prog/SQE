@@ -84,6 +84,20 @@ class SupplierDocumentManager {
 
       if (data.success) {
         this.suppliers = data.data || [];
+        // 中文拼音排序：先按来源排序（手动添加在前，IQC导入在后），然后按供应商名称拼音A-Z排序
+        this.suppliers.sort((a, b) => {
+            // 第一级排序：按来源
+            const sourceOrder = { 'MANUAL': 0, 'IQC': 1 };
+            const sourceA = sourceOrder[a.source] ?? 2;
+            const sourceB = sourceOrder[b.source] ?? 2;
+            
+            if (sourceA !== sourceB) {
+                return sourceA - sourceB;
+            }
+            
+            // 第二级排序：按供应商名称拼音排序
+            return a.supplierName.localeCompare(b.supplierName, 'zh-CN');
+        });
         console.log(`✅ 加载了 ${this.suppliers.length} 个供应商的汇总数据`);
         console.log('📊 供应商数据详情:', this.suppliers);
       } else {
@@ -683,7 +697,7 @@ class SupplierDocumentManager {
         <table class="supplier-table">
           <thead>
             <tr>
-              <th>供应商</th>
+              <th>供应商（A-Z排序）</th>
               <th colspan="5">资料状态</th>
               <th>物料</th>
               <th>操作</th>
