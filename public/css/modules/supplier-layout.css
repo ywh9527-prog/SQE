@@ -1779,6 +1779,13 @@
   gap: 8px;
 }
 
+/* 数据概览标题图标 */
+.supplier-stats-title i {
+  color: var(--primary-600);
+  font-size: 24px;
+  margin-right: 4px;
+}
+
 /* 统计卡片网格 */
 .supplier-stats-grid {
   display: grid;
@@ -1940,12 +1947,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 16px 20px;
-  background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
-  border: 1px solid var(--gray-200);
-  border-radius: 12px;
   margin-bottom: 16px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 /* 资料列表标题 */
@@ -2031,6 +2033,19 @@
   gap: 8px;
 }
 
+/* 搜索和筛选标题图标 */
+.supplier-search-filter-title i {
+  color: var(--primary-600);
+  font-size: 24px;
+  margin-right: 4px;
+}
+
+/* 筛选信息提示图标 */
+.filter-info-icon i {
+  color: var(--primary-600);
+  font-size: 24px;
+}
+
 /* 筛选信息提示 */
 .supplier-search-filter-info {
   margin-top: 16px;
@@ -2097,34 +2112,12 @@
 
 /* 资料列表容器 */
 .supplier-list-wrapper {
+  padding: 20px;
   background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   border: 1px solid var(--gray-200);
   border-radius: 16px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   overflow: visible;
-}
-
-/* 资料列表标题容器 */
-.supplier-list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  background: transparent;  /* 移除背景，使用父容器背景 */
-  border-bottom: 2px solid var(--gray-100);  /* 加粗分隔线，增加视觉层次 */
-}
-
-/* 资料列表标题 */
-.supplier-list-title {
-  font-family: var(--font-heading);
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--gray-900);
-  margin: 0;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  letter-spacing: -0.3px;
 }
 
 /* 资料列表信息 */
@@ -2371,4 +2364,23 @@
 .supplier-list-wrapper .no-data-content .btn:active {
   transform: translateY(0);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   Phosphor Icons 统一样式
+   ============================================ */
+
+/* 标题图标统一样式 */
+.supplier-stats-title i,
+.supplier-search-filter-title i,
+.supplier-list-title i {
+  color: var(--primary-600);
+  font-size: 24px;
+  margin-right: 4px;
+}
+
+/* 筛选信息图标 */
+.filter-info-icon i {
+  color: var(--primary-600);
+  font-size: 24px;
 }

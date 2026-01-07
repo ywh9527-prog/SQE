@@ -70,7 +70,7 @@
 
             <nav class="sidebar-nav">
                 <a href="#dashboard" class="nav-item active" data-module="dashboard">
-                    <i class="ph ph-squares-four"></i>
+                    <i class="ph ph-barn"></i>
                     <span>工作台</span>
                 </a>
                 <a href="#iqc" class="nav-item" data-module="iqc">
@@ -445,11 +445,11 @@
                         <h3>供应商资料管理</h3>
                         <div class="module-actions">
                             <button class="btn btn-primary" id="importBtn">
-                                <span class="btn-icon">🔄</span>
+                                <span class="btn-icon"><i class="ph ph-arrows-clockwise"></i></span>
                                 同步供应商
                             </button>
                             <button class="btn btn-primary" id="refreshBtn">
-                                <span class="btn-icon">🔄</span>
+                                <span class="btn-icon"><i class="ph ph-arrows-clockwise"></i></span>
                                 刷新
                             </button>
                         </div>
@@ -523,15 +523,15 @@
                         <h3>供应商配置中心</h3>
                         <div class="module-actions">
                             <button class="btn btn-primary" id="syncFromIQCBtn">
-                                <span class="btn-icon">🔄</span>
+                                <span class="btn-icon"><i class="ph ph-download-simple"></i></span>
                                 从IQC同步
                             </button>
                             <button class="btn btn-primary" id="addVendorBtn">
-                                <span class="btn-icon">➕</span>
+                                <span class="btn-icon"><i class="ph ph-plus"></i></span>
                                 添加供应商
                             </button>
                             <button class="btn btn-primary" id="refreshBtn">
-                                <span class="btn-icon">🔄</span>
+                                <span class="btn-icon"><i class="ph ph-arrows-clockwise"></i></span>
                                 刷新
                             </button>
                         </div>
@@ -540,32 +540,32 @@
                     <!-- 统计卡片区域 -->
                     <div class="vendor-config__stats-wrapper">
                         <div class="vendor-config__stats-header">
-                            <h4 class="vendor-config__stats-title">📊 数据概览</h4>
+                            <h4 class="vendor-config__stats-title"><i class="ph ph-newspaper-clipping"></i> 数据概览</h4>
                         </div>
                         <div class="vendor-config__stats-container">
                             <div class="vendor-config__stat-card vendor-config__stat-card--total">
-                                <div class="vendor-config__stat-icon">📊</div>
+                                <div class="vendor-config__stat-icon"><i class="ph ph-chart-bar"></i></div>
                                 <div class="vendor-config__stat-content">
                                     <div class="vendor-config__stat-value" id="statTotal">0</div>
                                     <div class="vendor-config__stat-label">总供应商数</div>
                                 </div>
                             </div>
                             <div class="vendor-config__stat-card vendor-config__stat-card--document">
-                                <div class="vendor-config__stat-icon">📁</div>
+                                <div class="vendor-config__stat-icon"><i class="ph ph-folder"></i></div>
                                 <div class="vendor-config__stat-content">
                                     <div class="vendor-config__stat-value" id="statDocument">0</div>
                                     <div class="vendor-config__stat-label">资料管理启用</div>
                                 </div>
                             </div>
                             <div class="vendor-config__stat-card vendor-config__stat-card--performance">
-                                <div class="vendor-config__stat-icon">📈</div>
+                                <div class="vendor-config__stat-icon"><i class="ph ph-trend-up"></i></div>
                                 <div class="vendor-config__stat-content">
                                     <div class="vendor-config__stat-value" id="statPerformance">0</div>
                                     <div class="vendor-config__stat-label">绩效管理启用</div>
                                 </div>
                             </div>
                             <div class="vendor-config__stat-card vendor-config__stat-card--sync">
-                                <div class="vendor-config__stat-icon">🔄</div>
+                                <div class="vendor-config__stat-icon"><i class="ph ph-clock"></i></div>
                                 <div class="vendor-config__stat-content">
                                     <div class="vendor-config__stat-value" id="statSyncTime">-</div>
                                     <div class="vendor-config__stat-label">最后同步时间</div>
@@ -577,7 +577,7 @@
                     <!-- 控制面板 -->
                     <div class="vendor-config__control-panel">
                         <div class="vendor-config__control-panel-header">
-                            <h4 class="vendor-config__control-panel-title">🔍 筛选和操作</h4>
+                            <h4 class="vendor-config__control-panel-title"><i class="ph-fill ph-magnifying-glass"></i> 筛选和操作</h4>
                         </div>
                         <div class="vendor-config__control-panel-body">
                             <div class="vendor-config__filter">
@@ -597,13 +597,13 @@
                             </div>
                             <div class="vendor-config__batch-actions">
                                 <button class="btn btn-primary" id="batchEnableDocument">
-                                    📁 批量启用资料管理
+                                    <i class="ph ph-folder-open"></i> 批量启用资料管理
                                 </button>
                                 <button class="btn btn-primary" id="batchEnablePerformance">
-                                    📈 批量启用绩效评价
+                                    <i class="ph ph-trend-up"></i> 批量启用绩效评价
                                 </button>
                                 <button class="btn btn-danger" id="batchDisable">
-                                    🗑️ 批量禁用
+                                    <i class="ph ph-power"></i> 批量禁用
                                 </button>
                             </div>
                         </div>
@@ -612,7 +612,7 @@
                     <!-- 表格区域 -->
                     <div class="vendor-config__table-wrapper">
                         <div class="vendor-config__table-header">
-                            <h4 class="vendor-config__table-title">📋 供应商配置表格</h4>
+                            <h4 class="vendor-config__table-title"><i class="ph ph-list-dashes"></i> 供应商配置表格</h4>
                         </div>
                         <div class="vendor-config__table-container">
                             <table class="vendor-config__table">

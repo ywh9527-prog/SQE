@@ -519,11 +519,11 @@ class SupplierDocumentManager {
         <!-- 统计概览卡片 -->
         <div class="supplier-stats-wrapper">
           <div class="supplier-stats-header">
-            <h4 class="supplier-stats-title">📊 数据概览</h4>
+            <h4 class="supplier-stats-title"><i class="ph ph-newspaper-clipping"></i> 数据概览</h4>
           </div>
           <div class="supplier-stats-grid">
             <div class="supplier-stats-card supplier-stats-card--total">
-              <div class="supplier-stats-icon">📊</div>
+              <div class="supplier-stats-icon"><i class="ph ph-chart-bar"></i></div>
               <div class="supplier-stats-content">
                 <div class="supplier-stats-value">${this.suppliers.length}</div>
                 <div class="supplier-stats-label">总供应商</div>
@@ -582,7 +582,7 @@ class SupplierDocumentManager {
         <!-- 第二部分：搜索和筛选 -->
         <div class="supplier-search-filter-wrapper">
           <div class="supplier-search-filter-header">
-            <h4 class="supplier-search-filter-title">🔍 搜索和筛选</h4>
+            <h4 class="supplier-search-filter-title"><i class="ph-fill ph-magnifying-glass"></i> 搜索和筛选</h4>
           </div>
           <div class="supplier-controls-row">
             <!-- 搜索区域 -->
@@ -651,7 +651,7 @@ class SupplierDocumentManager {
         ${(this.searchKeyword || this.statusFilter) ?
           `<div class="supplier-search-filter-info">
             <div class="filter-info-content">
-              <span class="filter-info-icon">🔍</span>
+              <span class="filter-info-icon"><i class="ph ph-magnifying-glass"></i></span>
               <span class="filter-info-text">
                 ${this.searchKeyword ? `搜索: "${this.searchKeyword}"` : ''}
                 ${this.searchKeyword && this.statusFilter ? ' | ' : ''}
@@ -670,7 +670,7 @@ class SupplierDocumentManager {
         <div class="supplier-list-wrapper">
           <!-- 资料列表标题 -->
           <div class="supplier-list-header">
-            <h3 class="supplier-list-title">📋 资料列表</h3>
+            <h3 class="supplier-list-title"><i class="ph ph-list-dashes"></i> 资料列表</h3>
             <div class="supplier-list-info">
               显示 <span class="highlight">${filteredSuppliers.length}</span> 个供应商
               ${this.searchKeyword ? `（搜索："${this.searchKeyword}"）` : ''}
@@ -978,7 +978,7 @@ class SupplierDocumentManager {
     return `
       <tr class="supplier-row ${isExpanded ? 'expanded' : ''}">
         <td class="supplier-name" style="text-align: center !important;">
-          <i class="far fa-building" style="color: #3b82f6; margin-right: 8px; font-size: 1.6em;"></i>
+          <i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 8px; font-size: 1.6em;"></i>
           <span style="font-size: 1.1em; font-weight: 600;">${supplier.supplierName}</span>
         </td>
         <td colspan="5" class="progress-cell">

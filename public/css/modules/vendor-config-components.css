@@ -321,6 +321,16 @@
     transition: transform var(--vendor-transition-base);
 }
 
+.vendor-config__btn .btn-icon i {
+    color: white;
+}
+
+.vendor-config__btn i {
+    color: white;
+    font-size: 18px;
+    margin-right: 4px;
+}
+
 .vendor-config__btn:hover .btn-icon {
     transform: scale(1.1);
 }
