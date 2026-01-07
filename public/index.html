@@ -581,7 +581,9 @@
                         </div>
                         <div class="vendor-config__control-panel-body">
                             <div class="vendor-config__filter">
-                                <input type="text" id="searchInput" placeholder="搜索供应商名称">
+                                <div class="vendor-config__search-wrapper">
+                                    <input type="text" id="searchInput" placeholder="搜索供应商名称" autocomplete="off">
+                                </div>
                                 <select id="sourceFilter">
                                     <option value="">全部来源</option>
                                     <option value="IQC">IQC数据</option>
@@ -1079,6 +1081,9 @@
             </div>
         </div>
     </div>
+
+    <!-- 搜索建议列表（fixed定位，放在body下） -->
+    <div id="searchSuggestions" class="vendor-config__search-suggestions"></div>
 
 </body>
 

@@ -15,6 +15,98 @@
     align-items: center;
 }
 
+/* 搜索包装器 */
+.vendor-config__search-wrapper {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    /* 确保下拉列表不被裁剪 */
+    overflow: visible;
+}
+
+/* 搜索建议列表 */
+.vendor-config__search-suggestions {
+    position: fixed;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--vendor-color-white);
+    border: 1px solid var(--vendor-color-gray-light);
+    border-radius: var(--vendor-border-radius-sm);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    z-index: 99999;
+    display: none;
+    margin-top: 4px;
+}
+
+.vendor-config__search-suggestions--visible {
+    display: block;
+}
+
+/* 搜索建议项 */
+.vendor-config__search-suggestion-item {
+    padding: 10px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid var(--vendor-color-gray-light);
+    transition: background-color 0.2s ease;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.vendor-config__search-suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.vendor-config__search-suggestion-item:hover {
+    background-color: var(--vendor-color-gray-light);
+}
+
+.vendor-config__search-suggestion-item--active {
+    background-color: #dbeafe;
+}
+
+/* 搜索建议项文本 */
+.vendor-config__search-suggestion-item__name {
+    font-weight: var(--vendor-font-weight-medium);
+    color: var(--vendor-color-black);
+}
+
+/* 搜索建议项标签 */
+.vendor-config__search-suggestion-item__tags {
+    display: flex;
+    gap: 6px;
+}
+
+.vendor-config__search-suggestion-item__tag {
+    font-size: var(--vendor-font-size-xs);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-weight: var(--vendor-font-weight-medium);
+}
+
+.vendor-config__search-suggestion-item__tag--source {
+    background-color: #f3f4f6;
+    color: #374151;
+}
+
+.vendor-config__search-suggestion-item__tag--active {
+    background-color: #dcfce7;
+    color: #166534;
+}
+
+.vendor-config__search-suggestion-item__tag--inactive {
+    background-color: #fee2e2;
+    color: #991b1b;
+}
+
+/* 无结果提示 */
+.vendor-config__search-suggestions__no-result {
+    padding: 12px;
+    text-align: center;
+    color: var(--vendor-color-gray);
+    font-size: var(--vendor-font-size-sm);
+}
+
 /* 筛选组 */
 .vendor-config__filter-group {
     display: flex;
@@ -41,6 +133,14 @@
     cursor: pointer;
     transition: all 0.2s ease;
     min-width: 120px;
+    /* 隐藏滚动条 */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE 10+ */
+}
+
+/* 隐藏滚动条 - Chrome, Safari, Edge */
+.vendor-config__filter select::-webkit-scrollbar {
+    display: none;
 }
 
 .vendor-config__filter select:hover {

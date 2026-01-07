@@ -333,12 +333,71 @@ class VendorConfigManager {
         const searchInput = document.getElementById('searchInput');
         if (searchInput) {
             let debounceTimer;
+            let suggestionTimer;
+            let activeSuggestionIndex = -1;
+
+            // 点击搜索框 - 显示所有供应商
+            searchInput.addEventListener('focus', () => {
+                this.showSearchSuggestions('');
+            });
+
+            // 输入事件 - 显示建议列表
             searchInput.addEventListener('input', (e) => {
                 clearTimeout(debounceTimer);
+                clearTimeout(suggestionTimer);
+                const keyword = e.target.value.trim();
+
+                // 显示建议列表
+                if (keyword.length > 0) {
+                    suggestionTimer = setTimeout(() => {
+                        this.showSearchSuggestions(keyword);
+                    }, 300);
+                } else {
+                    // 如果清空了输入框，显示所有供应商
+                    this.showSearchSuggestions('');
+                }
+
+                // 防抖搜索
                 debounceTimer = setTimeout(() => {
-                    this.filter.keyword = e.target.value;
+                    this.filter.keyword = keyword;
                     this.loadVendors();
-                }, 300);
+                }, 500);
+            });
+
+            // 键盘事件 - 导航建议列表
+            searchInput.addEventListener('keydown', (e) => {
+                const suggestions = document.querySelectorAll('.vendor-config__search-suggestion-item');
+
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    activeSuggestionIndex = Math.min(activeSuggestionIndex + 1, suggestions.length - 1);
+                    this.updateActiveSuggestion(suggestions, activeSuggestionIndex);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    activeSuggestionIndex = Math.max(activeSuggestionIndex - 1, -1);
+                    this.updateActiveSuggestion(suggestions, activeSuggestionIndex);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (activeSuggestionIndex >= 0 && suggestions[activeSuggestionIndex]) {
+                        suggestions[activeSuggestionIndex].click();
+                    } else {
+                        // 执行搜索
+                        this.filter.keyword = searchInput.value.trim();
+                        this.loadVendors();
+                        this.hideSearchSuggestions();
+                    }
+                } else if (e.key === 'Escape') {
+                    this.hideSearchSuggestions();
+                    activeSuggestionIndex = -1;
+                }
+            });
+
+            // 点击外部隐藏建议列表
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.vendor-config__search-wrapper')) {
+                    this.hideSearchSuggestions();
+                    activeSuggestionIndex = -1;
+                }
             });
         }
 
@@ -703,8 +762,17 @@ class VendorConfigManager {
             config.status = 'Active';
         }
 
-        const action = config.status === 'Active' ? '启用' : '停用';
-        if (!await window.vendorConfigUIUtils.confirm(`确定要${action}当前筛选结果中的所有 ${this.vendors.length} 个供应商吗？`)) {
+        // 根据config中的字段确定提示信息
+        let actionText = '';
+        if (config.enable_document_mgmt !== undefined) {
+            actionText = config.enable_document_mgmt ? '为所有供应商启用资料管理' : '为所有供应商禁用资料管理';
+        } else if (config.enable_performance_mgmt !== undefined) {
+            actionText = config.enable_performance_mgmt ? '为所有供应商启用绩效评价' : '为所有供应商禁用绩效评价';
+        } else if (config.status !== undefined) {
+            actionText = config.status === 'Active' ? '启用所有供应商' : '停用所有供应商';
+        }
+
+        if (!await window.vendorConfigUIUtils.confirm(`确定要${actionText}吗？当前筛选结果中共有 ${this.vendors.length} 个供应商。`)) {
             return;
         }
 
@@ -803,6 +871,90 @@ class VendorConfigManager {
 
         // 重新绑定表格内的事件（因为HTML被重新生成了）
         this.bindTableEvents();
+    }
+
+    /**
+     * 显示搜索建议列表
+     * @param {string} keyword - 搜索关键词
+     */
+    showSearchSuggestions(keyword) {
+        const suggestionsContainer = document.getElementById('searchSuggestions');
+        if (!suggestionsContainer) return;
+
+        // 如果keyword为空，显示所有供应商；否则进行模糊匹配
+        let matchedVendors;
+        if (keyword === '' || keyword === null || keyword === undefined) {
+            matchedVendors = this.vendors; // 显示所有供应商
+        } else {
+            matchedVendors = this.vendors.filter(vendor =>
+                vendor.supplier_name.toLowerCase().includes(keyword.toLowerCase())
+            );
+        }
+
+        if (matchedVendors.length === 0) {
+            suggestionsContainer.innerHTML = '<div class="vendor-config__search-suggestions__no-result">没有找到匹配的供应商</div>';
+        } else {
+            suggestionsContainer.innerHTML = matchedVendors.map(vendor => `
+                <div class="vendor-config__search-suggestion-item" data-vendor-name="${vendor.supplier_name}">
+                    <span class="vendor-config__search-suggestion-item__name">${vendor.supplier_name}</span>
+                    <div class="vendor-config__search-suggestion-item__tags">
+                        <span class="vendor-config__search-suggestion-item__tag vendor-config__search-suggestion-item__tag--source">${vendor.source}</span>
+                        <span class="vendor-config__search-suggestion-item__tag vendor-config__search-suggestion-item__tag--${vendor.status.toLowerCase()}">${vendor.status === 'Active' ? '启用' : '停用'}</span>
+                    </div>
+                </div>
+            `).join('');
+
+            // 为每个建议项添加点击事件
+            suggestionsContainer.querySelectorAll('.vendor-config__search-suggestion-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    const supplierName = item.dataset.vendorName;
+                    const searchInput = document.getElementById('searchInput');
+                    if (searchInput) {
+                        searchInput.value = supplierName;
+                        this.filter.keyword = supplierName;
+                        this.loadVendors();
+                        this.hideSearchSuggestions();
+                    }
+                });
+            });
+        }
+
+        // 计算并设置下拉列表的位置和宽度
+        const searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            const rect = searchInput.getBoundingClientRect();
+            
+            suggestionsContainer.style.top = `${rect.bottom + 4}px`;
+            suggestionsContainer.style.left = `${rect.left}px`;
+            suggestionsContainer.style.width = `${rect.width}px`;
+        }
+
+        suggestionsContainer.classList.add('vendor-config__search-suggestions--visible');
+    }
+
+    /**
+     * 隐藏搜索建议列表
+     */
+    hideSearchSuggestions() {
+        const suggestionsContainer = document.getElementById('searchSuggestions');
+        if (suggestionsContainer) {
+            suggestionsContainer.classList.remove('vendor-config__search-suggestions--visible');
+        }
+    }
+
+    /**
+     * 更新活动建议项
+     * @param {NodeList} suggestions - 建议项列表
+     * @param {number} activeIndex - 活动索引
+     */
+    updateActiveSuggestion(suggestions, activeIndex) {
+        suggestions.forEach((item, index) => {
+            if (index === activeIndex) {
+                item.classList.add('vendor-config__search-suggestion-item--active');
+            } else {
+                item.classList.remove('vendor-config__search-suggestion-item--active');
+            }
+        });
     }
 }
 
