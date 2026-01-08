@@ -15,11 +15,17 @@
 .vendor-config__toggle-checkbox,
 .vendor-config__status-select {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    /* 优化渲染，修复110%缩放时的模糊问题 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
 }
 
 /* 按钮交互效果 */
 .vendor-config__btn {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
 }
 
 .vendor-config__btn:hover {
@@ -51,6 +57,7 @@
 .vendor-config__checkbox,
 .vendor-config__toggle-checkbox {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
 }
 
 .vendor-config__checkbox:hover,
@@ -68,6 +75,7 @@
 .vendor-config__status-badge,
 .vendor-config__source-badge {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
 }
 
 .vendor-config__status-badge:hover,
@@ -79,6 +87,7 @@
 /* 统计卡片交互效果 */
 .vendor-config__stat-card {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
 }
 
 .vendor-config__stat-card:hover {
