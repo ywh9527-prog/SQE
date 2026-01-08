@@ -355,11 +355,12 @@
 
 /* 统计数值 */
 .vendor-config__stat-value {
-    font-family: var(--vendor-font-family-heading);
+    font-family: var(--font-heading);
     font-size: 32px;
-    font-weight: var(--vendor-font-weight-bold);
+    font-weight: 700;
     color: var(--vendor-color-text-primary);
-    line-height: var(--vendor-line-height-tight);
+    line-height: 1.2;
+    margin-bottom: 4px;
     transition: all var(--vendor-transition-slow);
     letter-spacing: -1px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -400,19 +401,12 @@
 
 /* 统计标签 */
 .vendor-config__stat-label {
-    font-size: var(--vendor-font-size-sm);
-    font-weight: var(--vendor-font-weight-medium);
+    font-size: 14px;
+    font-weight: 600;
     color: var(--vendor-color-text-secondary);
     margin-top: 4px;
     letter-spacing: 0.2px;
 }
-    margin-top: var(--vendor-spacing-1);
-    line-height: var(--vendor-line-height-normal);
-    font-weight: var(--vendor-font-weight-semibold);
-    transition: all var(--vendor-transition-base);
-}
-
-.vendor-config__stat-card:hover .vendor-config__stat-label {
     color: var(--vendor-color-text-primary);
 }
 
