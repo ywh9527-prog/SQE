@@ -19,7 +19,7 @@
 .vendor-config__search-wrapper {
     position: relative;
     flex: 1;
-    min-width: 200px;
+    min-width: 400px;
     /* 确保下拉列表不被裁剪 */
     overflow: visible;
 }
@@ -156,7 +156,7 @@
 /* 筛选搜索框 */
 .vendor-config__filter input[type="text"] {
     flex: 1;
-    min-width: 200px;
+    min-width: 400px;
     padding: var(--vendor-spacing-sm);
     border: 1px solid var(--vendor-color-gray-light);
     border-radius: var(--vendor-border-radius-sm);
