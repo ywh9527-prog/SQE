@@ -452,20 +452,65 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
 }
 
-/* 切换复选框（用于启用/禁用功能） */
+/* 切换复选框（用于启用/禁用功能） - 苹果风格开关 */
 .vendor-config__toggle-checkbox {
-    width: 20px;
-    height: 20px;
+    appearance: none;
+    width: 44px;
+    height: 24px;
     cursor: pointer;
-    accent-color: var(--vendor-color-success);
-    border-radius: var(--vendor-border-radius-sm);
+    border-radius: 12px;
     transition: all var(--vendor-transition-base);
     box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: var(--vendor-color-gray-200);
+    border: none;
+}
+
+.vendor-config__toggle-checkbox::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--vendor-color-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all var(--vendor-transition-base);
 }
 
 .vendor-config__toggle-checkbox:hover {
-    transform: scale(1.1);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+.vendor-config__toggle-checkbox:hover::before {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.vendor-config__toggle-checkbox:checked {
+    background: linear-gradient(135deg, var(--vendor-color-success-light) 0%, var(--vendor-color-success) 100%);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.vendor-config__toggle-checkbox:checked::before {
+    left: 22px;
+    background: var(--vendor-color-white);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.vendor-config__toggle-checkbox:checked:hover {
+    background: linear-gradient(135deg, var(--vendor-color-success-lighter) 0%, var(--vendor-color-success-light) 100%);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
+}
+
+.vendor-config__toggle-checkbox:active {
+    transform: scale(0.95);
+}
+
+.vendor-config__toggle-checkbox:active::before {
+    width: 18px;
+    height: 18px;
 }
 
 /* 状态徽章组件（玻璃态） */
@@ -668,28 +713,63 @@
 
 /* 切换复选框（用于启用/禁用功能） */
 .vendor-config__toggle-checkbox {
+    appearance: none;
+    width: 44px;
+    height: 24px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: all var(--vendor-transition-base);
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+    position: relative;
+    background: var(--vendor-color-gray-200);
+    border: none;
+}
+
+.vendor-config__toggle-checkbox::before {
+    content: '';
+    position: absolute;
+    top: 2px;
+    left: 2px;
     width: 20px;
     height: 20px;
-    cursor: pointer;
-    accent-color: var(--vendor-color-primary);
-    border: 2px solid var(--vendor-color-gray-light);
-    border-radius: 4px;
-    transition: all 0.2s ease;
+    border-radius: 50%;
+    background: var(--vendor-color-white);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    transition: all var(--vendor-transition-base);
 }
 
 .vendor-config__toggle-checkbox:hover {
-    border-color: var(--vendor-color-primary);
-    transform: scale(1.1);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.15);
+}
+
+.vendor-config__toggle-checkbox:hover::before {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .vendor-config__toggle-checkbox:checked {
-    accent-color: var(--vendor-color-primary);
-    border-color: var(--vendor-color-primary);
+    background: linear-gradient(135deg, var(--vendor-color-primary-light) 0%, var(--vendor-color-primary) 100%);
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.vendor-config__toggle-checkbox:checked::before {
+    left: 22px;
+    background: var(--vendor-color-white);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .vendor-config__toggle-checkbox:checked:hover {
-    accent-color: var(--vendor-color-success);
-    border-color: var(--vendor-color-success);
+    background: linear-gradient(135deg, var(--vendor-color-primary-lighter) 0%, var(--vendor-color-primary-light) 100%);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.vendor-config__toggle-checkbox:active {
+    transform: scale(0.95);
+}
+
+.vendor-config__toggle-checkbox:active::before {
+    width: 18px;
+    height: 18px;
 }
 
 /* 状态下拉框（玻璃态） */
