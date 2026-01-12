@@ -50,7 +50,7 @@ const VendorConfig = sequelize.define('VendorConfig', {
     status: {
         type: DataTypes.STRING(20),
         allowNull: false,
-        defaultValue: 'Active',
+        defaultValue: 'Inactive',
         comment: '状态：Active/Inactive'
     },
     created_at: {

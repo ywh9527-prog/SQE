@@ -38,7 +38,7 @@ class VendorSyncService {
                             source: 'IQC',
                             enable_document_mgmt: false,
                             enable_performance_mgmt: false,
-                            status: 'Active',
+                            status: 'Inactive',
                             firstSeenIndex: index
                         });
                     }
@@ -146,7 +146,7 @@ class VendorSyncService {
                         source: supplierData.source || 'IQC',
                         enable_document_mgmt: supplierData.enable_document_mgmt || false,
                         enable_performance_mgmt: supplierData.enable_performance_mgmt || false,
-                        status: supplierData.status || 'Active'
+                        status: supplierData.status || 'Inactive'
                     });
                     stats.created++;
                 }

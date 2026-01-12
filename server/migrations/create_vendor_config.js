@@ -41,7 +41,7 @@ async function createVendorConfigTable() {
                 source VARCHAR(50) DEFAULT 'IQC',
                 enable_document_mgmt BOOLEAN DEFAULT 0,
                 enable_performance_mgmt BOOLEAN DEFAULT 0,
-                status VARCHAR(20) DEFAULT 'Active',
+                status VARCHAR(20) DEFAULT 'Inactive',
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
                 updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )

@@ -252,25 +252,24 @@
 /* 主按钮 */
 .vendor-config__btn--primary {
     background: var(--vendor-glass-bg-light);
-    color: var(--vendor-color-primary-dark);
-    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--primary-700);
+    border: 1px solid rgba(20, 184, 166, 0.3);
     box-shadow:
-        0 2px 8px rgba(59, 130, 246, 0.1),
+        0 2px 8px rgba(20, 184, 166, 0.1),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
 }
 
 .vendor-config__btn--primary:hover {
     background: linear-gradient(
         135deg,
-        rgba(59, 130, 246, 0.1) 0%,
-        rgba(59, 130, 246, 0.05) 100%
+        rgba(20, 184, 166, 0.15) 0%,
+        rgba(13, 148, 136, 0.12) 100%
     );
-    border-color: var(--vendor-color-primary);
+    color: var(--primary-800);
+    border-color: rgba(20, 184, 166, 0.5);
     box-shadow:
-        0 4px 16px rgba(59, 130, 246, 0.2),
-        0 2px 8px rgba(59, 130, 246, 0.1),
+        0 6px 16px rgba(20, 184, 166, 0.2),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
-    transform: translateY(-2px);
 }
 
 /* 次要按钮 */
@@ -358,7 +357,7 @@
 }
 
 .vendor-config__status-badge:hover {
-    transform: scale(1.05);
+    transform: scale(1.03);
     box-shadow:
         0 4px 12px rgba(0, 0, 0, 0.12),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.7);
@@ -371,7 +370,7 @@
         rgba(16, 185, 129, 0.15) 0%,
         rgba(16, 185, 129, 0.08) 100%
     );
-    color: var(--vendor-color-success-dark);
+    color: var(--success);
     border: 1px solid rgba(16, 185, 129, 0.3);
 }
 
@@ -382,7 +381,7 @@
         rgba(239, 68, 68, 0.15) 0%,
         rgba(239, 68, 68, 0.08) 100%
     );
-    color: var(--vendor-color-danger-dark);
+    color: var(--danger);
     border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
