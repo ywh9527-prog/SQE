@@ -225,6 +225,20 @@ router.put('/config/batch', authenticateToken, async (req, res) => {
             }
         );
 
+        // 检查是否修改了任何管理模块配置,自动同步到 suppliers 表
+        // 支持所有以 enable_ 开头的字段,便于未来扩展
+        const managementFields = Object.keys(updates).filter(key => key.startsWith('enable_'));
+        if (managementFields.length > 0) {
+            logger.info(`检测到管理模块配置变更(${managementFields.join(', ')})，自动同步到 suppliers 表...`);
+            const syncResult = await vendorToSupplierSyncService.syncToSuppliers();
+
+            if (syncResult.success) {
+                logger.info(`自动同步成功: 新增 ${syncResult.stats.added}，更新 ${syncResult.stats.updated}，停用 ${syncResult.stats.deactivated}`);
+            } else {
+                logger.error(`自动同步失败: ${syncResult.message}`);
+            }
+        }
+
         res.json({
             success: true,
             message: `批量更新成功，影响 ${result[0]} 条记录`

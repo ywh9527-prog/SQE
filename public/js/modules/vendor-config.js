@@ -797,10 +797,14 @@ class VendorConfigManager {
             window.vendorConfigUIUtils.showToast(result.message, 'success');
             await this.loadVendorsWithScrollPosition();
 
-            // 通知资料管理模块刷新
-            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
-                detail: { config }
-            }));
+            // 延迟发送事件,确保后端同步完成
+            console.log('📢 批量更新成功,1秒后通知资料管理模块刷新...');
+            setTimeout(() => {
+                console.log('📢 发送vendor-config-updated事件');
+                window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+                    detail: { config }
+                }));
+            }, 1000);
         } else {
             window.vendorConfigUIUtils.showToast(result.error, 'error');
         }
@@ -828,18 +832,67 @@ class VendorConfigManager {
 
         const result = await window.vendorConfigServices.batchUpdateConfig(ids, config);
 
-        if (result.success) {
-            window.vendorConfigUIUtils.showToast(result.message, 'success');
-            await this.loadVendorsWithScrollPosition();
+        
 
-            // 通知资料管理模块刷新
-            window.dispatchEvent(new CustomEvent('vendor-config-updated', {
-                detail: { config }
-            }));
-        } else {
-            window.vendorConfigUIUtils.showToast(result.error, 'error');
-        }
-    }
+                if (result.success) {
+
+        
+
+                            window.vendorConfigUIUtils.showToast(result.message, 'success');
+
+        
+
+                            await this.loadVendorsWithScrollPosition();
+
+        
+
+                
+
+        
+
+                            // 延迟发送事件,确保后端同步完成
+
+        
+
+                            console.log('📢 批量禁用成功,1秒后通知资料管理模块刷新...');
+
+        
+
+                            setTimeout(() => {
+
+        
+
+                                console.log('📢 发送vendor-config-updated事件');
+
+        
+
+                                window.dispatchEvent(new CustomEvent('vendor-config-updated', {
+
+        
+
+                                    detail: { config }
+
+        
+
+                                }));
+
+        
+
+                            }, 1000);
+
+        
+
+                        } else {
+
+        
+
+                            window.vendorConfigUIUtils.showToast(result.error, 'error');
+
+        
+
+                        }
+
+            }
 
     /**
      * 渲染界面

@@ -2629,22 +2629,15 @@ if (typeof window !== 'undefined') {
 
   // 自动初始化 (检查documentsContainer是否存在)
   const initializeModule = () => {
-    if (document.getElementById('documentsContainer')) {
-      console.log('🚀 找到documentsContainer，初始化供应商资料管理模块...');
-      if (!window.supplierManager) {
-        window.supplierManager = new SupplierDocumentManager();
-        console.log('✅ 供应商资料管理模块初始化完成');
-      }
-    } else {
-      console.log('⏳ documentsContainer不存在，延迟初始化...');
-      setTimeout(initializeModule, 1000);
+    // 总是初始化供应商资料管理模块,确保事件监听器被添加
+    console.log('🚀 初始化供应商资料管理模块...');
+    if (!window.supplierManager) {
+      window.supplierManager = new SupplierDocumentManager();
+      console.log('✅ 供应商资料管理模块初始化完成');
     }
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initializeModule);
-  } else {
-    initializeModule();
-  }
+  // 立即初始化,不等待DOM加载
+  initializeModule();
 }
 
