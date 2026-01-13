@@ -500,6 +500,11 @@ class VendorConfigManager {
                     this.updateVendorRow(id, 'status', 'Active');
                 }
 
+                // 延迟刷新数据概览,确保后端同步完成
+                setTimeout(() => {
+                    this.loadStatistics();
+                }, 500);
+
                 // 通知资料管理模块刷新
                 window.dispatchEvent(new CustomEvent('vendor-config-updated', {
                     detail: { field, value }
