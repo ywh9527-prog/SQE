@@ -1,0 +1,418 @@
+/**
+ * 供应商绩效评价主界面样式
+ * 基于CLAUDE.md CSS架构健康维护原则设计
+ */
+
+/* ============================================
+   主界面容器
+   ============================================ */
+
+.performance__results-interface {
+    padding: calc(var(--border-radius-lg) * 1.5);
+}
+
+.results-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--border-radius-xl);
+    padding-bottom: var(--border-radius-lg);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.results-header h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.results-info {
+    display: flex;
+    gap: var(--border-radius-lg);
+    align-items: center;
+}
+
+.results-info .info-item {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--border-radius-sm) * 0.5);
+    font-size: 0.875rem;
+    color: var(--gray-600);
+}
+
+/* ============================================
+   顶部统计区
+   ============================================ */
+
+.stats-section {
+    background: var(--gray-50);
+    padding: calc(var(--border-radius-lg) * 1.5);
+    border-radius: var(--border-radius-lg);
+    margin-bottom: var(--border-radius-xl);
+    box-shadow: var(--shadow-sm);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: var(--border-radius-lg);
+    align-items: center;
+}
+
+/* 平均综合得分 */
+.main-score {
+    text-align: center;
+    padding: calc(var(--border-radius-xl) * 1.5);
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
+    border-radius: var(--border-radius-lg);
+    color: var(--gray-50);
+}
+
+.main-score h3 {
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+    font-weight: 500;
+}
+
+.main-score .score-value {
+    font-size: 4rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+}
+
+.main-score .trend {
+    font-size: 1rem;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.main-score .trend.up {
+    color: var(--success-light);
+}
+
+.main-score .trend.down {
+    color: var(--danger-light);
+}
+
+.main-score .trend.flat {
+    color: var(--gray-300);
+}
+
+/* 等级分布 */
+.grade-distribution {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: calc(var(--border-radius-sm) * 0.75);
+}
+
+.grade-card {
+    padding: calc(var(--border-radius-lg) * 1.5);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    border: 2px solid transparent;
+}
+
+.grade-card.excellent {
+    background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
+    border-color: var(--success-dark);
+}
+
+.grade-card.good {
+    background: linear-gradient(135deg, var(--info-light) 0%, var(--info) 100%);
+    border-color: var(--info-dark);
+}
+
+.grade-card.improve {
+    background: linear-gradient(135deg, var(--warning-light) 0%, var(--warning) 100%);
+    border-color: var(--warning-dark);
+}
+
+.grade-card.poor {
+    background: linear-gradient(135deg, var(--danger-light) 0%, var(--danger) 100%);
+    border-color: var(--danger-dark);
+}
+
+.grade-card h3 {
+    font-size: 0.8125rem;
+    color: var(--gray-700);
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+    font-weight: 500;
+}
+
+.grade-card .count {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+}
+
+.grade-card.excellent .count { color: var(--success-dark); }
+.grade-card.good .count { color: var(--info-dark); }
+.grade-card.improve .count { color: var(--warning-dark); }
+.grade-card.poor .count { color: var(--danger-dark); }
+
+.grade-card .percentage {
+    font-size: 0.75rem;
+    color: var(--gray-700);
+    font-weight: 500;
+}
+
+/* 关键指标 */
+.key-metrics {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--border-radius-sm) * 0.75);
+}
+
+.metric-item {
+    padding: calc(var(--border-radius-lg) * 1.5);
+    background: var(--gray-100);
+    border-radius: var(--border-radius-md);
+}
+
+.metric-item h3 {
+    font-size: 0.8125rem;
+    color: var(--gray-600);
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+    font-weight: 500;
+}
+
+.metric-item .value {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.metric-item .label {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    margin-top: calc(var(--border-radius-sm) * 0.25);
+    font-weight: 500;
+}
+
+/* ============================================
+   中部图表区
+   ============================================ */
+
+.charts-section {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    gap: var(--border-radius-lg);
+    margin-bottom: var(--border-radius-xl);
+}
+
+.chart-card {
+    background: var(--gray-50);
+    padding: calc(var(--border-radius-lg) * 1.5);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.chart-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--border-radius-lg);
+}
+
+.chart-container {
+    height: 200px;
+    position: relative;
+}
+
+/* ============================================
+   底部表格区
+   ============================================ */
+
+.table-section {
+    background: var(--gray-50);
+    padding: calc(var(--border-radius-lg) * 1.5);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+.table-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--border-radius-lg);
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.results-table thead {
+    background: var(--gray-100);
+}
+
+.results-table th {
+    padding: calc(var(--border-radius-sm) * 0.75) calc(var(--border-radius-sm) * 1);
+    text-align: left;
+    font-weight: 600;
+    color: var(--gray-700);
+    border-bottom: 2px solid var(--gray-300);
+}
+
+.results-table td {
+    padding: calc(var(--border-radius-sm) * 0.75) calc(var(--border-radius-sm) * 1);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.results-table tbody tr:hover {
+    background: var(--gray-100);
+}
+
+/* 排名列 */
+.rank-cell {
+    text-align: center;
+    width: 80px;
+}
+
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: 0.875rem;
+    color: var(--gray-50);
+}
+
+.rank-1 {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+}
+
+.rank-2 {
+    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-600) 100%);
+}
+
+.rank-3 {
+    background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
+}
+
+.rank-other {
+    background: var(--gray-300);
+    color: var(--gray-700);
+}
+
+/* 分数列 */
+.score-cell {
+    text-align: center;
+}
+
+.score-value {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.score-high { color: var(--success-dark); }
+.score-medium { color: var(--info-dark); }
+.score-low { color: var(--danger-dark); }
+
+/* 等级徽章 */
+.grade-badge {
+    display: inline-block;
+    padding: calc(var(--border-radius-xs) * 0.5) calc(var(--border-radius-sm) * 1);
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.grade-excellent {
+    background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
+    color: var(--success-dark);
+}
+
+.grade-good {
+    background: linear-gradient(135deg, var(--info-light) 0%, var(--info) 100%);
+    color: var(--info-dark);
+}
+
+.grade-improve {
+    background: linear-gradient(135deg, var(--warning-light) 0%, var(--warning) 100%);
+    color: var(--warning-dark);
+}
+
+.grade-poor {
+    background: linear-gradient(135deg, var(--danger-light) 0%, var(--danger) 100%);
+    color: var(--danger-dark);
+}
+
+/* 趋势列 */
+.trend-cell {
+    text-align: center;
+}
+
+.trend-up { color: var(--success); font-weight: 600; }
+.trend-down { color: var(--danger); font-weight: 600; }
+.trend-flat { color: var(--gray-500); font-weight: 600; }
+
+/* 维度进度条 */
+.dimensions-cell {
+    display: flex;
+    gap: calc(var(--border-radius-sm) * 0.5);
+}
+
+.dimension-bar {
+    flex: 1;
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.dimension-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width var(--transition-base);
+}
+
+.dimension-fill.quality { background: var(--success); }
+.dimension-fill.delivery { background: var(--info); }
+.dimension-fill.service { background: var(--warning); }
+
+/* ============================================
+   响应式设计
+   ============================================ */
+
+@media (max-width: 1024px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .charts-section {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .results-header {
+        flex-direction: column;
+        gap: var(--border-radius-lg);
+        text-align: center;
+    }
+
+    .grade-distribution {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .results-table {
+        font-size: 0.75rem;
+    }
+
+    .results-table th,
+    .results-table td {
+        padding: calc(var(--border-radius-xs) * 0.5) calc(var(--border-radius-xs) * 0.75);
+    }
+}

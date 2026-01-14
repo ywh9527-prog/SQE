@@ -48,6 +48,9 @@
     <link rel="stylesheet" href="css/modules/vendor-config-layout.css?v=20250108-13">
     <link rel="stylesheet" href="css/modules/vendor-config-interactions.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-modals.css?v=20250108">
+    <!-- 供应商绩效评价样式 -->
+    <link rel="stylesheet" href="css/modules/performance-evaluation.css?v=20250114">
+    <link rel="stylesheet" href="css/modules/performance-dashboard.css?v=20250114">
     <link rel="stylesheet" href="css/modules/vendor-config-font-hierarchy.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-filter.css?v=20250108-4">
     <!-- 供应商绩效评价样式 -->
@@ -614,6 +617,129 @@
                         <h3>历史评价周期</h3>
                         <div id="periodsList"></div>
                     </div>
+
+                    <!-- 主界面展示 -->
+                    <div id="resultsInterface" class="performance__results-interface hidden">
+                        <!-- 顶部信息 -->
+                        <div class="results-header">
+                            <h2 id="resultsTitle">评价结果</h2>
+                            <div class="results-info">
+                                <span class="info-item">
+                                    <i class="ph ph-calendar"></i>
+                                    <span id="resultsPeriod">2025-01-01 至 2025-01-31</span>
+                                </span>
+                            </div>
+                            <button class="btn btn-secondary" id="exitResultsBtn">
+                                <i class="ph ph-x"></i> 返回
+                            </button>
+                        </div>
+
+                        <!-- 顶部统计区 -->
+                        <div class="stats-section">
+                            <div class="stats-grid">
+                                <!-- 平均综合得分 -->
+                                <div class="main-score">
+                                    <h3>平均综合得分</h3>
+                                    <div class="score-value" id="averageScore">-</div>
+                                    <div class="trend" id="scoreTrend">-</div>
+                                </div>
+
+                                <!-- 等级分布 -->
+                                <div class="grade-distribution">
+                                    <div class="grade-card excellent">
+                                        <h3>优秀</h3>
+                                        <div class="count" id="gradeExcellent">0</div>
+                                        <div class="percentage" id="gradeExcellentPercent">0%</div>
+                                    </div>
+                                    <div class="grade-card good">
+                                        <h3>合格</h3>
+                                        <div class="count" id="gradeGood">0</div>
+                                        <div class="percentage" id="gradeGoodPercent">0%</div>
+                                    </div>
+                                    <div class="grade-card improve">
+                                        <h3>整改后合格</h3>
+                                        <div class="count" id="gradeImprove">0</div>
+                                        <div class="percentage" id="gradeImprovePercent">0%</div>
+                                    </div>
+                                    <div class="grade-card poor">
+                                        <h3>不合格</h3>
+                                        <div class="count" id="gradePoor">0</div>
+                                        <div class="percentage" id="gradePoorPercent">0%</div>
+                                    </div>
+                                </div>
+
+                                <!-- 关键指标 -->
+                                <div class="key-metrics">
+                                    <div class="metric-item">
+                                        <h3>已评价</h3>
+                                        <div class="value" id="evaluatedCount">0</div>
+                                        <div class="label">家评价实体</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <h3>未评价</h3>
+                                        <div class="value" id="unevaluatedCount">0</div>
+                                        <div class="label">家评价实体</div>
+                                    </div>
+                                    <div class="metric-item">
+                                        <h3>总计</h3>
+                                        <div class="value" id="totalCount">0</div>
+                                        <div class="label">家评价实体</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 中部图表区 -->
+                        <div class="charts-section">
+                            <!-- 趋势折线图 -->
+                            <div class="chart-card">
+                                <h3>得分趋势</h3>
+                                <div class="chart-container">
+                                    <canvas id="trendChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 等级分布环形图 -->
+                            <div class="chart-card">
+                                <h3>等级分布</h3>
+                                <div class="chart-container">
+                                    <canvas id="gradeChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- TOP3雷达图 -->
+                            <div class="chart-card">
+                                <h3>TOP3评价实体</h3>
+                                <div class="chart-container">
+                                    <canvas id="radarChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 底部表格区 -->
+                        <div class="table-section">
+                            <div class="table-card">
+                                <h3>评价实体排名</h3>
+                                <div class="table-container">
+                                    <table class="results-table">
+                                        <thead>
+                                            <tr>
+                                                <th>排名</th>
+                                                <th>评价实体名称</th>
+                                                <th>综合得分</th>
+                                                <th>等级</th>
+                                                <th>各维度得分</th>
+                                                <th>趋势</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="resultsTableBody">
+                                            <!-- 数据将动态加载 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="module-vendor-config" class="module-view hidden">
                     <div class="module-header">
@@ -785,6 +911,7 @@
     <script src="js/modules/vendor-config-ui-utils.js"></script>
     <script src="js/modules/vendor-config.js"></script>
     <script src="js/modules/performance.js?v=20250114"></script>
+<script src="js/modules/performance-dashboard.js?v=20250114"></script>
 
     <!-- 供应商资料管理初始化脚本 -->
     <script>

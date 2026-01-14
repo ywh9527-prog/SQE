@@ -340,7 +340,11 @@
 
         // 查看结果
         viewResults(evaluationId) {
-            alert('查看结果功能开发中...');
+            if (window.App.Modules.PerformanceDashboard) {
+                window.App.Modules.PerformanceDashboard.loadResults(evaluationId);
+            } else {
+                alert('绩效评价主界面模块未加载');
+            }
         }
     };
 
