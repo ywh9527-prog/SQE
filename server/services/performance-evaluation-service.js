@@ -1,4 +1,5 @@
-const { PerformanceEvaluation, PerformanceEvaluationDetail } = require('../models');
+const PerformanceEvaluation = require('../models/PerformanceEvaluation');
+const PerformanceEvaluationDetail = require('../models/PerformanceEvaluationDetail');
 const { sequelize } = require('../database/config');
 const logger = require('../utils/logger');
 
