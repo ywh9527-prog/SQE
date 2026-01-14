@@ -308,6 +308,16 @@ app.use('/api/evaluation-config', evaluationConfigRouter);
 
 **内容**：基于方案A的设计，实现卡片式一览表和侧边栏评价的样式
 
+**CSS规范要求**（遵循CLAUDE.md）：
+1. **使用CSS变量**：所有颜色、尺寸必须使用`var(--token)`格式
+   - 颜色：`--primary-500`、`--gray-50`、`--success`等
+   - 尺寸：`--border-radius-lg`、`--shadow-md`等
+   - 过渡：`--transition-base`、`--transition-slow`等
+2. **禁止硬编码**：代码审查必须检查`#xxxxxx`和`xxpx`硬编码
+3. **BEM命名规范**：使用`.block__element--modifier`格式
+4. **文件行数限制**：每个CSS文件不超过500行
+5. **参考现有模块**：参照`supplier-components.css`和`documents.css`的结构和规范
+
 ### 2.3 实现评价功能JavaScript
 
 #### 任务2.3.1：创建评价模块JavaScript
