@@ -32,6 +32,8 @@ const loadModels = () => {
         models.SystemLog = require('../models/SystemLog');
         models.Certificate = require('../models/Certificate');
         models.VendorConfig = require('../models/VendorConfig');
+        models.PerformanceEvaluation = require('../models/PerformanceEvaluation');
+        models.PerformanceEvaluationDetail = require('../models/PerformanceEvaluationDetail');
 
         // 建立模型关联
         Object.values(models).forEach(model => {

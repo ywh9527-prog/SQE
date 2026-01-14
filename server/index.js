@@ -62,6 +62,12 @@ console.log('✅ documentTypesRoutes 加载完成');
 const systemRoutes = require('./routes/system');
 console.log('✅ systemRoutes 加载完成');
 
+// 供应商绩效评价路由
+const evaluationsRoutes = require('./routes/evaluations');
+console.log('✅ evaluationsRoutes 加载完成');
+const evaluationConfigRoutes = require('./routes/evaluation-config');
+console.log('✅ evaluationConfigRoutes 加载完成');
+
 // 路由注册
 console.log('🔧 开始注册API路由...');
 
@@ -109,6 +115,12 @@ console.log('✅ /api/document-types/* 路由已注册 (document-types)');
 // 系统功能路由
 app.use('/api/system', systemRoutes);
 console.log('✅ /api/system/* 路由已注册 (system)');
+
+// 供应商绩效评价路由
+app.use('/api/evaluations', evaluationsRoutes);
+console.log('✅ /api/evaluations/* 路由已注册 (evaluations)');
+app.use('/api/evaluation-config', evaluationConfigRoutes);
+console.log('✅ /api/evaluation-config/* 路由已注册 (evaluation-config)');
 
 console.log('🎉 所有API路由注册完成');
 
