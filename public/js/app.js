@@ -81,7 +81,13 @@ function initializeApp() {
         }
     });
 
-    
+    window.App.Router.register('performance', () => {
+        console.log('月度绩效评价模块已激活');
+        // 初始化绩效评价模块
+        if (window.App.Modules && window.App.Modules.Performance) {
+            window.App.Modules.Performance.init();
+        }
+    });
 
     // 手动触发一次路由处理，确保直接访问带 hash 的 URL 时能正确渲染
     if (window.App.Router) {

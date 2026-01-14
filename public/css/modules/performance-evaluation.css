@@ -1,0 +1,463 @@
+/**
+ * 供应商绩效评价界面样式
+ * 基于方案A - 卡片式一览表 + 侧边栏评价
+ */
+
+/* 评价周期选择区 */
+.performance__period-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.performance__period-selector h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.period-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.period-actions .btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s ease;
+}
+
+.period-actions .btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* 评价界面 */
+.performance__evaluation-interface {
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 评价头部 */
+.evaluation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem 2rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.evaluation-header h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.evaluation-info {
+    display: flex;
+    gap: 2rem;
+}
+
+.evaluation-info .info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.evaluation-info .info-item i {
+    font-size: 1.1rem;
+    color: #667eea;
+}
+
+/* 评价内容区 */
+.evaluation-content {
+    display: flex;
+    gap: 1.5rem;
+    min-height: 600px;
+}
+
+/* 供应商卡片列表 */
+.vendor-cards {
+    flex: 1;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.vendor-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.vendor-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #667eea;
+}
+
+.vendor-card.evaluated {
+    border-color: #48bb78;
+    background: linear-gradient(135deg, #f0fff4 0%, #c6f6d5 100%);
+}
+
+.vendor-card.current {
+    border-color: #667eea;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.2);
+}
+
+.vendor-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.vendor-card-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+}
+
+.vendor-card-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.vendor-card-status.pending {
+    background: #fed7d7;
+    color: #c53030;
+}
+
+.vendor-card-status.completed {
+    background: #c6f6d5;
+    color: #2f855a;
+}
+
+.vendor-card-quality {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.vendor-card-quality .quality-item {
+    text-align: center;
+}
+
+.vendor-card-quality .quality-item label {
+    display: block;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-bottom: 0.25rem;
+}
+
+.vendor-card-quality .quality-item span {
+    display: block;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.vendor-card-quality .quality-item span.pass-rate {
+    color: #667eea;
+}
+
+/* 评价侧边栏 */
+.evaluation-sidebar {
+    width: 400px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.sidebar-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.sidebar-header .btn-icon {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.sidebar-header .btn-icon:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* 质量数据展示 */
+.quality-data-section {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.quality-data-section h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.quality-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+}
+
+.quality-stats .stat-item {
+    text-align: center;
+    padding: 1rem;
+    background: #f7fafc;
+    border-radius: 8px;
+}
+
+.quality-stats .stat-item label {
+    display: block;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.quality-stats .stat-item span {
+    display: block;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* 评价表单 */
+.evaluation-form {
+    padding: 1.5rem;
+}
+
+.evaluation-form h4 {
+    margin: 0 0 1rem 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.evaluation-form .form-group {
+    margin-bottom: 1.5rem;
+}
+
+.evaluation-form .form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.evaluation-form .form-group input[type="number"],
+.evaluation-form .form-group textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+}
+
+.evaluation-form .form-group input[type="number"]:focus,
+.evaluation-form .form-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.evaluation-form .form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.evaluation-form .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+/* 评价周期列表 */
+.performance__periods-list {
+    margin-top: 2rem;
+}
+
+.performance__periods-list h3 {
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+#periodsList {
+    display: grid;
+    gap: 1rem;
+}
+
+.period-item {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+.period-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.period-item-info h4 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.period-item-info p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: #718096;
+}
+
+.period-item-status {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.period-item-status .status-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.period-item-status .status-badge.draft {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.period-item-status .status-badge.in_progress {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+.period-item-status .status-badge.completed {
+    background: #c6f6d5;
+    color: #2f855a;
+}
+
+.period-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .evaluation-content {
+        flex-direction: column;
+    }
+
+    .evaluation-sidebar {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .performance__period-selector {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .period-actions {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .evaluation-header {
+        flex-direction: column;
+        gap: 1rem;
+        text-align: center;
+    }
+
+    .evaluation-info {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .vendor-cards {
+        grid-template-columns: 1fr;
+    }
+}

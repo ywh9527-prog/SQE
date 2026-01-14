@@ -50,6 +50,9 @@
     <link rel="stylesheet" href="css/modules/vendor-config-modals.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-font-hierarchy.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-filter.css?v=20250108-4">
+    <!-- 供应商绩效评价样式 -->
+    <link rel="stylesheet" href="css/modules/performance-evaluation.css?v=20250114">
+    <link rel="stylesheet" href="css/modules/vendor-config-filter.css?v=20250108-4">
     <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -516,7 +519,101 @@
                     </section>
                 </div>
                 <div id="module-performance" class="module-view hidden">
-                    <h3>绩效评价 (开发中)</h3>
+                    <!-- 评价周期选择区 -->
+                    <div class="performance__period-selector">
+                        <h3>评价周期</h3>
+                        <div class="period-actions">
+                            <button class="btn btn-primary" id="createEvaluationBtn">
+                                <span class="btn-icon"><i class="ph ph-plus"></i></span>
+                                创建评价周期
+                            </button>
+                            <button class="btn btn-secondary" id="configBtn">
+                                <span class="btn-icon"><i class="ph ph-gear"></i></span>
+                                配置
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 评价界面 -->
+                    <div id="evaluationInterface" class="performance__evaluation-interface hidden">
+                        <!-- 顶部信息 -->
+                        <div class="evaluation-header">
+                            <h2 id="evaluationTitle">2025年1月评价</h2>
+                            <div class="evaluation-info">
+                                <span class="info-item">
+                                    <i class="ph ph-calendar"></i>
+                                    <span id="evaluationPeriod">2025-01-01 至 2025-01-31</span>
+                                </span>
+                                <span class="info-item">
+                                    <i class="ph ph-users"></i>
+                                    <span id="evaluationVendorCount">0</span> 家供应商
+                                </span>
+                            </div>
+                            <button class="btn btn-secondary" id="exitEvaluationBtn">
+                                <i class="ph ph-x"></i> 退出
+                            </button>
+                        </div>
+
+                        <!-- 主内容区 -->
+                        <div class="evaluation-content">
+                            <!-- 供应商卡片列表 -->
+                            <div class="vendor-cards">
+                                <div id="vendorCardsList"></div>
+                            </div>
+
+                            <!-- 评价侧边栏 -->
+                            <div id="evaluationSidebar" class="evaluation-sidebar hidden">
+                                <div class="sidebar-header">
+                                    <h3 id="sidebarVendorName">供应商名称</h3>
+                                    <button class="btn-icon" id="closeSidebarBtn">
+                                        <i class="ph ph-x"></i>
+                                    </button>
+                                </div>
+
+                                <!-- 质量数据展示 -->
+                                <div class="quality-data-section">
+                                    <h4>质量数据</h4>
+                                    <div class="quality-stats">
+                                        <div class="stat-item">
+                                            <label>总批次</label>
+                                            <span id="qualityTotalBatches">-</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <label>合格批次</label>
+                                            <span id="qualityOkBatches">-</span>
+                                        </div>
+                                        <div class="stat-item">
+                                            <label>合格率</label>
+                                            <span id="qualityPassRate">-</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- 评价表单 -->
+                                <div class="evaluation-form">
+                                    <h4>评价分数</h4>
+                                    <form id="evaluationForm">
+                                        <div id="dimensionInputs"></div>
+                                        <div class="form-group">
+                                            <label>评价备注</label>
+                                            <textarea id="evaluationRemarks" rows="3"></textarea>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="ph ph-check"></i> 保存
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 评价周期列表 -->
+                    <div id="evaluationPeriodsList" class="performance__periods-list">
+                        <h3>历史评价周期</h3>
+                        <div id="periodsList"></div>
+                    </div>
                 </div>
                 <div id="module-vendor-config" class="module-view hidden">
                     <div class="module-header">
@@ -687,6 +784,7 @@
     <script src="js/modules/vendor-config-services.js"></script>
     <script src="js/modules/vendor-config-ui-utils.js"></script>
     <script src="js/modules/vendor-config.js"></script>
+    <script src="js/modules/performance.js?v=20250114"></script>
 
     <!-- 供应商资料管理初始化脚本 -->
     <script>
