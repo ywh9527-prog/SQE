@@ -5,9 +5,9 @@
     // 模块状态
     const state = {
         currentEvaluation: null,
-        currentVendor: null,
+        currentEntity: null,
         config: null,
-        vendors: []
+        entities: []
     };
 
     // DOM 元素缓存
@@ -31,11 +31,11 @@
             els.evaluationInterface = document.getElementById('evaluationInterface');
             els.evaluationTitle = document.getElementById('evaluationTitle');
             els.evaluationPeriod = document.getElementById('evaluationPeriod');
-            els.evaluationVendorCount = document.getElementById('evaluationVendorCount');
+            els.evaluationEntityCount = document.getElementById('evaluationEntityCount');
             els.exitEvaluationBtn = document.getElementById('exitEvaluationBtn');
-            els.vendorCardsList = document.getElementById('vendorCardsList');
+            els.entityCardsList = document.getElementById('entityCardsList');
             els.evaluationSidebar = document.getElementById('evaluationSidebar');
-            els.sidebarVendorName = document.getElementById('sidebarVendorName');
+            els.sidebarEntityName = document.getElementById('sidebarEntityName');
             els.closeSidebarBtn = document.getElementById('closeSidebarBtn');
             els.qualityTotalBatches = document.getElementById('qualityTotalBatches');
             els.qualityOkBatches = document.getElementById('qualityOkBatches');
@@ -182,7 +182,7 @@
 
                 if (result.success) {
                     state.currentEvaluation = result.data.evaluation;
-                    state.vendors = result.data.vendors;
+                    state.entities = result.data.evaluationEntities;
 
                     this.showEvaluationInterface();
                 } else {
@@ -198,55 +198,55 @@
         showEvaluationInterface() {
             els.evaluationTitle.textContent = state.currentEvaluation.period_name;
             els.evaluationPeriod.textContent = `${state.currentEvaluation.start_date} 至 ${state.currentEvaluation.end_date}`;
-            els.evaluationVendorCount.textContent = state.vendors.length;
+            els.evaluationEntityCount.textContent = state.entities.length;
 
-            this.renderVendorCards();
+            this.renderEntityCards();
 
             els.evaluationInterface.classList.remove('hidden');
             document.getElementById('evaluationPeriodsList').classList.add('hidden');
         },
 
-        // 渲染供应商卡片
-        renderVendorCards() {
-            els.vendorCardsList.innerHTML = '';
+        // 渲染评价实体卡片
+        renderEntityCards() {
+            els.entityCardsList.innerHTML = '';
 
-            state.vendors.forEach(vendor => {
+            state.entities.forEach(entity => {
                 const card = document.createElement('div');
-                card.className = 'vendor-card';
+                card.className = 'entity-card';
                 card.innerHTML = `
-                    <div class="vendor-card-header">
-                        <h4 class="vendor-card-title">${vendor.name}</h4>
-                        <span class="vendor-card-status pending">待评价</span>
+                    <div class="entity-card-header">
+                        <h4 class="entity-card-title">${entity.name}</h4>
+                        <span class="entity-card-status pending">待评价</span>
                     </div>
-                    <div class="vendor-card-quality">
+                    <div class="entity-card-quality">
                         <div class="quality-item">
                             <label>总批次</label>
-                            <span>${vendor.qualityData.totalBatches}</span>
+                            <span>${entity.qualityData.totalBatches}</span>
                         </div>
                         <div class="quality-item">
                             <label>合格批次</label>
-                            <span>${vendor.qualityData.okBatches}</span>
+                            <span>${entity.qualityData.okBatches}</span>
                         </div>
                         <div class="quality-item">
                             <label>合格率</label>
-                            <span class="pass-rate">${vendor.qualityData.passRate}%</span>
+                            <span class="pass-rate">${entity.qualityData.passRate}%</span>
                         </div>
                     </div>
                 `;
 
-                card.addEventListener('click', () => this.openSidebar(vendor));
-                els.vendorCardsList.appendChild(card);
+                card.addEventListener('click', () => this.openSidebar(entity));
+                els.entityCardsList.appendChild(card);
             });
         },
 
         // 打开侧边栏
-        openSidebar(vendor) {
-            state.currentVendor = vendor;
+        openSidebar(entity) {
+            state.currentEntity = entity;
 
-            els.sidebarVendorName.textContent = vendor.name;
-            els.qualityTotalBatches.textContent = vendor.qualityData.totalBatches;
-            els.qualityOkBatches.textContent = vendor.qualityData.okBatches;
-            els.qualityPassRate.textContent = vendor.qualityData.passRate + '%';
+            els.sidebarEntityName.textContent = entity.name;
+            els.qualityTotalBatches.textContent = entity.qualityData.totalBatches;
+            els.qualityOkBatches.textContent = entity.qualityData.okBatches;
+            els.qualityPassRate.textContent = entity.qualityData.passRate + '%';
 
             this.renderDimensionInputs();
 
@@ -275,7 +275,7 @@
         // 关闭侧边栏
         closeSidebar() {
             els.evaluationSidebar.classList.add('hidden');
-            state.currentVendor = null;
+            state.currentEntity = null;
             els.evaluationForm.reset();
         },
 
@@ -283,7 +283,7 @@
         async handleEvaluationSubmit(e) {
             e.preventDefault();
 
-            if (!state.currentEvaluation || !state.currentVendor) {
+            if (!state.currentEvaluation || !state.currentEntity) {
                 return;
             }
 
@@ -299,7 +299,7 @@
             const remarks = els.evaluationRemarks.value;
 
             try {
-                const response = await fetch(`/api/evaluations/${state.currentEvaluation.id}/vendors/${encodeURIComponent(state.currentVendor.name)}`, {
+                const response = await fetch(`/api/evaluations/${state.currentEvaluation.id}/entities/${encodeURIComponent(state.currentEntity.name)}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
@@ -328,8 +328,8 @@
                 els.evaluationInterface.classList.add('hidden');
                 document.getElementById('evaluationPeriodsList').classList.remove('hidden');
                 state.currentEvaluation = null;
-                state.currentVendor = null;
-                state.vendors = [];
+                state.currentEntity = null;
+                state.entities = [];
             }
         },
 

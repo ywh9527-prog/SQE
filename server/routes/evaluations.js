@@ -140,34 +140,34 @@ router.post('/:id/start', authenticateToken, async (req, res) => {
 });
 
 /**
- * 获取供应商列表
- * GET /api/evaluations/:id/vendors
+ * 获取评价实体列表
+ * GET /api/evaluations/:id/entities
  */
-router.get('/:id/vendors', authenticateToken, async (req, res) => {
+router.get('/:id/entities', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const vendors = await performanceEvaluationService.getEvaluationVendors(parseInt(id));
+        const entities = await performanceEvaluationService.getEvaluationEntities(parseInt(id));
 
         res.json({
             success: true,
-            data: vendors
+            data: entities
         });
     } catch (error) {
-        logger.error('获取供应商列表失败:', error);
+        logger.error('获取评价实体列表失败:', error);
         res.status(500).json({
             success: false,
-            message: error.message || '获取供应商列表失败'
+            message: error.message || '获取评价实体列表失败'
         });
     }
 });
 
 /**
- * 保存单个供应商评价
- * PUT /api/evaluations/:id/vendors/:vendorName
+ * 保存单个评价实体评价
+ * PUT /api/evaluations/:id/entities/:entityName
  */
-router.put('/:id/vendors/:vendorName', authenticateToken, async (req, res) => {
+router.put('/:id/entities/:entityName', authenticateToken, async (req, res) => {
     try {
-        const { id, vendorName } = req.params;
+        const { id, entityName } = req.params;
         const { scores, remarks } = req.body;
 
         if (!scores || typeof scores !== 'object') {
@@ -177,9 +177,9 @@ router.put('/:id/vendors/:vendorName', authenticateToken, async (req, res) => {
             });
         }
 
-        const detail = await performanceEvaluationService.saveVendorEvaluation(
+        const detail = await performanceEvaluationService.saveEntityEvaluation(
             parseInt(id),
-            vendorName,
+            entityName,
             { scores, remarks }
         );
 
@@ -242,12 +242,12 @@ router.get('/:id/results', authenticateToken, async (req, res) => {
 
 /**
  * 获取趋势数据
- * GET /api/evaluations/trend/:vendorName
+ * GET /api/evaluations/trend/:entityName
  */
-router.get('/trend/:vendorName', authenticateToken, async (req, res) => {
+router.get('/trend/:entityName', authenticateToken, async (req, res) => {
     try {
-        const { vendorName } = req.params;
-        const trendData = await performanceEvaluationService.getTrendData(vendorName);
+        const { entityName } = req.params;
+        const trendData = await performanceEvaluationService.getTrendData(entityName);
 
         res.json({
             success: true,

@@ -9,7 +9,7 @@ const { sequelize } = require('../database/config');
  * 字段说明:
  * - id: 主键ID
  * - evaluation_id: 评价周期ID（外键）
- * - vendor_name: 供应商名称
+ * - evaluation_entity_name: 评价实体名称
  * - scores: 各维度分数（JSON格式，支持自定义维度）
  * - total_score: 总分（0-100）
  * - grade: 等级（优秀/合格/整改后合格/不合格）
@@ -30,10 +30,10 @@ const PerformanceEvaluationDetail = sequelize.define('PerformanceEvaluationDetai
         allowNull: false,
         comment: '评价周期ID'
     },
-    vendor_name: {
+    evaluation_entity_name: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        comment: '供应商名称'
+        comment: '评价实体名称'
     },
     scores: {
         type: DataTypes.JSON,

@@ -165,7 +165,7 @@ class PerformanceEvaluationService {
 
                 await PerformanceEvaluationDetail.create({
                     evaluation_id: id,
-                    vendor_name: vendor.supplier_name,
+                    evaluation_entity_name: vendor.supplier_name,
                     scores: {},
                     total_score: null,
                     grade: null,
@@ -179,7 +179,7 @@ class PerformanceEvaluationService {
 
             return {
                 evaluation,
-                vendors: vendors.map(v => ({
+                evaluationEntities: vendors.map(v => ({
                     name: v.supplier_name,
                     qualityData: qualityDataMap[v.supplier_name] || {
                         totalBatches: 0,
@@ -201,15 +201,15 @@ class PerformanceEvaluationService {
      * @param {number} id - 评价周期ID
      * @returns {Promise<Array>} 供应商列表
      */
-    async getEvaluationVendors(id) {
+    async getEvaluationEntities(id) {
         try {
             const details = await PerformanceEvaluationDetail.findAll({
                 where: { evaluation_id: id },
-                order: [['vendor_name', 'ASC']]
+                order: [['evaluation_entity_name', 'ASC']]
             });
 
             return details.map(detail => ({
-                vendorName: detail.vendor_name,
+                entityName: detail.evaluation_entity_name,
                 scores: detail.scores,
                 totalScore: detail.total_score,
                 grade: detail.grade,
@@ -217,24 +217,24 @@ class PerformanceEvaluationService {
                 qualityData: detail.quality_data_snapshot
             }));
         } catch (error) {
-            logger.error('获取供应商列表失败:', error);
+            logger.error('获取评价实体列表失败:', error);
             throw error;
         }
     }
 
     /**
-     * 保存单个供应商的评价
+     * 保存单个评价实体的评价
      * @param {number} id - 评价周期ID
-     * @param {string} vendorName - 供应商名称
+     * @param {string} entityName - 评价实体名称
      * @param {Object} data - 评价数据
      * @returns {Promise<Object>} 保存的评价详情
      */
-    async saveVendorEvaluation(id, vendorName, data) {
+    async saveEntityEvaluation(id, entityName, data) {
         try {
             const detail = await PerformanceEvaluationDetail.findOne({
                 where: {
                     evaluation_id: id,
-                    vendor_name: vendorName
+                    evaluation_entity_name: entityName
                 }
             });
 
@@ -256,10 +256,10 @@ class PerformanceEvaluationService {
             detail.remarks = data.remarks || null;
             await detail.save();
 
-            logger.info(`保存供应商评价成功: ${vendorName}`);
+            logger.info(`保存评价实体评价成功: ${entityName}`);
             return detail;
         } catch (error) {
-            logger.error('保存供应商评价失败:', error);
+            logger.error('保存评价实体评价失败:', error);
             throw error;
         }
     }
@@ -281,7 +281,7 @@ class PerformanceEvaluationService {
                 throw new Error('评价周期未开始或已完成');
             }
 
-            // 检查是否所有供应商都已评价
+            // 检查是否所有评价实体都已评价
             const details = await PerformanceEvaluationDetail.findAll({
                 where: { evaluation_id: id }
             });
@@ -289,7 +289,7 @@ class PerformanceEvaluationService {
             const unevaluatedCount = details.filter(d => d.total_score === null).length;
 
             if (unevaluatedCount > 0) {
-                throw new Error(`还有 ${unevaluatedCount} 个供应商未完成评价`);
+                throw new Error(`还有 ${unevaluatedCount} 个评价实体未完成评价`);
             }
 
             // 更新状态为已完成
@@ -324,7 +324,7 @@ class PerformanceEvaluationService {
 
             // 计算统计数据
             const details = evaluation.details || [];
-            const totalVendors = details.length;
+            const totalEntities = details.length;
             const evaluatedCount = details.filter(d => d.total_score !== null).length;
             const averageScore = evaluatedCount > 0
                 ? details.reduce((sum, d) => sum + (d.total_score || 0), 0) / evaluatedCount
@@ -347,7 +347,7 @@ class PerformanceEvaluationService {
             return {
                 evaluation,
                 details: details.map(d => ({
-                    vendorName: d.vendor_name,
+                    entityName: d.evaluation_entity_name,
                     scores: d.scores,
                     totalScore: d.total_score,
                     grade: d.grade,
@@ -355,9 +355,9 @@ class PerformanceEvaluationService {
                     qualityData: d.quality_data_snapshot
                 })),
                 statistics: {
-                    totalVendors,
+                    totalEntities,
                     evaluatedCount,
-                    unevaluatedCount: totalVendors - evaluatedCount,
+                    unevaluatedCount: totalEntities - evaluatedCount,
                     averageScore: parseFloat(averageScore.toFixed(2)),
                     gradeCount
                 }
@@ -370,10 +370,10 @@ class PerformanceEvaluationService {
 
     /**
      * 获取趋势数据
-     * @param {string} vendorName - 供应商名称
+     * @param {string} entityName - 评价实体名称
      * @returns {Promise<Array>} 趋势数据
      */
-    async getTrendData(vendorName) {
+    async getTrendData(entityName) {
         try {
             const evaluations = await PerformanceEvaluation.findAll({
                 where: { status: 'completed' },
@@ -381,7 +381,7 @@ class PerformanceEvaluationService {
                 include: [{
                     model: PerformanceEvaluationDetail,
                     as: 'details',
-                    where: { vendor_name: vendorName },
+                    where: { evaluation_entity_name: entityName },
                     required: true
                 }]
             });

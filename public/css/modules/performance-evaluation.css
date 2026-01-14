@@ -124,7 +124,7 @@
     gap: var(--border-radius-lg);
 }
 
-.vendor-card {
+.entity-card {
     background: var(--gray-50);
     border-radius: var(--border-radius-lg);
     padding: calc(var(--border-radius-lg) * 1.5);
@@ -134,37 +134,37 @@
     border: 2px solid transparent;
 }
 
-.vendor-card:hover {
+.entity-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
     border-color: var(--primary-500);
 }
 
-.vendor-card.evaluated {
+.entity-card.evaluated {
     border-color: var(--success);
     background: linear-gradient(135deg, var(--success-light) 0%, var(--success-light) 100%);
 }
 
-.vendor-card.current {
+.entity-card.current {
     border-color: var(--primary-500);
     box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
 }
 
-.vendor-card-header {
+.entity-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--border-radius-lg);
 }
 
-.vendor-card-title {
+.entity-card-title {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
     margin: 0;
 }
 
-.vendor-card-status {
+.entity-card-status {
     display: inline-flex;
     align-items: center;
     gap: calc(var(--border-radius-sm) * 0.25);
@@ -174,17 +174,17 @@
     font-weight: 500;
 }
 
-.vendor-card-status.pending {
+.entity-card-status.pending {
     background: var(--danger-light);
     color: var(--danger);
 }
 
-.vendor-card-status.completed {
+.entity-card-status.completed {
     background: var(--success-light);
     color: var(--success);
 }
 
-.vendor-card-quality {
+.entity-card-quality {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: calc(var(--border-radius-sm) * 0.75);
@@ -193,25 +193,25 @@
     border-top: 1px solid var(--gray-200);
 }
 
-.vendor-card-quality .quality-item {
+.entity-card-quality .quality-item {
     text-align: center;
 }
 
-.vendor-card-quality .quality-item label {
+.entity-card-quality .quality-item label {
     display: block;
     font-size: 0.75rem;
     color: var(--gray-500);
     margin-bottom: calc(var(--border-radius-sm) * 0.25);
 }
 
-.vendor-card-quality .quality-item span {
+.entity-card-quality .quality-item span {
     display: block;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.vendor-card-quality .quality-item span.pass-rate {
+.entity-card-quality .quality-item span.pass-rate {
     color: var(--primary-600);
 }
 
@@ -488,7 +488,7 @@
         gap: calc(var(--border-radius-sm) * 0.5);
     }
 
-    .vendor-cards {
+    .entity-cards {
         grid-template-columns: 1fr;
     }
 }
