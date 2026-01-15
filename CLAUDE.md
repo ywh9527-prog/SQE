@@ -300,6 +300,48 @@ estart-dev.ps1"`
 
 **实际案例**：SQE供应商模块CSS优化 - 发现656个!important和1095个硬编码，通过建立变量体系和BEM规范解决。
 
+### **CSS文件与模块对应关系**
+
+#### **全局CSS（所有模块共享）**
+- `css/style_v2.css` - 全局基础样式
+- `css/utils/toast.css` - Toast提示框样式
+- `css/utils/progress.css` - 进度指示器样式
+
+#### **IQC质量分析模块**
+- `css/modules/iqc_v2.css` - IQC核心样式
+- `css/modules/iqc_v2_monthly_fix.css` - IQC月度统计修复样式
+- `css/modules/sheet-selection-debug.css` - 表格选择调试样式
+- `css/modules/iqc_cards_enhanced.css` - IQC卡片UI增强样式
+- `css/modules/year_switcher.css` - 年份选择器样式
+
+#### **供应商资料管理模块**
+- `css/modules/documents.css` - 供应商资料管理核心样式（建议重命名为supplier-documents.css）
+- `css/modules/supplier-layout.css` - 供应商资料管理布局样式
+- `css/modules/supplier-interactions.css` - 供应商资料管理交互样式
+- `css/modules/supplier-modals.css` - 供应商资料管理模态框样式
+- `css/modules/supplier-font-hierarchy.css` - 供应商资料管理字体样式
+- `css/modules/supplier-components.css` - 供应商资料管理通用组件样式
+- `css/modules/supplier-search-professional.css` - 供应商资料管理搜索筛选样式
+- `css/modules/supplier-chart.css` - 供应商资料管理图表样式
+
+#### **供应商配置中心模块**
+- `css/modules/vendor-config-components.css` - 供应商配置中心组件样式
+- `css/modules/vendor-config-layout.css` - 供应商配置中心布局样式
+- `css/modules/vendor-config-interactions.css` - 供应商配置中心交互样式
+- `css/modules/vendor-config-modals.css` - 供应商配置中心模态框样式
+- `css/modules/vendor-config-font-hierarchy.css` - 供应商配置中心字体样式
+- `css/modules/vendor-config-filter.css` - 供应商配置中心筛选样式
+
+#### **供应商绩效评价模块**
+- `css/modules/performance-evaluation.css` - 绩效评价界面样式
+- `css/modules/performance-dashboard.css` - 绩效评价主界面样式
+
+**命名规范提醒**：
+- 供应商相关模块使用`supplier-*.css`前缀
+- 配置中心模块使用`vendor-config-*.css`前缀
+- 绩效评价模块使用`performance-*.css`前缀
+- 避免使用通用名称（如`documents.css`），防止命名冲突
+
 ---
 
 ## 🏷️ **代码标记规范提醒**
