@@ -150,8 +150,8 @@
                     <div class="period-item-status">
                         <span class="status-badge ${evaluation.status}">${this.getStatusText(evaluation.status)}</span>
                         <div class="period-item-actions">
-                            ${evaluation.status === 'draft' ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">开始评价</button>` : ''}
-                            ${evaluation.status === 'completed' ? `<button class="btn btn-sm btn-secondary" onclick="window.App.Modules.Performance.viewResults(${evaluation.id})">查看结果</button>` : ''}
+                            ${evaluation.status === 'draft' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">开始评价</button>` : ''}
+                            ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-secondary" onclick="window.App.Modules.Performance.viewResults(${evaluation.id})">查看结果</button>` : ''}
                         </div>
                     </div>
                 `;
