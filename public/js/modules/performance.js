@@ -24,6 +24,24 @@
             console.log('Performance Module: Initialization complete');
         },
 
+        // 辅助函数：发送带认证的请求
+        async authenticatedFetch(url, options = {}) {
+            const token = localStorage.getItem('authToken');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            return fetch(url, {
+                ...options,
+                headers
+            });
+        },
+
         // 缓存 DOM 元素
         cacheElements() {
             els.createEvaluationBtn = document.getElementById('createEvaluationBtn');
@@ -58,7 +76,7 @@
         // 加载配置
         async loadConfig() {
             try {
-                const response = await fetch('/api/evaluation-config');
+                const response = await this.authenticatedFetch('/api/evaluation-config');
                 const result = await response.json();
 
                 if (result.success) {
@@ -72,7 +90,7 @@
         // 加载评价周期列表
         async loadEvaluationPeriods() {
             try {
-                const response = await fetch('/api/evaluations');
+                const response = await this.authenticatedFetch('/api/evaluations');
                 const result = await response.json();
 
                 if (result.success) {
@@ -149,11 +167,8 @@
         // 创建评价周期
         async createEvaluation(data) {
             try {
-                const response = await fetch('/api/evaluations', {
+                const response = await this.authenticatedFetch('/api/evaluations', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify(data)
                 });
 
@@ -174,7 +189,7 @@
         // 开始评价
         async startEvaluation(evaluationId) {
             try {
-                const response = await fetch(`/api/evaluations/${evaluationId}/start`, {
+                const response = await this.authenticatedFetch(`/api/evaluations/${evaluationId}/start`, {
                     method: 'POST'
                 });
 
@@ -299,11 +314,8 @@
             const remarks = els.evaluationRemarks.value;
 
             try {
-                const response = await fetch(`/api/evaluations/${state.currentEvaluation.id}/entities/${encodeURIComponent(state.currentEntity.name)}`, {
+                const response = await this.authenticatedFetch(`/api/evaluations/${state.currentEvaluation.id}/entities/${encodeURIComponent(state.currentEntity.name)}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
                     body: JSON.stringify({ scores, remarks })
                 });
 

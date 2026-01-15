@@ -26,6 +26,24 @@
             console.log('Performance Dashboard Module: Initialization complete');
         },
 
+        // 辅助函数：发送带认证的请求
+        async authenticatedFetch(url, options = {}) {
+            const token = localStorage.getItem('authToken');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            return fetch(url, {
+                ...options,
+                headers
+            });
+        },
+
         // 缓存 DOM 元素
         cacheElements() {
             els.resultsInterface = document.getElementById('resultsInterface');
@@ -36,7 +54,7 @@
             els.scoreTrend = document.getElementById('scoreTrend');
             els.gradeExcellent = document.getElementById('gradeExcellent');
             els.gradeGood = document.getElementById('gradeGood');
-            elS.gradeImprove = document.getElementById('gradeImprove');
+            els.gradeImprove = document.getElementById('gradeImprove');
             els.gradePoor = document.getElementById('gradePoor');
             els.gradeExcellentPercent = document.getElementById('gradeExcellentPercent');
             els.gradeGoodPercent = document.getElementById('gradeGoodPercent');
@@ -61,7 +79,7 @@
         // 加载评价结果
         async loadResults(evaluationId) {
             try {
-                const response = await fetch(`/api/evaluations/${evaluationId}/results`);
+                const response = await this.authenticatedFetch(`/api/evaluations/${evaluationId}/results`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -101,7 +119,7 @@
             // 等级分布
             els.gradeExcellent.textContent = statistics.gradeCount['优秀'] || 0;
             els.gradeGood.textContent = statistics.gradeCount['合格'] || 0;
-            elS.gradeImprove.textContent = statistics.gradeCount['整改后合格'] || 0;
+            els.gradeImprove.textContent = statistics.gradeCount['整改后合格'] || 0;
             els.gradePoor.textContent = statistics.gradeCount['不合格'] || 0;
 
             const total = details.length;
