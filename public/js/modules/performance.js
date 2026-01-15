@@ -70,11 +70,36 @@
 
         // 绑定事件
         bindEvents() {
-            els.createEvaluationBtn.addEventListener('click', () => this.showCreateEvaluationDialog());
-            els.configBtn.addEventListener('click', () => this.showConfigDialog());
-            els.exitEvaluationBtn.addEventListener('click', () => this.exitEvaluation());
-            els.closeSidebarBtn.addEventListener('click', () => this.closeSidebar());
-            els.evaluationForm.addEventListener('submit', (e) => this.handleEvaluationSubmit(e));
+            console.log('绑定事件...');
+            console.log('createEvaluationBtn:', els.createEvaluationBtn);
+            console.log('configBtn:', els.configBtn);
+
+            if (els.createEvaluationBtn) {
+                els.createEvaluationBtn.addEventListener('click', () => {
+                    console.log('点击创建评价周期按钮');
+                    this.showCreateEvaluationDialog();
+                });
+            } else {
+                console.error('createEvaluationBtn 元素未找到！');
+            }
+
+            if (els.configBtn) {
+                els.configBtn.addEventListener('click', () => this.showConfigDialog());
+            } else {
+                console.error('configBtn 元素未找到！');
+            }
+
+            if (els.exitEvaluationBtn) {
+                els.exitEvaluationBtn.addEventListener('click', () => this.exitEvaluation());
+            }
+
+            if (els.closeSidebarBtn) {
+                els.closeSidebarBtn.addEventListener('click', () => this.closeSidebar());
+            }
+
+            if (els.evaluationForm) {
+                els.evaluationForm.addEventListener('submit', (e) => this.handleEvaluationSubmit(e));
+            }
         },
 
         // 加载配置
@@ -146,8 +171,17 @@
 
         // 显示创建评价周期对话框
         showCreateEvaluationDialog() {
+            console.log('showCreateEvaluationDialog 被调用');
             const modal = document.getElementById('createEvaluationModal');
+            console.log('modal元素:', modal);
+
+            if (!modal) {
+                console.error('createEvaluationModal 元素未找到！');
+                return;
+            }
+
             modal.classList.remove('hidden');
+            console.log('移除hidden类');
 
             // 重置对话框状态
             this.resetCreateModal();
