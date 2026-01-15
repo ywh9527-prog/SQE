@@ -81,7 +81,7 @@
 
             try {
                 // 加载配置
-                const response = await this.authenticatedFetch('/api/evaluations/config');
+                const response = await this.authenticatedFetch('/api/evaluation-config');
                 const result = await response.json();
 
                 if (result.success) {
@@ -267,7 +267,7 @@
             if (!confirm('确定要重置为默认配置吗？这将清除所有自定义配置。')) return;
 
             try {
-                const response = await this.authenticatedFetch('/api/evaluations/config/reset', {
+                const response = await this.authenticatedFetch('/api/evaluation-config/reset', {
                     method: 'POST'
                 });
                 const result = await response.json();
@@ -309,7 +309,7 @@
                 }
 
                 // 保存配置
-                const response = await this.authenticatedFetch('/api/evaluations/config', {
+                const response = await this.authenticatedFetch('/api/evaluation-config', {
                     method: 'PUT',
                     body: JSON.stringify(state.config)
                 });
