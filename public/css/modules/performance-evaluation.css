@@ -497,21 +497,21 @@
    创建评价周期对话框
    ============================================ */
 
-.modal {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    bottom: 0 !important;
-    background: rgba(0, 0, 0, 0.5) !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    z-index: 1000 !important;
-    animation: modal-fade-in var(--transition-base) ease-out;
+.performance-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: performance-modal-fade-in var(--transition-base) ease-out;
 }
 
-@keyframes modal-fade-in {
+@keyframes performance-modal-fade-in {
     from {
         opacity: 0;
     }
@@ -520,7 +520,7 @@
     }
 }
 
-.modal-content {
+.performance-modal-content {
     background: var(--gray-50);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
@@ -528,10 +528,10 @@
     max-width: 600px;
     max-height: 90vh;
     overflow-y: auto;
-    animation: modal-slide-up var(--transition-base) ease-out;
+    animation: performance-modal-slide-up var(--transition-base) ease-out;
 }
 
-@keyframes modal-slide-up {
+@keyframes performance-modal-slide-up {
     from {
         opacity: 0;
         transform: translateY(20px);
@@ -542,7 +542,7 @@
     }
 }
 
-.modal-header {
+.performance-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -552,13 +552,13 @@
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
-.modal-header h3 {
+.performance-modal-header h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
 }
 
-.modal-header .btn-icon {
+.performance-modal-header .btn-icon {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: var(--gray-50);
@@ -572,11 +572,11 @@
     transition: all var(--transition-base);
 }
 
-.modal-header .btn-icon:hover {
+.performance-modal-header .btn-icon:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 
-.modal-body {
+.performance-modal-body {
     padding: calc(var(--border-radius-lg) * 1.5);
 }
 
