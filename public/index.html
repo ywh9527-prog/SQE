@@ -537,6 +537,125 @@
                         </div>
                     </div>
 
+                    <!-- 创建评价周期对话框 -->
+                    <div id="createEvaluationModal" class="modal hidden">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3>创建评价周期</h3>
+                                <button class="btn-icon" id="closeCreateModalBtn">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- 步骤1：选择周期类型 -->
+                                <div id="createStep1" class="create-step">
+                                    <h4>选择周期类型</h4>
+                                    <div class="period-type-grid">
+                                        <button class="period-type-card" data-type="monthly">
+                                            <i class="ph ph-calendar"></i>
+                                            <h5>月度评价</h5>
+                                            <p>按月进行评价</p>
+                                        </button>
+                                        <button class="period-type-card" data-type="quarterly">
+                                            <i class="ph ph-calendar-dots"></i>
+                                            <h5>季度评价</h5>
+                                            <p>按季度进行评价</p>
+                                        </button>
+                                        <button class="period-type-card" data-type="yearly">
+                                            <i class="ph ph-calendar-check"></i>
+                                            <h5>年度评价</h5>
+                                            <p>按年进行评价</p>
+                                        </button>
+                                        <button class="period-type-card" data-type="custom">
+                                            <i class="ph ph-calendar-plus"></i>
+                                            <h5>自定义</h5>
+                                            <p>自定义日期范围</p>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- 步骤2：选择日期 -->
+                                <div id="createStep2" class="create-step hidden">
+                                    <h4 id="step2Title">选择日期</h4>
+                                    <form id="createEvaluationForm">
+                                        <!-- 月度选择 -->
+                                        <div id="monthlySelector" class="date-selector hidden">
+                                            <div class="form-group">
+                                                <label>选择月份</label>
+                                                <select id="monthlyYear" class="form-control"></select>
+                                                <select id="monthlyMonth" class="form-control"></select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 季度选择 -->
+                                        <div id="quarterlySelector" class="date-selector hidden">
+                                            <div class="form-group">
+                                                <label>选择季度</label>
+                                                <select id="quarterlyYear" class="form-control"></select>
+                                                <select id="quarterlyQuarter" class="form-control">
+                                                    <option value="1">第一季度 (Q1)</option>
+                                                    <option value="2">第二季度 (Q2)</option>
+                                                    <option value="3">第三季度 (Q3)</option>
+                                                    <option value="4">第四季度 (Q4)</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 年度选择 -->
+                                        <div id="yearlySelector" class="date-selector hidden">
+                                            <div class="form-group">
+                                                <label>选择年份</label>
+                                                <select id="yearlyYear" class="form-control"></select>
+                                            </div>
+                                        </div>
+
+                                        <!-- 自定义日期 -->
+                                        <div id="customSelector" class="date-selector hidden">
+                                            <div class="form-group">
+                                                <label>周期名称</label>
+                                                <input type="text" id="customPeriodName" class="form-control" placeholder="输入周期名称">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>开始日期</label>
+                                                <input type="date" id="customStartDate" class="form-control">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>结束日期</label>
+                                                <input type="date" id="customEndDate" class="form-control">
+                                            </div>
+                                        </div>
+
+                                        <!-- 预览信息 -->
+                                        <div id="periodPreview" class="period-preview hidden">
+                                            <h5>评价周期信息</h5>
+                                            <div class="preview-item">
+                                                <span class="preview-label">周期名称：</span>
+                                                <span class="preview-value" id="previewName">-</span>
+                                            </div>
+                                            <div class="preview-item">
+                                                <span class="preview-label">开始日期：</span>
+                                                <span class="preview-value" id="previewStartDate">-</span>
+                                            </div>
+                                            <div class="preview-item">
+                                                <span class="preview-label">结束日期：</span>
+                                                <span class="preview-value" id="previewEndDate">-</span>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-actions">
+                                            <button type="button" class="btn btn-secondary" id="backToStep1">
+                                                <i class="ph ph-arrow-left"></i> 返回
+                                            </button>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="ph ph-check"></i> 创建
+                                            </button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 评价界面 -->
                     <div id="evaluationInterface" class="performance__evaluation-interface hidden">
                         <!-- 顶部信息 -->

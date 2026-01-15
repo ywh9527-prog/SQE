@@ -492,3 +492,241 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* ============================================
+   创建评价周期对话框
+   ============================================ */
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    animation: modal-fade-in var(--transition-base) ease-out;
+}
+
+@keyframes modal-fade-in {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-xl);
+    width: 90%;
+    max-width: 600px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: modal-slide-up var(--transition-base) ease-out;
+}
+
+@keyframes modal-slide-up {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: calc(var(--border-radius-lg) * 1.5);
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-900) 100%);
+    color: var(--gray-50);
+    border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+}
+
+.modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.modal-header .btn-icon {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: var(--gray-50);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.modal-header .btn-icon:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.modal-body {
+    padding: calc(var(--border-radius-lg) * 1.5);
+}
+
+.create-step {
+    animation: step-fade-in var(--transition-base) ease-out;
+}
+
+@keyframes step-fade-in {
+    from {
+        opacity: 0;
+        transform: translateX(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.create-step h4 {
+    margin: 0 0 calc(var(--border-radius-lg) * 1.5) 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+/* 周期类型选择网格 */
+.period-type-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--border-radius-lg);
+}
+
+.period-type-card {
+    padding: calc(var(--border-radius-lg) * 1.5);
+    background: var(--gray-100);
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-lg);
+    cursor: pointer;
+    transition: all var(--transition-base);
+    text-align: center;
+}
+
+.period-type-card:hover {
+    background: var(--gray-200);
+    border-color: var(--primary-500);
+    transform: translateY(-2px);
+}
+
+.period-type-card i {
+    font-size: 2rem;
+    color: var(--primary-600);
+    margin-bottom: var(--border-radius-sm);
+}
+
+.period-type-card h5 {
+    margin: var(--border-radius-sm) 0 calc(var(--border-radius-sm) * 0.5) 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.period-type-card p {
+    margin: 0;
+    font-size: 0.875rem;
+    color: var(--gray-500);
+}
+
+/* 日期选择器 */
+.date-selector {
+    margin-bottom: var(--border-radius-lg);
+}
+
+.date-selector .form-group {
+    margin-bottom: var(--border-radius-lg);
+}
+
+.date-selector .form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-800);
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+}
+
+.date-selector .form-control {
+    width: 100%;
+    padding: calc(var(--border-radius-sm) * 0.75);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.95rem;
+    transition: all var(--transition-base);
+}
+
+.date-selector .form-control:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
+}
+
+/* 预览信息 */
+.period-preview {
+    padding: var(--border-radius-lg);
+    background: var(--gray-100);
+    border-radius: var(--border-radius-sm);
+    margin-bottom: var(--border-radius-lg);
+}
+
+.period-preview h5 {
+    margin: 0 0 var(--border-radius-lg) 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.preview-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+    font-size: 0.875rem;
+}
+
+.preview-item:last-child {
+    margin-bottom: 0;
+}
+
+.preview-label {
+    color: var(--gray-500);
+}
+
+.preview-value {
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+/* 表单操作 */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: calc(var(--border-radius-sm) * 0.75);
+    margin-top: var(--border-radius-lg);
+}
+
+/* 响应式 */
+@media (max-width: 640px) {
+    .period-type-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+}

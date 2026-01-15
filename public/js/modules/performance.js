@@ -7,7 +7,9 @@
         currentEvaluation: null,
         currentEntity: null,
         config: null,
-        entities: []
+        entities: [],
+        selectedPeriodType: null,
+        createEvaluationData: null
     };
 
     // DOM 元素缓存
@@ -46,6 +48,8 @@
         cacheElements() {
             els.createEvaluationBtn = document.getElementById('createEvaluationBtn');
             els.configBtn = document.getElementById('configBtn');
+            els.createEvaluationModal = document.getElementById('createEvaluationModal');
+            els.closeCreateModalBtn = document.getElementById('closeCreateModalBtn');
             els.evaluationInterface = document.getElementById('evaluationInterface');
             els.evaluationTitle = document.getElementById('evaluationTitle');
             els.evaluationPeriod = document.getElementById('evaluationPeriod');
@@ -142,26 +146,244 @@
 
         // 显示创建评价周期对话框
         showCreateEvaluationDialog() {
-            // 这里应该显示一个对话框，让用户输入评价周期信息
-            // 为了简化，这里使用prompt
-            const periodName = prompt('请输入评价周期名称（如：2025年1月）：');
-            if (!periodName) return;
+            const modal = document.getElementById('createEvaluationModal');
+            modal.classList.remove('hidden');
 
-            const periodType = prompt('请输入周期类型（monthly/quarterly/yearly/custom）：', 'monthly');
-            if (!periodType) return;
+            // 重置对话框状态
+            this.resetCreateModal();
 
-            const startDate = prompt('请输入开始日期（YYYY-MM-DD）：');
-            if (!startDate) return;
+            // 初始化年份选择器
+            this.initializeYearSelectors();
 
-            const endDate = prompt('请输入结束日期（YYYY-MM-DD）：');
-            if (!endDate) return;
+            // 绑定事件
+            this.bindCreateModalEvents();
+        },
 
-            this.createEvaluation({
+        // 重置创建对话框
+        resetCreateModal() {
+            document.getElementById('createStep1').classList.remove('hidden');
+            document.getElementById('createStep2').classList.add('hidden');
+            document.getElementById('monthlySelector').classList.add('hidden');
+            document.getElementById('quarterlySelector').classList.add('hidden');
+            document.getElementById('yearlySelector').classList.add('hidden');
+            document.getElementById('customSelector').classList.add('hidden');
+            document.getElementById('periodPreview').classList.add('hidden');
+            document.getElementById('createEvaluationForm').reset();
+        },
+
+        // 初始化年份选择器
+        initializeYearSelectors() {
+            const currentYear = new Date().getFullYear();
+            const years = [];
+
+            // 生成前后5年的年份
+            for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+                years.push(i);
+            }
+
+            // 填充月度年份选择器
+            const monthlyYear = document.getElementById('monthlyYear');
+            monthlyYear.innerHTML = years.map(year => 
+                `<option value="${year}" ${year === currentYear ? 'selected' : ''}>${year}年</option>`
+            ).join('');
+
+            // 填充季度年份选择器
+            const quarterlyYear = document.getElementById('quarterlyYear');
+            quarterlyYear.innerHTML = years.map(year => 
+                `<option value="${year}" ${year === currentYear ? 'selected' : ''}>${year}年</option>`
+            ).join('');
+
+            // 填充年度年份选择器
+            const yearlyYear = document.getElementById('yearlyYear');
+            yearlyYear.innerHTML = years.map(year => 
+                `<option value="${year}" ${year === currentYear ? 'selected' : ''}>${year}年</option>`
+            ).join('');
+
+            // 填充月份选择器
+            const monthlyMonth = document.getElementById('monthlyMonth');
+            const currentMonth = new Date().getMonth() + 1;
+            monthlyMonth.innerHTML = Array.from({ length: 12 }, (_, i) => 
+                `<option value="${i + 1}" ${(i + 1) === currentMonth ? 'selected' : ''}>${i + 1}月</option>`
+            ).join('');
+        },
+
+        // 绑定创建对话框事件
+        bindCreateModalEvents() {
+            const self = this;
+
+            // 周期类型选择
+            document.querySelectorAll('.period-type-card').forEach(card => {
+                card.onclick = function() {
+                    const periodType = this.dataset.type;
+                    self.selectPeriodType(periodType);
+                };
+            });
+
+            // 返回按钮
+            document.getElementById('backToStep1').onclick = function() {
+                document.getElementById('createStep1').classList.remove('hidden');
+                document.getElementById('createStep2').classList.add('hidden');
+            };
+
+            // 关闭按钮
+            document.getElementById('closeCreateModalBtn').onclick = function() {
+                document.getElementById('createEvaluationModal').classList.add('hidden');
+            };
+
+            // 表单提交
+            document.getElementById('createEvaluationForm').onsubmit = function(e) {
+                e.preventDefault();
+                self.handleCreateEvaluationSubmit();
+            };
+
+            // 日期选择器变更事件
+            document.getElementById('monthlyYear').onchange = function() {
+                self.updatePeriodPreview('monthly');
+            };
+            document.getElementById('monthlyMonth').onchange = function() {
+                self.updatePeriodPreview('monthly');
+            };
+            document.getElementById('quarterlyYear').onchange = function() {
+                self.updatePeriodPreview('quarterly');
+            };
+            document.getElementById('quarterlyQuarter').onchange = function() {
+                self.updatePeriodPreview('quarterly');
+            };
+            document.getElementById('yearlyYear').onchange = function() {
+                self.updatePeriodPreview('yearly');
+            };
+            document.getElementById('customPeriodName').oninput = function() {
+                self.updatePeriodPreview('custom');
+            };
+            document.getElementById('customStartDate').onchange = function() {
+                self.updatePeriodPreview('custom');
+            };
+            document.getElementById('customEndDate').onchange = function() {
+                self.updatePeriodPreview('custom');
+            };
+        },
+
+        // 选择周期类型
+        selectPeriodType(periodType) {
+            state.selectedPeriodType = periodType;
+
+            // 隐藏步骤1，显示步骤2
+            document.getElementById('createStep1').classList.add('hidden');
+            document.getElementById('createStep2').classList.remove('hidden');
+
+            // 隐藏所有日期选择器
+            document.querySelectorAll('.date-selector').forEach(selector => {
+                selector.classList.add('hidden');
+            });
+
+            // 显示对应的日期选择器
+            switch (periodType) {
+                case 'monthly':
+                    document.getElementById('monthlySelector').classList.remove('hidden');
+                    document.getElementById('step2Title').textContent = '选择月份';
+                    break;
+                case 'quarterly':
+                    document.getElementById('quarterlySelector').classList.remove('hidden');
+                    document.getElementById('step2Title').textContent = '选择季度';
+                    break;
+                case 'yearly':
+                    document.getElementById('yearlySelector').classList.remove('hidden');
+                    document.getElementById('step2Title').textContent = '选择年份';
+                    break;
+                case 'custom':
+                    document.getElementById('customSelector').classList.remove('hidden');
+                    document.getElementById('step2Title').textContent = '自定义日期范围';
+                    break;
+            }
+
+            // 更新预览
+            this.updatePeriodPreview(periodType);
+        },
+
+        // 更新周期预览
+        updatePeriodPreview(periodType) {
+            const preview = document.getElementById('periodPreview');
+            const previewName = document.getElementById('previewName');
+            const previewStartDate = document.getElementById('previewStartDate');
+            const previewEndDate = document.getElementById('previewEndDate');
+
+            let periodName = '';
+            let startDate = '';
+            let endDate = '';
+
+            switch (periodType) {
+                case 'monthly':
+                    const year = parseInt(document.getElementById('monthlyYear').value);
+                    const month = parseInt(document.getElementById('monthlyMonth').value);
+                    periodName = `${year}年${month}月`;
+
+                    // 计算该月的开始和结束日期
+                    startDate = `${year}-${String(month).padStart(2, '0')}-01`;
+                    const lastDay = new Date(year, month, 0).getDate();
+                    endDate = `${year}-${String(month).padStart(2, '0')}-${lastDay}`;
+                    break;
+
+                case 'quarterly':
+                    const qYear = parseInt(document.getElementById('quarterlyYear').value);
+                    const quarter = parseInt(document.getElementById('quarterlyQuarter').value);
+                    periodName = `${qYear}年Q${quarter}`;
+
+                    // 计算该季度的开始和结束日期
+                    const qStartMonth = (quarter - 1) * 3 + 1;
+                    const qEndMonth = quarter * 3;
+                    startDate = `${qYear}-${String(qStartMonth).padStart(2, '0')}-01`;
+                    const qLastDay = new Date(qYear, qEndMonth, 0).getDate();
+                    endDate = `${qYear}-${String(qEndMonth).padStart(2, '0')}-${qLastDay}`;
+                    break;
+
+                case 'yearly':
+                    const yYear = parseInt(document.getElementById('yearlyYear').value);
+                    periodName = `${yYear}年`;
+                    startDate = `${yYear}-01-01`;
+                    endDate = `${yYear}-12-31`;
+                    break;
+
+                case 'custom':
+                    const customName = document.getElementById('customPeriodName').value;
+                    const customStart = document.getElementById('customStartDate').value;
+                    const customEnd = document.getElementById('customEndDate').value;
+
+                    if (customName && customStart && customEnd) {
+                        periodName = customName;
+                        startDate = customStart;
+                        endDate = customEnd;
+                    } else {
+                        preview.classList.add('hidden');
+                        return;
+                    }
+                    break;
+            }
+
+            previewName.textContent = periodName;
+            previewStartDate.textContent = startDate;
+            previewEndDate.textContent = endDate;
+            preview.classList.remove('hidden');
+
+            // 保存到状态
+            state.createEvaluationData = {
                 period_name: periodName,
                 period_type: periodType,
                 start_date: startDate,
                 end_date: endDate
-            });
+            };
+        },
+
+        // 处理创建评价周期提交
+        async handleCreateEvaluationSubmit() {
+            if (!state.createEvaluationData) {
+                alert('请先选择周期类型和日期');
+                return;
+            }
+
+            await this.createEvaluation(state.createEvaluationData);
+
+            // 关闭对话框
+            document.getElementById('createEvaluationModal').classList.add('hidden');
         },
 
         // 创建评价周期
