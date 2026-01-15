@@ -12,9 +12,19 @@ const authenticateToken = (req, res, next) => {
         return res.status(401).json({ success: false, message: '缺少认证令牌' });
     }
 
-    // 这里应该验证token的有效性
-    // 为了简化，暂时跳过验证
-    next();
+    const AuthService = require('../services/authService');
+    AuthService.verifyToken(token)
+        .then(result => {
+            if (!result.success) {
+                return res.status(401).json({ success: false, message: '认证失败' });
+            }
+            req.user = result.user;
+            next();
+        })
+        .catch(error => {
+            console.error('认证失败:', error);
+            res.status(500).json({ success: false, message: '认证服务错误' });
+        });
 };
 
 /**
