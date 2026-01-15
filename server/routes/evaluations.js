@@ -3,6 +3,19 @@ const router = express.Router();
 const performanceEvaluationService = require('../services/performance-evaluation-service');
 const logger = require('../utils/logger');
 
+// 辅助函数：验证和解析ID
+const parseAndValidateId = (id, res) => {
+    const parsedId = parseInt(id);
+    if (isNaN(parsedId)) {
+        res.status(400).json({
+            success: false,
+            message: '无效的评价周期ID'
+        });
+        return null;
+    }
+    return parsedId;
+};
+
 // 认证中间件
 const authenticateToken = (req, res, next) => {
     const authHeader = req.headers['authorization'];
@@ -90,7 +103,10 @@ router.get('/', authenticateToken, async (req, res) => {
 router.get('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const evaluation = await performanceEvaluationService.getEvaluationById(parseInt(id));
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
+        const evaluation = await performanceEvaluationService.getEvaluationById(parsedId);
 
         res.json({
             success: true,
@@ -112,7 +128,10 @@ router.get('/:id', authenticateToken, async (req, res) => {
 router.delete('/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        await performanceEvaluationService.deleteEvaluation(parseInt(id));
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
+        await performanceEvaluationService.deleteEvaluation(parsedId);
 
         res.json({
             success: true,
@@ -134,7 +153,10 @@ router.delete('/:id', authenticateToken, async (req, res) => {
 router.post('/:id/start', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const result = await performanceEvaluationService.startEvaluation(parseInt(id));
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
+        const result = await performanceEvaluationService.startEvaluation(parsedId);
 
         res.json({
             success: true,
@@ -156,7 +178,10 @@ router.post('/:id/start', authenticateToken, async (req, res) => {
 router.get('/:id/entities', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const entities = await performanceEvaluationService.getEvaluationEntities(parseInt(id));
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
+        const entities = await performanceEvaluationService.getEvaluationEntities(parsedId);
 
         res.json({
             success: true,
@@ -178,6 +203,9 @@ router.get('/:id/entities', authenticateToken, async (req, res) => {
 router.put('/:id/entities/:entityName', authenticateToken, async (req, res) => {
     try {
         const { id, entityName } = req.params;
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
         const { scores, remarks } = req.body;
 
         if (!scores || typeof scores !== 'object') {
@@ -213,7 +241,10 @@ router.put('/:id/entities/:entityName', authenticateToken, async (req, res) => {
 router.put('/:id/submit', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const evaluation = await performanceEvaluationService.submitEvaluation(parseInt(id));
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
+        const evaluation = await performanceEvaluationService.submitEvaluation(parsedId);
 
         res.json({
             success: true,
@@ -235,7 +266,10 @@ router.put('/:id/submit', authenticateToken, async (req, res) => {
 router.get('/:id/results', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const results = await performanceEvaluationService.getEvaluationResults(parseInt(id));
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+        
+        const results = await performanceEvaluationService.getEvaluationResults(parsedId);
 
         res.json({
             success: true,
