@@ -603,7 +603,11 @@
 
         // 显示配置对话框
         showConfigDialog() {
-            alert('配置功能开发中...');
+            if (window.App.Modules.PerformanceConfig) {
+                window.App.Modules.PerformanceConfig.openConfigModal();
+            } else {
+                alert('绩效评价配置管理模块未加载');
+            }
         },
 
         // 查看结果

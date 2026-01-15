@@ -1,0 +1,224 @@
+/**
+ * 供应商绩效评价配置管理界面样式
+ * 遵循CLAUDE.md CSS架构健康维护原则
+ */
+
+/* ============================================
+   配置管理对话框
+   ============================================ */
+
+.config-section {
+    margin-bottom: var(--border-radius-xl);
+    padding: var(--border-radius-lg);
+    background: var(--gray-100);
+    border-radius: var(--border-radius-md);
+}
+
+.config-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--border-radius-lg);
+}
+
+.config-section-header h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+/* ============================================
+   维度列表
+   ============================================ */
+
+.dimensions-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--border-radius-sm);
+    margin-bottom: var(--border-radius-lg);
+}
+
+.dimension-item {
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-sm);
+    padding: var(--border-radius-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-base);
+}
+
+.dimension-item:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.dimension-item .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.dimension-item .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+}
+
+.dimension-item .form-control {
+    padding: calc(var(--border-radius-sm) * 0.5);
+    font-size: 0.875rem;
+}
+
+.dimension-item .btn-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--danger-light);
+    color: var(--danger);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.dimension-item .btn-icon:hover {
+    background: var(--danger);
+    color: var(--gray-50);
+}
+
+.weight-summary {
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-sm);
+    padding: var(--border-radius-lg);
+    background: var(--primary-700);
+    color: var(--gray-50);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.weight-summary span:last-child {
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+/* ============================================
+   等级规则列表
+   ============================================ */
+
+.grade-rules-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--border-radius-sm);
+}
+
+.grade-rule-item {
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-sm);
+    padding: var(--border-radius-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-base);
+}
+
+.grade-rule-item:hover {
+    box-shadow: var(--shadow-sm);
+}
+
+.grade-rule-item .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.grade-rule-item .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+}
+
+.grade-rule-item .form-control {
+    padding: calc(var(--border-radius-sm) * 0.5);
+    font-size: 0.875rem;
+}
+
+.grade-rule-item .range-display {
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-sm);
+    padding: var(--border-radius-sm);
+    background: var(--gray-200);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.grade-rule-item .btn-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--danger-light);
+    color: var(--danger);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.grade-rule-item .btn-icon:hover {
+    background: var(--danger);
+    color: var(--gray-50);
+}
+
+/* ============================================
+   配置操作按钮
+   ============================================ */
+
+.config-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--border-radius-sm);
+    margin-top: var(--border-radius-xl);
+    padding-top: var(--border-radius-lg);
+    border-top: 1px solid var(--gray-200);
+}
+
+.config-actions .btn {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--border-radius-sm) * 0.5);
+}
+
+/* ============================================
+   响应式设计
+   ============================================ */
+
+@media (max-width: 768px) {
+    .dimension-item,
+    .grade-rule-item {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .dimension-item .btn-icon,
+    .grade-rule-item .btn-icon {
+        align-self: flex-end;
+    }
+
+    .config-actions {
+        flex-direction: column;
+    }
+
+    .config-actions .btn {
+        width: 100%;
+        justify-content: center;
+    }
+}

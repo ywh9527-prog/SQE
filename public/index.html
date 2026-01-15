@@ -51,6 +51,7 @@
     <!-- 供应商绩效评价样式 -->
     <link rel="stylesheet" href="css/modules/performance-evaluation.css?v=20250115-4">
     <link rel="stylesheet" href="css/modules/performance-dashboard.css?v=20250115">
+    <link rel="stylesheet" href="css/modules/performance-config.css?v=20250115">
     <link rel="stylesheet" href="css/modules/vendor-config-font-hierarchy.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-filter.css?v=20250108-4">
     <script src="js/chart.min.js"></script>
@@ -653,6 +654,59 @@
                         </div>
                     </div>
 
+                    <!-- 配置管理对话框 -->
+                    <div id="configModal" class="performance-modal hidden">
+                        <div class="performance-modal-content">
+                            <div class="performance-modal-header">
+                                <h3>评价配置管理</h3>
+                                <button class="btn-icon" id="closeConfigModalBtn">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            </div>
+                            <div class="performance-modal-body">
+                                <!-- 维度配置 -->
+                                <div class="config-section">
+                                    <div class="config-section-header">
+                                        <h4>评价维度</h4>
+                                        <button class="btn btn-sm btn-primary" id="addDimensionBtn">
+                                            <i class="ph ph-plus"></i> 添加维度
+                                        </button>
+                                    </div>
+                                    <div id="dimensionsList" class="dimensions-list">
+                                        <!-- 维度列表将在这里动态生成 -->
+                                    </div>
+                                    <div class="weight-summary">
+                                        <span>权重总和：</span>
+                                        <span id="totalWeight">1.00</span>
+                                    </div>
+                                </div>
+
+                                <!-- 等级规则配置 -->
+                                <div class="config-section">
+                                    <div class="config-section-header">
+                                        <h4>等级规则</h4>
+                                        <button class="btn btn-sm btn-primary" id="addGradeRuleBtn">
+                                            <i class="ph ph-plus"></i> 添加等级
+                                        </button>
+                                    </div>
+                                    <div id="gradeRulesList" class="grade-rules-list">
+                                        <!-- 等级规则列表将在这里动态生成 -->
+                                    </div>
+                                </div>
+
+                                <!-- 操作按钮 -->
+                                <div class="config-actions">
+                                    <button class="btn btn-secondary" id="resetConfigBtn">
+                                        <i class="ph ph-arrow-counter-clockwise"></i> 重置默认
+                                    </button>
+                                    <button class="btn btn-primary" id="saveConfigBtn">
+                                        <i class="ph ph-check"></i> 保存配置
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 评价界面 -->
                     <div id="evaluationInterface" class="performance__evaluation-interface hidden">
                         <!-- 顶部信息 -->
@@ -1027,7 +1081,8 @@
     <script src="js/modules/vendor-config-ui-utils.js"></script>
     <script src="js/modules/vendor-config.js"></script>
     <script src="js/modules/performance.js?v=20250115-2"></script>
-<script src="js/modules/performance-dashboard.js?v=20250114"></script>
+<script src="js/modules/performance-dashboard.js?v=20250115"></script>
+<script src="js/modules/performance-config.js?v=20250115"></script>
 
     <!-- 供应商资料管理初始化脚本 -->
     <script>
