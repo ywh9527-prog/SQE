@@ -117,10 +117,10 @@ app.use('/api/system', systemRoutes);
 console.log('✅ /api/system/* 路由已注册 (system)');
 
 // 供应商绩效评价路由
-app.use('/api/evaluations', evaluationsRoutes);
-console.log('✅ /api/evaluations/* 路由已注册 (evaluations)');
 app.use('/api/evaluation-config', evaluationConfigRoutes);
 console.log('✅ /api/evaluation-config/* 路由已注册 (evaluation-config)');
+app.use('/api/evaluations', evaluationsRoutes);
+console.log('✅ /api/evaluations/* 路由已注册 (evaluations)');
 
 console.log('🎉 所有API路由注册完成');
 
