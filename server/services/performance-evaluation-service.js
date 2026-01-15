@@ -117,85 +117,266 @@ class PerformanceEvaluationService {
     }
 
     /**
-     * 开始评价
-     * @param {number} id - 评价周期ID
-     * @returns {Promise<Object>} 评价周期和供应商列表
-     */
-    async startEvaluation(id) {
-        const transaction = await sequelize.transaction();
 
-        try {
-            const evaluation = await PerformanceEvaluation.findByPk(id);
+         * 开始评价
 
-            if (!evaluation) {
-                throw new Error('评价周期不存在');
-            }
+         * @param {number} id - 评价周期ID
 
-            if (evaluation.status !== 'draft') {
-                throw new Error('评价周期已开始或已完成');
-            }
+         * @returns {Promise<Object>} 评价周期和供应商列表
 
-            // 更新状态为进行中
-            evaluation.status = 'in_progress';
-            await evaluation.save({ transaction });
+         */
 
-            // 获取已启用绩效评价的供应商
-            const VendorConfig = require('../models/VendorConfig');
-            const vendors = await VendorConfig.findAll({
-                where: {
-                    enable_performance_mgmt: true,
-                    status: 'Active'
+        async startEvaluation(id) {
+
+            const transaction = await sequelize.transaction();
+
+    
+
+            try {
+
+                const evaluation = await PerformanceEvaluation.findByPk(id);
+
+    
+
+                if (!evaluation) {
+
+                    throw new Error('评价周期不存在');
+
                 }
-            });
 
-            // 提取质量数据
-            const qualityExtractionService = require('./quality-data-extraction-service');
-            const qualityDataMap = await qualityExtractionService.extractQualityData(
-                evaluation.start_date,
-                evaluation.end_date
-            );
+    
 
-            // 创建评价详情记录
-            for (const vendor of vendors) {
-                const qualityData = qualityDataMap[vendor.supplier_name] || {
-                    totalBatches: 0,
-                    okBatches: 0,
-                    ngBatches: 0,
-                    passRate: 0
-                };
+                // 如果状态为draft，开始评价
 
-                await PerformanceEvaluationDetail.create({
-                    evaluation_id: id,
-                    evaluation_entity_name: vendor.supplier_name,
-                    scores: {},
-                    total_score: null,
-                    grade: null,
-                    remarks: null,
-                    quality_data_snapshot: qualityData
-                }, { transaction });
+                if (evaluation.status === 'draft') {
+
+                    // 更新状态为进行中
+
+                    evaluation.status = 'in_progress';
+
+                    await evaluation.save({ transaction });
+
+    
+
+                    // 获取已启用绩效评价的供应商
+
+                    const VendorConfig = require('../models/VendorConfig');
+
+                    const vendors = await VendorConfig.findAll({
+
+                        where: {
+
+                            enable_performance_mgmt: true,
+
+                            status: 'Active'
+
+                        }
+
+                    });
+
+    
+
+                    // 提取质量数据
+
+                    const qualityExtractionService = require('./quality-data-extraction-service');
+
+                    const qualityDataMap = await qualityExtractionService.extractQualityData(
+
+                        evaluation.start_date,
+
+                        evaluation.end_date
+
+                    );
+
+    
+
+                    // 创建评价详情记录
+
+                    for (const vendor of vendors) {
+
+                        const qualityData = qualityDataMap[vendor.supplier_name] || {
+
+                            totalBatches: 0,
+
+                            okBatches: 0,
+
+                            ngBatches: 0,
+
+                            passRate: 0
+
+                        };
+
+    
+
+                        await PerformanceEvaluationDetail.create({
+
+                            evaluation_id: id,
+
+                            evaluation_entity_name: vendor.supplier_name,
+
+                            scores: {},
+
+                            total_score: null,
+
+                            grade: null,
+
+                            remarks: null,
+
+                            quality_data_snapshot: qualityData
+
+                        }, { transaction });
+
+                    }
+
+    
+
+                    await transaction.commit();
+
+                    logger.info(`开始评价成功: ${evaluation.period_name}`);
+
+    
+
+                    return {
+
+                        evaluation,
+
+                        evaluationEntities: vendors.map(v => ({
+
+                            name: v.supplier_name,
+
+                            qualityData: qualityDataMap[v.supplier_name] || {
+
+                                totalBatches: 0,
+
+                                okBatches: 0,
+
+                                ngBatches: 0,
+
+                                passRate: 0
+
+                            }
+
+                        }))
+
+                    };
+
+                } 
+
+                // 如果状态为in_progress，继续评价
+
+                else if (evaluation.status === 'in_progress') {
+
+                    // 获取已有的评价详情记录
+
+                    const details = await PerformanceEvaluationDetail.findAll({
+
+                        where: { evaluation_id: id },
+
+                        order: [['evaluation_entity_name', 'ASC']]
+
+                    });
+
+    
+
+                    // 获取已启用绩效评价的供应商
+
+                    const VendorConfig = require('../models/VendorConfig');
+
+                    const vendors = await VendorConfig.findAll({
+
+                        where: {
+
+                            enable_performance_mgmt: true,
+
+                            status: 'Active'
+
+                        }
+
+                    });
+
+    
+
+                    // 提取质量数据
+
+                    const qualityExtractionService = require('./quality-data-extraction-service');
+
+                    const qualityDataMap = await qualityExtractionService.extractQualityData(
+
+                        evaluation.start_date,
+
+                        evaluation.end_date
+
+                    );
+
+    
+
+                    await transaction.commit();
+
+                    logger.info(`继续评价成功: ${evaluation.period_name}`);
+
+    
+
+                    return {
+
+                        evaluation,
+
+                        evaluationEntities: vendors.map(v => {
+
+                            const detail = details.find(d => d.evaluation_entity_name === v.supplier_name);
+
+                            return {
+
+                                name: v.supplier_name,
+
+                                qualityData: qualityDataMap[v.supplier_name] || {
+
+                                    totalBatches: 0,
+
+                                    okBatches: 0,
+
+                                    ngBatches: 0,
+
+                                    passRate: 0
+
+                                },
+
+                                scores: detail ? detail.scores : {},
+
+                                totalScore: detail ? detail.total_score : null,
+
+                                grade: detail ? detail.grade : null,
+
+                                remarks: detail ? detail.remarks : null
+
+                            };
+
+                        })
+
+                    };
+
+                }
+
+                // 其他状态不允许
+
+                else {
+
+                    throw new Error('评价周期已完成，无法继续评价');
+
+                }
+
+            } catch (error) {
+
+                await transaction.rollback();
+
+                logger.error('开始评价失败:', error);
+
+    
+
+                throw error;
+
             }
 
-            await transaction.commit();
-            logger.info(`开始评价成功: ${evaluation.period_name}`);
-
-            return {
-                evaluation,
-                evaluationEntities: vendors.map(v => ({
-                    name: v.supplier_name,
-                    qualityData: qualityDataMap[v.supplier_name] || {
-                        totalBatches: 0,
-                        okBatches: 0,
-                        ngBatches: 0,
-                        passRate: 0
-                    }
-                }))
-            };
-        } catch (error) {
-            await transaction.rollback();
-            logger.error('开始评价失败:', error);
-            throw error;
         }
-    }
 
     /**
      * 获取评价周期的供应商列表
