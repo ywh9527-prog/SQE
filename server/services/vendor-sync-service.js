@@ -51,13 +51,15 @@ class VendorSyncService {
 
     /**
      * 去重供应商列表
+     * 注意：同一供应商可以有多条记录（不同data_type），所以去重时要考虑data_type
      * @param {Array} suppliers - 供应商列表
      * @returns {Array} 去重后的供应商列表
      */
     deduplicateSuppliers(suppliers) {
         const seen = new Map();
         return suppliers.filter(supplier => {
-            const key = supplier.supplier_name.toLowerCase();
+            // 使用 (supplier_name + data_type) 作为唯一键
+            const key = `${supplier.supplier_name.toLowerCase()}_${supplier.data_type}`;
             if (seen.has(key)) {
                 return false;
             }
@@ -86,7 +88,7 @@ class VendorSyncService {
             } else {
                 // 获取所有IQC文件的数据
                 iqcDataRecords = await IQCData.findAll({
-                    attributes: ['id', 'fileName', 'rawData']
+                    attributes: ['id', 'fileName', 'rawData', 'dataType']
                 });
             }
 
@@ -96,6 +98,10 @@ class VendorSyncService {
             iqcDataRecords.forEach(record => {
                 if (record && record.rawData) {
                     const suppliers = this.extractSuppliers(record.rawData);
+                    // 为每个供应商添加dataType信息
+                    suppliers.forEach(supplier => {
+                        supplier.data_type = record.dataType || 'purchase';
+                    });
                     allSuppliers.push(...suppliers);
                     fileNames.push(record.fileName);
                 }
@@ -124,8 +130,12 @@ class VendorSyncService {
 
         for (const supplierData of suppliers) {
             try {
+                // 查找现有供应商（同时匹配supplier_name和data_type）
                 const existing = await VendorConfig.findOne({
-                    where: { supplier_name: supplierData.supplier_name }
+                    where: { 
+                        supplier_name: supplierData.supplier_name,
+                        data_type: supplierData.data_type
+                    }
                 });
 
                 if (existing) {
@@ -143,6 +153,7 @@ class VendorSyncService {
                     // 创建新供应商
                     await VendorConfig.create({
                         supplier_name: supplierData.supplier_name,
+                        data_type: supplierData.data_type || 'purchase',
                         source: supplierData.source || 'IQC',
                         enable_document_mgmt: supplierData.enable_document_mgmt || false,
                         enable_performance_mgmt: supplierData.enable_performance_mgmt || false,
@@ -152,10 +163,10 @@ class VendorSyncService {
                 }
             } catch (error) {
                 if (error.name === 'SequelizeUniqueConstraintError') {
-                    logger.warn(`供应商 ${supplierData.supplier_name} 已存在，跳过`);
+                    logger.warn(`供应商 ${supplierData.supplier_name} (${supplierData.data_type}) 已存在，跳过`);
                     stats.skipped++;
                 } else {
-                    logger.error(`同步供应商 ${supplierData.supplier_name} 失败:`, error);
+                    logger.error(`同步供应商 ${supplierData.supplier_name} (${supplierData.data_type}) 失败:`, error);
                     stats.skipped++;
                 }
             }

@@ -69,11 +69,11 @@ const authenticateToken = (req, res, next) => {
 /**
  * 1. 获取配置列表
  * GET /api/vendors/config
- * Query: ?source=IQC&status=Active&keyword=xxx
+ * Query: ?source=IQC&status=Active&keyword=xxx&data_type=purchase
  */
 router.get('/config', authenticateToken, async (req, res) => {
     try {
-        const { source, status, keyword } = req.query;
+        const { source, status, keyword, data_type } = req.query;
 
         const where = {};
         
@@ -83,6 +83,10 @@ router.get('/config', authenticateToken, async (req, res) => {
         
         if (status) {
             where.status = status;
+        }
+        
+        if (data_type) {
+            where.data_type = data_type;
         }
         
         if (keyword) {
@@ -244,6 +248,12 @@ router.put('/config/batch', authenticateToken, async (req, res) => {
             message: `批量更新成功，影响 ${result[0]} 条记录`
         });
     } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({
+                success: false,
+                error: '供应商名称和数据类型组合已存在'
+            });
+        }
         logger.error('批量更新配置失败:', error);
         res.status(500).json({
             success: false,
@@ -324,7 +334,7 @@ router.get('/config/:id', authenticateToken, async (req, res) => {
 router.put('/config/:id', authenticateToken, async (req, res) => {
     try {
         const { id } = req.params;
-        const { enable_document_mgmt, enable_performance_mgmt, status } = req.body;
+        const { data_type, enable_document_mgmt, enable_performance_mgmt, status } = req.body;
 
         const config = await VendorConfig.findByPk(id);
 
@@ -332,6 +342,14 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
             return res.status(404).json({
                 success: false,
                 error: '配置不存在'
+            });
+        }
+
+        // 验证data_type值
+        if (data_type && data_type !== 'purchase' && data_type !== 'external') {
+            return res.status(400).json({
+                success: false,
+                error: '数据类型必须是 purchase（外购）或 external（外协）'
             });
         }
 
@@ -344,6 +362,7 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
             // 临时更新数据以进行判断
             const tempConfig = {
                 ...config.dataValues,
+                data_type: data_type !== undefined ? data_type : config.data_type,
                 enable_document_mgmt: enable_document_mgmt !== undefined ? enable_document_mgmt : config.enable_document_mgmt,
                 enable_performance_mgmt: enable_performance_mgmt !== undefined ? enable_performance_mgmt : config.enable_performance_mgmt
             };
@@ -357,6 +376,7 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
         }
 
         await config.update({
+            data_type: data_type !== undefined ? data_type : config.data_type,
             enable_document_mgmt: enable_document_mgmt !== undefined ? enable_document_mgmt : config.enable_document_mgmt,
             enable_performance_mgmt: enable_performance_mgmt !== undefined ? enable_performance_mgmt : config.enable_performance_mgmt,
             status: finalStatus,
@@ -381,6 +401,12 @@ router.put('/config/:id', authenticateToken, async (req, res) => {
             data: config
         });
     } catch (error) {
+        if (error.name === 'SequelizeUniqueConstraintError') {
+            return res.status(400).json({
+                success: false,
+                error: '供应商名称和数据类型组合已存在'
+            });
+        }
         logger.error('更新配置失败:', error);
         res.status(500).json({
             success: false,
@@ -424,7 +450,7 @@ router.post('/sync-from-iqc', authenticateToken, async (req, res) => {
  */
 router.post('/config', authenticateToken, async (req, res) => {
     try {
-        const { supplier_name, source, enable_document_mgmt, enable_performance_mgmt, status } = req.body;
+        const { supplier_name, data_type, source, enable_document_mgmt, enable_performance_mgmt, status } = req.body;
 
         if (!supplier_name) {
             return res.status(400).json({
@@ -433,8 +459,17 @@ router.post('/config', authenticateToken, async (req, res) => {
             });
         }
 
+        // 验证data_type值
+        if (data_type && data_type !== 'purchase' && data_type !== 'external') {
+            return res.status(400).json({
+                success: false,
+                error: '数据类型必须是 purchase（外购）或 external（外协）'
+            });
+        }
+
         const config = await VendorConfig.create({
             supplier_name,
+            data_type: data_type || 'purchase',
             source: source || 'MANUAL',
             enable_document_mgmt: enable_document_mgmt || false,
             enable_performance_mgmt: enable_performance_mgmt || false,
@@ -450,7 +485,7 @@ router.post('/config', authenticateToken, async (req, res) => {
         if (error.name === 'SequelizeUniqueConstraintError') {
             return res.status(400).json({
                 success: false,
-                error: '供应商名称已存在'
+                error: '供应商名称和数据类型组合已存在'
             });
         }
         logger.error('添加供应商失败:', error);

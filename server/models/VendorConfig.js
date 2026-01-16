@@ -8,7 +8,8 @@ const { sequelize } = require('../database/config');
  * 
  * 字段说明:
  * - id: 主键
- * - supplier_name: 供应商名称（唯一）
+ * - supplier_name: 供应商名称（与data_type组合唯一）
+ * - data_type: 数据类型（purchase-外购/external-外协）
  * - source: 数据来源（IQC/MANUAL/IMPORT）
  * - enable_document_mgmt: 是否启用资料管理
  * - enable_performance_mgmt: 是否启用绩效评价
@@ -26,8 +27,13 @@ const VendorConfig = sequelize.define('VendorConfig', {
     supplier_name: {
         type: DataTypes.STRING(255),
         allowNull: false,
-        unique: true,
-        comment: '供应商名称（唯一）'
+        comment: '供应商名称（与data_type组合唯一）'
+    },
+    data_type: {
+        type: DataTypes.TEXT,
+        allowNull: false,
+        defaultValue: 'purchase',
+        comment: '数据类型：purchase-外购/external-外协'
     },
     source: {
         type: DataTypes.STRING(50),
@@ -72,8 +78,17 @@ const VendorConfig = sequelize.define('VendorConfig', {
     underscored: true,
     indexes: [
         {
+            name: 'idx_vendor_config_supplier_name_type',
+            unique: true,
+            fields: ['supplier_name', 'data_type']
+        },
+        {
             name: 'idx_vendor_config_supplier_name',
             fields: ['supplier_name']
+        },
+        {
+            name: 'idx_vendor_config_data_type',
+            fields: ['data_type']
         },
         {
             name: 'idx_vendor_config_source',

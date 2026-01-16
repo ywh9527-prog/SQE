@@ -47,20 +47,44 @@ class VendorConfigManager {
 
         if (result.success) {
             this.vendors = result.data || [];
+            
+            // 检测哪些供应商有多个记录（不同data_type）
+            const supplierCounts = {};
+            this.vendors.forEach(vendor => {
+                const key = vendor.supplier_name;
+                supplierCounts[key] = (supplierCounts[key] || 0) + 1;
+            });
+            
+            // 为每个供应商添加hasMultipleTypes标记
+            this.vendors.forEach(vendor => {
+                vendor.hasMultipleTypes = supplierCounts[vendor.supplier_name] > 1;
+            });
+            
             // 中文拼音排序：先按来源排序（手动添加在前，IQC导入在后），然后按供应商名称拼音A-Z排序
             this.vendors.sort((a, b) => {
-                // 第一级排序：按来源
+                // 第一级排序：按供应商名称拼音排序
+                const nameCompare = a.supplier_name.localeCompare(b.supplier_name, 'zh-CN');
+                if (nameCompare !== 0) {
+                    return nameCompare;
+                }
+                
+                // 第二级排序：按数据类型（外购在前，外协在后）
+                const dataTypeOrder = { 'purchase': 0, 'external': 1 };
+                const typeA = dataTypeOrder[a.data_type] ?? 2;
+                const typeB = dataTypeOrder[b.data_type] ?? 2;
+                
+                if (typeA !== typeB) {
+                    return typeA - typeB;
+                }
+                
+                // 第三级排序：按来源
                 const sourceOrder = { 'MANUAL': 0, 'IQC': 1 };
                 const sourceA = sourceOrder[a.source] ?? 2;
                 const sourceB = sourceOrder[b.source] ?? 2;
                 
-                if (sourceA !== sourceB) {
-                    return sourceA - sourceB;
-                }
-                
-                // 第二级排序：按供应商名称拼音排序
-                return a.supplier_name.localeCompare(b.supplier_name, 'zh-CN');
+                return sourceA - sourceB;
             });
+            
             this.render();
         } else {
             window.vendorConfigUIUtils.showErrorState(result.error);
@@ -568,6 +592,13 @@ class VendorConfigManager {
                     <input type="text" id="supplierName" name="supplierName" required>
                 </div>
                 <div class="vendor-config__form-group">
+                    <label for="dataType">数据类型 *</label>
+                    <select id="dataType" name="dataType" required>
+                        <option value="purchase">外购</option>
+                        <option value="external">外协</option>
+                    </select>
+                </div>
+                <div class="vendor-config__form-group">
                     <label for="source">来源</label>
                     <select id="source" name="source">
                         <option value="MANUAL">手动添加</option>
@@ -596,6 +627,7 @@ class VendorConfigManager {
     async addVendor() {
         const form = document.getElementById('addVendorForm');
         const supplierName = form.supplierName.value.trim();
+        const dataType = form.dataType.value;
         const source = form.source.value;
 
         const validation = window.vendorConfigUIUtils.validateSupplierName(supplierName);
@@ -606,6 +638,7 @@ class VendorConfigManager {
 
         const result = await window.vendorConfigServices.addVendor({
             supplier_name: supplierName,
+            data_type: dataType,
             source: source,
             enable_document_mgmt: 0,
             enable_performance_mgmt: 0,
@@ -911,9 +944,17 @@ class VendorConfigManager {
             return;
         }
 
-        const html = this.vendors.map(vendor => `
+        const html = this.vendors.map(vendor => {
+            // 智能显示供应商名称
+            let displayName = vendor.supplier_name;
+            if (vendor.hasMultipleTypes) {
+                const typeLabel = vendor.data_type === 'purchase' ? '外购' : '外协';
+                displayName = `${vendor.supplier_name}（${typeLabel}）`;
+            }
+            
+            return `
             <tr class="vendor-config__row" data-vendor-id="${vendor.id}">
-                <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${vendor.supplier_name}</td>
+                <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${displayName}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
                 <td class="vendor-config__cell vendor-config__cell--document">
                     <input type="checkbox"
@@ -937,7 +978,8 @@ class VendorConfigManager {
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--actions">${window.vendorConfigUIUtils.renderActionButtons(vendor.id, vendor.status)}</td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
 
         container.innerHTML = html;
 
