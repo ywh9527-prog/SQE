@@ -15,6 +15,7 @@
 
 const express = require('express');
 const router = express.Router();
+const { sequelize } = require('../database/config');
 const VendorConfig = require('../models/VendorConfig');
 const VendorSyncService = require('../services/vendor-sync-service');
 const vendorToSupplierSyncService = require('../services/vendor-to-supplier-sync-service');
@@ -116,16 +117,30 @@ router.get('/config', authenticateToken, async (req, res) => {
 /**
  * 2. 获取统计数据
  * GET /api/vendors/config/statistics
+ * Query: ?data_type=purchase
  * 注意：必须放在 /config/:id 之前，否则会被 :id 参数匹配
  */
 router.get('/config/statistics', authenticateToken, async (req, res) => {
     try {
-        // 获取总供应商数
-        const totalCount = await VendorConfig.count();
+        const { data_type } = req.query;
+        logger.info(`📊 统计数据API调用，data_type参数: ${data_type}`);
+
+        // 构建查询条件
+        const where = {};
+        if (data_type && data_type !== '') {
+            where.data_type = data_type;
+        }
+
+        logger.info(`📊 查询条件:`, where);
+
+        // 获取按类型筛选的供应商数
+        const totalCount = await VendorConfig.count({ where });
+        logger.info(`📊 按类型筛选的供应商数: ${totalCount}`);
 
         // 获取启用资料管理的供应商数
         const documentCount = await VendorConfig.count({
             where: {
+                ...where,
                 enable_document_mgmt: true,
                 status: 'Active'
             }
@@ -134,6 +149,7 @@ router.get('/config/statistics', authenticateToken, async (req, res) => {
         // 获取启用绩效管理的供应商数
         const performanceCount = await VendorConfig.count({
             where: {
+                ...where,
                 enable_performance_mgmt: true,
                 status: 'Active'
             }
@@ -177,6 +193,43 @@ router.get('/config/statistics', authenticateToken, async (req, res) => {
         res.status(500).json({
             success: false,
             error: '获取统计数据失败'
+        });
+    }
+});
+
+/**
+ * 2.1 获取类型统计数据
+ * GET /api/vendors/config/type-statistics
+ * 返回外购和外协的供应商数量
+ */
+router.get('/config/type-statistics', authenticateToken, async (req, res) => {
+    try {
+        // 获取外购供应商数
+        const purchaseCount = await VendorConfig.count({
+            where: {
+                data_type: 'purchase'
+            }
+        });
+
+        // 获取外协供应商数
+        const externalCount = await VendorConfig.count({
+            where: {
+                data_type: 'external'
+            }
+        });
+
+        res.json({
+            success: true,
+            data: {
+                purchase: purchaseCount,
+                external: externalCount
+            }
+        });
+    } catch (error) {
+        logger.error('获取类型统计数据失败:', error);
+        res.status(500).json({
+            success: false,
+            error: '获取类型统计数据失败'
         });
     }
 });
