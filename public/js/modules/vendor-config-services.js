@@ -18,6 +18,7 @@ class VendorConfigServices {
             if (filters.source) params.append('source', filters.source);
             if (filters.status) params.append('status', filters.status);
             if (filters.keyword) params.append('keyword', filters.keyword);
+            if (filters.data_type) params.append('data_type', filters.data_type);
 
             const response = await fetch(`${this.baseURL}/config?${params.toString()}`, {
                 headers: {
@@ -207,11 +208,44 @@ class VendorConfigServices {
 
     /**
      * 获取统计数据
+     * @param {string} data_type - 数据类型（可选）
      * @returns {Promise<Object>} 统计数据
      */
-    async getStatistics() {
+    async getStatistics(data_type = '') {
         try {
-            const response = await fetch(`${this.baseURL}/config/statistics`, {
+            const params = new URLSearchParams();
+            if (data_type) params.append('data_type', data_type);
+
+            console.log('📊 [API] 获取统计数据，data_type:', data_type);
+            console.log('📊 [API] 请求URL:', `${this.baseURL}/config/statistics?${params.toString()}`);
+
+            const response = await fetch(`${this.baseURL}/config/statistics?${params.toString()}`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('authToken')}`
+                }
+            });
+
+            const data = await response.json();
+            console.log('📊 [API] 响应数据:', data);
+
+            if (data.success) {
+                return { success: true, data: data.data };
+            } else {
+                return { success: false, error: data.error };
+            }
+        } catch (error) {
+            console.error('获取统计数据失败:', error);
+            return { success: false, error: '获取统计数据失败' };
+        }
+    }
+
+    /**
+     * 获取类型统计数据
+     * @returns {Promise<Object>} 类型统计数据
+     */
+    async getTypeStatistics() {
+        try {
+            const response = await fetch(`${this.baseURL}/config/type-statistics`, {
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('authToken')}`
                 }
@@ -224,8 +258,8 @@ class VendorConfigServices {
                 return { success: false, error: data.error };
             }
         } catch (error) {
-            console.error('获取统计数据失败:', error);
-            return { success: false, error: '获取统计数据失败' };
+            console.error('获取类型统计数据失败:', error);
+            return { success: false, error: '获取类型统计数据失败' };
         }
     }
 }

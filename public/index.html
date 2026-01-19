@@ -709,6 +709,29 @@
 
                     <!-- 评价界面 -->
                     <div id="evaluationInterface" class="performance__evaluation-interface hidden">
+                        <!-- 外购/外协切换卡片 -->
+                        <div class="performance__data-source-wrapper">
+                            <div class="performance__data-source-header">
+                                <h4 class="performance__data-source-title"><i class="ph ph-database"></i> 数据源选择</h4>
+                            </div>
+                            <div class="performance__data-source-container">
+                                <div class="performance__type-card performance__type-card--active" data-type="purchase">
+                                    <div class="performance__type-icon"><i class="ph ph-shopping-cart"></i></div>
+                                    <div class="performance__type-content">
+                                        <div class="performance__type-title">外购</div>
+                                        <div class="performance__type-count" id="performancePurchaseCount">0</div>
+                                    </div>
+                                </div>
+                                <div class="performance__type-card" data-type="external">
+                                    <div class="performance__type-icon"><i class="ph ph-factory"></i></div>
+                                    <div class="performance__type-content">
+                                        <div class="performance__type-title">外协</div>
+                                        <div class="performance__type-count" id="performanceExternalCount">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- 顶部信息 -->
                         <div class="evaluation-header">
                             <h2 id="evaluationTitle">2025年1月评价</h2>
@@ -730,9 +753,7 @@
                         <!-- 主内容区 -->
                         <div class="evaluation-content">
                             <!-- 评价实体卡片列表 -->
-                            <div class="entity-cards">
-                                <div id="entityCardsList"></div>
-                            </div>
+                            <div id="entityCardsList" class="entity-cards"></div>
 
                             <!-- 评价侧边栏 -->
                             <div id="evaluationSidebar" class="evaluation-sidebar hidden">
@@ -927,6 +948,33 @@
                                 <span class="btn-icon"><i class="ph ph-arrows-clockwise"></i></span>
                                 刷新
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- 外购/外协切换卡片 -->
+                    <div class="vendor-config__data-source-wrapper">
+                        <div class="vendor-config__data-source-header">
+                            <h4 class="vendor-config__data-source-title"><i class="ph ph-database"></i> 数据源选择</h4>
+                        </div>
+                        <div class="vendor-config__data-source-container">
+                            <div class="vendor-config__type-card vendor-config__type-card--active" data-type="purchase">
+                                <div class="vendor-config__type-icon"><i class="ph ph-shopping-cart"></i></div>
+                                <div class="vendor-config__type-content">
+                                    <div class="vendor-config__type-title">外购</div>
+                                    <div class="vendor-config__type-count" id="purchaseCount">0</div>
+                                    <div class="vendor-config__type-description">外购物料供应商</div>
+                                    <div class="vendor-config__type-status">当前选中</div>
+                                </div>
+                            </div>
+                            <div class="vendor-config__type-card" data-type="external">
+                                <div class="vendor-config__type-icon"><i class="ph ph-factory"></i></div>
+                                <div class="vendor-config__type-content">
+                                    <div class="vendor-config__type-title">外协</div>
+                                    <div class="vendor-config__type-count" id="externalCount">0</div>
+                                    <div class="vendor-config__type-description">外协加工供应商</div>
+                                    <div class="vendor-config__type-status">未选中</div>
+                                </div>
+                            </div>
                         </div>
                     </div>
 

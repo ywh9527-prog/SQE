@@ -192,73 +192,149 @@ class PerformanceEvaluationService {
 
                     // 创建评价详情记录
 
-                    for (const vendor of vendors) {
+    
 
-                        const qualityData = qualityDataMap[vendor.supplier_name] || {
-
-                            totalBatches: 0,
-
-                            okBatches: 0,
-
-                            ngBatches: 0,
-
-                            passRate: 0
-
-                        };
+                                        for (const vendor of vendors) {
 
     
 
-                        await PerformanceEvaluationDetail.create({
+                                            const qualityData = qualityDataMap[vendor.supplier_name] || {
 
-                            evaluation_id: id,
+    
 
-                            evaluation_entity_name: vendor.supplier_name,
+                                                totalBatches: 0,
 
-                            scores: {},
+    
 
-                            total_score: null,
+                                                okBatches: 0,
 
-                            grade: null,
+    
 
-                            remarks: null,
+                                                ngBatches: 0,
 
-                            quality_data_snapshot: qualityData
+    
 
-                        }, { transaction });
+                                                passRate: 0
 
-                    }
+    
+
+                                            };
+
+    
+
+                    
+
+    
+
+                                            await PerformanceEvaluationDetail.create({
+
+    
+
+                                                evaluation_id: id,
+
+    
+
+                                                evaluation_entity_name: vendor.supplier_name,
+
+    
+
+                                                data_type: vendor.data_type || 'purchase',
+
+    
+
+                                                scores: {},
+
+    
+
+                                                total_score: null,
+
+    
+
+                                                grade: null,
+
+    
+
+                                                remarks: null,
+
+    
+
+                                                quality_data_snapshot: qualityData
+
+    
+
+                                            }, { transaction });
+
+    
+
+                                        }
 
     
 
                     await transaction.commit();
 
-                    logger.info(`开始评价成功: ${evaluation.period_name}`);
+    
+
+                    
 
     
 
-                    return {
+                                        logger.info(`开始评价成功: ${evaluation.period_name}`);
 
-                        evaluation,
+    
 
-                        evaluationEntities: vendors.map(v => ({
+                    
 
-                            name: v.supplier_name,
+    
 
-                            qualityData: qualityDataMap[v.supplier_name] || {
+                                        return {
 
-                                totalBatches: 0,
+    
 
-                                okBatches: 0,
+                                            evaluation,
 
-                                ngBatches: 0,
+    
 
-                                passRate: 0
+                                            evaluationEntities: vendors.map(v => ({
 
-                            }
+    
 
-                        }))
+                                                name: v.supplier_name,
 
-                    };
+    
+
+                                                data_type: v.data_type || 'purchase',
+
+    
+
+                                                qualityData: qualityDataMap[v.supplier_name] || {
+
+    
+
+                                                    totalBatches: 0,
+
+    
+
+                                                    okBatches: 0,
+
+    
+
+                                                    ngBatches: 0,
+
+    
+
+                                                    passRate: 0
+
+    
+
+                                                }
+
+    
+
+                                            }))
+
+    
+
+                                        };
 
                 } 
 
@@ -392,6 +468,7 @@ class PerformanceEvaluationService {
 
             return details.map(detail => ({
                 entityName: detail.evaluation_entity_name,
+                data_type: detail.data_type || 'purchase',
                 scores: detail.scores,
                 totalScore: detail.total_score,
                 grade: detail.grade,
@@ -417,7 +494,11 @@ class PerformanceEvaluationService {
                 where: {
                     evaluation_id: id,
                     evaluation_entity_name: entityName
-                }
+                },
+                include: [{
+                    model: require('../models/PerformanceEvaluation'),
+                    as: 'evaluation'
+                }]
             });
 
             if (!detail) {

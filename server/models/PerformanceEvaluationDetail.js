@@ -35,6 +35,11 @@ const PerformanceEvaluationDetail = sequelize.define('PerformanceEvaluationDetai
         allowNull: false,
         comment: '评价实体名称'
     },
+    data_type: {
+        type: DataTypes.ENUM('purchase', 'external'),
+        allowNull: true,
+        comment: '数据类型（purchase-外购/external-外协）'
+    },
     scores: {
         type: DataTypes.JSON,
         allowNull: true,

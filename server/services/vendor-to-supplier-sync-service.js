@@ -53,7 +53,14 @@ class VendorToSupplierSyncService {
                 };
 
                 // 6. 同步启用的供应商
+                const processedNames = new Set(); // 记录已处理的供应商名称
                 for (const vendor of enabledVendors) {
+                    // 如果这个供应商名称已经处理过，跳过
+                    if (processedNames.has(vendor.supplier_name)) {
+                        continue;
+                    }
+                    processedNames.add(vendor.supplier_name);
+
                     const existingSupplier = currentSupplierMap.get(vendor.supplier_name);
 
                     if (existingSupplier) {

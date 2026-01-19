@@ -15,14 +15,15 @@ class QualityDataExtractionService {
      */
     async extractQualityData(startDate, endDate) {
         try {
-            // 查询指定时间范围内的IQC数据
+            // 查询与指定时间范围有交集的IQC数据
+            // 条件：数据时间范围与评价周期有交集
             const iqcDataList = await IQCData.findAll({
                 where: {
                     timeRangeStart: {
-                        [require('sequelize').Op.gte]: startDate
+                        [require('sequelize').Op.lte]: endDate  // 数据开始时间 <= 评价周期结束时间
                     },
                     timeRangeEnd: {
-                        [require('sequelize').Op.lte]: endDate
+                        [require('sequelize').Op.gte]: startDate  // 数据结束时间 >= 评价周期开始时间
                     }
                 }
             });
@@ -52,7 +53,7 @@ class QualityDataExtractionService {
                     }
                 } else {
                     // 如果没有按供应商统计的数据，需要从rawData中提取
-                    const vendorQualityData = await this.extractFromRawData(iqcData);
+                    const vendorQualityData = await this.extractFromRawData(iqcData, startDate, endDate);
                     for (const [supplierName, data] of Object.entries(vendorQualityData)) {
                         if (!qualityDataMap[supplierName]) {
                             qualityDataMap[supplierName] = {
@@ -90,9 +91,11 @@ class QualityDataExtractionService {
     /**
      * 从rawData中提取质量数据
      * @param {Object} iqcData - IQC数据
+     * @param {Date} startDate - 评价周期开始日期
+     * @param {Date} endDate - 评价周期结束日期
      * @returns {Promise<Object>} 质量数据映射
      */
-    async extractFromRawData(iqcData) {
+    async extractFromRawData(iqcData, startDate, endDate) {
         const qualityDataMap = {};
 
         try {
@@ -102,15 +105,28 @@ class QualityDataExtractionService {
                 return qualityDataMap;
             }
 
-            // 遍历rawData，按供应商统计
-            for (const row of rawData) {
-                // 假设rawData中包含供应商名称和检验结果
-                // 这里需要根据实际的rawData结构进行调整
-                const supplierName = row['供应商名称'] || row['供应商'] || row['Supplier'];
-                const result = row['检验结果'] || row['结果'] || row['Result'];
+            // 将日期字符串转换为Date对象进行比较
+            const startDateTime = new Date(startDate).setHours(0, 0, 0, 0);
+            const endDateTime = new Date(endDate).setHours(23, 59, 59, 999);
 
+            // 遍历rawData，按供应商统计（只统计评价周期范围内的数据）
+            for (const row of rawData) {
+                // 使用实际的字段名（英文）
+                const supplierName = row['supplier'];
+                const result = row['result'];
+                const time = row['time'];
+
+                // 如果没有供应商名称，跳过
                 if (!supplierName) {
                     continue;
+                }
+
+                // 检查时间是否在评价周期范围内
+                if (time) {
+                    const rowTime = new Date(time).getTime();
+                    if (rowTime < startDateTime || rowTime > endDateTime) {
+                        continue; // 跳过不在评价周期范围内的数据
+                    }
                 }
 
                 if (!qualityDataMap[supplierName]) {
@@ -125,9 +141,9 @@ class QualityDataExtractionService {
                 qualityDataMap[supplierName].totalBatches++;
 
                 // 判断是否合格
-                if (result && (result.includes('合格') || result.includes('OK') || result.includes('PASS'))) {
+                if (result === 'OK') {
                     qualityDataMap[supplierName].okBatches++;
-                } else if (result && (result.includes('不合格') || result.includes('NG') || result.includes('FAIL'))) {
+                } else if (result === 'NG') {
                     qualityDataMap[supplierName].ngBatches++;
                 }
             }

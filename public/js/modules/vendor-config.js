@@ -6,6 +6,7 @@ class VendorConfigManager {
     constructor() {
         this.vendors = [];
         this.selectedVendors = new Set();
+        this.currentType = 'purchase'; // 当前选择的数据类型：purchase-外购/external-外协
         this.filter = {
             source: '',
             status: '',
@@ -31,6 +32,7 @@ class VendorConfigManager {
     async init() {
         window.vendorConfigManager = this;
         console.log('🚀 供应商配置中心模块初始化...');
+        console.log('🚀 当前选择的数据类型:', this.currentType);
 
         // 先绑定事件，再加载数据，最后渲染
         this.bindEvents();
@@ -43,22 +45,16 @@ class VendorConfigManager {
     async loadVendors() {
         window.vendorConfigUIUtils.setLoading(true);
 
-        const result = await window.vendorConfigServices.getConfig(this.filter);
+        // 添加data_type到筛选条件
+        const filterWithDataType = {
+            ...this.filter,
+            data_type: this.currentType
+        };
+
+        const result = await window.vendorConfigServices.getConfig(filterWithDataType);
 
         if (result.success) {
             this.vendors = result.data || [];
-            
-            // 检测哪些供应商有多个记录（不同data_type）
-            const supplierCounts = {};
-            this.vendors.forEach(vendor => {
-                const key = vendor.supplier_name;
-                supplierCounts[key] = (supplierCounts[key] || 0) + 1;
-            });
-            
-            // 为每个供应商添加hasMultipleTypes标记
-            this.vendors.forEach(vendor => {
-                vendor.hasMultipleTypes = supplierCounts[vendor.supplier_name] > 1;
-            });
             
             // 中文拼音排序：先按来源排序（手动添加在前，IQC导入在后），然后按供应商名称拼音A-Z排序
             this.vendors.sort((a, b) => {
@@ -68,16 +64,7 @@ class VendorConfigManager {
                     return nameCompare;
                 }
                 
-                // 第二级排序：按数据类型（外购在前，外协在后）
-                const dataTypeOrder = { 'purchase': 0, 'external': 1 };
-                const typeA = dataTypeOrder[a.data_type] ?? 2;
-                const typeB = dataTypeOrder[b.data_type] ?? 2;
-                
-                if (typeA !== typeB) {
-                    return typeA - typeB;
-                }
-                
-                // 第三级排序：按来源
+                // 第二级排序：按来源
                 const sourceOrder = { 'MANUAL': 0, 'IQC': 1 };
                 const sourceA = sourceOrder[a.source] ?? 2;
                 const sourceB = sourceOrder[b.source] ?? 2;
@@ -101,7 +88,10 @@ class VendorConfigManager {
     async loadStatistics() {
         try {
             console.log('📊 开始加载统计数据...');
-            const result = await window.vendorConfigServices.getStatistics();
+            console.log('📊 当前选择的数据类型:', this.currentType);
+            
+            // 获取统计数据（根据当前类型筛选）
+            const result = await window.vendorConfigServices.getStatistics(this.currentType);
             console.log('📊 统计数据API返回:', result);
 
             if (result.success) {
@@ -109,6 +99,12 @@ class VendorConfigManager {
                 this.renderStatistics(result.data);
             } else {
                 console.error('❌ 加载统计数据失败:', result.error);
+            }
+
+            // 获取类型统计数据（更新类型切换卡片）
+            const typeResult = await window.vendorConfigServices.getTypeStatistics();
+            if (typeResult.success) {
+                this.renderTypeStatistics(typeResult.data);
             }
         } catch (error) {
             console.error('❌ 加载统计数据异常:', error);
@@ -128,6 +124,17 @@ class VendorConfigManager {
         if (statDocument) statDocument.textContent = data.document || 0;
         if (statPerformance) statPerformance.textContent = data.performance || 0;
         if (statSyncTime) statSyncTime.textContent = data.syncTime || '-';
+    }
+
+    /**
+     * 渲染类型统计数据
+     */
+    renderTypeStatistics(data) {
+        const purchaseCount = document.getElementById('purchaseCount');
+        const externalCount = document.getElementById('externalCount');
+
+        if (purchaseCount) purchaseCount.textContent = data.purchase || 0;
+        if (externalCount) externalCount.textContent = data.external || 0;
     }
 
     /**
@@ -228,6 +235,9 @@ class VendorConfigManager {
         // 重新绑定表格和批量操作事件
         this.bindTableEvents();
         this.bindBatchEvents();
+
+        // 绑定类型切换卡片事件
+        this.bindTypeSwitcherEvents();
     }
 
     /**
@@ -302,6 +312,51 @@ class VendorConfigManager {
             batchActions.addEventListener('click', this.batchActionsHandler);
             console.log('✅ batchActions 事件绑定成功');
         }
+    }
+
+    /**
+     * 绑定类型切换卡片事件
+     */
+    bindTypeSwitcherEvents() {
+        console.log('🔗 绑定类型切换卡片事件...');
+
+        const typeCards = document.querySelectorAll('.vendor-config__type-card');
+        typeCards.forEach(card => {
+            card.addEventListener('click', () => {
+                const type = card.dataset.type;
+                this.switchType(type);
+            });
+        });
+
+        console.log('✅ 类型切换卡片事件绑定成功');
+    }
+
+    /**
+     * 切换数据类型
+     * @param {string} type - 数据类型（purchase-外购/external-外协）
+     */
+    switchType(type) {
+        console.log(`🔄 切换数据类型: ${type}`);
+
+        // 更新当前类型
+        this.currentType = type;
+
+        // 更新卡片样式
+        const typeCards = document.querySelectorAll('.vendor-config__type-card');
+        typeCards.forEach(card => {
+            const statusElement = card.querySelector('.vendor-config__type-status');
+            if (card.dataset.type === type) {
+                card.classList.add('vendor-config__type-card--active');
+                if (statusElement) statusElement.textContent = '当前选中';
+            } else {
+                card.classList.remove('vendor-config__type-card--active');
+                if (statusElement) statusElement.textContent = '未选中';
+            }
+        });
+
+        // 重新加载数据
+        this.loadVendors();
+        this.loadStatistics();
     }
 
     /**
@@ -945,16 +1000,10 @@ class VendorConfigManager {
         }
 
         const html = this.vendors.map(vendor => {
-            // 智能显示供应商名称
-            let displayName = vendor.supplier_name;
-            if (vendor.hasMultipleTypes) {
-                const typeLabel = vendor.data_type === 'purchase' ? '外购' : '外协';
-                displayName = `${vendor.supplier_name}（${typeLabel}）`;
-            }
-            
+            // 只显示供应商名称，不显示类型标签（因为已经通过卡片筛选了）
             return `
             <tr class="vendor-config__row" data-vendor-id="${vendor.id}">
-                <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${displayName}</td>
+                <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
                 <td class="vendor-config__cell vendor-config__cell--document">
                     <input type="checkbox"

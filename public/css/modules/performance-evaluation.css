@@ -64,6 +64,227 @@
 }
 
 /* ============================================
+   外购/外协切换卡片
+   ============================================ */
+
+.performance__data-source-wrapper {
+    margin-bottom: var(--border-radius-xl);
+    padding: var(--border-radius-lg);
+    background: #ffffff;
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--border-radius-xl);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.08),
+        0 4px 12px rgba(0, 0, 0, 0.04),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.02);
+    position: relative;
+    overflow: visible;
+    transition: all var(--transition-slow);
+}
+
+.performance__data-source-wrapper:hover {
+    transform: translateY(-4px);
+    box-shadow:
+        0 12px 32px rgba(0, 0, 0, 0.12),
+        0 6px 16px rgba(0, 0, 0, 0.06),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.03);
+    border-color: var(--primary-300);
+}
+
+.performance__data-source-wrapper::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, var(--primary-500), transparent);
+    opacity: 0.5;
+    transition: opacity var(--transition-base);
+}
+
+.performance__data-source-wrapper:hover::before {
+    opacity: 0.8;
+}
+
+.performance__data-source-header {
+    margin-bottom: var(--border-radius-lg);
+    position: relative;
+}
+
+.performance__data-source-title {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+    line-height: 1.5;
+    letter-spacing: -0.3px;
+    display: flex;
+    align-items: center;
+    gap: calc(var(--border-radius-sm) * 0.5);
+}
+
+.performance__data-source-title i {
+    font-size: 1.25rem;
+    color: var(--primary-600);
+}
+
+.performance__data-source-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.performance__type-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: 16px;
+    padding: 2rem;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.05),
+        0 4px 12px rgba(0, 0, 0, 0.08);
+    border: 2px solid var(--gray-200);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transform: translateY(0);
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* 顶部装饰条 - 渐变效果 */
+.performance__type-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 5px;
+    background: linear-gradient(90deg,
+            var(--primary-500) 0%,
+            var(--primary-400) 50%,
+            var(--primary-500) 100%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+/* 背景光晕效果 */
+.performance__type-card::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle,
+            rgba(20, 184, 166, 0.08) 0%,
+            transparent 70%);
+    opacity: 0;
+    transition: opacity 0.6s ease;
+    pointer-events: none;
+}
+
+/* Hover 状态 - 提升和光晕 */
+.performance__type-card:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow:
+        0 8px 24px rgba(0, 0, 0, 0.12),
+        0 16px 48px rgba(20, 184, 166, 0.15);
+    border-color: var(--primary-300);
+}
+
+.performance__type-card:hover::before {
+    opacity: 1;
+}
+
+.performance__type-card:hover::after {
+    opacity: 1;
+}
+
+/* 选中状态 - 强烈视觉反馈 */
+.performance__type-card--active {
+    background: linear-gradient(135deg,
+            var(--primary-50) 0%,
+            var(--primary-100) 100%);
+    border-color: var(--primary-500);
+    box-shadow:
+        0 4px 12px rgba(20, 184, 166, 0.15),
+        0 8px 24px rgba(20, 184, 166, 0.1);
+}
+
+.performance__type-card--active::before {
+    opacity: 1;
+}
+
+.performance__type-card--active::after {
+    opacity: 0.5;
+}
+
+/* 图标样式 */
+.performance__type-icon {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 56px;
+    height: 56px;
+    background: linear-gradient(135deg, var(--gray-100) 0%, var(--gray-200) 100%);
+    border-radius: 14px;
+    font-size: 28px;
+    color: var(--primary-600);
+    transition: all 0.4s ease;
+    box-shadow:
+        0 2px 4px rgba(0, 0, 0, 0.05),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.8);
+}
+
+.performance__type-card--active .performance__type-icon {
+    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
+    color: var(--gray-50);
+    box-shadow:
+        0 4px 8px rgba(20, 184, 166, 0.2),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.3);
+}
+
+/* 内容区域 */
+.performance__type-content {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+}
+
+.performance__type-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: 0.5rem;
+    transition: color 0.3s ease;
+}
+
+.performance__type-card--active .performance__type-title {
+    color: var(--primary-700);
+}
+
+.performance__type-count {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--primary-600);
+    line-height: 1;
+    transition: all 0.3s ease;
+}
+
+.performance__type-card--active .performance__type-count {
+    color: var(--primary-700);
+}
+
+/* ============================================
    评价头部
    ============================================ */
 
@@ -117,6 +338,7 @@
    供应商卡片列表
    ============================================ */
 
+.entity-cards,
 .vendor-cards {
     flex: 1;
     display: grid;
@@ -142,13 +364,30 @@
 
 .entity-card.evaluated {
     border-color: var(--success);
-    background: linear-gradient(135deg, var(--success-light) 0%, var(--success-light) 100%);
 }
 
 .entity-card.current {
     border-color: var(--primary-500);
     box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
 }
+
+/* 排名徽章 */
+.rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 12px;
+    color: white;
+}
+
+.rank-1 { background: #fbbf24; }
+.rank-2 { background: #94a3b8; }
+.rank-3 { background: #b45309; }
+.rank-other { background: var(--gray-200); color: var(--gray-500); }
 
 .entity-card-header {
     display: flex;
@@ -184,6 +423,68 @@
     color: var(--success);
 }
 
+/* 总分显示 */
+.entity-card-score {
+    text-align: center;
+    margin-bottom: var(--border-radius-lg);
+}
+
+.entity-card-score .total-score {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--gray-800);
+    line-height: 1;
+}
+
+.entity-card-score .grade-badge {
+    display: inline-block;
+    padding: calc(var(--border-radius-sm) * 0.25) calc(var(--border-radius-sm) * 0.75);
+    border-radius: 9999px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: calc(var(--border-radius-sm) * 0.5);
+}
+
+.grade-excellent { background: var(--success-light); color: var(--success); }
+.grade-good { background: var(--info-light); color: var(--info); }
+.grade-improve { background: var(--warning-light); color: var(--warning); }
+.grade-poor { background: var(--danger-light); color: var(--danger); }
+
+/* 各维度进度条 */
+.entity-card-dimensions {
+    margin-top: var(--border-radius-lg);
+}
+
+.dimension-item {
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+}
+
+.dimension-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+}
+
+.progress-bar {
+    height: 6px;
+    background: var(--gray-200);
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    transition: width var(--transition-base);
+}
+
+.progress-quality { background: linear-gradient(90deg, var(--success), #34d399); }
+.progress-delivery { background: linear-gradient(90deg, var(--info), #60a5fa); }
+.progress-service { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+
+/* 质量数据（未评价时显示） */
 .entity-card-quality {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -214,6 +515,21 @@
 .entity-card-quality .quality-item span.pass-rate {
     color: var(--primary-600);
 }
+
+/* 卡片底部信息（趋势、日期） */
+.entity-card-footer {
+    margin-top: var(--border-radius-lg);
+    padding-top: var(--border-radius-lg);
+    border-top: 1px solid var(--gray-200);
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+}
+
+.trend-up { color: var(--success); }
+.trend-down { color: var(--danger); }
+.trend-flat { color: var(--gray-500); }
 
 /* ============================================
    评价侧边栏
@@ -729,4 +1045,20 @@
         width: 95%;
         max-height: 95vh;
     }
+}
+
+/* ============================================
+   按钮样式扩展
+   ============================================ */
+
+.btn-danger {
+    background: var(--danger);
+    border-color: var(--danger);
+    color: var(--gray-50);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    transform: translateY(-2px);
 }
