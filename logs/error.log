@@ -90,3 +90,239 @@
 2025-12-03 22:53:04 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
 2025-12-03 22:54:16 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
 2025-12-03 22:55:01 [ERROR]: 文件上传同步失败: The "path" argument must be of type string. Received undefined
+2026-01-15 15:20:35 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:20:35 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:20:35 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:20:35 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:23:57 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:23:57 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:23:57 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:23:57 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:23:57 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:23:57 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:24:30 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:24:30 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:24:30 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:24:30 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:25:22 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 15:25:22 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 15:25:22 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 15:25:22 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 15:36:20 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:36:20 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:36:20 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:36:20 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:23 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:23 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:23 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:23 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:44 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:44 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:44 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:44 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:44 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:41:44 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:42:08 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:42:08 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:42:08 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:42:08 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:46:29 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:46:29 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:46:29 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:46:29 [ERROR]: 获取评价周期详情失败: SQLITE_ERROR: no such column: NaN
+2026-01-15 15:48:00 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 15:48:00 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 15:48:03 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 15:48:03 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 16:13:29 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 16:13:29 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 16:13:31 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 16:13:31 [ERROR]: 开始评价失败: 评价周期已开始或已完成
+2026-01-15 19:08:54 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:08:54 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:08:54 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:08:54 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:09:05 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:09:05 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:09:05 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:09:05 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:10:04 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:10:04 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:10:04 [ERROR]: 保存评价实体评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 19:10:04 [ERROR]: 保存供应商评价失败: Cannot read properties of undefined (reading 'config_snapshot')
+2026-01-15 23:24:47 [ERROR]: 无法连接到数据库: SQLITE_ERROR: index idx_vendor_config_supplier_name_type already exists
+2026-01-16 13:22:16 [ERROR]: 无法连接到数据库: SQLITE_ERROR: index idx_vendor_config_data_type already exists
+2026-01-16 13:23:18 [ERROR]: 无法连接到数据库: Validation error
+2026-01-16 13:23:30 [ERROR]: 无法连接到数据库: Validation error
+2026-01-16 13:25:31 [ERROR]: 无法连接到数据库: Validation error
+2026-01-16 14:27:06 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 14:28:59 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 14:29:39 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 14:35:48 [ERROR]: 令牌验证错误: jwt malformed
+2026-01-16 14:37:29 [ERROR]: 令牌验证错误: jwt malformed
+2026-01-16 14:37:29 [ERROR]: 令牌验证错误: jwt malformed
+2026-01-16 14:37:29 [ERROR]: 令牌验证错误: jwt malformed
+2026-01-16 15:00:37 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 15:47:26 [ERROR]: 创建默认用户失败: SQLITE_ERROR: no such table: users
+2026-01-16 15:47:37 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:02 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:03 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:03 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:04 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:04 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:17 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:30 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:32 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:32 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:32 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:32 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:32 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:32 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:48:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:23 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:23 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:23 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:23 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:23 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:23 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:24 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:24 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:24 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:24 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:24 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:24 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:26 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:26 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:26 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:26 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:26 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:26 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:28 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:29 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:29 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:29 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:29 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:30 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:30 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:33 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:36 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:38 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:49:40 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:29 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:31 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:33 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:34 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:37 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:38 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:40 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:40 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:47 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:47 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:47 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:47 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:48 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:48 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:48 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:50:48 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:02 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:02 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:02 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:04 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 15:51:04 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:17 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:20 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:20 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:25 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:27 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 15:51:27 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:55 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:55 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:55 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:55 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:56 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:56 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:56 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:56 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:57 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:57 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:57 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:57 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:58 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:51:59 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:00 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:00 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:00 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:00 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:01 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:52:40 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:54:02 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:54:05 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 15:54:05 [ERROR]: 获取统计数据失败: sequelize is not defined
+2026-01-16 16:08:52 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-16 16:13:49 [ERROR]: 自动同步失败: 同步供应商失败
+2026-01-18 20:17:52 [ERROR]: 开始评价失败: SQLITE_ERROR: no such column: data_type
+2026-01-18 20:17:52 [ERROR]: 开始评价失败: SQLITE_ERROR: no such column: data_type
+2026-01-18 20:18:27 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 20:18:27 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 20:21:12 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 20:21:12 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 21:53:37 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 21:53:37 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 22:32:28 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-18 22:32:28 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 12:50:24 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 12:50:24 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 14:32:43 [ERROR]: 令牌验证错误: jwt malformed
+2026-01-19 14:32:43 [ERROR]: 令牌验证错误: jwt malformed
+2026-01-19 14:48:46 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 14:48:46 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 14:50:22 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 14:50:22 [ERROR]: 开始评价失败: SQLITE_ERROR: table performance_evaluation_details has no column named data_type
+2026-01-19 14:51:39 [ERROR]: ✗ 迁移失败: SQLITE_ERROR: near "ped": syntax error
+2026-01-19 17:25:54 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:25:54 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:25:54 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:25:54 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:30:37 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:30:37 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:30:37 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:30:37 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:31:22 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:31:22 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:31:22 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:31:22 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:32:18 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:32:18 [ERROR]: 保存供应商评价失败: 评价详情不存在
+2026-01-19 17:32:18 [ERROR]: 保存评价实体评价失败: 评价详情不存在
+2026-01-19 17:32:18 [ERROR]: 保存供应商评价失败: 评价详情不存在
