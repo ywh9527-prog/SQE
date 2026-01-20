@@ -685,6 +685,13 @@
             // 按类型过滤
             const filteredEntities = this.filterEntitiesByType(state.entities);
 
+            // 按拼音首字母排序（A-Z）
+            filteredEntities.sort((a, b) => {
+                const nameA = (a.name || a.entityName || '').toLowerCase();
+                const nameB = (b.name || b.entityName || '').toLowerCase();
+                return nameA.localeCompare(nameB, 'zh-CN');
+            });
+
             console.log('过滤后的实体数量:', filteredEntities.length);
 
             filteredEntities.forEach(entity => {
@@ -817,10 +824,39 @@
             state.config.dimensions.forEach(dimension => {
                 const formGroup = document.createElement('div');
                 formGroup.className = 'form-group';
-                formGroup.innerHTML = `
+
+                // 检查是否是质量维度
+                const isQualityDimension = dimension.key === 'quality';
+
+                // 如果是质量维度，自动计算分数
+                let inputValue = '';
+                let inputHtml = '';
+                let autoCalcInfo = '';
+
+                if (isQualityDimension && state.currentEntity && state.currentEntity.qualityData) {
+                    const qualityData = state.currentEntity.qualityData;
+                    // 确保passRate是数字类型
+                    const passRate = parseFloat(qualityData.passRate) || 0;
+                    const totalBatches = qualityData.totalBatches || 0;
+                    const okBatches = qualityData.okBatches || 0;
+
+                    // 直接使用合格率作为分数，不乘以权重
+                    inputValue = passRate.toFixed(1);
+                    autoCalcInfo = `
+                        <div class="auto-calc-info" style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                            <i class="ph ph-calculator"></i>
+                            当月合格批次/当月交付总批次：${okBatches}/${totalBatches} = ${passRate}%
+                        </div>
+                    `;
+                }
+
+                inputHtml = `
                     <label>${dimension.name} (权重: ${(dimension.weight * 100).toFixed(0)}%)</label>
-                    <input type="number" name="${dimension.key}" min="0" max="100" step="0.1" required>
+                    <input type="number" name="${dimension.key}" min="0" max="100" step="0.1" required value="${inputValue}">
+                    ${autoCalcInfo}
                 `;
+
+                formGroup.innerHTML = inputHtml;
                 els.dimensionInputs.appendChild(formGroup);
             });
         },

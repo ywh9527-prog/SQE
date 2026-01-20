@@ -441,7 +441,7 @@ class PerformanceEvaluationService {
         }
 
     /**
-     * 获取评价周期的供应商列表
+     * 获取评价周期的所有评价实体
      * @param {number} id - 评价周期ID
      * @returns {Promise<Array>} 供应商列表
      */
@@ -449,10 +449,17 @@ class PerformanceEvaluationService {
         try {
             const details = await PerformanceEvaluationDetail.findAll({
                 where: { evaluation_id: id },
-                order: [['evaluation_entity_name', 'ASC']]
+                order: [['evaluation_entity_name', 'ASC']]  // 按供应商名称升序排序（SQLite默认按拼音排序）
             });
 
-            return details.map(detail => ({
+            // 按拼音首字母排序（A-Z）
+            const sortedDetails = details.sort((a, b) => {
+                const nameA = a.evaluation_entity_name || '';
+                const nameB = b.evaluation_entity_name || '';
+                return nameA.localeCompare(nameB, 'zh-CN');
+            });
+
+            return sortedDetails.map(detail => ({
                 entityName: detail.evaluation_entity_name,
                 data_type: detail.data_type || 'purchase',
                 scores: detail.scores,
