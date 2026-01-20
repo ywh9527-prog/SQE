@@ -9,11 +9,25 @@ server/data/*.db
 # 日志文件
 logs/*.log
 logs/combined.log
+logs/error.log
+server.log
+server-error.log
 
 # 临时文件
 *.tmp
 *.temp
 *.lock
+nul
+
+# 调试脚本
+check-*.js
+compare-*.js
+create-*.js
+detailed-*.js
+
+# Excel临时文件
+~$*.xlsx
+~$*.xls
 
 # 依赖目录
 node_modules/
