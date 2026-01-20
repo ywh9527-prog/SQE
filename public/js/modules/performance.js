@@ -701,8 +701,11 @@
                 // 判断是否已评价
                 const isEvaluated = entity.totalScore !== null && entity.totalScore !== undefined;
 
+                // 统一显示：质量数据始终显示
+                const qualityData = entity.qualityData || { totalBatches: 0, okBatches: 0, passRate: 0 };
+
                 if (isEvaluated) {
-                    // 已评价：显示方案A的设计
+                    // 已评价：显示总分、等级和维度
                     const gradeText = this.getGradeText(entity.grade);
                     const gradeClass = this.getGradeClass(entity.grade);
 
@@ -715,9 +718,9 @@
                             const score = entity.scores[dimension.key] || 0;
                             dimensionsHtml += `
                                 <div class="dimension-item">
-                                    <div class="dimension-label">
-                                        <span>${dimension.name}</span>
-                                        <span>${score}</span>
+                                    <div class="dimension-header">
+                                        <span class="dimension-name">${dimension.name}</span>
+                                        <span class="dimension-score">${score}</span>
                                     </div>
                                     <div class="progress-bar">
                                         <div class="progress-fill" style="width: ${score}%; background: var(--primary-500)"></div>
@@ -738,6 +741,20 @@
                             <div class="total-score">${entity.totalScore}</div>
                             <span class="grade-badge ${gradeClass}">${gradeText}</span>
                         </div>
+                        <div class="entity-card-quality">
+                            <div class="quality-item">
+                                <label>总批次</label>
+                                <span>${qualityData.totalBatches}</span>
+                            </div>
+                            <div class="quality-item">
+                                <label>合格批次</label>
+                                <span>${qualityData.okBatches}</span>
+                            </div>
+                            <div class="quality-item">
+                                <label>合格率</label>
+                                <span class="pass-rate">${qualityData.passRate}%</span>
+                            </div>
+                        </div>
                         <div class="entity-card-dimensions">
                             ${dimensionsHtml}
                         </div>
@@ -748,7 +765,7 @@
                     `;
                     card.classList.add('evaluated');
                 } else {
-                    // 未评价：显示当前设计
+                    // 未评价：只显示质量数据，不显示总分和维度
                     card.innerHTML = `
                         <div class="entity-card-header">
                             <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
@@ -757,16 +774,19 @@
                         <div class="entity-card-quality">
                             <div class="quality-item">
                                 <label>总批次</label>
-                                <span>${entity.qualityData.totalBatches}</span>
+                                <span>${qualityData.totalBatches}</span>
                             </div>
                             <div class="quality-item">
                                 <label>合格批次</label>
-                                <span>${entity.qualityData.okBatches}</span>
+                                <span>${qualityData.okBatches}</span>
                             </div>
                             <div class="quality-item">
                                 <label>合格率</label>
-                                <span class="pass-rate">${entity.qualityData.passRate}%</span>
+                                <span class="pass-rate">${qualityData.passRate}%</span>
                             </div>
+                        </div>
+                        <div class="entity-card-footer">
+                            <span>点击卡片开始评价</span>
                         </div>
                     `;
                 }

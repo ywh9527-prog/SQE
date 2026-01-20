@@ -522,28 +522,50 @@
     margin-top: var(--border-radius-lg);
 }
 
-.dimension-item {
+.entity-card-dimensions .dimension-item {
+    padding: calc(var(--border-radius-sm) * 0.75);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
+    display: block;
 }
 
-.dimension-label {
+.entity-card-dimensions .dimension-header {
     display: flex;
     justify-content: space-between;
-    font-size: 0.75rem;
-    color: var(--gray-500);
-    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+    align-items: center;
+    margin-bottom: calc(var(--border-radius-sm) * 0.5);
+    width: 100%;
 }
 
-.progress-bar {
-    height: 6px;
+.entity-card-dimensions .dimension-name {
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.entity-card-dimensions .dimension-score {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-600);
+    text-align: right;
+    white-space: nowrap;
+    min-width: 3rem;
+}
+
+.entity-card-dimensions .progress-bar {
+    height: 8px;
     background: var(--gray-200);
-    border-radius: 3px;
+    border-radius: 4px;
     overflow: hidden;
+    width: 100%;
+    display: block;
 }
 
-.progress-fill {
+.entity-card-dimensions .progress-fill {
     height: 100%;
-    border-radius: 3px;
+    border-radius: 4px;
     transition: width var(--transition-base);
 }
 
@@ -551,14 +573,15 @@
 .progress-delivery { background: linear-gradient(90deg, var(--info), #60a5fa); }
 .progress-service { background: linear-gradient(90deg, var(--warning), #fbbf24); }
 
-/* 质量数据（未评价时显示） */
+/* 质量数据（所有卡片都显示） */
 .entity-card-quality {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: calc(var(--border-radius-sm) * 0.75);
     margin-top: var(--border-radius-lg);
-    padding-top: var(--border-radius-lg);
-    border-top: 1px solid var(--gray-200);
+    padding: var(--border-radius-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
 }
 
 .entity-card-quality .quality-item {
@@ -570,6 +593,7 @@
     font-size: 0.75rem;
     color: var(--gray-500);
     margin-bottom: calc(var(--border-radius-sm) * 0.25);
+    white-space: nowrap;
 }
 
 .entity-card-quality .quality-item span {
