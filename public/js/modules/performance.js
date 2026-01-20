@@ -617,28 +617,18 @@
                 return entities;
             }
             
-            console.log(`过滤实体，当前类型: ${state.currentType}`);
-            console.log(`实体总数: ${entities.length}`);
-            
             const filtered = entities.filter(entity => {
                 // 兼容不同的字段名
                 const entityType = entity.data_type || entity.dataType;
                 const result = entityType === state.currentType;
-                
-                if (!result && state.currentType === 'external') {
-                    console.log(`过滤掉: ${entity.name || entity.entityName}, 类型: ${entityType}`);
-                }
-                
                 return result;
             });
             
-            console.log(`过滤后数量: ${filtered.length}`);
             return filtered;
         },
 
         // 切换数据类型
         switchType(type) {
-            console.log(`🔄 切换数据类型: ${type}`);
             state.currentType = type;
 
             // 更新卡片样式
@@ -714,10 +704,8 @@
 
                     // 遍历配置中的所有维度
                     if (state.config && state.config.dimensions) {
-                        console.log(`渲染实体 ${entity.name || entity.entityName} 的维度...`);
                         state.config.dimensions.forEach((dimension, index) => {
                             const score = entity.scores[dimension.key] || 0;
-                            console.log(`  - ${dimension.name} (${dimension.key}): ${score}`);
                             dimensionsHtml += `
                                 <div class="dimension-item">
                                     <div class="dimension-label">

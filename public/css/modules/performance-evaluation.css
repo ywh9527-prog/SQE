@@ -972,24 +972,15 @@
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
     width: 90%;
-    max-width: 600px;
+    max-width: 900px;
     max-height: 90vh;
-    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
     animation: performance-modal-slide-up var(--transition-base) ease-out;
 }
 
-@keyframes performance-modal-slide-up {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
 .performance-modal-header {
+    flex-shrink: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1024,7 +1015,28 @@
 }
 
 .performance-modal-body {
+    flex: 1;
+    overflow-y: auto;
     padding: calc(var(--border-radius-lg) * 1.5);
+}
+
+/* 自定义滚动条样式 */
+.performance-modal-body::-webkit-scrollbar {
+    width: 8px;
+}
+
+.performance-modal-body::-webkit-scrollbar-track {
+    background: var(--gray-100);
+    border-radius: 4px;
+}
+
+.performance-modal-body::-webkit-scrollbar-thumb {
+    background: var(--gray-300);
+    border-radius: 4px;
+}
+
+.performance-modal-body::-webkit-scrollbar-thumb:hover {
+    background: var(--gray-400);
 }
 
 .create-step {

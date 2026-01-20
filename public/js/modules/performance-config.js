@@ -157,9 +157,9 @@
                             onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'key', this.value)">
                     </div>
                     <div class="form-group">
-                        <label>权重</label>
-                        <input type="number" class="form-control" value="${dimension.weight}" step="0.01" min="0" max="1"
-                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'weight', parseFloat(this.value))">
+                        <label>权重（%）</label>
+                        <input type="number" class="form-control" value="${(dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100"
+                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'weight', parseFloat(this.value) / 100)">
                     </div>
                     <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeDimension(${index})">
                         <i class="ph ph-trash"></i>
@@ -279,7 +279,7 @@
             if (!state.config || !state.config.dimensions) return;
 
             const totalWeight = state.config.dimensions.reduce((sum, dim) => sum + (dim.weight || 0), 0);
-            els.totalWeight.textContent = totalWeight.toFixed(2);
+            els.totalWeight.textContent = (totalWeight * 100).toFixed(0) + '%';
 
             // 权重总和不为1时显示警告
             if (Math.abs(totalWeight - 1) > 0.01) {
