@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>方案A - 卡片式一览表 + 侧边栏评价</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #1e293b;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .toolbar label {
+            font-weight: 500;
+            color: #64748b;
+        }
+        .toolbar input[type="month"] {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* 评分规则展示区 */
+        .rules-panel {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .rules-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .rule-section {
+            padding: 15px;
+            border-radius: 6px;
+        }
+        .rule-section.weights {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .rule-section.levels {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+        .rule-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+        .rule-content {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+        .weight-item, .level-item {
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .rule-actions {
+            margin-top: 10px;
+            text-align: right;
+        }
+        .rule-actions button {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        .cards-container {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .supplier-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .supplier-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.12);
+        }
+        .supplier-card.excellent {
+            border-top: 4px solid #10b981;
+        }
+        .supplier-card.good {
+            border-top: 4px solid #3b82f6;
+        }
+        .supplier-card.improve {
+            border-top: 4px solid #f59e0b;
+        }
+        .supplier-card.poor {
+            border-top: 4px solid #ef4444;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .rank-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+        }
+        .rank-1 { background: #fbbf24; }
+        .rank-2 { background: #94a3b8; }
+        .rank-3 { background: #b45309; }
+        .rank-other { background: #e2e8f0; color: #64748b; }
+        .supplier-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #1e293b;
+        }
+        .score-display {
+            text-align: center;
+            margin-bottom: 15px;
+        }
+        .total-score {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            line-height: 1;
+        }
+        .grade-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 8px;
+        }
+        .grade-excellent { background: #dcfce7; color: #16a34a; }
+        .grade-good { background: #dbeafe; color: #2563eb; }
+        .grade-improve { background: #fef3c7; color: #d97706; }
+        .grade-poor { background: #fee2e2; color: #dc2626; }
+        .dimensions {
+            margin-top: 15px;
+        }
+        .dimension-item {
+            margin-bottom: 8px;
+        }
+        .dimension-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .progress-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.3s;
+        }
+        .progress-quality { background: linear-gradient(90deg, #10b981, #34d399); }
+        .progress-delivery { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .progress-service { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .card-footer {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #64748b;
+        }
+        .trend-up { color: #10b981; }
+        .trend-down { color: #ef4444; }
+        .trend-flat { color: #64748b; }
+
+        /* 侧边栏 */
+        .sidebar {
+            width: 380px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            height: fit-content;
+            position: sticky;
+            top: 20px;
+        }
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .sidebar-header h3 {
+            font-size: 18px;
+            color: #1e293b;
+        }
+        .sidebar-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #64748b;
+        }
+        .evaluation-supplier {
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .evaluation-supplier h4 {
+            font-size: 16px;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .quality-extract {
+            background: #ecfdf5;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 15px;
+        }
+        .quality-extract h5 {
+            font-size: 13px;
+            color: #065f46;
+            margin-bottom: 8px;
+        }
+        .quality-data {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 4px;
+        }
+        .input-group {
+            margin-bottom: 15px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: #64748b;
+        }
+        .input-group input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .input-group input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .score-preview {
+            background: #f0f9ff;
+            padding: 15px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        .score-preview-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .score-preview-item:last-child {
+            margin-bottom: 0;
+        }
+        .total-score-preview {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .sidebar-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .sidebar-actions .btn {
+            flex: 1;
+        }
+        .nav-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+        }
+        .nav-btn {
+            background: #f1f5f9;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #64748b;
+        }
+        .nav-btn:hover {
+            background: #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="header-top">
+                <h1>供应商月度评价系统</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">配置管理</button>
+                    <button class="btn btn-primary">导出报告</button>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label>评价周期:</label>
+                <input type="month" value="2025-01">
+                <button class="btn btn-primary">开始评价</button>
+                <button class="btn btn-secondary">刷新数据</button>
+            </div>
+        </div>
+
+        <!-- 评分规则展示区 -->
+        <div class="rules-panel">
+            <div class="rules-grid">
+                <div class="rule-section weights">
+                    <div class="rule-title">⚖️ 权重配置</div>
+                    <div class="rule-content">
+                        <div class="weight-item">质量 40%</div>
+                        <div class="weight-item">交付 30%</div>
+                        <div class="weight-item">服务 30%</div>
+                    </div>
+                    <div class="rule-actions">
+                        <button>修改权重</button>
+                    </div>
+                </div>
+                <div class="rule-section levels">
+                    <div class="rule-title">📊 等级标准</div>
+                    <div class="rule-content">
+                        <div class="level-item">优秀 ≥95分</div>
+                        <div class="level-item">合格 85-94分</div>
+                        <div class="level-item">整改后合格 70-84分</div>
+                        <div class="level-item">不合格 <70分</div>
+                    </div>
+                    <div class="rule-actions">
+                        <button>修改等级</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 卡片容器 -->
+            <div class="cards-container">
+                <div class="supplier-card excellent" onclick="openEvaluation('供应商A')">
+                    <div class="card-header">
+                        <span class="rank-badge rank-1">1</span>
+                        <span class="supplier-name">供应商A</span>
+                    </div>
+                    <div class="score-display">
+                        <div class="total-score">95.5</div>
+                        <span class="grade-badge grade-excellent">优秀</span>
+                    </div>
+                    <div class="dimensions">
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>质量</span>
+                                <span>97.5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-quality" style="width: 97.5%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>交付</span>
+                                <span>95.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-delivery" style="width: 95%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>服务</span>
+                                <span>92.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-service" style="width: 92%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span>趋势: <span class="trend-up">↑ 2.3</span></span>
+                        <span>2025-02-05</span>
+                    </div>
+                </div>
+
+                <div class="supplier-card good" onclick="openEvaluation('供应商B')">
+                    <div class="card-header">
+                        <span class="rank-badge rank-2">2</span>
+                        <span class="supplier-name">供应商B</span>
+                    </div>
+                    <div class="score-display">
+                        <div class="total-score">88.7</div>
+                        <span class="grade-badge grade-good">合格</span>
+                    </div>
+                    <div class="dimensions">
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>质量</span>
+                                <span>90.6</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-quality" style="width: 90.6%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>交付</span>
+                                <span>88.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-delivery" style="width: 88%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>服务</span>
+                                <span>85.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-service" style="width: 85%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span>趋势: <span class="trend-flat">- 0.0</span></span>
+                        <span>2025-02-05</span>
+                    </div>
+                </div>
+
+                <div class="supplier-card good" onclick="openEvaluation('供应商C')">
+                    <div class="card-header">
+                        <span class="rank-badge rank-3">3</span>
+                        <span class="supplier-name">供应商C</span>
+                    </div>
+                    <div class="score-display">
+                        <div class="total-score">82.3</div>
+                        <span class="grade-badge grade-good">合格</span>
+                    </div>
+                    <div class="dimensions">
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>质量</span>
+                                <span>85.2</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-quality" style="width: 85.2%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>交付</span>
+                                <span>80.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-delivery" style="width: 80%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>服务</span>
+                                <span>78.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-service" style="width: 78%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span>趋势: <span class="trend-down">↓ 3.5</span></span>
+                        <span>2025-02-05</span>
+                    </div>
+                </div>
+
+                <div class="supplier-card improve" onclick="openEvaluation('供应商D')">
+                    <div class="card-header">
+                        <span class="rank-badge rank-other">4</span>
+                        <span class="supplier-name">供应商D</span>
+                    </div>
+                    <div class="score-display">
+                        <div class="total-score">72.5</div>
+                        <span class="grade-badge grade-improve">整改后合格</span>
+                    </div>
+                    <div class="dimensions">
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>质量</span>
+                                <span>75.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-quality" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>交付</span>
+                                <span>70.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-delivery" style="width: 70%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>服务</span>
+                                <span>68.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-service" style="width: 68%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span>趋势: <span class="trend-up">↑ 1.2</span></span>
+                        <span>2025-02-05</span>
+                    </div>
+                </div>
+
+                <div class="supplier-card poor" onclick="openEvaluation('供应商E')">
+                    <div class="card-header">
+                        <span class="rank-badge rank-other">5</span>
+                        <span class="supplier-name">供应商E</span>
+                    </div>
+                    <div class="score-display">
+                        <div class="total-score">65.8</div>
+                        <span class="grade-badge grade-poor">不合格</span>
+                    </div>
+                    <div class="dimensions">
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>质量</span>
+                                <span>68.5</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-quality" style="width: 68.5%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>交付</span>
+                                <span>65.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-delivery" style="width: 65%"></div>
+                            </div>
+                        </div>
+                        <div class="dimension-item">
+                            <div class="dimension-label">
+                                <span>服务</span>
+                                <span>60.0</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill progress-service" style="width: 60%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer">
+                        <span>趋势: <span class="trend-down">↓ 5.2</span></span>
+                        <span>2025-02-05</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 评价侧边栏 -->
+            <div class="sidebar">
+                <div class="sidebar-header">
+                    <h3>评价供应商</h3>
+                    <button class="sidebar-close">×</button>
+                </div>
+                <div class="evaluation-supplier">
+                    <h4>供应商A</h4>
+                    <div class="quality-extract">
+                        <h5>📊 质量数据 (自动提取)</h5>
+                        <div class="quality-data">
+                            <span>检验批次:</span>
+                            <span>120</span>
+                        </div>
+                        <div class="quality-data">
+                            <span>NG批次:</span>
+                            <span>3</span>
+                        </div>
+                        <div class="quality-data">
+                            <span>质量得分:</span>
+                            <span style="font-weight: 600; color: #059669;">97.5</span>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label>📦 交付得分 (0-100)</label>
+                        <input type="number" value="95" min="0" max="100">
+                    </div>
+                    <div class="input-group">
+                        <label>🤝 服务得分 (0-100)</label>
+                        <input type="number" value="92" min="0" max="100">
+                    </div>
+                </div>
+                <div class="score-preview">
+                    <div class="score-preview-item">
+                        <span>综合得分:</span>
+                        <span class="total-score-preview">95.5</span>
+                    </div>
+                    <div class="score-preview-item">
+                        <span>评价等级:</span>
+                        <span class="grade-badge grade-excellent">优秀</span>
+                    </div>
+                </div>
+                <div class="sidebar-actions">
+                    <button class="btn btn-secondary">取消</button>
+                    <button class="btn btn-primary">保存评价</button>
+                </div>
+                <div class="nav-buttons">
+                    <button class="nav-btn">← 上一个</button>
+                    <button class="nav-btn">下一个 →</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openEvaluation(supplierName) {
+            console.log('打开评价:', supplierName);
+        }
+    </script>
+</body>
+</html>

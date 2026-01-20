@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>主界面 - 方案三 混合式布局</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: #f0f2f5;
+        }
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .header h1 {
+            font-size: 24px;
+            color: #1e293b;
+        }
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #2563eb;
+        }
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #475569;
+        }
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+        .btn-evaluation {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .btn-evaluation:hover {
+            background: linear-gradient(135deg, #5a67d8 0%, #6b46c1 100%);
+        }
+        .toolbar {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .toolbar label {
+            font-weight: 500;
+            color: #64748b;
+        }
+        .toolbar input[type="month"] {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        /* 主内容区 */
+        .main-content {
+            display: grid;
+            grid-template-columns: 250px 1fr 280px;
+            gap: 20px;
+        }
+
+        /* 左侧供应商列表 */
+        .supplier-list {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 15px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        .list-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .list-item {
+            padding: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .list-item:hover {
+            background: #f8fafc;
+        }
+        .list-item.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .list-item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .list-item-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .list-item-score {
+            font-weight: 700;
+            font-size: 14px;
+        }
+        .list-item.active .list-item-score {
+            color: white;
+        }
+        .list-item-rank {
+            font-size: 12px;
+            color: #64748b;
+        }
+        .list-item.active .list-item-rank {
+            color: rgba(255,255,255,0.8);
+        }
+
+        /* 中间主展示区 */
+        .main-display {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .key-metrics {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+        }
+        .metric-card {
+            text-align: center;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .metric-card.main {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .metric-card h3 {
+            font-size: 13px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+        .metric-card.main h3 {
+            color: rgba(255,255,255,0.9);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+        .metric-card.main .metric-value {
+            color: white;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+        .metric-card.main .metric-label {
+            color: rgba(255,255,255,0.8);
+        }
+        .charts-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+        .chart-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .chart-card h3 {
+            font-size: 16px;
+            color: #1e293b;
+            margin-bottom: 15px;
+        }
+        .chart-placeholder {
+            height: 180px;
+            background: #f8fafc;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+        .detail-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        .detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .detail-header h3 {
+            font-size: 18px;
+            color: #1e293b;
+        }
+        .detail-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+        .detail-card {
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+        .detail-card h4 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .detail-score {
+            font-size: 36px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+        .detail-score.quality { color: #10b981; }
+        .detail-score.delivery { color: #3b82f6; }
+        .detail-score.service { color: #f59e0b; }
+        .detail-info {
+            font-size: 13px;
+            color: #64748b;
+            line-height: 1.8;
+        }
+        .detail-info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .trend-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 10px;
+            height: 120px;
+            padding: 10px 0;
+        }
+        .trend-bar {
+            flex: 1;
+            background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%);
+            border-radius: 4px 4px 0 0;
+            min-height: 20px;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            padding-bottom: 5px;
+            font-size: 10px;
+            color: white;
+            font-weight: 600;
+        }
+        .trend-label {
+            text-align: center;
+            font-size: 10px;
+            color: #64748b;
+            margin-top: 5px;
+        }
+
+        /* 右侧统计面板 */
+        .stats-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            padding: 20px;
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        .panel-header {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1e293b;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .grade-distribution {
+            margin-bottom: 25px;
+        }
+        .grade-distribution h4 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .grade-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .grade-bar {
+            flex: 1;
+            height: 24px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .grade-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+        .grade-fill-excellent { background: linear-gradient(90deg, #10b981, #34d399); }
+        .grade-fill-good { background: linear-gradient(90deg, #3b82f6, #60a5fa); }
+        .grade-fill-improve { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+        .grade-fill-poor { background: linear-gradient(90deg, #ef4444, #f87171); }
+        .ranking-list {
+            margin-top: 25px;
+        }
+        .ranking-list h4 {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 15px;
+        }
+        .ranking-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            background: #f8fafc;
+            border-radius: 6px;
+            margin-bottom: 8px;
+        }
+        .ranking-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 12px;
+            color: white;
+        }
+        .ranking-1 { background: #fbbf24; }
+        .ranking-2 { background: #94a3b8; }
+        .ranking-3 { background: #b45309; }
+        .ranking-other { background: #e2e8f0; color: #64748b; }
+        .ranking-name {
+            flex: 1;
+            font-size: 13px;
+            color: #475569;
+        }
+        .ranking-score {
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .ranking-score.high { color: #10b981; }
+        .ranking-score.medium { color: #3b82f6; }
+        .ranking-score.low { color: #ef4444; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 头部 -->
+        <div class="header">
+            <div class="header-top">
+                <h1>供应商月度评价系统</h1>
+                <div class="header-actions">
+                    <button class="btn btn-secondary">配置管理</button>
+                </div>
+            </div>
+            <div class="toolbar">
+                <label>评价周期:</label>
+                <input type="month" value="2025-01">
+                <button class="btn btn-evaluation">开始评价</button>
+                <button class="btn btn-secondary">刷新数据</button>
+            </div>
+        </div>
+
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 左侧供应商列表 -->
+            <div class="supplier-list">
+                <div class="list-header">📋 供应商列表</div>
+                <div class="list-item active">
+                    <div class="list-item-header">
+                        <span class="list-item-name">供应商A</span>
+                        <span class="list-item-score">95.5</span>
+                    </div>
+                    <div class="list-item-rank">排名: 1</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <span class="list-item-name">供应商B</span>
+                        <span class="list-item-score">88.7</span>
+                    </div>
+                    <div class="list-item-rank">排名: 2</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <span class="list-item-name">供应商C</span>
+                        <span class="list-item-score">82.3</span>
+                    </div>
+                    <div class="list-item-rank">排名: 3</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <span class="list-item-name">供应商D</span>
+                        <span class="list-item-score">72.5</span>
+                    </div>
+                    <div class="list-item-rank">排名: 4</div>
+                </div>
+                <div class="list-item">
+                    <div class="list-item-header">
+                        <span class="list-item-name">供应商E</span>
+                        <span class="list-item-score">65.8</span>
+                    </div>
+                    <div class="list-item-rank">排名: 5</div>
+                </div>
+            </div>
+
+            <!-- 中间主展示区 -->
+            <div class="main-display">
+                <!-- 关键指标 -->
+                <div class="key-metrics">
+                    <div class="metrics-grid">
+                        <div class="metric-card main">
+                            <h3>平均综合得分</h3>
+                            <div class="metric-value">81.0</div>
+                            <div class="metric-label">↑ 2.5 较上月</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>优秀供应商</h3>
+                            <div class="metric-value">1</div>
+                            <div class="metric-label">占比 20%</div>
+                        </div>
+                        <div class="metric-card">
+                            <h3>评价完成率</h3>
+                            <div class="metric-value">100%</div>
+                            <div class="metric-label">5/5 已完成</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 图表区 -->
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <h3>📈 综合得分趋势 (最近6个月)</h3>
+                        <div class="trend-chart">
+                            <div>
+                                <div class="trend-bar" style="height: 70%;">78.5</div>
+                                <div class="trend-label">10月</div>
+                            </div>
+                            <div>
+                                <div class="trend-bar" style="height: 75%;">76.0</div>
+                                <div class="trend-label">11月</div>
+                            </div>
+                            <div>
+                                <div class="trend-bar" style="height: 78%;">78.5</div>
+                                <div class="trend-label">12月</div>
+                            </div>
+                            <div>
+                                <div class="trend-bar" style="height: 81%;">81.0</div>
+                                <div class="trend-label">1月</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chart-card">
+                        <h3>📊 等级分布</h3>
+                        <div class="chart-placeholder">
+                            <div style="text-align: center;">
+                                <div style="width: 80px; height: 80px; border-radius: 50%; background: conic-gradient(#10b981 0deg 72deg, #3b82f6 72deg 216deg, #f59e0b 216deg 288deg, #ef4444 288deg 360deg); margin: 0 auto 10px;"></div>
+                                <div style="font-size: 12px;">等级分布图</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 详情展示区 -->
+                <div class="detail-section">
+                    <div class="detail-header">
+                        <h3>供应商A - 详细信息</h3>
+                        <span class="grade-badge grade-excellent">优秀</span>
+                    </div>
+                    <div class="detail-content">
+                        <div class="detail-card">
+                            <h4>质量维度</h4>
+                            <div class="detail-score quality">97.5</div>
+                            <div class="detail-info">
+                                <span>检验批次: 120批次</span>
+                                <span>NG批次: 3批次</span>
+                                <span>合格率: 97.5%</span>
+                            </div>
+                        </div>
+                        <div class="detail-card">
+                            <h4>交付维度</h4>
+                            <div class="detail-score delivery">95.0</div>
+                            <div class="detail-info">
+                                <span>准时率: 98%</span>
+                                <span>准确率: 97%</span>
+                                <span>响应速度: 优秀</span>
+                            </div>
+                        </div>
+                        <div class="detail-card">
+                            <h4>服务维度</h4>
+                            <div class="detail-score service">92.0</div>
+                            <div class="detail-info">
+                                <span>配合度: 优秀</span>
+                                <span>沟通及时性: 优秀</span>
+                                <span>问题处理: 优秀</span>
+                            </div>
+                        </div>
+                        <div class="detail-card">
+                            <h4>历史趋势</h4>
+                            <div class="trend-chart">
+                                <div>
+                                    <div class="trend-bar" style="height: 85%;">93.2</div>
+                                    <div class="trend-label">10月</div>
+                                </div>
+                                <div>
+                                    <div class="trend-bar" style="height: 88%;">95.0</div>
+                                    <div class="trend-label">11月</div>
+                                </div>
+                                <div>
+                                    <div class="trend-bar" style="height: 90%;">96.5</div>
+                                    <div class="trend-label">12月</div>
+                                </div>
+                                <div>
+                                    <div class="trend-bar" style="height: 95.5%;">95.5</div>
+                                    <div class="trend-label">1月</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧统计面板 -->
+            <div class="stats-panel">
+                <div class="panel-header">📊 统计面板</div>
+                <div class="grade-distribution">
+                    <h4>等级分布</h4>
+                    <div class="grade-item">
+                        <span style="width: 50px; font-size: 12px; color: #64748b;">优秀</span>
+                        <div class="grade-bar">
+                            <div class="grade-fill grade-fill-excellent" style="width: 20%;">1</div>
+                        </div>
+                    </div>
+                    <div class="grade-item">
+                        <span style="width: 50px; font-size: 12px; color: #64748b;">合格</span>
+                        <div class="grade-bar">
+                            <div class="grade-fill grade-fill-good" style="width: 40%;">2</div>
+                        </div>
+                    </div>
+                    <div class="grade-item">
+                        <span style="width: 50px; font-size: 12px; color: #64748b;">整改后合格</span>
+                        <div class="grade-bar">
+                            <div class="grade-fill grade-fill-improve" style="width: 20%;">1</div>
+                        </div>
+                    </div>
+                    <div class="grade-item">
+                        <span style="width: 50px; font-size: 12px; color: #64748b;">不合格</span>
+                        <div class="grade-bar">
+                            <div class="grade-fill grade-fill-poor" style="width: 20%;">1</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="ranking-list">
+                    <h4>快速排名</h4>
+                    <div class="ranking-item">
+                        <span class="ranking-badge ranking-1">1</span>
+                        <span class="ranking-name">供应商A</span>
+                        <span class="ranking-score high">95.5</span>
+                    </div>
+                    <div class="ranking-item">
+                        <span class="ranking-badge ranking-2">2</span>
+                        <span class="ranking-name">供应商B</span>
+                        <span class="ranking-score medium">88.7</span>
+                    </div>
+                    <div class="ranking-item">
+                        <span class="ranking-badge ranking-3">3</span>
+                        <span class="ranking-name">供应商C</span>
+                        <span class="ranking-score medium">82.3</span>
+                    </div>
+                    <div class="ranking-item">
+                        <span class="ranking-badge ranking-other">4</span>
+                        <span class="ranking-name">供应商D</span>
+                        <span class="ranking-score low">72.5</span>
+                    </div>
+                    <div class="ranking-item">
+                        <span class="ranking-badge ranking-other">5</span>
+                        <span class="ranking-name">供应商E</span>
+                        <span class="ranking-score low">65.8</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
