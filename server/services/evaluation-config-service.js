@@ -88,7 +88,111 @@ class EvaluationConfigService {
      * @returns {Promise<Object>} 更新后的配置
      */
     async updateConfig(config) {
-        return await this.saveConfig(config);
+        const { sequelize } = require('../database/config');
+        const PerformanceEvaluation = require('../models/PerformanceEvaluation');
+        const PerformanceEvaluationDetail = require('../models/PerformanceEvaluationDetail');
+        const transaction = await sequelize.transaction();
+
+        try {
+            // 验证配置
+            this.validateConfig(config);
+
+            // 保存配置到文件
+            await this.saveConfigToFile(config, transaction);
+
+            // 检查是否存在进行中的评价周期
+            const inProgressEvaluations = await PerformanceEvaluation.findAll({
+                where: { status: 'in_progress' },
+                transaction
+            });
+
+            if (inProgressEvaluations.length > 0) {
+                logger.info(`检测到 ${inProgressEvaluations.length} 个进行中的评价周期，开始更新配置快照`);
+
+                let totalRecalculated = 0;
+
+                // 更新每个进行中评价周期的配置快照，并重新计算已评价的供应商分数
+                for (const evaluation of inProgressEvaluations) {
+                    // 获取该评价周期的所有评价详情
+                    const details = await PerformanceEvaluationDetail.findAll({
+                        where: { evaluation_id: evaluation.id },
+                        transaction
+                    });
+
+                    if (details.length > 0) {
+                        logger.info(`评价周期 ${evaluation.period_name} 已有 ${details.length} 条评价数据，开始重新计算`);
+
+                        // 重新计算每条评价详情的总分和等级
+                        for (const detail of details) {
+                            const { totalScore, grade } = this.calculateScoreAndGrade(
+                                detail.scores,
+                                config  // 使用新配置
+                            );
+
+                            detail.total_score = totalScore;
+                            detail.grade = grade;
+                            await detail.save({ transaction });
+                            totalRecalculated++;
+                        }
+                    }
+
+                    // 更新配置快照
+                    evaluation.config_snapshot = config;
+                    await evaluation.save({ transaction });
+                }
+
+                await transaction.commit();
+                logger.info(`已更新 ${inProgressEvaluations.length} 个评价周期的配置快照，重新计算了 ${totalRecalculated} 条评价数据`);
+
+                return {
+                    config,
+                    updatedEvaluations: inProgressEvaluations.length,
+                    recalculatedDetails: totalRecalculated
+                };
+            } else {
+                await transaction.commit();
+                logger.info('没有进行中的评价周期，仅更新配置文件');
+                return {
+                    config,
+                    updatedEvaluations: 0,
+                    recalculatedDetails: 0
+                };
+            }
+        } catch (error) {
+            await transaction.rollback();
+            logger.error('更新评价配置失败:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 保存配置到文件
+     * @param {Object} config - 评价配置
+     * @param {Object} transaction - 数据库事务
+     * @returns {Promise<Object>} 保存的配置
+     */
+    async saveConfigToFile(config, transaction) {
+        try {
+            // 验证配置
+            this.validateConfig(config);
+
+            // 确保data目录存在
+            const dataDir = path.dirname(this.configFilePath);
+            await fs.mkdir(dataDir, { recursive: true });
+
+            // 保存配置文件
+            await fs.writeFile(
+                this.configFilePath,
+                JSON.stringify(config, null, 2),
+                'utf-8'
+            );
+
+            logger.info('保存评价配置文件成功');
+            return config;
+        } catch (error) {
+            logger.error('保存评价配置文件失败:', error);
+            throw error;
+        }
     }
 
     /**

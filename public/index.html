@@ -664,6 +664,16 @@
                                 </button>
                             </div>
                             <div class="performance-modal-body">
+                                <!-- 配置变更警告横幅 -->
+                                <div id="configWarningBanner" class="config-warning-banner hidden">
+                                    <i class="ph ph-warning"></i>
+                                    <div class="warning-content">
+                                        <h4>⚠️ 配置变更提醒</h4>
+                                        <p>检测到有 <span id="inProgressCount">0</span> 个评价周期正在进行中。</p>
+                                        <p>修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。</p>
+                                    </div>
+                                </div>
+
                                 <!-- 维度配置 -->
                                 <div class="config-section">
                                     <div class="config-section-header">
@@ -720,6 +730,8 @@
                                     <div class="performance__type-content">
                                         <div class="performance__type-title">外购</div>
                                         <div class="performance__type-count" id="performancePurchaseCount">0</div>
+                                        <div class="performance__type-description">外购物料供应商</div>
+                                        <div class="performance__type-status">当前选中</div>
                                     </div>
                                 </div>
                                 <div class="performance__type-card" data-type="external">
@@ -727,6 +739,8 @@
                                     <div class="performance__type-content">
                                         <div class="performance__type-title">外协</div>
                                         <div class="performance__type-count" id="performanceExternalCount">0</div>
+                                        <div class="performance__type-description">外协加工供应商</div>
+                                        <div class="performance__type-status">未选中</div>
                                     </div>
                                 </div>
                             </div>
@@ -755,62 +769,62 @@
                             <!-- 评价实体卡片列表 -->
                             <div id="entityCardsList" class="entity-cards"></div>
 
-                            <!-- 评价侧边栏 -->
-                            <div id="evaluationSidebar" class="evaluation-sidebar hidden">
-                                <div class="sidebar-header">
-                                    <h3 id="sidebarEntityName">评价实体名称</h3>
-                                    <button class="btn-icon" id="closeSidebarBtn">
-                                        <i class="ph ph-x"></i>
-                                    </button>
-                                </div>
-
-                                <!-- 质量数据展示 -->
-                                <div class="quality-data-section">
-                                    <h4>质量数据</h4>
-                                    <div class="quality-stats">
-                                        <div class="stat-item">
-                                            <label>总批次</label>
-                                            <span id="qualityTotalBatches">-</span>
+                            <!-- 评价模态框 -->
+                            <div id="evaluationModal" class="evaluation-modal hidden">
+                                <div class="evaluation-modal-content">
+                                    <div class="evaluation-modal-header">
+                                        <h3 id="modalEntityName">评价实体名称</h3>
+                                        <button class="btn-icon" id="closeModalBtn">
+                                            <i class="ph ph-x"></i>
+                                        </button>
+                                    </div>
+                            
+                                    <div class="evaluation-modal-body">
+                                        <!-- 质量数据展示 -->
+                                        <div class="quality-data-section">
+                                            <h4><i class="ph ph-chart-bar"></i> 质量数据</h4>
+                                            <div class="quality-stats">
+                                                <div class="stat-item">
+                                                    <label>总批次</label>
+                                                    <span id="qualityTotalBatches">-</span>
+                                                </div>
+                                                <div class="stat-item">
+                                                    <label>合格批次</label>
+                                                    <span id="qualityOkBatches">-</span>
+                                                </div>
+                                                <div class="stat-item">
+                                                    <label>合格率</label>
+                                                    <span id="qualityPassRate">-</span>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="stat-item">
-                                            <label>合格批次</label>
-                                            <span id="qualityOkBatches">-</span>
-                                        </div>
-                                        <div class="stat-item">
-                                            <label>合格率</label>
-                                            <span id="qualityPassRate">-</span>
+                            
+                                        <!-- 评价表单 -->
+                                        <div class="evaluation-form">
+                                            <h4><i class="ph ph-star"></i> 评价分数</h4>
+                                            <form id="evaluationForm">
+                                                <div id="dimensionInputs"></div>
+                                                <div class="form-group">
+                                                    <label>评价备注</label>
+                                                    <textarea id="evaluationRemarks" rows="3" placeholder="请输入评价备注..."></textarea>
+                                                </div>
+                                                <div class="form-actions">
+                                                    <button type="button" class="btn btn-secondary" id="cancelEvaluationBtn">
+                                                        <i class="ph ph-x"></i> 取消
+                                                    </button>
+                                                    <button type="submit" class="btn btn-primary">
+                                                        <i class="ph ph-check"></i> 保存
+                                                    </button>
+                                                </div>
+                                            </form>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- 评价表单 -->
-                                <div class="evaluation-form">
-                                    <h4>评价分数</h4>
-                                    <form id="evaluationForm">
-                                        <div id="dimensionInputs"></div>
-                                        <div class="form-group">
-                                            <label>评价备注</label>
-                                            <textarea id="evaluationRemarks" rows="3"></textarea>
-                                        </div>
-                                        <div class="form-actions">
-                                            <button type="submit" class="btn btn-primary">
-                                                <i class="ph ph-check"></i> 保存
-                                            </button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                            </div>                        </div>
                     </div>
 
-                    <!-- 评价周期列表 -->
-                    <div id="evaluationPeriodsList" class="performance__periods-list">
-                        <h3>历史评价周期</h3>
-                        <div id="periodsList"></div>
-                    </div>
-
-                    <!-- 主界面展示 -->
-                    <div id="resultsInterface" class="performance__results-interface hidden">
+                    <!-- 主界面展示（默认显示） -->
+                    <div id="resultsInterface" class="performance__results-interface">
                         <!-- 顶部信息 -->
                         <div class="results-header">
                             <h2 id="resultsTitle">评价结果</h2>
@@ -820,9 +834,14 @@
                                     <span id="resultsPeriod">2025-01-01 至 2025-01-31</span>
                                 </span>
                             </div>
-                            <button class="btn btn-secondary" id="exitResultsBtn">
-                                <i class="ph ph-x"></i> 返回
-                            </button>
+                            <div class="results-actions">
+                                <button class="btn btn-secondary" id="showPeriodsBtn">
+                                    <i class="ph ph-clock-counter-clockwise"></i> 历史评价
+                                </button>
+                                <button class="btn btn-secondary" id="exitResultsBtn">
+                                    <i class="ph ph-x"></i> 返回
+                                </button>
+                            </div>
                         </div>
 
                         <!-- 顶部统计区 -->
@@ -930,6 +949,12 @@
                                 </div>
                             </div>
                         </div>
+                    </div>
+
+                    <!-- 评价周期列表（默认隐藏） -->
+                    <div id="evaluationPeriodsList" class="performance__periods-list hidden">
+                        <h3>历史评价周期</h3>
+                        <div id="periodsList"></div>
                     </div>
                 </div>
                 <div id="module-vendor-config" class="module-view hidden">

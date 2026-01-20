@@ -298,39 +298,43 @@ class PerformanceEvaluationService {
 
     
 
-                                                name: v.supplier_name,
+                                                                                            entityName: v.supplier_name,
 
     
 
-                                                data_type: v.data_type || 'purchase',
+                                                                                            name: v.supplier_name,
 
     
 
-                                                qualityData: qualityDataMap[v.supplier_name] || {
+                                                                                            data_type: v.data_type || 'purchase',
 
     
 
-                                                    totalBatches: 0,
+                                                                                            qualityData: qualityDataMap[v.supplier_name] || {
 
     
 
-                                                    okBatches: 0,
+                                                                                                totalBatches: 0,
 
     
 
-                                                    ngBatches: 0,
+                                                                                                okBatches: 0,
 
     
 
-                                                    passRate: 0
+                                                                                                ngBatches: 0,
 
     
 
-                                                }
+                                                                                                passRate: 0
 
     
 
-                                            }))
+                                                                                            }
+
+    
+
+                                                                                        }))
 
     
 
@@ -390,44 +394,26 @@ class PerformanceEvaluationService {
 
                     logger.info(`继续评价成功: ${evaluation.period_name}`);
 
-    
-
                     return {
-
                         evaluation,
-
                         evaluationEntities: vendors.map(v => {
-
                             const detail = details.find(d => d.evaluation_entity_name === v.supplier_name);
-
                             return {
-
+                                entityName: v.supplier_name,
                                 name: v.supplier_name,
-
+                                data_type: v.data_type || 'purchase',
                                 qualityData: qualityDataMap[v.supplier_name] || {
-
                                     totalBatches: 0,
-
                                     okBatches: 0,
-
                                     ngBatches: 0,
-
                                     passRate: 0
-
                                 },
-
                                 scores: detail ? detail.scores : {},
-
                                 totalScore: detail ? detail.total_score : null,
-
                                 grade: detail ? detail.grade : null,
-
                                 remarks: detail ? detail.remarks : null
-
                             };
-
                         })
-
                     };
 
                 }

@@ -76,6 +76,92 @@
             }
         },
 
+        // 显示空状态（无评价数据时）
+        showEmptyState() {
+            console.log('显示空状态');
+            // 显示主界面
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.remove('hidden');
+            }
+            
+            // 更新标题
+            if (els.resultsTitle) {
+                els.resultsTitle.textContent = '供应商月度评价';
+            }
+            if (els.resultsPeriod) {
+                els.resultsPeriod.textContent = '暂无评价数据';
+            }
+            
+            // 显示空状态统计
+            if (els.averageScore) {
+                els.averageScore.textContent = '-';
+            }
+            if (els.scoreTrend) {
+                els.scoreTrend.textContent = '暂无数据';
+            }
+            
+            // 显示空状态等级分布
+            if (els.gradeExcellent) els.gradeExcellent.textContent = '0';
+            if (els.gradeGood) els.gradeGood.textContent = '0';
+            if (els.gradeImprove) els.gradeImprove.textContent = '0';
+            if (els.gradePoor) els.gradePoor.textContent = '0';
+            if (els.gradeExcellentPercent) els.gradeExcellentPercent.textContent = '0%';
+            if (els.gradeGoodPercent) els.gradeGoodPercent.textContent = '0%';
+            if (els.gradeImprovePercent) els.gradeImprovePercent.textContent = '0%';
+            if (els.gradePoorPercent) els.gradePoorPercent.textContent = '0%';
+            
+            // 显示空状态指标
+            if (els.evaluatedCount) els.evaluatedCount.textContent = '0';
+            if (els.unevaluatedCount) els.unevaluatedCount.textContent = '0';
+            if (els.totalCount) els.totalCount.textContent = '0';
+            
+            // 显示空状态图表
+            this.renderEmptyCharts();
+            
+            // 显示空状态表格
+            if (els.resultsTableBody) {
+                els.resultsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: #718096;">
+                            <div style="margin-bottom: 1rem;">
+                                <i class="ph ph-chart-bar" style="font-size: 48px; opacity: 0.5;"></i>
+                            </div>
+                            <div style="font-size: 16px; font-weight: 500; margin-bottom: 0.5rem;">暂无评价数据</div>
+                            <div style="font-size: 14px;">请先创建评价周期开始评价</div>
+                        </td>
+                    </tr>
+                `;
+            }
+        },
+
+        // 渲染空状态图表
+        renderEmptyCharts() {
+            // 清空现有图表
+            if (state.charts.trend) {
+                state.charts.trend.destroy();
+                state.charts.trend = null;
+            }
+            if (state.charts.grade) {
+                state.charts.grade.destroy();
+                state.charts.grade = null;
+            }
+            if (state.charts.radar) {
+                state.charts.radar.destroy();
+                state.charts.radar = null;
+            }
+            
+            // 显示占位符
+            if (els.trendChart) {
+                els.trendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
+            }
+            if (els.gradeChart) {
+                els.gradeChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-chart-pie-slice" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
+            }
+            if (els.radarChart) {
+                els.radarChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-polygon" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
+            }
+        },
+
         // 加载评价结果
         async loadResults(evaluationId) {
             try {

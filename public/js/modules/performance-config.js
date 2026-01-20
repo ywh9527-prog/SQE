@@ -32,6 +32,8 @@
             els.addGradeRuleBtn = document.getElementById('addGradeRuleBtn');
             els.resetConfigBtn = document.getElementById('resetConfigBtn');
             els.saveConfigBtn = document.getElementById('saveConfigBtn');
+            els.configWarningBanner = document.getElementById('configWarningBanner');
+            els.inProgressCount = document.getElementById('inProgressCount');
         },
 
         // 绑定事件
@@ -90,6 +92,10 @@
                     this.renderDimensions();
                     this.renderGradeRules();
                     this.updateTotalWeight();
+                    
+                    // 检查是否有进行中的评价周期
+                    await this.checkInProgressEvaluations();
+                    
                     els.configModal.classList.remove('hidden');
                 } else {
                     alert('加载配置失败：' + result.message);
@@ -97,6 +103,27 @@
             } catch (error) {
                 console.error('加载配置失败:', error);
                 alert('加载配置失败');
+            }
+        },
+
+        // 检查是否有进行中的评价周期
+        async checkInProgressEvaluations() {
+            try {
+                const response = await this.authenticatedFetch('/api/evaluations/in-progress-check');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    // 显示警告横幅
+                    els.inProgressCount.textContent = result.data.count;
+                    els.configWarningBanner.classList.remove('hidden');
+                } else {
+                    // 隐藏警告横幅
+                    els.configWarningBanner.classList.add('hidden');
+                }
+            } catch (error) {
+                console.error('检查进行中评价周期失败:', error);
+                // 即使检查失败也隐藏警告横幅
+                els.configWarningBanner.classList.add('hidden');
             }
         },
 
@@ -308,23 +335,134 @@
                     }
                 }
 
+                // 检查是否有进行中的评价周期
+                const inProgressCheck = await this.checkInProgressEvaluationsSync();
+
+                // 总是显示确认对话框，让用户明确知道配置变更的影响
+                let confirmMessage = '确定要保存配置吗？';
+                
+                if (inProgressCheck.hasInProgress) {
+                    confirmMessage = 
+                        `⚠️ 配置变更提醒\n\n` +
+                        `检测到有 ${inProgressCheck.count} 个评价周期正在进行中。\n\n` +
+                        `修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。\n\n` +
+                        `是否继续保存配置？`;
+                } else {
+                    confirmMessage = 
+                        `确定要保存配置吗？\n\n` +
+                        `保存后，评价界面将自动刷新以应用新配置。`;
+                }
+
+                const confirmed = confirm(confirmMessage);
+
+                if (!confirmed) {
+                    return; // 用户取消
+                }
+
                 // 保存配置
+                console.log('开始保存配置:', state.config);
                 const response = await this.authenticatedFetch('/api/evaluation-config', {
                     method: 'PUT',
                     body: JSON.stringify(state.config)
                 });
+                
+                console.log('保存配置响应状态:', response.status);
                 const result = await response.json();
+                console.log('保存配置响应数据:', result);
 
                 if (result.success) {
-                    alert('配置保存成功！');
+                    let message = '配置保存成功！';
+                    
+                    // 如果有进行中的评价周期，提示用户
+                    if (inProgressCheck.hasInProgress) {
+                        message += `\n\n已更新 ${result.data.updatedEvaluations} 个评价周期的配置快照。`;
+                        if (result.data.recalculatedDetails > 0) {
+                            message += `\n已自动重新计算 ${result.data.recalculatedDetails} 条评价数据。`;
+                        }
+                        message += `\n\n建议重新检查已评价的供应商分数。`;
+                    } else {
+                        message += `\n\n评价界面将自动刷新以应用新配置。`;
+                    }
+                    
+                    alert(message);
                     state.originalConfig = JSON.parse(JSON.stringify(state.config));
                     els.configModal.classList.add('hidden');
+                    
+                    // 通知评价模块重新加载配置并刷新界面
+                    try {
+                        console.log('准备刷新评价界面...');
+                        console.log('window.App:', window.App);
+                        console.log('window.App.Modules:', window.App?.Modules);
+                        console.log('window.App.Modules.Performance:', window.App?.Modules?.Performance);
+                        
+                        if (window.App && window.App.Modules && window.App.Modules.Performance) {
+                            const perfModule = window.App.Modules.Performance;
+                            console.log('Performance模块存在');
+                            console.log('perfModule.state:', perfModule.state);
+                            console.log('perfModule.state.currentEvaluation:', perfModule.state?.currentEvaluation);
+                            
+                            // 重新加载配置
+                            console.log('开始重新加载配置...');
+                            await perfModule.loadConfig();
+                            console.log('配置重新加载完成');
+                            
+                            // 如果当前正在评价界面，重新加载实体数据并渲染卡片
+                            if (perfModule.state && perfModule.state.currentEvaluation) {
+                                console.log('检测到当前正在评价界面，开始刷新实体数据...');
+                                console.log('评价周期ID:', perfModule.state.currentEvaluation.id);
+                                
+                                // 重新加载评价实体数据
+                                const response = await perfModule.authenticatedFetch(
+                                    `/api/evaluations/${perfModule.state.currentEvaluation.id}/entities`
+                                );
+                                const result = await response.json();
+                                
+                                console.log('实体数据响应:', result);
+                                
+                                if (result.success) {
+                                    perfModule.state.entities = result.data;
+                                    console.log('评价实体数据已更新:', perfModule.state.entities);
+                                    
+                                    // 重新渲染卡片
+                                    console.log('开始重新渲染卡片...');
+                                    perfModule.renderEntityCards();
+                                    console.log('卡片重新渲染完成');
+                                }
+                            } else {
+                                console.log('当前不在评价界面，跳过实体数据刷新');
+                            }
+                        } else {
+                            console.warn('Performance模块不存在');
+                        }
+                    } catch (error) {
+                        console.error('刷新评价界面失败:', error);
+                        // 即使刷新失败也不影响配置保存
+                    }
                 } else {
+                    console.error('保存配置失败:', result);
                     alert('保存配置失败：' + result.message);
                 }
             } catch (error) {
-                console.error('保存配置失败:', error);
-                alert('保存配置失败');
+                console.error('保存配置异常:', error);
+                alert('保存配置失败：' + error.message);
+            }
+        },
+
+        // 同步检查是否有进行中的评价周期
+        async checkInProgressEvaluationsSync() {
+            try {
+                const response = await this.authenticatedFetch('/api/evaluations/in-progress-check');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    return result.data;
+                } else {
+                    return { hasInProgress: false, count: 0 };
+                }
+            } catch (error) {
+                console.error('检查进行中评价周期失败:', error);
+                // 即使检查失败也返回默认值，不影响配置保存
+                return { hasInProgress: false, count: 0 };
             }
         }
     };

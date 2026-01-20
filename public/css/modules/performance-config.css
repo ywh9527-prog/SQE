@@ -7,6 +7,45 @@
    配置管理对话框
    ============================================ */
 
+.config-warning-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--border-radius-lg);
+    padding: var(--border-radius-lg);
+    margin-bottom: var(--border-radius-lg);
+    background: var(--warning-light);
+    border: 1px solid var(--warning);
+    border-radius: var(--border-radius-md);
+}
+
+.config-warning-banner i {
+    font-size: 1.5rem;
+    color: var(--warning);
+    flex-shrink: 0;
+}
+
+.config-warning-banner .warning-content h4 {
+    margin: 0 0 var(--border-radius-sm) 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--warning);
+}
+
+.config-warning-banner .warning-content p {
+    margin: var(--border-radius-sm) 0 0 0;
+    font-size: 0.875rem;
+    color: var(--gray-700);
+    line-height: 1.5;
+}
+
+.config-warning-banner .warning-content p:last-child {
+    margin-bottom: 0;
+}
+
+.config-warning-banner.hidden {
+    display: none;
+}
+
 .config-section {
     margin-bottom: var(--border-radius-xl);
     padding: var(--border-radius-lg);

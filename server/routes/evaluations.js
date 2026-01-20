@@ -260,6 +260,34 @@ router.put('/:id/submit', authenticateToken, async (req, res) => {
 });
 
 /**
+ * 检查是否有进行中的评价周期
+ * GET /api/evaluations/in-progress-check
+ * 注意：这个路由必须在其他带参数的路由之前，避免路由冲突
+ */
+router.get('/in-progress-check', authenticateToken, async (req, res) => {
+    try {
+        const PerformanceEvaluation = require('../models/PerformanceEvaluation');
+        const count = await PerformanceEvaluation.count({
+            where: { status: 'in_progress' }
+        });
+
+        res.json({
+            success: true,
+            data: {
+                hasInProgress: count > 0,
+                count: count
+            }
+        });
+    } catch (error) {
+        logger.error('检查进行中评价周期失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '检查失败'
+        });
+    }
+});
+
+/**
  * 获取评价结果
  * GET /api/evaluations/:id/results
  */

@@ -204,17 +204,19 @@ router.get('/config/statistics', authenticateToken, async (req, res) => {
  */
 router.get('/config/type-statistics', authenticateToken, async (req, res) => {
     try {
-        // 获取外购供应商数
+        // 获取已启用绩效评价的外购供应商数
         const purchaseCount = await VendorConfig.count({
             where: {
-                data_type: 'purchase'
+                data_type: 'purchase',
+                enable_performance_mgmt: 1
             }
         });
 
-        // 获取外协供应商数
+        // 获取已启用绩效评价的外协供应商数
         const externalCount = await VendorConfig.count({
             where: {
-                data_type: 'external'
+                data_type: 'external',
+                enable_performance_mgmt: 1
             }
         });
 

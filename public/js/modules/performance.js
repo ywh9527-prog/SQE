@@ -17,13 +17,16 @@
     const els = {};
 
     const PerformanceModule = {
+        // 暴露state供外部访问
+        state: state,
+        
         // 初始化模块
         init() {
             console.log('Performance Module: Initializing...');
             this.cacheElements();
             this.bindEvents();
             this.loadConfig();
-            this.loadEvaluationPeriods();
+            this.loadDashboard();
             console.log('Performance Module: Initialization complete');
         },
 
@@ -57,9 +60,10 @@
             els.evaluationEntityCount = document.getElementById('evaluationEntityCount');
             els.exitEvaluationBtn = document.getElementById('exitEvaluationBtn');
             els.entityCardsList = document.getElementById('entityCardsList');
-            els.evaluationSidebar = document.getElementById('evaluationSidebar');
-            els.sidebarEntityName = document.getElementById('sidebarEntityName');
-            els.closeSidebarBtn = document.getElementById('closeSidebarBtn');
+            els.evaluationModal = document.getElementById('evaluationModal');
+            els.modalEntityName = document.getElementById('modalEntityName');
+            els.closeModalBtn = document.getElementById('closeModalBtn');
+            els.cancelEvaluationBtn = document.getElementById('cancelEvaluationBtn');
             els.qualityTotalBatches = document.getElementById('qualityTotalBatches');
             els.qualityOkBatches = document.getElementById('qualityOkBatches');
             els.qualityPassRate = document.getElementById('qualityPassRate');
@@ -67,6 +71,11 @@
             els.evaluationForm = document.getElementById('evaluationForm');
             els.evaluationRemarks = document.getElementById('evaluationRemarks');
             els.periodsList = document.getElementById('periodsList');
+            
+            // 主界面和周期列表
+            els.resultsInterface = document.getElementById('resultsInterface');
+            els.evaluationPeriodsList = document.getElementById('evaluationPeriodsList');
+            els.showPeriodsBtn = document.getElementById('showPeriodsBtn');
             
             // 外购/外协切换卡片
             els.performanceTypeCards = document.querySelectorAll('.performance__type-card');
@@ -99,8 +108,17 @@
                 els.exitEvaluationBtn.addEventListener('click', () => this.exitEvaluation());
             }
 
-            if (els.closeSidebarBtn) {
-                els.closeSidebarBtn.addEventListener('click', () => this.closeSidebar());
+            // 切换到历史评价列表
+            if (els.showPeriodsBtn) {
+                els.showPeriodsBtn.addEventListener('click', () => this.showPeriodsList());
+            }
+
+            if (els.closeModalBtn) {
+                els.closeModalBtn.addEventListener('click', () => this.closeEvaluationModal());
+            }
+
+            if (els.cancelEvaluationBtn) {
+                els.cancelEvaluationBtn.addEventListener('click', () => this.closeEvaluationModal());
             }
 
             // 外购/外协切换事件
@@ -120,16 +138,76 @@
 
         // 加载配置
         async loadConfig() {
+            console.log('Performance Module: Loading config...');
             try {
                 const response = await this.authenticatedFetch('/api/evaluation-config');
                 const result = await response.json();
 
                 if (result.success) {
                     state.config = result.data;
+                    console.log('配置加载成功:', state.config);
+                    console.log('维度数量:', state.config.dimensions.length);
+                    console.log('维度列表:', state.config.dimensions);
+                } else {
+                    console.error('加载配置失败:', result.message);
                 }
             } catch (error) {
                 console.error('加载配置失败:', error);
             }
+        },
+
+        // 加载主界面
+        async loadDashboard() {
+            console.log('加载主界面...');
+            // 默认显示主界面
+            this.showDashboard();
+            
+            // 尝试加载最新的评价结果
+            try {
+                const response = await this.authenticatedFetch('/api/evaluations/latest');
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    console.log('找到最新评价:', result.data.id);
+                    // 有最新评价，加载数据
+                    if (window.App.Modules.PerformanceDashboard) {
+                        window.App.Modules.PerformanceDashboard.loadResults(result.data.id);
+                    }
+                } else {
+                    console.log('暂无评价数据');
+                    // 没有评价数据，显示空状态
+                    if (window.App.Modules.PerformanceDashboard) {
+                        window.App.Modules.PerformanceDashboard.showEmptyState();
+                    }
+                }
+            } catch (error) {
+                console.error('加载主界面失败:', error);
+                // 显示空状态
+                if (window.App.Modules.PerformanceDashboard) {
+                    window.App.Modules.PerformanceDashboard.showEmptyState();
+                }
+            }
+        },
+
+        // 显示主界面
+        showDashboard() {
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.remove('hidden');
+            }
+            if (els.evaluationPeriodsList) {
+                els.evaluationPeriodsList.classList.add('hidden');
+            }
+        },
+
+        // 显示历史周期列表
+        showPeriodsList() {
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.add('hidden');
+            }
+            if (els.evaluationPeriodsList) {
+                els.evaluationPeriodsList.classList.remove('hidden');
+            }
+            this.loadEvaluationPeriods();
         },
 
         // 加载评价周期列表
@@ -488,6 +566,7 @@
         // 开始评价
         async startEvaluation(evaluationId) {
             try {
+                console.log('开始评价, ID:', evaluationId);
                 const response = await this.authenticatedFetch(`/api/evaluations/${evaluationId}/start`, {
                     method: 'POST'
                 });
@@ -497,6 +576,10 @@
                 if (result.success) {
                     state.currentEvaluation = result.data.evaluation;
                     state.entities = result.data.evaluationEntities;
+                    state.currentType = 'purchase'; // 重置为默认类型
+
+                    console.log('评价实体数据:', state.entities);
+                    console.log('实体数量:', state.entities.length);
 
                     this.showEvaluationInterface();
                 } else {
@@ -510,6 +593,10 @@
 
         // 显示评价界面
         showEvaluationInterface() {
+            console.log('显示评价界面');
+            console.log('当前评价:', state.currentEvaluation);
+            console.log('评价实体:', state.entities);
+
             els.evaluationTitle.textContent = state.currentEvaluation.period_name;
             els.evaluationPeriod.textContent = `${state.currentEvaluation.start_date} 至 ${state.currentEvaluation.end_date}`;
             
@@ -529,7 +616,24 @@
             if (!state.currentType || state.currentType === '') {
                 return entities;
             }
-            return entities.filter(entity => entity.data_type === state.currentType);
+            
+            console.log(`过滤实体，当前类型: ${state.currentType}`);
+            console.log(`实体总数: ${entities.length}`);
+            
+            const filtered = entities.filter(entity => {
+                // 兼容不同的字段名
+                const entityType = entity.data_type || entity.dataType;
+                const result = entityType === state.currentType;
+                
+                if (!result && state.currentType === 'external') {
+                    console.log(`过滤掉: ${entity.name || entity.entityName}, 类型: ${entityType}`);
+                }
+                
+                return result;
+            });
+            
+            console.log(`过滤后数量: ${filtered.length}`);
+            return filtered;
         },
 
         // 切换数据类型
@@ -540,10 +644,13 @@
             // 更新卡片样式
             if (els.performanceTypeCards.length > 0) {
                 els.performanceTypeCards.forEach(card => {
+                    const statusElement = card.querySelector('.performance__type-status');
                     if (card.dataset.type === type) {
                         card.classList.add('performance__type-card--active');
+                        if (statusElement) statusElement.textContent = '当前选中';
                     } else {
                         card.classList.remove('performance__type-card--active');
+                        if (statusElement) statusElement.textContent = '未选中';
                     }
                 });
             }
@@ -575,12 +682,20 @@
             }
         },
 
-        // 渲染评价实体卡片
+// 渲染实体卡片
         renderEntityCards() {
+            console.log('渲染实体卡片...');
+            console.log('当前配置:', state.config);
+            console.log('配置维度:', state.config?.dimensions);
+
+            if (!els.entityCardsList) return;
+
             els.entityCardsList.innerHTML = '';
 
             // 按类型过滤
             const filteredEntities = this.filterEntitiesByType(state.entities);
+
+            console.log('过滤后的实体数量:', filteredEntities.length);
 
             filteredEntities.forEach(entity => {
                 const card = document.createElement('div');
@@ -594,48 +709,42 @@
                     const gradeText = this.getGradeText(entity.grade);
                     const gradeClass = this.getGradeClass(entity.grade);
 
-                    // 获取各维度分数
-                    const qualityScore = entity.scores['质量'] || 0;
-                    const deliveryScore = entity.scores['交付'] || 0;
-                    const serviceScore = entity.scores['服务'] || 0;
+                    // 动态生成维度HTML，支持自定义维度
+                    let dimensionsHtml = '';
+
+                    // 遍历配置中的所有维度
+                    if (state.config && state.config.dimensions) {
+                        console.log(`渲染实体 ${entity.name || entity.entityName} 的维度...`);
+                        state.config.dimensions.forEach((dimension, index) => {
+                            const score = entity.scores[dimension.key] || 0;
+                            console.log(`  - ${dimension.name} (${dimension.key}): ${score}`);
+                            dimensionsHtml += `
+                                <div class="dimension-item">
+                                    <div class="dimension-label">
+                                        <span>${dimension.name}</span>
+                                        <span>${score}</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: ${score}%; background: var(--primary-500)"></div>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                    } else {
+                        console.warn('配置或维度不存在');
+                    }
 
                     card.innerHTML = `
                         <div class="entity-card-header">
                             <span class="rank-badge rank-other">#</span>
-                            <h4 class="entity-card-title">${entity.entityName}</h4>
+                            <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
                         </div>
                         <div class="entity-card-score">
                             <div class="total-score">${entity.totalScore}</div>
                             <span class="grade-badge ${gradeClass}">${gradeText}</span>
                         </div>
                         <div class="entity-card-dimensions">
-                            <div class="dimension-item">
-                                <div class="dimension-label">
-                                    <span>质量</span>
-                                    <span>${qualityScore}</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill progress-quality" style="width: ${qualityScore}%"></div>
-                                </div>
-                            </div>
-                            <div class="dimension-item">
-                                <div class="dimension-label">
-                                    <span>交付</span>
-                                    <span>${deliveryScore}</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill progress-delivery" style="width: ${deliveryScore}%"></div>
-                                </div>
-                            </div>
-                            <div class="dimension-item">
-                                <div class="dimension-label">
-                                    <span>服务</span>
-                                    <span>${serviceScore}</span>
-                                </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill progress-service" style="width: ${serviceScore}%"></div>
-                                </div>
-                            </div>
+                            ${dimensionsHtml}
                         </div>
                         <div class="entity-card-footer">
                             <span>趋势: <span class="trend-flat">-</span></span>
@@ -647,7 +756,7 @@
                     // 未评价：显示当前设计
                     card.innerHTML = `
                         <div class="entity-card-header">
-                            <h4 class="entity-card-title">${entity.entityName}</h4>
+                            <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
                             <span class="entity-card-status pending">待评价</span>
                         </div>
                         <div class="entity-card-quality">
@@ -667,7 +776,7 @@
                     `;
                 }
 
-                card.addEventListener('click', () => this.openSidebar(entity));
+                card.addEventListener('click', () => this.openEvaluationModal(entity));
                 els.entityCardsList.appendChild(card);
             });
         },
@@ -695,17 +804,18 @@
         },
 
         // 打开侧边栏
-        openSidebar(entity) {
+        // 打开评价模态框
+        openEvaluationModal(entity) {
             state.currentEntity = entity;
 
-            els.sidebarEntityName.textContent = entity.entityName;
+            els.modalEntityName.textContent = entity.entityName;
             els.qualityTotalBatches.textContent = entity.qualityData.totalBatches;
             els.qualityOkBatches.textContent = entity.qualityData.okBatches;
             els.qualityPassRate.textContent = entity.qualityData.passRate + '%';
 
             this.renderDimensionInputs();
 
-            els.evaluationSidebar.classList.remove('hidden');
+            els.evaluationModal.classList.remove('hidden');
         },
 
         // 渲染维度输入框
@@ -727,9 +837,9 @@
             });
         },
 
-        // 关闭侧边栏
-        closeSidebar() {
-            els.evaluationSidebar.classList.add('hidden');
+        // 关闭评价模态框
+        closeEvaluationModal() {
+            els.evaluationModal.classList.add('hidden');
             state.currentEntity = null;
             els.evaluationForm.reset();
         },
@@ -751,6 +861,9 @@
                 });
             }
 
+            console.log('📊 提交的评价分数:', scores);
+            console.log('📊 当前评价实体:', state.currentEntity);
+
             const remarks = els.evaluationRemarks.value;
 
             try {
@@ -760,10 +873,11 @@
                 });
 
                 const result = await response.json();
+                console.log('📊 保存结果:', result);
 
                 if (result.success) {
                     alert('保存成功！');
-                    this.closeSidebar();
+                    this.closeEvaluationModal();
                     // 重新加载当前评价周期的实体数据
                     await this.startEvaluation(state.currentEvaluation.id);
                 } else {
@@ -777,6 +891,12 @@
 
         // 退出评价
         exitEvaluation() {
+            // 防止重复调用
+            if (this.isExiting) {
+                return;
+            }
+            this.isExiting = true;
+
             if (confirm('确定要退出评价吗？未保存的数据将丢失。')) {
                 els.evaluationInterface.classList.add('hidden');
                 document.getElementById('evaluationPeriodsList').classList.remove('hidden');
@@ -784,6 +904,11 @@
                 state.currentEntity = null;
                 state.entities = [];
             }
+
+            // 重置标志
+            setTimeout(() => {
+                this.isExiting = false;
+            }, 500);
         },
 
         // 显示配置对话框
