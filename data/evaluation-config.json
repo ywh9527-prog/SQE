@@ -1,0 +1,46 @@
+{
+  "dimensions": [
+    {
+      "name": "质量",
+      "key": "quality",
+      "weight": 0.5
+    },
+    {
+      "name": "交付",
+      "key": "delivery",
+      "weight": 0.3
+    },
+    {
+      "name": "服务",
+      "key": "service",
+      "weight": 0.1
+    },
+    {
+      "name": "新维度",
+      "key": "dimension_1768926160540",
+      "weight": 0.1
+    }
+  ],
+  "gradeRules": [
+    {
+      "min": 95,
+      "max": 100,
+      "label": "优秀"
+    },
+    {
+      "min": 85,
+      "max": 94.99,
+      "label": "合格"
+    },
+    {
+      "min": 70,
+      "max": 84.99,
+      "label": "整改后合格"
+    },
+    {
+      "min": 0,
+      "max": 69.99,
+      "label": "不合格"
+    }
+  ]
+}
