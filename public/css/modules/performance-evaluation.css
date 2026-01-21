@@ -555,23 +555,88 @@
 }
 
 .entity-card-dimensions .progress-bar {
-    height: 8px;
-    background: var(--gray-200);
-    border-radius: 4px;
+    height: 10px;
+    background: var(--gray-100);
+    border-radius: 5px;
     overflow: hidden;
     width: 100%;
     display: block;
+    position: relative;
 }
 
 .entity-card-dimensions .progress-fill {
     height: 100%;
-    border-radius: 4px;
-    transition: width var(--transition-base);
+    border-radius: 5px;
+    transition: width 0.4s ease-out;
+    position: relative;
 }
 
-.progress-quality { background: linear-gradient(90deg, var(--success), #34d399); }
-.progress-delivery { background: linear-gradient(90deg, var(--info), #60a5fa); }
-.progress-service { background: linear-gradient(90deg, var(--warning), #fbbf24); }
+/* 质量维度 - 绿色系 */
+.progress-quality { 
+    background: linear-gradient(90deg, 
+        #10b981 0%, 
+        #34d399 100%);
+}
+
+/* 交付维度 - 蓝色系 */
+.progress-delivery { 
+    background: linear-gradient(90deg, 
+        #3b82f6 0%, 
+        #60a5fa 100%);
+}
+
+/* 服务维度 - 紫色系 */
+.progress-service { 
+    background: linear-gradient(90deg, 
+        #8b5cf6 0%, 
+        #a78bfa 100%);
+}
+
+/* 自定义维度1 - 粉红渐变 */
+.progress-custom-1 { 
+    background: linear-gradient(90deg, 
+        #ec4899 0%, 
+        #f472b6 100%);
+}
+
+/* 自定义维度2 - 青色渐变 */
+.progress-custom-2 { 
+    background: linear-gradient(90deg, 
+        #06b6d4 0%, 
+        #22d3ee 100%);
+}
+
+/* 自定义维度3 - 天蓝渐变 */
+.progress-custom-3 { 
+    background: linear-gradient(90deg, 
+        #0ea5e9 0%, 
+        #38bdf8 100%);
+}
+
+/* 自定义维度4 - 靛蓝渐变 */
+.progress-custom-4 { 
+    background: linear-gradient(90deg, 
+        #6366f1 0%, 
+        #818cf8 100%);
+}
+
+/* 自定义维度5 - 绿松石渐变 */
+.progress-custom-5 { 
+    background: linear-gradient(90deg, 
+        #14b8a6 0%, 
+        #2dd4bf 100%);
+}
+
+/* 进度条加载动画 */
+@keyframes progressLoad {
+    from {
+        width: 0;
+    }
+}
+
+.entity-card-dimensions .progress-fill {
+    animation: progressLoad 0.6s ease-out forwards;
+}
 
 /* 质量数据（所有卡片都显示） */
 .entity-card-quality {

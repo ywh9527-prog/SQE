@@ -712,10 +712,36 @@
                     // 动态生成维度HTML，支持自定义维度
                     let dimensionsHtml = '';
 
+                    // 自定义维度的5种预设颜色
+                    const customDimensionColors = [
+                        'progress-custom-1', // 粉红渐变
+                        'progress-custom-2', // 青色渐变
+                        'progress-custom-3', // 玫红渐变
+                        'progress-custom-4', // 靛蓝渐变
+                        'progress-custom-5'  // 橙红渐变
+                    ];
+                    
+                    let customIndex = 0;
+
                     // 遍历配置中的所有维度
                     if (state.config && state.config.dimensions) {
                         state.config.dimensions.forEach((dimension, index) => {
                             const score = entity.scores[dimension.key] || 0;
+                            
+                            // 根据维度类型选择进度条样式
+                            let progressClass = '';
+                            if (dimension.key === 'quality') {
+                                progressClass = 'progress-quality';
+                            } else if (dimension.key === 'delivery') {
+                                progressClass = 'progress-delivery';
+                            } else if (dimension.key === 'service') {
+                                progressClass = 'progress-service';
+                            } else {
+                                // 自定义维度使用预设的5种颜色策略
+                                progressClass = customDimensionColors[customIndex % customDimensionColors.length];
+                                customIndex++;
+                            }
+                            
                             dimensionsHtml += `
                                 <div class="dimension-item">
                                     <div class="dimension-header">
@@ -723,7 +749,7 @@
                                         <span class="dimension-score">${score}</span>
                                     </div>
                                     <div class="progress-bar">
-                                        <div class="progress-fill" style="width: ${score}%; background: var(--primary-500)"></div>
+                                        <div class="progress-fill ${progressClass}" style="width: ${score}%" data-score="${score}"></div>
                                     </div>
                                 </div>
                             `;
