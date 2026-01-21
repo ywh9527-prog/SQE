@@ -131,8 +131,8 @@
                 });
             }
 
-            if (els.evaluationForm) {
-                els.evaluationForm.addEventListener('submit', (e) => this.handleEvaluationSubmit(e));
+            if (els.submitEvaluationBtn) {
+                els.submitEvaluationBtn.addEventListener('click', () => this.handleEvaluationSubmit());
             }
         },
 
@@ -867,44 +867,111 @@
                 return;
             }
 
+            // 创建维度卡片网格
+            const dimensionsGrid = document.createElement('div');
+            dimensionsGrid.className = 'dimensions-grid';
+
             state.config.dimensions.forEach(dimension => {
-                const formGroup = document.createElement('div');
-                formGroup.className = 'form-group';
+                // 创建维度卡片
+                const dimensionCard = document.createElement('div');
+                dimensionCard.className = 'dimension-card';
 
                 // 检查是否是质量维度
                 const isQualityDimension = dimension.key === 'quality';
 
-                // 如果是质量维度，自动计算分数
+                // 计算输入值
                 let inputValue = '';
-                let inputHtml = '';
                 let autoCalcInfo = '';
 
                 if (isQualityDimension && state.currentEntity && state.currentEntity.qualityData) {
                     const qualityData = state.currentEntity.qualityData;
-                    // 确保passRate是数字类型
                     const passRate = parseFloat(qualityData.passRate) || 0;
                     const totalBatches = qualityData.totalBatches || 0;
                     const okBatches = qualityData.okBatches || 0;
 
-                    // 直接使用合格率作为分数，不乘以权重
                     inputValue = passRate.toFixed(1);
                     autoCalcInfo = `
-                        <div class="auto-calc-info" style="font-size: 12px; color: var(--gray-500); margin-top: 4px;">
+                        <div class="auto-calc-info">
                             <i class="ph ph-calculator"></i>
-                            当月合格批次/当月交付总批次：${okBatches}/${totalBatches} = ${passRate}%
+                            自动评分：当月合格批次/当月交付总批次：${okBatches}/${totalBatches} = ${passRate}%
                         </div>
                     `;
+                } else if (state.currentEntity && state.currentEntity.scores && state.currentEntity.scores[dimension.key] !== undefined) {
+                    inputValue = state.currentEntity.scores[dimension.key];
                 }
 
-                inputHtml = `
-                    <label>${dimension.name} (权重: ${(dimension.weight * 100).toFixed(0)}%)</label>
-                    <input type="number" name="${dimension.key}" min="0" max="100" step="0.1" required value="${inputValue}">
+                dimensionCard.innerHTML = `
+                    <div class="dimension-card-header">
+                        <div class="dimension-card-title">${dimension.name}</div>
+                        <div class="dimension-card-weight">权重 ${(dimension.weight * 100).toFixed(0)}%</div>
+                    </div>
+                    <div class="dimension-card-input">
+                        <label>评分</label>
+                        <input type="number" name="${dimension.key}" min="0" max="100" step="0.1" required value="${inputValue}" data-dimension-key="${dimension.key}">
+                    </div>
                     ${autoCalcInfo}
                 `;
 
-                formGroup.innerHTML = inputHtml;
-                els.dimensionInputs.appendChild(formGroup);
+                dimensionsGrid.appendChild(dimensionCard);
             });
+
+            els.dimensionInputs.appendChild(dimensionsGrid);
+
+            // 添加实时计算事件监听
+            this.setupRealTimeCalculation();
+        },
+
+        // 设置实时总分计算
+        setupRealTimeCalculation() {
+            const inputs = els.dimensionInputs.querySelectorAll('input[name]');
+            inputs.forEach(input => {
+                input.addEventListener('input', () => this.updateTotalScorePreview());
+            });
+
+            // 初始化总分预览
+            this.updateTotalScorePreview();
+        },
+
+        // 更新总分预览
+        updateTotalScorePreview() {
+            if (!state.config || !state.config.dimensions) {
+                return;
+            }
+
+            const inputs = els.dimensionInputs.querySelectorAll('input[name]');
+            const scores = {};
+
+            inputs.forEach(input => {
+                const key = input.getAttribute('data-dimension-key');
+                scores[key] = parseFloat(input.value) || 0;
+            });
+
+            // 计算总分
+            let totalScore = 0;
+            state.config.dimensions.forEach(dimension => {
+                const score = scores[dimension.key] || 0;
+                totalScore += score * dimension.weight;
+            });
+
+            // 计算等级
+            const grade = this.calculateGrade(totalScore);
+
+            // 更新显示
+            if (els.totalScorePreview) {
+                els.totalScorePreview.textContent = totalScore.toFixed(1);
+            }
+            if (els.totalScoreGrade) {
+                els.totalScoreGrade.textContent = grade;
+            }
+        },
+
+        // 计算等级
+        calculateGrade(totalScore) {
+            if (totalScore >= 90) return 'A';
+            if (totalScore >= 80) return 'B';
+            if (totalScore >= 70) return 'C';
+            if (totalScore >= 60) return 'D';
+            return 'E';
         },
 
         // 关闭评价模态框
@@ -915,21 +982,19 @@
         },
 
         // 处理评价提交
-        async handleEvaluationSubmit(e) {
-            e.preventDefault();
-
+        async handleEvaluationSubmit() {
             if (!state.currentEvaluation || !state.currentEntity) {
                 return;
             }
 
-            const formData = new FormData(els.evaluationForm);
+            // 获取所有维度输入框
+            const inputs = els.dimensionInputs.querySelectorAll('input[name]');
             const scores = {};
 
-            if (state.config && state.config.dimensions) {
-                state.config.dimensions.forEach(dimension => {
-                    scores[dimension.key] = parseFloat(formData.get(dimension.key)) || 0;
-                });
-            }
+            inputs.forEach(input => {
+                const key = input.getAttribute('data-dimension-key');
+                scores[key] = parseFloat(input.value) || 0;
+            });
 
             console.log('📊 提交的评价分数:', scores);
             console.log('📊 当前评价实体:', state.currentEntity);
@@ -951,11 +1016,11 @@
                     // 重新加载当前评价周期的实体数据
                     await this.startEvaluation(state.currentEvaluation.id);
                 } else {
-                    alert('保存失败：' + result.message);
+                    alert('保存失败：' + (result.message || '未知错误'));
                 }
             } catch (error) {
-                console.error('保存评价失败:', error);
-                alert('保存评价失败');
+                console.error('提交评价失败:', error);
+                alert('提交失败，请重试');
             }
         },
 

@@ -47,6 +47,7 @@
     --info-light-03: rgba(219, 234, 254, 0.03);
 
     /* 中性色 - SaaS标准 */
+    --white: #ffffff;
     --gray-50: #f8fafc;
     --gray-100: #f1f5f9;
     --gray-200: #e2e8f0;

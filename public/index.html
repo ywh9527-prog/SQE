@@ -778,46 +778,57 @@
                                             <i class="ph ph-x"></i>
                                         </button>
                                     </div>
-                            
+
                                     <div class="evaluation-modal-body">
-                                        <!-- 质量数据展示 -->
-                                        <div class="quality-data-section">
-                                            <h4><i class="ph ph-chart-bar"></i> 质量数据</h4>
-                                            <div class="quality-stats">
-                                                <div class="stat-item">
-                                                    <label>总批次</label>
-                                                    <span id="qualityTotalBatches">-</span>
+                                        <!-- 供应商信息卡片 -->
+                                        <div class="supplier-info-card">
+                                            <div class="supplier-info-title">质量数据</div>
+                                            <div class="supplier-info-content">
+                                                <div class="supplier-info-item">
+                                                    <div class="supplier-info-label">总批次</div>
+                                                    <div class="supplier-info-value" id="qualityTotalBatches">-</div>
                                                 </div>
-                                                <div class="stat-item">
-                                                    <label>合格批次</label>
-                                                    <span id="qualityOkBatches">-</span>
+                                                <div class="supplier-info-item">
+                                                    <div class="supplier-info-label">合格批次</div>
+                                                    <div class="supplier-info-value highlight" id="qualityOkBatches">-</div>
                                                 </div>
-                                                <div class="stat-item">
-                                                    <label>合格率</label>
-                                                    <span id="qualityPassRate">-</span>
+                                                <div class="supplier-info-item">
+                                                    <div class="supplier-info-label">合格率</div>
+                                                    <div class="supplier-info-value highlight" id="qualityPassRate">-</div>
                                                 </div>
                                             </div>
                                         </div>
-                            
-                                        <!-- 评价表单 -->
-                                        <div class="evaluation-form">
-                                            <h4><i class="ph ph-star"></i> 评价分数</h4>
-                                            <form id="evaluationForm">
-                                                <div id="dimensionInputs"></div>
-                                                <div class="form-group">
-                                                    <label>评价备注</label>
-                                                    <textarea id="evaluationRemarks" rows="3" placeholder="请输入评价备注..."></textarea>
-                                                </div>
-                                                <div class="form-actions">
-                                                    <button type="button" class="btn btn-secondary" id="cancelEvaluationBtn">
-                                                        <i class="ph ph-x"></i> 取消
-                                                    </button>
-                                                    <button type="submit" class="btn btn-primary">
-                                                        <i class="ph ph-check"></i> 保存
-                                                    </button>
-                                                </div>
-                                            </form>
+
+                                        <!-- 维度评分卡片网格 -->
+                                        <div id="dimensionInputs"></div>
+
+                                        <!-- 总分预览卡片 -->
+                                        <div class="total-score-card">
+                                            <div class="total-score-card-header">
+                                                <div class="total-score-card-title">总分预览</div>
+                                            </div>
+                                            <div class="total-score-display">
+                                                <div class="total-score-value" id="totalScorePreview">0.0</div>
+                                                <div class="total-score-label">分</div>
+                                                <div class="total-score-grade" id="totalScoreGrade">-</div>
+                                            </div>
                                         </div>
+
+                                        <!-- 备注输入框 -->
+                                        <div class="remarks-input">
+                                            <label>评价备注</label>
+                                            <textarea id="evaluationRemarks" rows="3" placeholder="请输入评价备注..."></textarea>
+                                        </div>
+                                    </div>
+
+                                    <!-- 模态框底部 -->
+                                    <div class="evaluation-modal-footer">
+                                        <button type="button" class="btn btn-secondary" id="cancelEvaluationBtn">
+                                            <i class="ph ph-x"></i> 取消
+                                        </button>
+                                        <button type="button" class="btn btn-primary" id="submitEvaluationBtn">
+                                            <i class="ph ph-check"></i> 保存评价
+                                        </button>
                                     </div>
                                 </div>
                             </div>                        </div>
