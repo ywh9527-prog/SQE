@@ -81,6 +81,11 @@
             els.performanceTypeCards = document.querySelectorAll('.performance__type-card');
             els.performancePurchaseCount = document.getElementById('performancePurchaseCount');
             els.performanceExternalCount = document.getElementById('performanceExternalCount');
+            
+            // 总分预览元素
+            els.totalScorePreview = document.getElementById('totalScorePreview');
+            els.totalScoreGrade = document.getElementById('totalScoreGrade');
+            els.submitEvaluationBtn = document.getElementById('submitEvaluationBtn');
         },
 
         // 绑定事件
@@ -919,7 +924,8 @@
                             <input type="number" class="dimension-number-box" 
                                    name="${dimension.key}" 
                                    min="0" max="100" step="0.1" 
-                                   value="${inputValue}">
+                                   value="${inputValue}"
+                                   data-dimension-key="${dimension.key}">
                             <div class="dimension-spinner">
                                 <span data-action="up">▲</span>
                                 <span data-action="down">▼</span>
@@ -1135,12 +1141,15 @@
                 return;
             }
 
-            const inputs = els.dimensionInputs.querySelectorAll('input[name]');
+            // 只获取数字输入框，避免和range输入框重复计算
+            const inputs = els.dimensionInputs.querySelectorAll('.dimension-number-box');
             const scores = {};
 
             inputs.forEach(input => {
                 const key = input.getAttribute('data-dimension-key');
-                scores[key] = parseFloat(input.value) || 0;
+                if (key) {
+                    scores[key] = parseFloat(input.value) || 0;
+                }
             });
 
             // 计算总分
@@ -1175,7 +1184,9 @@
         closeEvaluationModal() {
             els.evaluationModal.classList.add('hidden');
             state.currentEntity = null;
-            els.evaluationForm.reset();
+            if (els.evaluationForm) {
+                els.evaluationForm.reset();
+            }
         },
 
         // 处理评价提交
@@ -1184,13 +1195,15 @@
                 return;
             }
 
-            // 获取所有维度输入框
-            const inputs = els.dimensionInputs.querySelectorAll('input[name]');
+            // 只获取数字输入框，避免和range输入框重复
+            const inputs = els.dimensionInputs.querySelectorAll('.dimension-number-box');
             const scores = {};
 
             inputs.forEach(input => {
                 const key = input.getAttribute('data-dimension-key');
-                scores[key] = parseFloat(input.value) || 0;
+                if (key) {
+                    scores[key] = parseFloat(input.value) || 0;
+                }
             });
 
             console.log('📊 提交的评价分数:', scores);
@@ -1204,19 +1217,22 @@
                     body: JSON.stringify({ scores, remarks })
                 });
 
+                console.log('📊 HTTP状态码:', response.status);
                 const result = await response.json();
-                console.log('📊 保存结果:', result);
+                console.log('📊 保存结果原始数据:', JSON.stringify(result));
 
-                if (result.success) {
+                if (result && result.success === true) {
+                    console.log('📊 保存成功，进入成功分支');
                     alert('保存成功！');
                     this.closeEvaluationModal();
                     // 重新加载当前评价周期的实体数据
                     await this.startEvaluation(state.currentEvaluation.id);
                 } else {
+                    console.log('📊 保存失败，返回数据:', result);
                     alert('保存失败：' + (result.message || '未知错误'));
                 }
             } catch (error) {
-                console.error('提交评价失败:', error);
+                console.error('📊 提交评价出错:', error);
                 alert('提交失败，请重试');
             }
         },
