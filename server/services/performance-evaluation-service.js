@@ -244,7 +244,7 @@ class PerformanceEvaluationService {
 
     
 
-                                        // 创建评价详情记录
+                                                                                // 创建评价详情记录
 
     
 
@@ -252,7 +252,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                            for (const vendor of vendors) {
+                                        
 
     
 
@@ -260,23 +260,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                // 根据供应商类型获取对应的质量数据
-
-    
-
-                                                                const dataType = vendor.data_type || 'purchase';
-
-    
-
-                                                                const qualityDataMap = dataType === 'purchase' ? purchaseQualityDataMap : externalQualityDataMap;
-
-    
-
-                                                                
-
-    
-
-                                                                const qualityData = qualityDataMap[vendor.supplier_name] || {
+                                                                                                    for (const vendor of vendors) {
 
     
 
@@ -284,7 +268,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                    totalBatches: 0,
+                                        
 
     
 
@@ -292,7 +276,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                    okBatches: 0,
+                                        
 
     
 
@@ -300,7 +284,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                    ngBatches: 0,
+                                        
 
     
 
@@ -308,7 +292,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                    passRate: 0
+                                                                                                        // 根据供应商类型获取对应的质量数据
 
     
 
@@ -316,7 +300,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                };
+                                        
 
     
 
@@ -324,7 +308,7 @@ class PerformanceEvaluationService {
 
     
 
-                    
+                                                                                                        const dataType = vendor.data_type || 'purchase';
 
     
 
@@ -332,51 +316,7 @@ class PerformanceEvaluationService {
 
     
 
-                                            await PerformanceEvaluationDetail.create({
-
-    
-
-                                                evaluation_id: id,
-
-    
-
-                                                evaluation_entity_name: vendor.supplier_name,
-
-    
-
-                                                data_type: vendor.data_type || 'purchase',
-
-    
-
-                                                scores: {},
-
-    
-
-                                                total_score: null,
-
-    
-
-                                                grade: null,
-
-    
-
-                                                remarks: null,
-
-    
-
-                                                quality_data_snapshot: qualityData
-
-    
-
-                                            }, { transaction });
-
-    
-
-                                        }
-
-    
-
-                    await transaction.commit();
+                                        
 
     
 
@@ -384,7 +324,7 @@ class PerformanceEvaluationService {
 
     
 
-                                        logger.info(`开始评价成功: ${evaluation.period_name}`);
+                                                                                                        const qualityDataMap = dataType === 'purchase' ? purchaseQualityDataMap : externalQualityDataMap;
 
     
 
@@ -392,59 +332,711 @@ class PerformanceEvaluationService {
 
     
 
-                                        return {
+                                        
 
     
 
-                                            evaluation,
+                    
 
     
 
-                                            evaluationEntities: vendors.map(v => ({
+                                                                                                        
 
     
 
-                                                                                            entityName: v.supplier_name,
+                    
 
     
 
-                                                                                            name: v.supplier_name,
+                                        
 
     
 
-                                                                                            data_type: v.data_type || 'purchase',
+                    
 
     
 
-                                                                                            qualityData: qualityDataMap[v.supplier_name] || {
+                                                                                                        const qualityData = qualityDataMap[vendor.supplier_name] || {
 
     
 
-                                                                                                totalBatches: 0,
+                    
 
     
 
-                                                                                                okBatches: 0,
+                                        
 
     
 
-                                                                                                ngBatches: 0,
+                    
 
     
 
-                                                                                                passRate: 0
+                                        
 
     
 
-                                                                                            }
+                    
 
     
 
-                                                                                        }))
+                                        
 
     
 
-                                        };
+                    
+
+    
+
+                                                                                                            totalBatches: 0,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                            okBatches: 0,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                            ngBatches: 0,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                            passRate: 0
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                        };
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                    await PerformanceEvaluationDetail.create({
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        evaluation_id: id,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        evaluation_entity_name: vendor.supplier_name,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        data_type: vendor.data_type || 'purchase',
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        scores: {},
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        total_score: null,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        grade: null,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        remarks: null,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                        quality_data_snapshot: qualityData
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                    }, { transaction });
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                }
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                            await transaction.commit();
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                logger.info(`开始评价成功: ${evaluation.period_name}`);
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                // 合并外购和外协的质量数据
+
+    
+
+                    
+
+    
+
+                                                                                const allQualityDataMap = { ...purchaseQualityDataMap, ...externalQualityDataMap };
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                return {
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                    evaluation,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                    evaluationEntities: vendors.map(v => ({
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    entityName: v.supplier_name,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    name: v.supplier_name,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    data_type: v.data_type || 'purchase',
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    qualityData: allQualityDataMap[v.supplier_name] || {
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        totalBatches: 0,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        okBatches: 0,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        ngBatches: 0,
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        passRate: 0
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    }
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                }))
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                };
 
                 } 
 
