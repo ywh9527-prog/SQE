@@ -1211,10 +1211,17 @@
 
             const remarks = els.evaluationRemarks.value;
 
+            // 调试日志
+            console.log('📊 保存参数:', {
+                entityName: state.currentEntity.entityName,
+                dataType: state.currentEntity.data_type,
+                scores: Object.keys(scores).length + ' 个维度'
+            });
+
             try {
                 const response = await this.authenticatedFetch(`/api/evaluations/${state.currentEvaluation.id}/entities/${encodeURIComponent(state.currentEntity.entityName)}`, {
                     method: 'PUT',
-                    body: JSON.stringify({ scores, remarks })
+                    body: JSON.stringify({ scores, remarks, dataType: state.currentEntity.data_type })
                 });
 
                 console.log('📊 HTTP状态码:', response.status);

@@ -206,7 +206,7 @@ router.put('/:id/entities/:entityName', authenticateToken, async (req, res) => {
         const parsedId = parseAndValidateId(id, res);
         if (parsedId === null) return;
         
-        const { scores, remarks } = req.body;
+        const { scores, remarks, dataType } = req.body;
 
         if (!scores || typeof scores !== 'object') {
             return res.status(400).json({
@@ -218,6 +218,7 @@ router.put('/:id/entities/:entityName', authenticateToken, async (req, res) => {
         const detail = await performanceEvaluationService.saveEntityEvaluation(
             parseInt(id),
             entityName,
+            dataType,
             { scores, remarks }
         );
 

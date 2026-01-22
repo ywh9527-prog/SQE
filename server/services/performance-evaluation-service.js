@@ -1098,9 +1098,12 @@ class PerformanceEvaluationService {
                     return {
                         evaluation,
                         evaluationEntities: vendors.map(v => {
-                            const detail = details.find(d => d.evaluation_entity_name === v.supplier_name);
-                            // 根据供应商类型获取对应的质量数据
                             const dataType = v.data_type || 'purchase';
+                            // 同时按供应商名称和data_type查找对应的评价详情
+                            const detail = details.find(d => 
+                                d.evaluation_entity_name === v.supplier_name && 
+                                d.data_type === dataType
+                            );
                             const qualityDataMap = dataType === 'purchase' ? purchaseQualityDataMap : externalQualityDataMap;
                             return {
                                 entityName: v.supplier_name,
@@ -1182,21 +1185,26 @@ class PerformanceEvaluationService {
      * 保存单个评价实体的评价
      * @param {number} id - 评价周期ID
      * @param {string} entityName - 评价实体名称
+     * @param {string} dataType - 数据类型（purchase-外购/external-外协）
      * @param {Object} data - 评价数据
      * @returns {Promise<Object>} 保存的评价详情
      */
-    async saveEntityEvaluation(id, entityName, data) {
+    async saveEntityEvaluation(id, entityName, dataType, data) {
+        logger.info(`保存评价实体评价: id=${id}, entityName=${entityName}, dataType=${dataType}`);
         try {
             const detail = await PerformanceEvaluationDetail.findOne({
                 where: {
                     evaluation_id: id,
-                    evaluation_entity_name: entityName
+                    evaluation_entity_name: entityName,
+                    data_type: dataType  // 根据数据类型查找对应记录
                 },
                 include: [{
                     model: require('../models/PerformanceEvaluation'),
                     as: 'evaluation'
                 }]
             });
+
+            logger.info(`查询结果: detail=${detail ? '找到记录(id=' + detail.id + ')' : '未找到记录'}`);
 
             if (!detail) {
                 throw new Error('评价详情不存在');
