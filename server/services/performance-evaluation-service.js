@@ -176,49 +176,155 @@ class PerformanceEvaluationService {
 
     
 
-                    // 提取质量数据
-
-                    const qualityExtractionService = require('./quality-data-extraction-service');
-
-                    const qualityDataMap = await qualityExtractionService.extractQualityData(
-
-                        evaluation.start_date,
-
-                        evaluation.end_date
-
-                    );
+                                        // 提取质量数据（按数据类型分别提取，确保外协/外购数据分开统计）
 
     
 
-                    // 创建评价详情记录
+                                        const qualityExtractionService = require('./quality-data-extraction-service');
 
     
 
-                                        for (const vendor of vendors) {
+                                        
 
     
 
-                                            const qualityData = qualityDataMap[vendor.supplier_name] || {
+                                        // 提取外购质量数据
 
     
 
-                                                totalBatches: 0,
+                                        const purchaseQualityDataMap = await qualityExtractionService.extractQualityData(
 
     
 
-                                                okBatches: 0,
+                                            evaluation.start_date,
 
     
 
-                                                ngBatches: 0,
+                                            evaluation.end_date,
 
     
 
-                                                passRate: 0
+                                            'purchase'
 
     
 
-                                            };
+                                        );
+
+    
+
+                                        
+
+    
+
+                                        // 提取外协质量数据
+
+    
+
+                                        const externalQualityDataMap = await qualityExtractionService.extractQualityData(
+
+    
+
+                                            evaluation.start_date,
+
+    
+
+                                            evaluation.end_date,
+
+    
+
+                                            'external'
+
+    
+
+                                        );
+
+    
+
+                    
+
+    
+
+                                        // 创建评价详情记录
+
+    
+
+                    
+
+    
+
+                                                            for (const vendor of vendors) {
+
+    
+
+                    
+
+    
+
+                                                                // 根据供应商类型获取对应的质量数据
+
+    
+
+                                                                const dataType = vendor.data_type || 'purchase';
+
+    
+
+                                                                const qualityDataMap = dataType === 'purchase' ? purchaseQualityDataMap : externalQualityDataMap;
+
+    
+
+                                                                
+
+    
+
+                                                                const qualityData = qualityDataMap[vendor.supplier_name] || {
+
+    
+
+                    
+
+    
+
+                                                                    totalBatches: 0,
+
+    
+
+                    
+
+    
+
+                                                                    okBatches: 0,
+
+    
+
+                    
+
+    
+
+                                                                    ngBatches: 0,
+
+    
+
+                    
+
+    
+
+                                                                    passRate: 0
+
+    
+
+                    
+
+    
+
+                                                                };
+
+    
+
+                    
+
+    
+
+                    
 
     
 
@@ -376,19 +482,22 @@ class PerformanceEvaluationService {
 
     
 
-                    // 提取质量数据
-
+                    // 提取质量数据（按数据类型分别提取，确保外协/外购数据分开统计）
                     const qualityExtractionService = require('./quality-data-extraction-service');
-
-                    const qualityDataMap = await qualityExtractionService.extractQualityData(
-
+                    
+                    // 提取外购质量数据
+                    const purchaseQualityDataMap = await qualityExtractionService.extractQualityData(
                         evaluation.start_date,
-
-                        evaluation.end_date
-
+                        evaluation.end_date,
+                        'purchase'
                     );
-
-    
+                    
+                    // 提取外协质量数据
+                    const externalQualityDataMap = await qualityExtractionService.extractQualityData(
+                        evaluation.start_date,
+                        evaluation.end_date,
+                        'external'
+                    );
 
                     await transaction.commit();
 
@@ -398,10 +507,13 @@ class PerformanceEvaluationService {
                         evaluation,
                         evaluationEntities: vendors.map(v => {
                             const detail = details.find(d => d.evaluation_entity_name === v.supplier_name);
+                            // 根据供应商类型获取对应的质量数据
+                            const dataType = v.data_type || 'purchase';
+                            const qualityDataMap = dataType === 'purchase' ? purchaseQualityDataMap : externalQualityDataMap;
                             return {
                                 entityName: v.supplier_name,
                                 name: v.supplier_name,
-                                data_type: v.data_type || 'purchase',
+                                data_type: dataType,
                                 qualityData: qualityDataMap[v.supplier_name] || {
                                     totalBatches: 0,
                                     okBatches: 0,

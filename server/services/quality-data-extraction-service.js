@@ -11,14 +11,16 @@ class QualityDataExtractionService {
      * 提取指定周期的质量数据
      * @param {Date} startDate - 开始日期
      * @param {Date} endDate - 结束日期
+     * @param {string} dataType - 数据类型：purchase-外购, external-外协
      * @returns {Promise<Object>} 质量数据映射（供应商名称 -> 质量数据）
      */
-    async extractQualityData(startDate, endDate) {
+    async extractQualityData(startDate, endDate, dataType = 'purchase') {
         try {
-            // 查询与指定时间范围有交集的IQC数据
-            // 条件：数据时间范围与评价周期有交集
+            // 查询与指定时间范围有交集的IQC数据，并按dataType过滤
+            // 条件：数据时间范围与评价周期有交集，且数据类型匹配
             const iqcDataList = await IQCData.findAll({
                 where: {
+                    dataType: dataType,  // 按数据类型过滤（外购/外协）
                     timeRangeStart: {
                         [require('sequelize').Op.lte]: endDate  // 数据开始时间 <= 评价周期结束时间
                     },
