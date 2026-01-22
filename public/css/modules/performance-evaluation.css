@@ -904,71 +904,31 @@
 /* ========== 维度评分卡片网格 ========== */
 
 .dimensions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
     margin-bottom: 24px;
 }
 
 .dimension-card {
     background: var(--white);
-    border-radius: var(--border-radius-lg);
-    padding: 24px;
-    box-shadow:
-        0 4px 6px -1px rgba(0, 0, 0, 0.05),
-        0 2px 4px -1px rgba(0, 0, 0, 0.03);
+    border-radius: var(--border-radius-md);
+    padding: 16px 20px;
     border: 1px solid var(--gray-200);
-    transition: all 0.3s ease;
-    animation: dimension-card-appear 0.4s ease-out both;
-}
-
-.dimension-card:nth-child(1) { animation-delay: 0.15s; }
-.dimension-card:nth-child(2) { animation-delay: 0.2s; }
-.dimension-card:nth-child(3) { animation-delay: 0.25s; }
-.dimension-card:nth-child(4) { animation-delay: 0.3s; }
-.dimension-card:nth-child(5) { animation-delay: 0.35s; }
-
-@keyframes dimension-card-appear {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.dimension-card:hover {
-    transform: translateY(-4px);
-    box-shadow:
-        0 10px 15px -3px rgba(0, 0, 0, 0.1),
-        0 4px 6px -2px rgba(0, 0, 0, 0.05);
-    border-color: var(--primary-300);
+    transition: all 0.2s ease;
 }
 
 .dimension-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .dimension-card-title {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--gray-800);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.dimension-card-title::before {
-    content: '';
-    width: 4px;
-    height: 16px;
-    background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
-    border-radius: 2px;
 }
 
 .dimension-card-weight {
@@ -976,59 +936,155 @@
     color: var(--gray-500);
     font-weight: 500;
     background: var(--gray-100);
-    padding: 4px 10px;
-    border-radius: 20px;
+    padding: 2px 8px;
+    border-radius: 12px;
 }
 
-.dimension-card-input {
-    margin-bottom: 12px;
+/* ========== 滑块组件 ========== */
+
+.dimension-slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
 }
 
-.dimension-card-input label {
-    display: block;
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--gray-600);
-    margin-bottom: 8px;
+/* 滑块轨道容器 */
+.dimension-slider-track {
+    position: relative;
+    flex: 1;
+    height: 24px;
+    background: var(--gray-100);
+    border-radius: 12px;
+    overflow: visible;
+    cursor: pointer;
 }
 
-.dimension-card-input input {
+/* 滑块填充 */
+.dimension-slider-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-500) 0%, var(--primary-400) 100%);
+    border-radius: 12px;
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 滑块Thumb - 增大尺寸完全覆盖圆角 */
+.dimension-slider-thumb {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 28px;
+    height: 28px;
+    background: var(--primary-500);
+    border: 3px solid var(--white);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    cursor: grab;
+    box-shadow: 
+        0 2px 8px rgba(0, 0, 0, 0.3);
+    z-index: 3;
+    transition: background 0.15s ease;
+}
+
+.dimension-slider-thumb:hover {
+    background: var(--primary-600);
+}
+
+.dimension-slider-thumb:active {
+    cursor: grabbing;
+    background: var(--primary-700);
+}
+
+/* 隐藏原生range input */
+.dimension-slider-input {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    padding: 12px 16px;
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--gray-800);
-    border: 2px solid var(--gray-200);
-    border-radius: var(--border-radius-lg);
-    background: var(--gray-50);
-    transition: all 0.2s ease;
-    text-align: center;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 4;
 }
 
-.dimension-card-input input:focus {
+/* 数值输入框容器 */
+.dimension-number-box-wrapper {
+    position: relative;
+    width: 80px;
+    display: flex;
+    align-items: center;
+}
+
+/* 数值输入框 */
+.dimension-number-box {
+    width: 100%;
+    padding: 8px 28px 8px 10px;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--primary-700);
+    border: 2px solid var(--gray-200);
+    border-radius: 8px;
+    background: var(--white);
+    text-align: center;
+    transition: all 0.2s ease;
+    -moz-appearance: textfield;
+}
+
+.dimension-number-box::-webkit-outer-spin-button,
+.dimension-number-box::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.dimension-number-box:focus {
     outline: none;
     border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
     background: var(--white);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
+/* 自定义spinner按钮 */
+.dimension-spinner {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    pointer-events: none;
+}
+
+.dimension-spinner span {
+    font-size: 0.5rem;
+    color: var(--gray-400);
+    line-height: 1;
+    pointer-events: auto;
+    cursor: pointer;
+    padding: 2px 4px;
+}
+
+.dimension-spinner span:hover {
+    color: var(--primary-500);
+}
+
+.dimension-spinner span:active {
+    color: var(--primary-700);
+}
+
+/* 自动评分提示 */
 .auto-calc-info {
     font-size: 0.75rem;
     color: var(--gray-500);
-    text-align: center;
-    padding: 8px 12px;
-    background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
-    border-radius: var(--border-radius-md);
-    border: 1px solid var(--primary-200);
+    margin-top: 8px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 6px;
-}
-
-.auto-calc-info i {
-    color: var(--primary-600);
-    font-size: 1rem;
+    gap: 4px;
 }
 
 /* ========== 总分预览卡片 ========== */
@@ -1769,4 +1825,28 @@
     background: #dc2626;
     border-color: #dc2626;
     transform: translateY(-2px);
+}
+
+/* 质量维度提示框 */
+.quality-tooltip {
+    background: var(--primary-700);
+    color: var(--white);
+    padding: 10px 14px;
+    border-radius: 6px;
+    font-size: 0.8125rem;
+    max-width: 280px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    animation: tooltip-appear 0.2s ease-out;
+    pointer-events: none;
+}
+
+@keyframes tooltip-appear {
+    from {
+        opacity: 0;
+        transform: translateY(-4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

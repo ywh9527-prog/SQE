@@ -867,7 +867,7 @@
                 return;
             }
 
-            // 创建维度卡片网格
+            // 创建维度卡片网格（垂直排列）
             const dimensionsGrid = document.createElement('div');
             dimensionsGrid.className = 'dimensions-grid';
 
@@ -875,7 +875,7 @@
                 // 创建维度卡片
                 const dimensionCard = document.createElement('div');
                 dimensionCard.className = 'dimension-card';
-
+                
                 // 检查是否是质量维度
                 const isQualityDimension = dimension.key === 'quality';
 
@@ -892,8 +892,7 @@
                     inputValue = passRate.toFixed(1);
                     autoCalcInfo = `
                         <div class="auto-calc-info">
-                            <i class="ph ph-calculator"></i>
-                            自动评分：当月合格批次/当月交付总批次：${okBatches}/${totalBatches} = ${passRate}%
+                            自动评分：当月合格批次 ${okBatches}/${totalBatches} = ${passRate}%
                         </div>
                     `;
                 } else if (state.currentEntity && state.currentEntity.scores && state.currentEntity.scores[dimension.key] !== undefined) {
@@ -905,9 +904,27 @@
                         <div class="dimension-card-title">${dimension.name}</div>
                         <div class="dimension-card-weight">权重 ${(dimension.weight * 100).toFixed(0)}%</div>
                     </div>
-                    <div class="dimension-card-input">
-                        <label>评分</label>
-                        <input type="number" name="${dimension.key}" min="0" max="100" step="0.1" required value="${inputValue}" data-dimension-key="${dimension.key}">
+                    <div class="dimension-slider-row">
+                        <div class="dimension-slider-track" data-key="${dimension.key}" data-dimension-name="${dimension.name}" ${isQualityDimension ? 'data-quality="true"' : ''}>
+                            <div class="dimension-slider-fill" style="width: ${inputValue}%"></div>
+                            <div class="dimension-slider-thumb" style="left: ${inputValue}%"></div>
+                            <input type="range" class="dimension-slider-input" 
+                                   name="${dimension.key}_slider" 
+                                   min="0" max="100" step="0.1" 
+                                   value="${inputValue}" 
+                                   data-dimension-key="${dimension.key}"
+                                   ${isQualityDimension ? 'data-quality="true"' : ''}>
+                        </div>
+                        <div class="dimension-number-box-wrapper">
+                            <input type="number" class="dimension-number-box" 
+                                   name="${dimension.key}" 
+                                   min="0" max="100" step="0.1" 
+                                   value="${inputValue}">
+                            <div class="dimension-spinner">
+                                <span data-action="up">▲</span>
+                                <span data-action="down">▼</span>
+                            </div>
+                        </div>
                     </div>
                     ${autoCalcInfo}
                 `;
@@ -917,19 +934,199 @@
 
             els.dimensionInputs.appendChild(dimensionsGrid);
 
-            // 添加实时计算事件监听
-            this.setupRealTimeCalculation();
+            // 添加滑块交互事件
+            this.setupSliderInteractions();
         },
 
-        // 设置实时总分计算
-        setupRealTimeCalculation() {
-            const inputs = els.dimensionInputs.querySelectorAll('input[name]');
-            inputs.forEach(input => {
-                input.addEventListener('input', () => this.updateTotalScorePreview());
-            });
+        // 设置滑块交互
+        setupSliderInteractions() {
+            const sliderTracks = els.dimensionInputs.querySelectorAll('.dimension-slider-track');
+            const numberInputs = els.dimensionInputs.querySelectorAll('.dimension-number-box');
 
-            // 初始化总分预览
-            this.updateTotalScorePreview();
+            sliderTracks.forEach(track => {
+                const key = track.getAttribute('data-key');
+                const isQuality = track.getAttribute('data-quality') === 'true';
+                const sliderInput = track.querySelector('.dimension-slider-input');
+                const fill = track.querySelector('.dimension-slider-fill');
+                const thumb = track.querySelector('.dimension-slider-thumb');
+                const numberInput = els.dimensionInputs.querySelector(`.dimension-number-box[name="${key}"]`);
+
+                // 保存质量维度的原始值
+                const originalValue = parseFloat(sliderInput.value);
+
+                // 质量维度：鼠标悬停显示提示，移走后消失
+                if (isQuality) {
+                    let tooltipTimeout;
+                    const dimensionName = track.getAttribute('data-dimension-name');
+                    
+                    const showTooltip = () => {
+                        clearTimeout(tooltipTimeout);
+                        this.showQualityTooltipAtTitle(track, dimensionName);
+                    };
+                    
+                    const hideTooltip = () => {
+                        tooltipTimeout = setTimeout(() => {
+                            const existing = document.querySelector('.quality-tooltip');
+                            if (existing) existing.remove();
+                        }, 200);
+                    };
+                    
+                    track.addEventListener('mouseenter', showTooltip);
+                    track.addEventListener('mouseleave', hideTooltip);
+                }
+
+                // 质量维度：点击轨道时也显示提示
+                if (isQuality) {
+                    track.addEventListener('click', (e) => {
+                        const dimensionName = track.getAttribute('data-dimension-name');
+                        this.showQualityTooltipAtTitle(track, dimensionName);
+                    });
+                }
+
+                // 滑块拖动事件
+                sliderInput.addEventListener('input', () => {
+                    const value = sliderInput.value;
+                    
+                    // 质量维度：拖动时弹回原位并提示
+                    if (isQuality) {
+                        const dimensionName = track.getAttribute('data-dimension-name');
+                        this.showQualityTooltipAtTitle(track, dimensionName);
+                        sliderInput.value = originalValue;
+                        fill.style.width = originalValue + '%';
+                        thumb.style.left = originalValue + '%';
+                        if (numberInput) numberInput.value = originalValue;
+                        return;
+                    }
+                    
+                    fill.style.width = value + '%';
+                    thumb.style.left = value + '%';
+                    if (numberInput) numberInput.value = value;
+                    this.updateTotalScorePreview();
+                });
+
+                // 滑块获得焦点时（键盘操作）- 质量维度提示
+                if (isQuality) {
+                    sliderInput.addEventListener('focus', () => {
+                        const dimensionName = track.getAttribute('data-dimension-name');
+                        this.showQualityTooltipAtTitle(track, dimensionName);
+                    });
+                }
+
+                // 修复：thumb在0位置时也能拖动 - 让thumb也能触发range input
+                thumb.addEventListener('mousedown', (e) => {
+                    e.preventDefault();
+                    sliderInput.focus();
+                    // 模拟拖动开始
+                    const startX = e.clientX;
+                    const startValue = parseFloat(sliderInput.value);
+                    
+                    const onMouseMove = (moveEvent) => {
+                        const rect = track.getBoundingClientRect();
+                        const percent = Math.max(0, Math.min(100, ((moveEvent.clientX - rect.left) / rect.width) * 100));
+                        sliderInput.value = percent;
+                        
+                        // 质量维度：拖动时弹回
+                        if (isQuality) {
+                            sliderInput.value = originalValue;
+                            fill.style.width = originalValue + '%';
+                            thumb.style.left = originalValue + '%';
+                            if (numberInput) numberInput.value = originalValue;
+                        } else {
+                            fill.style.width = percent + '%';
+                            thumb.style.left = percent + '%';
+                            if (numberInput) numberInput.value = percent.toFixed(1);
+                            this.updateTotalScorePreview();
+                        }
+                    };
+                    
+                    const onMouseUp = () => {
+                        document.removeEventListener('mousemove', onMouseMove);
+                        document.removeEventListener('mouseup', onMouseUp);
+                    };
+                    
+                    document.addEventListener('mousemove', onMouseMove);
+                    document.addEventListener('mouseup', onMouseUp);
+                });
+
+                // 数字输入框事件
+                if (numberInput) {
+                    numberInput.addEventListener('input', () => {
+                        const value = numberInput.value;
+                        sliderInput.value = value;
+                        fill.style.width = value + '%';
+                        thumb.style.left = value + '%';
+                        this.updateTotalScorePreview();
+                    });
+                }
+
+                // Spinner按钮点击事件
+                const spinner = track.parentElement.querySelector('.dimension-spinner');
+                if (spinner) {
+                    spinner.querySelectorAll('span').forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const action = btn.getAttribute('data-action');
+                            const step = parseFloat(sliderInput.step) || 0.1;
+                            let currentValue = parseFloat(numberInput.value) || 0;
+                            
+                            if (action === 'up') {
+                                currentValue = Math.min(100, currentValue + step);
+                            } else if (action === 'down') {
+                                currentValue = Math.max(0, currentValue - step);
+                            }
+                            
+                            // 更新所有显示
+                            const newValue = Math.round(currentValue * 10) / 10;
+                            numberInput.value = newValue;
+                            sliderInput.value = newValue;
+                            fill.style.width = newValue + '%';
+                            thumb.style.left = newValue + '%';
+                            this.updateTotalScorePreview();
+                        });
+                    });
+                }
+            });
+        },
+
+        // 显示质量维度提示（滑块下方）
+        showQualityTooltip(track) {
+            const existing = document.querySelector('.quality-tooltip');
+            if (existing) existing.remove();
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'quality-tooltip';
+            tooltip.textContent = '质量维度由系统根据当月合格率自动评分，如需修改分数，请在右侧输入框中直接输入数值';
+            
+            const rect = track.getBoundingClientRect();
+            tooltip.style.position = 'fixed';
+            tooltip.style.left = rect.left + 'px';
+            tooltip.style.top = (rect.bottom + 8) + 'px';
+            tooltip.style.zIndex = '10000';
+            
+            document.body.appendChild(tooltip);
+
+            setTimeout(() => tooltip.remove(), 3000);
+        },
+
+        // 在标题位置显示质量维度提示（不遮挡内容）
+        showQualityTooltipAtTitle(track, title) {
+            const existing = document.querySelector('.quality-tooltip');
+            if (existing) existing.remove();
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'quality-tooltip';
+            tooltip.textContent = '质量维度由系统根据当月合格率自动评分，如需修改分数，请在右侧输入框中直接输入数值';
+            
+            // 查找标题位置
+            const header = track.closest('.dimension-card').querySelector('.dimension-card-title');
+            const headerRect = header.getBoundingClientRect();
+            
+            tooltip.style.position = 'fixed';
+            tooltip.style.left = headerRect.left + 'px';
+            tooltip.style.top = (headerRect.top - 40) + 'px';
+            tooltip.style.zIndex = '10000';
+            
+            document.body.appendChild(tooltip);
         },
 
         // 更新总分预览
