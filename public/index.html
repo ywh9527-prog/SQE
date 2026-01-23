@@ -849,6 +849,25 @@
                             </div>                        </div>
                     </div>
 
+                    <!-- 确认对话框模态框 -->
+                    <div id="confirmDialog" class="confirm-dialog hidden">
+                        <div class="confirm-dialog-content">
+                            <div class="confirm-dialog-icon">
+                                <i class="ph ph-warning-circle"></i>
+                            </div>
+                            <h3 class="confirm-dialog-title" id="confirmDialogTitle">确认操作</h3>
+                            <p class="confirm-dialog-message" id="confirmDialogMessage">确定要执行此操作吗？</p>
+                            <div class="confirm-dialog-actions">
+                                <button type="button" class="btn btn-secondary" id="confirmDialogCancel">
+                                    <i class="ph ph-x"></i> 取消
+                                </button>
+                                <button type="button" class="btn btn-danger" id="confirmDialogConfirm">
+                                    <i class="ph ph-check"></i> 确认
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- 主界面展示（默认显示） -->
                     <div id="resultsInterface" class="performance__results-interface">
                         <!-- 顶部信息 -->

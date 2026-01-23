@@ -98,11 +98,17 @@
                     
                     els.configModal.classList.remove('hidden');
                 } else {
-                    alert('加载配置失败：' + result.message);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('加载配置失败：' + result.message);
+                    }
                 }
             } catch (error) {
                 console.error('加载配置失败:', error);
-                alert('加载配置失败');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('加载配置失败');
+                }
             }
         },
 
@@ -129,10 +135,17 @@
 
         // 关闭配置对话框
         closeConfigModal() {
-            if (confirm('确定要关闭配置对话框吗？未保存的更改将丢失。')) {
-                els.configModal.classList.add('hidden');
-                state.config = null;
-                state.originalConfig = null;
+            // 使用全局确认对话框
+            if (window.App && window.App.Modules && window.App.Modules.Performance) {
+                window.App.Modules.Performance.showConfirmDialog(
+                    '确认关闭配置',
+                    '确定要关闭配置对话框吗？未保存的更改将丢失。',
+                    () => {
+                        els.configModal.classList.add('hidden');
+                        state.config = null;
+                        state.originalConfig = null;
+                    }
+                );
             }
         },
 
@@ -238,7 +251,10 @@
             if (!state.config || !state.config.dimensions) return;
 
             if (state.config.dimensions.length <= 1) {
-                alert('至少需要保留一个维度');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.warning('至少需要保留一个维度');
+                }
                 return;
             }
 
@@ -266,7 +282,10 @@
             if (!state.config || !state.config.gradeRules) return;
 
             if (state.config.gradeRules.length <= 1) {
-                alert('至少需要保留一个等级规则');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.warning('至少需要保留一个等级规则');
+                }
                 return;
             }
 
@@ -290,30 +309,88 @@
         },
 
         // 重置为默认配置
-        async resetToDefault() {
-            if (!confirm('确定要重置为默认配置吗？这将清除所有自定义配置。')) return;
 
-            try {
-                const response = await this.authenticatedFetch('/api/evaluation-config/reset', {
-                    method: 'POST'
-                });
-                const result = await response.json();
+                async resetToDefault() {
 
-                if (result.success) {
-                    alert('已重置为默认配置');
-                    state.config = JSON.parse(JSON.stringify(result.data));
-                    state.originalConfig = JSON.parse(JSON.stringify(result.data));
-                    this.renderDimensions();
-                    this.renderGradeRules();
-                    this.updateTotalWeight();
-                } else {
-                    alert('重置配置失败：' + result.message);
-                }
-            } catch (error) {
-                console.error('重置配置失败:', error);
-                alert('重置配置失败');
-            }
-        },
+                    // 使用全局确认对话框
+
+                    if (window.App && window.App.Modules && window.App.Modules.Performance) {
+
+                        window.App.Modules.Performance.showConfirmDialog(
+
+                            '确认重置配置',
+
+                            '确定要重置为默认配置吗？这将清除所有自定义配置。',
+
+                            async () => {
+
+                                try {
+
+                                    const response = await this.authenticatedFetch('/api/evaluation-config/reset', {
+
+                                        method: 'POST'
+
+                                    });
+
+                                    const result = await response.json();
+
+        
+
+                                    if (result.success) {
+
+                                        // 使用 Toast 通知
+
+                                        if (window.App && window.App.Toast) {
+
+                                            window.App.Toast.success('已重置为默认配置');
+
+                                        }
+
+                                        state.config = JSON.parse(JSON.stringify(result.data));
+
+                                        state.originalConfig = JSON.parse(JSON.stringify(result.data));
+
+                                        this.renderDimensions();
+
+                                        this.renderGradeRules();
+
+                                        this.updateTotalWeight();
+
+                                    } else {
+
+                                        // 使用 Toast 通知
+
+                                        if (window.App && window.App.Toast) {
+
+                                            window.App.Toast.error('重置配置失败：' + result.message);
+
+                                        }
+
+                                    }
+
+        
+
+                                } catch (error) {
+
+                                    console.error('重置配置失败:', error);
+
+                                    // 使用 Toast 通知
+
+                                    if (window.App && window.App.Toast) {
+
+                                        window.App.Toast.error('重置配置失败');
+
+                                    }
+
+                                }
+
+                            }
+
+                        );
+
+                    }
+
+                },
 
         // 保存配置
         async saveConfig() {
@@ -323,14 +400,20 @@
             try {
                 const totalWeight = state.config.dimensions.reduce((sum, dim) => sum + (dim.weight || 0), 0);
                 if (Math.abs(totalWeight - 1) > 0.01) {
-                    alert(`权重总和必须为1，当前为${totalWeight.toFixed(2)}`);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.warning(`权重总和必须为100%，当前为${(totalWeight * 100).toFixed(0)}%`);
+                    }
                     return;
                 }
 
                 // 验证等级规则
                 for (const rule of state.config.gradeRules) {
                     if (rule.min >= rule.max) {
-                        alert(`等级"${rule.label}"的最低分必须小于最高分`);
+                        // 使用 Toast 通知
+                        if (window.App && window.App.Toast) {
+                            window.App.Toast.warning(`等级"${rule.label}"的最低分必须小于最高分`);
+                        }
                         return;
                     }
                 }
@@ -339,26 +422,45 @@
                 const inProgressCheck = await this.checkInProgressEvaluationsSync();
 
                 // 总是显示确认对话框，让用户明确知道配置变更的影响
+                let confirmTitle = '确认保存配置';
                 let confirmMessage = '确定要保存配置吗？';
                 
                 if (inProgressCheck.hasInProgress) {
+                    confirmTitle = '⚠️ 配置变更提醒';
                     confirmMessage = 
-                        `⚠️ 配置变更提醒\n\n` +
-                        `检测到有 ${inProgressCheck.count} 个评价周期正在进行中。\n\n` +
-                        `修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。\n\n` +
+                        `检测到有 ${inProgressCheck.count} 个评价周期正在进行中。` +
+                        `修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。` +
                         `是否继续保存配置？`;
                 } else {
                     confirmMessage = 
-                        `确定要保存配置吗？\n\n` +
+                        `确定要保存配置吗？` +
                         `保存后，评价界面将自动刷新以应用新配置。`;
                 }
 
-                const confirmed = confirm(confirmMessage);
-
-                if (!confirmed) {
-                    return; // 用户取消
+                // 使用全局确认对话框
+                if (window.App && window.App.Modules && window.App.Modules.Performance) {
+                    window.App.Modules.Performance.showConfirmDialog(
+                        confirmTitle,
+                        confirmMessage,
+                        async () => {
+                            // 用户确认后的操作
+                            await this.doSaveConfig(inProgressCheck);
+                        }
+                    );
+                    return; // 等待用户确认
                 }
+            } catch (error) {
+                console.error('保存配置异常:', error);
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('保存配置失败：' + error.message);
+                }
+            }
+        },
 
+        // 执行保存配置的实际操作
+        async doSaveConfig(inProgressCheck) {
+            try {
                 // 保存配置
                 console.log('开始保存配置:', state.config);
                 const response = await this.authenticatedFetch('/api/evaluation-config', {
@@ -375,16 +477,20 @@
                     
                     // 如果有进行中的评价周期，提示用户
                     if (inProgressCheck.hasInProgress) {
-                        message += `\n\n已更新 ${result.data.updatedEvaluations} 个评价周期的配置快照。`;
+                        message += ` 已更新 ${result.data.updatedEvaluations} 个评价周期的配置快照。`;
                         if (result.data.recalculatedDetails > 0) {
-                            message += `\n已自动重新计算 ${result.data.recalculatedDetails} 条评价数据。`;
+                            message += ` 已自动重新计算 ${result.data.recalculatedDetails} 条评价数据。`;
                         }
-                        message += `\n\n建议重新检查已评价的供应商分数。`;
+                        message += ` 建议重新检查已评价的供应商分数。`;
                     } else {
-                        message += `\n\n评价界面将自动刷新以应用新配置。`;
+                        message += ` 评价界面将自动刷新以应用新配置。`;
                     }
                     
-                    alert(message);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success(message);
+                    }
+                    
                     state.originalConfig = JSON.parse(JSON.stringify(state.config));
                     els.configModal.classList.add('hidden');
                     
@@ -440,11 +546,17 @@
                     }
                 } else {
                     console.error('保存配置失败:', result);
-                    alert('保存配置失败：' + result.message);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('保存配置失败：' + result.message);
+                    }
                 }
             } catch (error) {
                 console.error('保存配置异常:', error);
-                alert('保存配置失败：' + error.message);
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('保存配置失败：' + error.message);
+                }
             }
         },
 

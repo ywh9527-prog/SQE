@@ -10,7 +10,8 @@
         entities: [],
         selectedPeriodType: null,
         createEvaluationData: null,
-        currentType: 'purchase' // 当前选择的数据类型：purchase-外购/external-外协
+        currentType: 'purchase', // 当前选择的数据类型：purchase-外购/external-外协
+        isInitialized: false // 防止重复初始化
     };
 
     // DOM 元素缓存
@@ -22,11 +23,20 @@
         
         // 初始化模块
         init() {
+            // 防止重复初始化
+            if (state.isInitialized) {
+                console.log('Performance Module: Already initialized, skipping...');
+                return;
+            }
+
             console.log('Performance Module: Initializing...');
             this.cacheElements();
             this.bindEvents();
             this.loadConfig();
             this.loadDashboard();
+            
+            // 标记为已初始化
+            state.isInitialized = true;
             console.log('Performance Module: Initialization complete');
         },
 
@@ -90,6 +100,13 @@
             els.totalScorePreview = document.getElementById('totalScorePreview');
             els.totalScoreGrade = document.getElementById('totalScoreGrade');
             els.submitEvaluationBtn = document.getElementById('submitEvaluationBtn');
+
+            // 确认对话框元素
+            els.confirmDialog = document.getElementById('confirmDialog');
+            els.confirmDialogTitle = document.getElementById('confirmDialogTitle');
+            els.confirmDialogMessage = document.getElementById('confirmDialogMessage');
+            els.confirmDialogCancel = document.getElementById('confirmDialogCancel');
+            els.confirmDialogConfirm = document.getElementById('confirmDialogConfirm');
         },
 
         // 绑定事件
@@ -141,6 +158,12 @@
             }
 
             if (els.submitEvaluationBtn) {
+                // 移除旧的事件监听器（通过克隆节点）
+                const newBtn = els.submitEvaluationBtn.cloneNode(true);
+                els.submitEvaluationBtn.parentNode.replaceChild(newBtn, els.submitEvaluationBtn);
+                els.submitEvaluationBtn = newBtn;
+                
+                // 绑定新的事件监听器
                 els.submitEvaluationBtn.addEventListener('click', () => this.handleEvaluationSubmit());
             }
         },
@@ -276,27 +299,39 @@
 
         // 删除评价周期
         async deleteEvaluation(evaluationId) {
-            if (!confirm('确定要删除这个评价周期吗？删除后无法恢复。')) {
-                return;
-            }
+            // 使用自定义确认对话框
+            this.showConfirmDialog(
+                '确认删除评价周期',
+                '确定要删除这个评价周期吗？删除后无法恢复。',
+                async () => {
+                    try {
+                        const response = await this.authenticatedFetch(`/api/evaluations/${evaluationId}`, {
+                            method: 'DELETE'
+                        });
 
-            try {
-                const response = await this.authenticatedFetch(`/api/evaluations/${evaluationId}`, {
-                    method: 'DELETE'
-                });
+                        const result = await response.json();
 
-                const result = await response.json();
-
-                if (result.success) {
-                    alert('删除成功');
-                    this.loadEvaluationPeriods();
-                } else {
-                    alert('删除失败：' + result.message);
+                        if (result.success) {
+                            // 使用 Toast 通知
+                            if (window.App && window.App.Toast) {
+                                window.App.Toast.success('删除成功');
+                            }
+                            this.loadEvaluationPeriods();
+                        } else {
+                            // 使用 Toast 通知
+                            if (window.App && window.App.Toast) {
+                                window.App.Toast.error('删除失败：' + result.message);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('删除评价周期失败:', error);
+                        // 使用 Toast 通知
+                        if (window.App && window.App.Toast) {
+                            window.App.Toast.error('删除评价周期失败');
+                        }
+                    }
                 }
-            } catch (error) {
-                console.error('删除评价周期失败:', error);
-                alert('删除评价周期失败');
-            }
+            );
         },
 
         // 显示创建评价周期对话框
@@ -540,7 +575,10 @@
         // 处理创建评价周期提交
         async handleCreateEvaluationSubmit() {
             if (!state.createEvaluationData) {
-                alert('请先选择周期类型和日期');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.warning('请先选择周期类型和日期');
+                }
                 return;
             }
 
@@ -561,14 +599,23 @@
                 const result = await response.json();
 
                 if (result.success) {
-                    alert('创建评价周期成功！');
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success('创建评价周期成功！');
+                    }
                     this.loadEvaluationPeriods();
                 } else {
-                    alert('创建评价周期失败：' + result.message);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('创建评价周期失败：' + result.message);
+                    }
                 }
             } catch (error) {
                 console.error('创建评价周期失败:', error);
-                alert('创建评价周期失败');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('创建评价周期失败');
+                }
             }
         },
 
@@ -594,11 +641,17 @@
 
                     this.showEvaluationInterface();
                 } else {
-                    alert('开始评价失败：' + result.message);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('开始评价失败：' + result.message);
+                    }
                 }
             } catch (error) {
                 console.error('开始评价失败:', error);
-                alert('开始评价失败');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('开始评价失败');
+                }
             }
         },
 
@@ -772,87 +825,12 @@
                 const card = this.createEntityCard(entity);
                 card.addEventListener('click', () => {
                     // 显示友好的提示信息
-                    this.showToast('本月无来料，无需评价', 'info');
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.info('本评价周期无来料，无需评价');
+                    }
                 });
                 els.entityCardsListWithoutMaterial.appendChild(card);
             });
-        },
-
-        // 显示 Toast 提示
-        showToast(message, type = 'info') {
-            // 检查是否已存在 Toast 容器
-            let toastContainer = document.getElementById('toastContainer');
-            if (!toastContainer) {
-                toastContainer = document.createElement('div');
-                toastContainer.id = 'toastContainer';
-                toastContainer.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 10000;
-                    display: flex;
-                    flex-direction: column;
-                    gap: 10px;
-                `;
-                document.body.appendChild(toastContainer);
-            }
-
-            // 创建 Toast 元素
-            const toast = document.createElement('div');
-            const bgColor = type === 'info' ? '#3b82f6' : type === 'success' ? '#10b981' : '#ef4444';
-            toast.style.cssText = `
-                background: ${bgColor};
-                color: white;
-                padding: 12px 24px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                animation: slideIn 0.3s ease-out;
-                font-size: 14px;
-                font-weight: 500;
-                max-width: 300px;
-            `;
-            toast.textContent = message;
-
-            // 添加动画样式
-            if (!document.getElementById('toastStyles')) {
-                const style = document.createElement('style');
-                style.id = 'toastStyles';
-                style.textContent = `
-                    @keyframes slideIn {
-                        from {
-                            transform: translateX(100%);
-                            opacity: 0;
-                        }
-                        to {
-                            transform: translateX(0);
-                            opacity: 1;
-                        }
-                    }
-                    @keyframes slideOut {
-                        from {
-                            transform: translateX(0);
-                            opacity: 1;
-                        }
-                        to {
-                            transform: translateX(100%);
-                            opacity: 0;
-                        }
-                    }
-                `;
-                document.head.appendChild(style);
-            }
-
-            toastContainer.appendChild(toast);
-
-            // 3秒后自动消失
-            setTimeout(() => {
-                toast.style.animation = 'slideOut 0.3s ease-out';
-                setTimeout(() => {
-                    if (toastContainer.contains(toast)) {
-                        toastContainer.removeChild(toast);
-                    }
-                }, 300);
-            }, 3000);
         },
 
         // 创建单个供应商卡片
@@ -929,7 +907,7 @@
                     <div class="entity-card-header">
                         <span class="rank-badge rank-other">#</span>
                         <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
-                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本月无来料</span>' : ''}
+                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本评价周期无来料</span>' : ''}
                     </div>
                     <div class="entity-card-score">
                         <div class="total-score">${entity.totalScore}</div>
@@ -963,7 +941,7 @@
                 card.innerHTML = `
                     <div class="entity-card-header">
                         <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
-                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本月无来料</span>' : '<span class="entity-card-status pending">待评价</span>'}
+                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本评价周期无来料</span>' : '<span class="entity-card-status pending">待评价</span>'}
                     </div>
                     <div class="entity-card-quality">
                         <div class="quality-item">
@@ -1391,18 +1369,65 @@
 
                 if (result && result.success === true) {
                     console.log('📊 保存成功，进入成功分支');
-                    alert('保存成功！');
+                    // 使用 Toast 通知替代 alert
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success('保存成功！');
+                    } else {
+                        alert('保存成功！');
+                    }
                     this.closeEvaluationModal();
                     // 重新加载当前评价周期的实体数据
                     await this.startEvaluation(state.currentEvaluation.id);
                 } else {
                     console.log('📊 保存失败，返回数据:', result);
-                    alert('保存失败：' + (result.message || '未知错误'));
+                    // 使用 Toast 通知替代 alert
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('保存失败：' + (result.message || '未知错误'));
+                    } else {
+                        alert('保存失败：' + (result.message || '未知错误'));
+                    }
                 }
             } catch (error) {
                 console.error('📊 提交评价出错:', error);
-                alert('提交失败，请重试');
+                // 使用 Toast 通知替代 alert
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('提交失败，请重试');
+                } else {
+                    alert('提交失败，请重试');
+                }
             }
+        },
+
+        // 显示确认对话框
+        showConfirmDialog(title, message, onConfirm) {
+            if (!els.confirmDialog) {
+                console.error('确认对话框元素未找到');
+                return;
+            }
+
+            // 设置标题和消息
+            if (els.confirmDialogTitle) {
+                els.confirmDialogTitle.textContent = title;
+            }
+            if (els.confirmDialogMessage) {
+                els.confirmDialogMessage.textContent = message;
+            }
+
+            // 显示对话框
+            els.confirmDialog.classList.remove('hidden');
+
+            // 绑定取消按钮事件
+            els.confirmDialogCancel.onclick = () => {
+                els.confirmDialog.classList.add('hidden');
+            };
+
+            // 绑定确认按钮事件
+            els.confirmDialogConfirm.onclick = () => {
+                els.confirmDialog.classList.add('hidden');
+                if (onConfirm) {
+                    onConfirm();
+                }
+            };
         },
 
         // 退出评价
@@ -1413,18 +1438,30 @@
             }
             this.isExiting = true;
 
-            if (confirm('确定要退出评价吗？未保存的数据将丢失。')) {
-                els.evaluationInterface.classList.add('hidden');
-                document.getElementById('evaluationPeriodsList').classList.remove('hidden');
-                state.currentEvaluation = null;
-                state.currentEntity = null;
-                state.entities = [];
-            }
+            // 使用自定义确认对话框
+            this.showConfirmDialog(
+                '确认退出评价',
+                '确定要退出评价吗？未保存的数据将丢失。',
+                () => {
+                    els.evaluationInterface.classList.add('hidden');
+                    document.getElementById('evaluationPeriodsList').classList.remove('hidden');
+                    state.currentEvaluation = null;
+                    state.currentEntity = null;
+                    state.entities = [];
 
-            // 重置标志
+                    // 重置标志
+                    setTimeout(() => {
+                        this.isExiting = false;
+                    }, 500);
+                }
+            );
+
+            // 如果用户取消，重置标志
             setTimeout(() => {
-                this.isExiting = false;
-            }, 500);
+                if (this.isExiting && !els.confirmDialog.classList.contains('hidden')) {
+                    this.isExiting = false;
+                }
+            }, 100);
         },
 
         // 显示配置对话框
@@ -1432,7 +1469,10 @@
             if (window.App.Modules.PerformanceConfig) {
                 window.App.Modules.PerformanceConfig.openConfigModal();
             } else {
-                alert('绩效评价配置管理模块未加载');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('绩效评价配置管理模块未加载');
+                }
             }
         },
 
@@ -1441,7 +1481,10 @@
             if (window.App.Modules.PerformanceDashboard) {
                 window.App.Modules.PerformanceDashboard.loadResults(evaluationId);
             } else {
-                alert('绩效评价主界面模块未加载');
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('绩效评价主界面模块未加载');
+                }
             }
         }
     };
