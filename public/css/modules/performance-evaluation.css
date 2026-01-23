@@ -397,8 +397,83 @@
 
 .evaluation-content {
     display: flex;
-    gap: calc(var(--border-radius-lg) * 1.5);
+    flex-direction: column;
+    gap: calc(var(--border-radius-lg) * 2);
     min-height: 600px;
+}
+
+/* ============================================
+   供应商区域分组
+   ============================================ */
+
+.entity-section {
+    background: #ffffff;
+    border-radius: var(--border-radius-xl);
+    padding: calc(var(--border-radius-lg) * 1.5);
+    box-shadow: var(--shadow-sm);
+    border: 2px solid var(--primary-100);
+    transition: all var(--transition-base);
+}
+
+.entity-section:hover {
+    box-shadow: var(--shadow-md);
+    border-color: var(--primary-200);
+}
+
+.entity-section--no-material {
+    background: var(--gray-50);
+    border-color: var(--gray-200);
+    opacity: 0.9;
+}
+
+.entity-section--no-material:hover {
+    opacity: 1;
+    border-color: var(--gray-300);
+}
+
+.entity-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: calc(var(--border-radius-lg) * 1.5);
+    padding-bottom: var(--border-radius-md);
+    border-bottom: 2px solid var(--primary-100);
+}
+
+.entity-section--no-material .entity-section-header {
+    border-bottom-color: var(--gray-200);
+}
+
+.entity-section-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--primary-700);
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-sm);
+}
+
+.entity-section--no-material .entity-section-header h3 {
+    color: var(--gray-600);
+}
+
+.entity-section-header h3 i {
+    font-size: 1.5rem;
+}
+
+.entity-section-count {
+    background: var(--primary-50);
+    color: var(--primary-700);
+    padding: var(--border-radius-sm) var(--border-radius-md);
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.entity-section--no-material .entity-section-count {
+    background: var(--gray-200);
+    color: var(--gray-600);
 }
 
 /* ============================================
@@ -436,6 +511,38 @@
 .entity-card.current {
     border-color: var(--primary-500);
     box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
+}
+
+/* 无来料卡片特殊样式 */
+.entity-card--no-material {
+    background: #f8f9fa;
+    opacity: 0.9;
+    border: 2px dashed var(--gray-300);
+    cursor: not-allowed;
+}
+
+.entity-card--no-material:hover {
+    transform: none;
+    box-shadow: var(--shadow-sm);
+    border-color: var(--gray-400);
+    opacity: 1;
+}
+
+/* 本月无来料标签 */
+.entity-card-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 12px;
+    border-radius: var(--border-radius-md);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.entity-card-badge.no-material {
+    background: var(--gray-200);
+    color: var(--gray-600);
 }
 
 /* 排名徽章 */
@@ -686,6 +793,12 @@
     gap: 6px;
 }
 
+/* 无来料卡片的 footer */
+.entity-card--no-material .entity-card-footer {
+    color: var(--gray-500);
+    border-top-color: var(--gray-200);
+}
+
 .entity-card-footer::before {
     content: '';
     display: inline-block;
@@ -695,6 +808,10 @@
     background-size: contain;
     background-repeat: no-repeat;
     opacity: 0.8;
+}
+
+.entity-card--no-material .entity-card-footer::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 8v4'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
 }
 
 .trend-up { color: var(--success); }

@@ -756,7 +756,7 @@
                                 </span>
                                 <span class="info-item">
                                     <i class="ph ph-users"></i>
-                                    <span id="evaluationEntityCount">0</span> 家评价实体
+                                    <span id="evaluationEntityCount">需评价供应商 0 家，因无来料不参与评价供应商 0 家</span>
                                 </span>
                             </div>
                             <button class="btn btn-secondary" id="exitEvaluationBtn">
@@ -766,8 +766,23 @@
 
                         <!-- 主内容区 -->
                         <div class="evaluation-content">
-                            <!-- 评价实体卡片列表 -->
-                            <div id="entityCardsList" class="entity-cards"></div>
+                            <!-- 需评价供应商（有来料） -->
+                            <div class="entity-section">
+                                <div class="entity-section-header">
+                                    <h3><i class="ph ph-check-circle"></i> 需评价供应商</h3>
+                                    <span class="entity-section-count" id="withMaterialCount">0 家</span>
+                                </div>
+                                <div id="entityCardsListWithMaterial" class="entity-cards"></div>
+                            </div>
+
+                            <!-- 无来料供应商 -->
+                            <div class="entity-section entity-section--no-material">
+                                <div class="entity-section-header">
+                                    <h3><i class="ph ph-minus-circle"></i> 因无来料不参与评价</h3>
+                                    <span class="entity-section-count" id="withoutMaterialCount">0 家</span>
+                                </div>
+                                <div id="entityCardsListWithoutMaterial" class="entity-cards"></div>
+                            </div>
 
                             <!-- 评价模态框 -->
                             <div id="evaluationModal" class="evaluation-modal hidden">

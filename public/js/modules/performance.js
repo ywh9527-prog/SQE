@@ -60,6 +60,10 @@
             els.evaluationEntityCount = document.getElementById('evaluationEntityCount');
             els.exitEvaluationBtn = document.getElementById('exitEvaluationBtn');
             els.entityCardsList = document.getElementById('entityCardsList');
+            els.entityCardsListWithMaterial = document.getElementById('entityCardsListWithMaterial');
+            els.entityCardsListWithoutMaterial = document.getElementById('entityCardsListWithoutMaterial');
+            els.withMaterialCount = document.getElementById('withMaterialCount');
+            els.withoutMaterialCount = document.getElementById('withoutMaterialCount');
             els.evaluationModal = document.getElementById('evaluationModal');
             els.modalEntityName = document.getElementById('modalEntityName');
             els.closeModalBtn = document.getElementById('closeModalBtn');
@@ -581,10 +585,12 @@
                 if (result.success) {
                     state.currentEvaluation = result.data.evaluation;
                     state.entities = result.data.evaluationEntities;
-                    state.currentType = 'purchase'; // 重置为默认类型
+                    // 不要重置 currentType，保持用户当前选择的供应商类型（外购/外协）
+                    // state.currentType = 'purchase'; // 已移除，避免保存后类型被重置
 
                     console.log('评价实体数据:', state.entities);
                     console.log('实体数量:', state.entities.length);
+                    console.log('当前供应商类型:', state.currentType);
 
                     this.showEvaluationInterface();
                 } else {
@@ -604,10 +610,25 @@
 
             els.evaluationTitle.textContent = state.currentEvaluation.period_name;
             els.evaluationPeriod.textContent = `${state.currentEvaluation.start_date} 至 ${state.currentEvaluation.end_date}`;
-            
+
             // 过滤实体
             const filteredEntities = this.filterEntitiesByType(state.entities);
-            els.evaluationEntityCount.textContent = filteredEntities.length;
+
+            // 按是否有来料分组统计
+            let withMaterialCount = 0;
+            let withoutMaterialCount = 0;
+
+            filteredEntities.forEach(entity => {
+                const qualityData = entity.qualityData || { totalBatches: 0 };
+                if (qualityData.totalBatches > 0) {
+                    withMaterialCount++;
+                } else {
+                    withoutMaterialCount++;
+                }
+            });
+
+            // 更新描述文字
+            els.evaluationEntityCount.textContent = `需评价供应商 ${withMaterialCount} 家，因无来料不参与评价供应商 ${withoutMaterialCount} 家`;
 
             this.renderEntityCards();
             this.loadTypeStatistics();
@@ -652,10 +673,23 @@
 
             // 重新渲染卡片
             this.renderEntityCards();
-            
-            // 更新实体数量
+
+            // 更新数量统计
             const filteredEntities = this.filterEntitiesByType(state.entities);
-            els.evaluationEntityCount.textContent = filteredEntities.length;
+
+            let withMaterialCount = 0;
+            let withoutMaterialCount = 0;
+
+            filteredEntities.forEach(entity => {
+                const qualityData = entity.qualityData || { totalBatches: 0 };
+                if (qualityData.totalBatches > 0) {
+                    withMaterialCount++;
+                } else {
+                    withoutMaterialCount++;
+                }
+            });
+
+            els.evaluationEntityCount.textContent = `需评价供应商 ${withMaterialCount} 家，因无来料不参与评价供应商 ${withoutMaterialCount} 家`;
         },
 
         // 加载类型统计数据
@@ -683,148 +717,275 @@
             console.log('当前配置:', state.config);
             console.log('配置维度:', state.config?.dimensions);
 
-            if (!els.entityCardsList) return;
+            if (!els.entityCardsListWithMaterial || !els.entityCardsListWithoutMaterial) return;
 
-            els.entityCardsList.innerHTML = '';
+            // 清空两个容器
+            els.entityCardsListWithMaterial.innerHTML = '';
+            els.entityCardsListWithoutMaterial.innerHTML = '';
 
             // 按类型过滤
             const filteredEntities = this.filterEntitiesByType(state.entities);
 
-            // 按拼音首字母排序（A-Z）
-            filteredEntities.sort((a, b) => {
+            // 按是否有来料分组
+            const entitiesWithMaterial = [];
+            const entitiesWithoutMaterial = [];
+
+            filteredEntities.forEach(entity => {
+                const qualityData = entity.qualityData || { totalBatches: 0 };
+                if (qualityData.totalBatches > 0) {
+                    entitiesWithMaterial.push(entity);
+                } else {
+                    entitiesWithoutMaterial.push(entity);
+                }
+            });
+
+            // 每组按拼音首字母排序（A-Z）
+            const sortByName = (a, b) => {
                 const nameA = (a.name || a.entityName || '').toLowerCase();
                 const nameB = (b.name || b.entityName || '').toLowerCase();
                 return nameA.localeCompare(nameB, 'zh-CN');
+            };
+
+            entitiesWithMaterial.sort(sortByName);
+            entitiesWithoutMaterial.sort(sortByName);
+
+            console.log('有来料的供应商数量:', entitiesWithMaterial.length);
+            console.log('无来料的供应商数量:', entitiesWithoutMaterial.length);
+
+            // 更新数量统计
+            if (els.withMaterialCount) {
+                els.withMaterialCount.textContent = `${entitiesWithMaterial.length} 家`;
+            }
+            if (els.withoutMaterialCount) {
+                els.withoutMaterialCount.textContent = `${entitiesWithoutMaterial.length} 家`;
+            }
+
+            // 渲染有来料的供应商卡片
+            entitiesWithMaterial.forEach(entity => {
+                const card = this.createEntityCard(entity);
+                card.addEventListener('click', () => this.openEvaluationModal(entity));
+                els.entityCardsListWithMaterial.appendChild(card);
             });
 
-            console.log('过滤后的实体数量:', filteredEntities.length);
+            // 渲染无来料的供应商卡片
+            entitiesWithoutMaterial.forEach(entity => {
+                const card = this.createEntityCard(entity);
+                card.addEventListener('click', () => {
+                    // 显示友好的提示信息
+                    this.showToast('本月无来料，无需评价', 'info');
+                });
+                els.entityCardsListWithoutMaterial.appendChild(card);
+            });
+        },
 
-            filteredEntities.forEach(entity => {
-                const card = document.createElement('div');
-                card.className = 'entity-card';
+        // 显示 Toast 提示
+        showToast(message, type = 'info') {
+            // 检查是否已存在 Toast 容器
+            let toastContainer = document.getElementById('toastContainer');
+            if (!toastContainer) {
+                toastContainer = document.createElement('div');
+                toastContainer.id = 'toastContainer';
+                toastContainer.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    z-index: 10000;
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                `;
+                document.body.appendChild(toastContainer);
+            }
 
-                // 判断是否已评价
-                const isEvaluated = entity.totalScore !== null && entity.totalScore !== undefined;
+            // 创建 Toast 元素
+            const toast = document.createElement('div');
+            const bgColor = type === 'info' ? '#3b82f6' : type === 'success' ? '#10b981' : '#ef4444';
+            toast.style.cssText = `
+                background: ${bgColor};
+                color: white;
+                padding: 12px 24px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                animation: slideIn 0.3s ease-out;
+                font-size: 14px;
+                font-weight: 500;
+                max-width: 300px;
+            `;
+            toast.textContent = message;
 
-                // 统一显示：质量数据始终显示
-                const qualityData = entity.qualityData || { totalBatches: 0, okBatches: 0, passRate: 0 };
-
-                if (isEvaluated) {
-                    // 已评价：显示总分、等级和维度
-                    const gradeText = this.getGradeText(entity.grade);
-                    const gradeClass = this.getGradeClass(entity.grade);
-
-                    // 动态生成维度HTML，支持自定义维度
-                    let dimensionsHtml = '';
-
-                    // 自定义维度的5种预设颜色
-                    const customDimensionColors = [
-                        'progress-custom-1', // 粉红渐变
-                        'progress-custom-2', // 青色渐变
-                        'progress-custom-3', // 玫红渐变
-                        'progress-custom-4', // 靛蓝渐变
-                        'progress-custom-5'  // 橙红渐变
-                    ];
-                    
-                    let customIndex = 0;
-
-                    // 遍历配置中的所有维度
-                    if (state.config && state.config.dimensions) {
-                        state.config.dimensions.forEach((dimension, index) => {
-                            const score = entity.scores[dimension.key] || 0;
-                            
-                            // 根据维度类型选择进度条样式
-                            let progressClass = '';
-                            if (dimension.key === 'quality') {
-                                progressClass = 'progress-quality';
-                            } else if (dimension.key === 'delivery') {
-                                progressClass = 'progress-delivery';
-                            } else if (dimension.key === 'service') {
-                                progressClass = 'progress-service';
-                            } else {
-                                // 自定义维度使用预设的5种颜色策略
-                                progressClass = customDimensionColors[customIndex % customDimensionColors.length];
-                                customIndex++;
-                            }
-                            
-                            dimensionsHtml += `
-                                <div class="dimension-item">
-                                    <div class="dimension-header">
-                                        <span class="dimension-name">${dimension.name}</span>
-                                        <span class="dimension-score">${score}</span>
-                                    </div>
-                                    <div class="progress-bar">
-                                        <div class="progress-fill ${progressClass}" style="width: ${score}%" data-score="${score}"></div>
-                                    </div>
-                                </div>
-                            `;
-                        });
-                    } else {
-                        console.warn('配置或维度不存在');
+            // 添加动画样式
+            if (!document.getElementById('toastStyles')) {
+                const style = document.createElement('style');
+                style.id = 'toastStyles';
+                style.textContent = `
+                    @keyframes slideIn {
+                        from {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                        to {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
                     }
+                    @keyframes slideOut {
+                        from {
+                            transform: translateX(0);
+                            opacity: 1;
+                        }
+                        to {
+                            transform: translateX(100%);
+                            opacity: 0;
+                        }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
 
-                    card.innerHTML = `
-                        <div class="entity-card-header">
-                            <span class="rank-badge rank-other">#</span>
-                            <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
-                        </div>
-                        <div class="entity-card-score">
-                            <div class="total-score">${entity.totalScore}</div>
-                            <span class="grade-badge ${gradeClass}">${gradeText}</span>
-                        </div>
-                        <div class="entity-card-quality">
-                            <div class="quality-item">
-                                <label>总批次</label>
-                                <span>${qualityData.totalBatches}</span>
+            toastContainer.appendChild(toast);
+
+            // 3秒后自动消失
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => {
+                    if (toastContainer.contains(toast)) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+        },
+
+        // 创建单个供应商卡片
+        createEntityCard(entity) {
+            const card = document.createElement('div');
+            card.className = 'entity-card';
+
+            // 判断是否已评价
+            const isEvaluated = entity.totalScore !== null && entity.totalScore !== undefined;
+
+            // 判断是否有来料
+            const qualityData = entity.qualityData || { totalBatches: 0, okBatches: 0, passRate: 0 };
+            const hasMaterial = qualityData.totalBatches > 0;
+
+            if (!hasMaterial) {
+                card.classList.add('entity-card--no-material');
+            }
+
+            if (isEvaluated) {
+                // 已评价：显示总分、等级和维度
+                const gradeText = this.getGradeText(entity.grade);
+                const gradeClass = this.getGradeClass(entity.grade);
+
+                // 动态生成维度HTML，支持自定义维度
+                let dimensionsHtml = '';
+
+                // 自定义维度的5种预设颜色
+                const customDimensionColors = [
+                    'progress-custom-1', // 粉红渐变
+                    'progress-custom-2', // 青色渐变
+                    'progress-custom-3', // 玫红渐变
+                    'progress-custom-4', // 靛蓝渐变
+                    'progress-custom-5'  // 橙红渐变
+                ];
+
+                let customIndex = 0;
+
+                // 遍历配置中的所有维度
+                if (state.config && state.config.dimensions) {
+                    state.config.dimensions.forEach((dimension, index) => {
+                        const score = entity.scores[dimension.key] || 0;
+
+                        // 根据维度类型选择进度条样式
+                        let progressClass = '';
+                        if (dimension.key === 'quality') {
+                            progressClass = 'progress-quality';
+                        } else if (dimension.key === 'delivery') {
+                            progressClass = 'progress-delivery';
+                        } else if (dimension.key === 'service') {
+                            progressClass = 'progress-service';
+                        } else {
+                            // 自定义维度使用预设的5种颜色策略
+                            progressClass = customDimensionColors[customIndex % customDimensionColors.length];
+                            customIndex++;
+                        }
+
+                        dimensionsHtml += `
+                            <div class="dimension-item">
+                                <div class="dimension-header">
+                                    <span class="dimension-name">${dimension.name}</span>
+                                    <span class="dimension-score">${score}</span>
+                                </div>
+                                <div class="progress-bar">
+                                    <div class="progress-fill ${progressClass}" style="width: ${score}%" data-score="${score}"></div>
+                                </div>
                             </div>
-                            <div class="quality-item">
-                                <label>合格批次</label>
-                                <span>${qualityData.okBatches}</span>
-                            </div>
-                            <div class="quality-item">
-                                <label>合格率</label>
-                                <span class="pass-rate">${qualityData.passRate}%</span>
-                            </div>
-                        </div>
-                        <div class="entity-card-dimensions">
-                            ${dimensionsHtml}
-                        </div>
-                        <div class="entity-card-footer">
-                            <span>趋势: <span class="trend-flat">-</span></span>
-                            <span>${new Date().toISOString().split('T')[0]}</span>
-                        </div>
-                    `;
-                    card.classList.add('evaluated');
+                        `;
+                    });
                 } else {
-                    // 未评价：只显示质量数据，不显示总分和维度
-                    card.innerHTML = `
-                        <div class="entity-card-header">
-                            <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
-                            <span class="entity-card-status pending">待评价</span>
-                        </div>
-                        <div class="entity-card-quality">
-                            <div class="quality-item">
-                                <label>总批次</label>
-                                <span>${qualityData.totalBatches}</span>
-                            </div>
-                            <div class="quality-item">
-                                <label>合格批次</label>
-                                <span>${qualityData.okBatches}</span>
-                            </div>
-                            <div class="quality-item">
-                                <label>合格率</label>
-                                <span class="pass-rate">${qualityData.passRate}%</span>
-                            </div>
-                        </div>
-                        <div class="entity-card-footer">
-                            <span>点击卡片开始评价</span>
-                        </div>
-                    `;
+                    console.warn('配置或维度不存在');
                 }
 
-                card.addEventListener('click', () => this.openEvaluationModal(entity));
-                els.entityCardsList.appendChild(card);
-            });
+                card.innerHTML = `
+                    <div class="entity-card-header">
+                        <span class="rank-badge rank-other">#</span>
+                        <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
+                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本月无来料</span>' : ''}
+                    </div>
+                    <div class="entity-card-score">
+                        <div class="total-score">${entity.totalScore}</div>
+                        <span class="grade-badge ${gradeClass}">${gradeText}</span>
+                    </div>
+                    <div class="entity-card-quality">
+                        <div class="quality-item">
+                            <label>总批次</label>
+                            <span>${qualityData.totalBatches}</span>
+                        </div>
+                        <div class="quality-item">
+                            <label>合格批次</label>
+                            <span>${qualityData.okBatches}</span>
+                        </div>
+                        <div class="quality-item">
+                            <label>合格率</label>
+                            <span class="pass-rate">${qualityData.passRate}%</span>
+                        </div>
+                    </div>
+                    <div class="entity-card-dimensions">
+                        ${dimensionsHtml}
+                    </div>
+                    <div class="entity-card-footer">
+                        <span>趋势: <span class="trend-flat">-</span></span>
+                        <span>${new Date().toISOString().split('T')[0]}</span>
+                    </div>
+                `;
+                card.classList.add('evaluated');
+            } else {
+                // 未评价：只显示质量数据，不显示总分和维度
+                card.innerHTML = `
+                    <div class="entity-card-header">
+                        <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
+                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本月无来料</span>' : '<span class="entity-card-status pending">待评价</span>'}
+                    </div>
+                    <div class="entity-card-quality">
+                        <div class="quality-item">
+                            <label>总批次</label>
+                            <span>${qualityData.totalBatches}</span>
+                        </div>
+                        <div class="quality-item">
+                            <label>合格批次</label>
+                            <span>${qualityData.okBatches}</span>
+                        </div>
+                        <div class="quality-item">
+                            <label>合格率</label>
+                            <span class="pass-rate">${qualityData.passRate}%</span>
+                        </div>
+                    </div>
+                    <div class="entity-card-footer">
+                        <span>${hasMaterial ? '点击卡片开始评价' : '无需评价'}</span>
+                    </div>
+                `;
+            }
+
+            return card;
         },
 
         // 获取等级文本
