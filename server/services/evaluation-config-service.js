@@ -122,17 +122,24 @@ class EvaluationConfigService {
                     if (details.length > 0) {
                         logger.info(`评价周期 ${evaluation.period_name} 已有 ${details.length} 条评价数据，开始重新计算`);
 
-                        // 重新计算每条评价详情的总分和等级
+                        // 只重新计算已评价的供应商分数（scores 有实际内容才计算）
+                        // 未评价的供应商保持 total_score 和 grade 为 null，显示为"待评价"状态
                         for (const detail of details) {
-                            const { totalScore, grade } = this.calculateScoreAndGrade(
-                                detail.scores,
-                                config  // 使用新配置
-                            );
+                            // 检查是否已评价（scores 不为空对象）
+                            const isEvaluated = detail.scores && Object.keys(detail.scores).length > 0;
+                            
+                            if (isEvaluated) {
+                                const { totalScore, grade } = this.calculateScoreAndGrade(
+                                    detail.scores,
+                                    config  // 使用新配置
+                                );
 
-                            detail.total_score = totalScore;
-                            detail.grade = grade;
-                            await detail.save({ transaction });
-                            totalRecalculated++;
+                                detail.total_score = totalScore;
+                                detail.grade = grade;
+                                await detail.save({ transaction });
+                                totalRecalculated++;
+                            }
+                            // 未评价的供应商不处理，保持原状（total_score = null）
                         }
                     }
 
