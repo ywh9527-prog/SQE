@@ -1249,15 +1249,27 @@ class PerformanceEvaluationService {
                 throw new Error('评价周期未开始或已完成');
             }
 
-            // 检查是否所有评价实体都已评价
+            // 检查是否所有有来料的评价实体都已评价
             const details = await PerformanceEvaluationDetail.findAll({
                 where: { evaluation_id: id }
             });
 
-            const unevaluatedCount = details.filter(d => d.total_score === null).length;
+            // 只检查有来料的供应商（totalBatches > 0）
+            const unevaluatedCount = details.filter(d => {
+                // 解析质量数据快照（可能是对象或字符串）
+                const qualityData = d.quality_data_snapshot 
+                    ? (typeof d.quality_data_snapshot === 'string' 
+                        ? JSON.parse(d.quality_data_snapshot) 
+                        : d.quality_data_snapshot)
+                    : { totalBatches: 0 };
+                const hasMaterial = qualityData.totalBatches > 0;
+                
+                // 只统计有来料但未评价的供应商
+                return hasMaterial && (d.total_score === null || d.total_score === undefined);
+            }).length;
 
             if (unevaluatedCount > 0) {
-                throw new Error(`还有 ${unevaluatedCount} 个评价实体未完成评价`);
+                throw new Error(`还有 ${unevaluatedCount} 个有来料的评价实体未完成评价`);
             }
 
             // 更新状态为已完成

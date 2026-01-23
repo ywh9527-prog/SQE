@@ -177,11 +177,19 @@
                     this.renderCharts();
                     this.renderTable();
                 } else {
-                    alert('加载评价结果失败：' + result.message);
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('加载评价结果失败：' + result.message);
+                    } else {
+                        alert('加载评价结果失败：' + result.message);
+                    }
                 }
             } catch (error) {
                 console.error('加载评价结果失败:', error);
-                alert('加载评价结果失败');
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('加载评价结果失败');
+                } else {
+                    alert('加载评价结果失败');
+                }
             }
         },
 
@@ -389,10 +397,10 @@
                     <td class="rank-cell">${rankHtml}</td>
                     <td>${detail.entityName}</td>
                     <td class="score-cell">
-                        <span class="score-value ${scoreClass}">${detail.totalScore.toFixed(1)}</span>
+                        <span class="score-value ${scoreClass}">${detail.totalScore !== null && detail.totalScore !== undefined ? detail.totalScore.toFixed(1) : '-'}</span>
                     </td>
                     <td>
-                        <span class="grade-badge ${gradeClass}">${detail.grade}</span>
+                        <span class="grade-badge ${gradeClass}">${detail.grade || '-'}</span>
                     </td>
                     <td class="dimensions-cell">
                         ${dimensionBars}
@@ -408,7 +416,18 @@
 
         // 退出结果界面
         exitResults() {
-            if (confirm('确定要返回评价周期列表吗？')) {
+            if (window.App && window.App.Modules && window.App.Modules.Performance && window.App.Modules.Performance.showConfirmDialog) {
+                window.App.Modules.Performance.showConfirmDialog(
+                    '确认返回',
+                    '确定要返回评价周期列表吗？',
+                    () => {
+                        els.resultsInterface.classList.add('hidden');
+                        document.getElementById('evaluationPeriodsList').classList.remove('hidden');
+                        state.currentEvaluation = null;
+                        state.resultsData = null;
+                    }
+                );
+            } else if (confirm('确定要返回评价周期列表吗？')) {
                 els.resultsInterface.classList.add('hidden');
                 document.getElementById('evaluationPeriodsList').classList.remove('hidden');
                 state.currentEvaluation = null;

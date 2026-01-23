@@ -1378,6 +1378,9 @@
                     this.closeEvaluationModal();
                     // 重新加载当前评价周期的实体数据
                     await this.startEvaluation(state.currentEvaluation.id);
+                    
+                    // 检查是否所有供应商都评价完了，如果是则提交评价周期
+                    await this.checkAndSubmitEvaluation();
                 } else {
                     console.log('📊 保存失败，返回数据:', result);
                     // 使用 Toast 通知替代 alert
@@ -1472,6 +1475,69 @@
                 // 使用 Toast 通知
                 if (window.App && window.App.Toast) {
                     window.App.Toast.error('绩效评价配置管理模块未加载');
+                }
+            }
+        },
+
+        // 检查并提交评价周期
+        async checkAndSubmitEvaluation() {
+            if (!state.currentEvaluation || !state.entities) {
+                return;
+            }
+
+            // 只检查有来料的供应商是否都已评价
+            const entitiesWithMaterial = state.entities.filter(entity => {
+                const qualityData = entity.qualityData || { totalBatches: 0 };
+                return qualityData.totalBatches > 0; // 只检查有来料的供应商
+            });
+
+            const unevaluatedCount = entitiesWithMaterial.filter(entity => 
+                entity.totalScore === null || entity.totalScore === undefined
+            ).length;
+
+            console.log('📊 有来料的供应商数量:', entitiesWithMaterial.length);
+            console.log('📊 有来料的未评价供应商数量:', unevaluatedCount);
+            console.log('📊 总供应商数量:', state.entities.length);
+
+            // 如果还有未评价的有来料供应商，不提交
+            if (unevaluatedCount > 0) {
+                console.log('📊 还有供应商未评价，不提交评价周期');
+                return;
+            }
+
+            // 所有有来料的供应商都已评价，提交评价周期
+            try {
+                console.log('📊 所有有来料的供应商已评价，开始提交评价周期...');
+                const response = await this.authenticatedFetch(`/api/evaluations/${state.currentEvaluation.id}/submit`, {
+                    method: 'PUT'
+                });
+
+                const result = await response.json();
+                console.log('📊 提交评价周期响应:', result);
+
+                if (result.success) {
+                    console.log('📊 评价周期提交成功');
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success('评价周期已完成！');
+                    }
+                    
+                    // 跳转到主界面显示结果
+                    if (window.App.Modules && window.App.Modules.PerformanceDashboard) {
+                        window.App.Modules.PerformanceDashboard.loadResults(state.currentEvaluation.id);
+                    }
+                } else {
+                    console.error('📊 提交评价周期失败:', result.message);
+                    // 使用 Toast 通知
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('提交评价周期失败：' + result.message);
+                    }
+                }
+            } catch (error) {
+                console.error('📊 提交评价周期异常:', error);
+                // 使用 Toast 通知
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('提交评价周期失败');
                 }
             }
         },
