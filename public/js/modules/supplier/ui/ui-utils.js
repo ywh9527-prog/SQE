@@ -421,6 +421,11 @@ class SupplierUIUtils {
     // 绑定资料类型设置按钮事件 - 确保无论如何都会绑定
     this.bindDocumentTypeSettingsButton(type);
 
+    // 绑定文件上传事件 - 确保点击上传区域可以打开文件选择对话框
+    if (window.supplierManager && window.supplierManager.bindFileUploadEvents) {
+      window.supplierManager.bindFileUploadEvents();
+    }
+
     // 显示模态框 - 使用!important覆盖内联样式
     modal.style.setProperty('display', 'flex', 'important');
     modal.style.setProperty('z-index', '9999', 'important');
