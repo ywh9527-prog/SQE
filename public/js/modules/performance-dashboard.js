@@ -86,7 +86,7 @@
             
             // 更新标题
             if (els.resultsTitle) {
-                els.resultsTitle.textContent = '供应商月度评价';
+                els.resultsTitle.textContent = '供应商绩效评价';
             }
             if (els.resultsPeriod) {
                 els.resultsPeriod.textContent = '暂无评价数据';

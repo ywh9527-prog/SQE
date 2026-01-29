@@ -78,7 +78,7 @@ class Router {
             'dashboard': '仪表盘',
             'iqc': 'IQC 质量分析',
             'documents': '供应商资料管理',
-            'performance': '月度绩效评价',
+            'performance': '供应商绩效评价',
             'vendor-config': '供应商配置中心'
         };
         const title = titleMap[hash] || 'SQE 系统';
