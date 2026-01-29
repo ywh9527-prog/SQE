@@ -22,7 +22,7 @@
         state: state,
         
         // 初始化模块
-        init() {
+        async init() {
             // 防止重复初始化
             if (state.isInitialized) {
                 console.log('Performance Module: Already initialized, skipping...');
@@ -32,9 +32,9 @@
             console.log('Performance Module: Initializing...');
             this.cacheElements();
             this.bindEvents();
-            this.loadConfig();
-            this.loadDashboard();
-            
+            await this.loadConfig();
+            await this.loadDashboard();
+
             // 标记为已初始化
             state.isInitialized = true;
             console.log('Performance Module: Initialization complete');
@@ -190,27 +190,13 @@
 
         // 加载主界面
         async loadDashboard() {
-            console.log('加载主界面...');
-            // 默认显示主界面
-            this.showDashboard();
-            
-            // 尝试加载最新的评价结果
             try {
-                const response = await this.authenticatedFetch('/api/evaluations/latest');
-                const result = await response.json();
-                
-                if (result.success && result.data) {
-                    console.log('找到最新评价:', result.data.id);
-                    // 有最新评价，加载数据
-                    if (window.App.Modules.PerformanceDashboard) {
-                        window.App.Modules.PerformanceDashboard.loadResults(result.data.id);
-                    }
-                } else {
-                    console.log('暂无评价数据');
-                    // 没有评价数据，显示空状态
-                    if (window.App.Modules.PerformanceDashboard) {
-                        window.App.Modules.PerformanceDashboard.showEmptyState();
-                    }
+                // 获取当前年份
+                const currentYear = new Date().getFullYear();
+
+                // 加载当前年份的累计数据（外购）
+                if (window.App.Modules.PerformanceDashboard) {
+                    window.App.Modules.PerformanceDashboard.loadAccumulatedResults(currentYear, 'purchase');
                 }
             } catch (error) {
                 console.error('加载主界面失败:', error);

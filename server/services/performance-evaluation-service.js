@@ -1,6 +1,6 @@
 const PerformanceEvaluation = require('../models/PerformanceEvaluation');
 const PerformanceEvaluationDetail = require('../models/PerformanceEvaluationDetail');
-const { sequelize } = require('../database/config');
+const { sequelize, Op } = require('../database/config');
 const logger = require('../utils/logger');
 
 /**
@@ -1376,6 +1376,174 @@ class PerformanceEvaluationService {
             }));
         } catch (error) {
             logger.error('获取趋势数据失败:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * 获取年度累计数据
+     * @param {number} year - 年份
+     * @param {string} type - 数据类型（purchase-外购/external-外协）
+     * @returns {Promise<Object>} 累计数据
+     */
+    async getAccumulatedResults(year, type) {
+        try {
+            // 查询该年份所有已完成的评价周期
+            // 使用日期范围查询（SQLite兼容）
+            const startDate = `${year}-01-01`;
+            const endDate = `${parseInt(year) + 1}-01-01`;
+
+            const evaluations = await PerformanceEvaluation.findAll({
+                where: {
+                    status: 'completed',
+                    [Op.or]: [
+                        {
+                            [Op.and]: [
+                                { start_date: { [Op.gte]: startDate } },
+                                { start_date: { [Op.lt]: endDate } }
+                            ]
+                        },
+                        {
+                            [Op.and]: [
+                                { end_date: { [Op.gte]: startDate } },
+                                { end_date: { [Op.lt]: endDate } }
+                            ]
+                        }
+                    ]
+                },
+                order: [['start_date', 'ASC']],
+                include: [{
+                    model: PerformanceEvaluationDetail,
+                    as: 'details',
+                    where: type ? { data_type: type } : undefined,
+                    required: false
+                }]
+            });
+
+            if (evaluations.length === 0) {
+                return {
+                    year,
+                    type,
+                    evaluations: [],
+                    statistics: {
+                        totalEntities: 0,
+                        evaluatedCount: 0,
+                        unevaluatedCount: 0,
+                        averageScore: 0,
+                        gradeCount: {
+                            '优秀': 0,
+                            '合格': 0,
+                            '整改后合格': 0,
+                            '不合格': 0
+                        }
+                    },
+                    details: [],
+                    trendData: []
+                };
+            }
+
+            // 收集所有评价详情
+            const allDetails = [];
+            evaluations.forEach(evaluation => {
+                if (evaluation.details && evaluation.details.length > 0) {
+                    evaluation.details.forEach(detail => {
+                        allDetails.push({
+                            ...detail.dataValues,
+                            evaluation: evaluation.dataValues
+                        });
+                    });
+                }
+            });
+
+            // 使用Set去重统计唯一供应商数量
+            const uniqueEntityNames = new Set(allDetails.map(d => d.evaluation_entity_name));
+            const totalEntities = uniqueEntityNames.size;
+
+            // 构建供应商评价状态映射（去重）
+            const entityStatusMap = new Map();
+            allDetails.forEach(d => {
+                const entityName = d.evaluation_entity_name;
+                // 如果该供应商已经有评价记录，就标记为已评价
+                if (d.total_score !== null && !entityStatusMap.has(entityName)) {
+                    entityStatusMap.set(entityName, 'evaluated');
+                } else if (!entityStatusMap.has(entityName)) {
+                    entityStatusMap.set(entityName, 'unevaluated');
+                }
+            });
+
+            // 计算统计数据（基于去重后的供应商）
+            const evaluatedCount = Array.from(entityStatusMap.values()).filter(status => status === 'evaluated').length;
+            const unevaluatedCount = totalEntities - evaluatedCount;
+
+            // 计算平均得分（基于所有评价记录，不去重）
+            const evaluatedDetails = allDetails.filter(d => d.total_score !== null);
+            const averageScore = evaluatedDetails.length > 0
+                ? evaluatedDetails.reduce((sum, d) => sum + (d.total_score || 0), 0) / evaluatedDetails.length
+                : 0;
+
+            // 统计各等级数量（基于所有评价记录，不去重）
+            const gradeCount = {
+                '优秀': 0,
+                '合格': 0,
+                '整改后合格': 0,
+                '不合格': 0
+            };
+
+            evaluatedDetails.forEach(d => {
+                if (d.grade && gradeCount[d.grade] !== undefined) {
+                    gradeCount[d.grade]++;
+                }
+            });
+
+            // 获取趋势数据（按周期）
+            const trendData = evaluations.map(evaluation => {
+                const periodDetails = evaluation.details || [];
+                const periodAverageScore = periodDetails.length > 0
+                    ? periodDetails
+                        .filter(d => d.total_score !== null)
+                        .reduce((sum, d) => sum + (d.total_score || 0), 0) / periodDetails.filter(d => d.total_score !== null).length
+                    : 0;
+
+                return {
+                    periodName: evaluation.period_name,
+                    startDate: evaluation.start_date,
+                    endDate: evaluation.end_date,
+                    averageScore: parseFloat(periodAverageScore.toFixed(2)),
+                    detailsCount: periodDetails.length
+                };
+            });
+
+            return {
+                year,
+                type,
+                evaluations: evaluations.map(e => ({
+                    id: e.id,
+                    periodName: e.period_name,
+                    startDate: e.start_date,
+                    endDate: e.end_date,
+                    status: e.status
+                })),
+                statistics: {
+                    totalEntities,
+                    evaluatedCount,
+                    unevaluatedCount: totalEntities - evaluatedCount,
+                    averageScore: parseFloat(averageScore.toFixed(2)),
+                    gradeCount
+                },
+                details: allDetails.map(d => ({
+                    evaluationId: d.evaluation_id,
+                    periodName: d.evaluation.period_name,
+                    entityName: d.evaluation_entity_name,
+                    scores: d.scores,
+                    totalScore: d.total_score,
+                    grade: d.grade,
+                    remarks: d.remarks,
+                    qualityData: d.quality_data_snapshot
+                })),
+                trendData
+            };
+        } catch (error) {
+            logger.error('获取年度累计数据失败:', error);
             throw error;
         }
     }

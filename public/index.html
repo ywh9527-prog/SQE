@@ -788,7 +788,7 @@
                             <div id="evaluationModal" class="evaluation-modal hidden">
                                 <div class="evaluation-modal-content">
                                     <div class="evaluation-modal-header">
-                                        <h3 id="modalEntityName">评价实体名称</h3>
+                                        <h3 id="modalEntityName">评价供应商名称</h3>
                                         <button class="btn-icon" id="closeModalBtn">
                                             <i class="ph ph-x"></i>
                                         </button>
@@ -876,6 +876,12 @@
                             <div class="results-info">
                                 <span class="info-item">
                                     <i class="ph ph-calendar"></i>
+                                    <select id="yearSelector" class="form-control year-selector">
+                                        <!-- 年份选项将动态生成 -->
+                                    </select>
+                                </span>
+                                <span class="info-item">
+                                    <i class="ph ph-clock"></i>
                                     <span id="resultsPeriod">2025-01-01 至 2025-01-31</span>
                                 </span>
                             </div>
@@ -886,6 +892,33 @@
                                 <button class="btn btn-secondary" id="exitResultsBtn">
                                     <i class="ph ph-x"></i> 返回
                                 </button>
+                            </div>
+                        </div>
+
+                        <!-- 外购/外协切换卡片 -->
+                        <div class="performance__data-source-wrapper">
+                            <div class="performance__data-source-header">
+                                <h4 class="performance__data-source-title"><i class="ph ph-database"></i> 数据源选择</h4>
+                            </div>
+                            <div class="performance__data-source-container">
+                                <div class="performance__type-card performance__type-card--active" data-type="purchase">
+                                    <div class="performance__type-icon"><i class="ph ph-shopping-cart"></i></div>
+                                    <div class="performance__type-content">
+                                        <div class="performance__type-title">外购</div>
+                                        <div class="performance__type-count" id="resultsPurchaseCount">0</div>
+                                        <div class="performance__type-description">外购物料供应商</div>
+                                        <div class="performance__type-status">当前选中</div>
+                                    </div>
+                                </div>
+                                <div class="performance__type-card" data-type="external">
+                                    <div class="performance__type-icon"><i class="ph ph-factory"></i></div>
+                                    <div class="performance__type-content">
+                                        <div class="performance__type-title">外协</div>
+                                        <div class="performance__type-count" id="resultsExternalCount">0</div>
+                                        <div class="performance__type-description">外协加工供应商</div>
+                                        <div class="performance__type-status">未选中</div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
@@ -928,17 +961,17 @@
                                     <div class="metric-item">
                                         <h3>已评价</h3>
                                         <div class="value" id="evaluatedCount">0</div>
-                                        <div class="label">家评价实体</div>
+                                        <div class="label">家评价供应商</div>
                                     </div>
                                     <div class="metric-item">
                                         <h3>未评价</h3>
                                         <div class="value" id="unevaluatedCount">0</div>
-                                        <div class="label">家评价实体</div>
+                                        <div class="label">家评价供应商</div>
                                     </div>
                                     <div class="metric-item">
                                         <h3>总计</h3>
                                         <div class="value" id="totalCount">0</div>
-                                        <div class="label">家评价实体</div>
+                                        <div class="label">家评价供应商</div>
                                     </div>
                                 </div>
                             </div>
@@ -964,7 +997,7 @@
 
                             <!-- TOP3雷达图 -->
                             <div class="chart-card">
-                                <h3>TOP3评价实体</h3>
+                                <h3>TOP3评价供应商</h3>
                                 <div class="chart-container">
                                     <canvas id="radarChart"></canvas>
                                 </div>
@@ -974,13 +1007,13 @@
                         <!-- 底部表格区 -->
                         <div class="table-section">
                             <div class="table-card">
-                                <h3>评价实体排名</h3>
+                                <h3>评价供应商排名</h3>
                                 <div class="table-container">
                                     <table class="results-table">
                                         <thead>
                                             <tr>
                                                 <th>排名</th>
-                                                <th>评价实体名称</th>
+                                                <th>评价供应商名称</th>
                                                 <th>综合得分</th>
                                                 <th>等级</th>
                                                 <th>各维度得分</th>

@@ -7,6 +7,8 @@
     const state = {
         currentEvaluation: null,
         resultsData: null,
+        currentYear: null,
+        currentType: 'purchase', // purchase-外购/external-外协
         charts: {
             trend: null,
             grade: null,
@@ -48,6 +50,7 @@
         cacheElements() {
             els.resultsInterface = document.getElementById('resultsInterface');
             els.resultsTitle = document.getElementById('resultsTitle');
+            els.yearSelector = document.getElementById('yearSelector');
             els.resultsPeriod = document.getElementById('resultsPeriod');
             els.exitResultsBtn = document.getElementById('exitResultsBtn');
             els.averageScore = document.getElementById('averageScore');
@@ -67,12 +70,34 @@
             els.gradeChart = document.getElementById('gradeChart');
             els.radarChart = document.getElementById('radarChart');
             els.resultsTableBody = document.getElementById('resultsTableBody');
+            // 外购/外购切换卡片
+            els.resultsTypeCards = document.querySelectorAll('#resultsInterface .performance__type-card');
+            els.resultsPurchaseCount = document.getElementById('resultsPurchaseCount');
+            els.resultsExternalCount = document.getElementById('resultsExternalCount');
         },
 
         // 绑定事件
         bindEvents() {
             if (els.exitResultsBtn) {
                 els.exitResultsBtn.addEventListener('click', () => this.exitResults());
+            }
+
+            // 年份选择器切换事件
+            if (els.yearSelector) {
+                els.yearSelector.addEventListener('change', () => {
+                    const year = parseInt(els.yearSelector.value);
+                    this.switchYear(year);
+                });
+            }
+
+            // 外购/外购卡片切换事件
+            if (els.resultsTypeCards.length > 0) {
+                els.resultsTypeCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        const type = card.getAttribute('data-type');
+                        this.switchType(type);
+                    });
+                });
             }
         },
 
@@ -189,6 +214,176 @@
                     window.App.Toast.error('加载评价结果失败');
                 } else {
                     alert('加载评价结果失败');
+                }
+            }
+        },
+
+        // 加载年度累计数据
+        async loadAccumulatedResults(year, type = 'purchase') {
+            try {
+                state.currentYear = year;
+                state.currentType = type;
+
+                // 初始化年份选择器
+                this.initYearSelector();
+
+                // 设置年份选择器的值
+                if (els.yearSelector) {
+                    els.yearSelector.value = year;
+                }
+
+                const response = await this.authenticatedFetch(`/api/evaluations/accumulated/${year}?type=${type}`);
+                const result = await response.json();
+
+                if (result.success) {
+                    state.resultsData = result.data;
+
+                    // 检查是否有数据
+                    if (result.data.evaluations && result.data.evaluations.length === 0) {
+                        // 没有评价数据，显示友好提示
+                        this.showEmptyState();
+                        if (window.App && window.App.Toast) {
+                            window.App.Toast.info(`${year}年暂未进行绩效评价`);
+                        }
+                        return;
+                    }
+
+                    this.showAccumulatedResults();
+                    this.updateStats();
+                    this.renderCharts();
+                    this.renderTable();
+                    this.updateTypeCounts();
+                } else {
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('加载累计数据失败：' + result.message);
+                    } else {
+                        alert('加载累计数据失败：' + result.message);
+                    }
+                }
+            } catch (error) {
+                console.error('加载累计数据失败:', error);
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('加载累计数据失败');
+                } else {
+                    alert('加载累计数据失败');
+                }
+            }
+        },
+
+        // 切换数据类型（外购/外购）
+        switchType(type) {
+            if (state.currentType === type) return;
+
+            state.currentType = type;
+
+            // 更新卡片样式
+            if (els.resultsTypeCards.length > 0) {
+                els.resultsTypeCards.forEach(card => {
+                    const cardType = card.getAttribute('data-type');
+                    const statusElement = card.querySelector('.performance__type-status');
+
+                    if (cardType === type) {
+                        card.classList.add('performance__type-card--active');
+                        if (statusElement) {
+                            statusElement.textContent = '当前选中';
+                        }
+                    } else {
+                        card.classList.remove('performance__type-card--active');
+                        if (statusElement) {
+                            statusElement.textContent = '未选中';
+                        }
+                    }
+                });
+            }
+
+            // 重新加载数据
+            if (state.currentYear) {
+                this.loadAccumulatedResults(state.currentYear, type);
+            }
+        },
+
+        // 更新外购/外购数量
+        updateTypeCounts() {
+            if (!state.resultsData || !state.resultsData.statistics) return;
+
+            const { statistics } = state.resultsData;
+
+            if (els.resultsPurchaseCount) {
+                // 查询外购数据
+                this.authenticatedFetch(`/api/evaluations/accumulated/${state.currentYear}?type=purchase`)
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success && result.data.statistics) {
+                            els.resultsPurchaseCount.textContent = result.data.statistics.totalEntities || 0;
+                        }
+                    })
+                    .catch(err => console.error('获取外购数量失败:', err));
+            }
+
+            if (els.resultsExternalCount) {
+                // 查询外购数据
+                this.authenticatedFetch(`/api/evaluations/accumulated/${state.currentYear}?type=external`)
+                    .then(res => res.json())
+                    .then(result => {
+                        if (result.success && result.data.statistics) {
+                            els.resultsExternalCount.textContent = result.data.statistics.totalEntities || 0;
+                        }
+                    })
+                    .catch(err => console.error('获取外购数量失败:', err));
+            }
+        },
+
+        // 初始化年份选择器
+        initYearSelector() {
+            if (!els.yearSelector) return;
+
+            const currentYear = new Date().getFullYear();
+            // 生成最近5年的选项
+            const startYear = currentYear - 4;
+            const endYear = currentYear + 1;
+
+            els.yearSelector.innerHTML = '';
+            for (let year = endYear; year >= startYear; year--) {
+                const option = document.createElement('option');
+                option.value = year;
+                option.textContent = `${year}年`;
+                if (year === currentYear) {
+                    option.selected = true;
+                }
+                els.yearSelector.appendChild(option);
+            }
+        },
+
+        // 切换年份
+        switchYear(year) {
+            if (state.currentYear === year) return;
+
+            state.currentYear = year;
+
+            // 重新加载数据
+            this.loadAccumulatedResults(year, state.currentType);
+        },
+
+        // 显示累计结果界面
+        showAccumulatedResults() {
+            console.log('显示累计结果界面');
+            // 显示主界面
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.remove('hidden');
+            }
+
+            // 更新标题
+            if (els.resultsTitle) {
+                els.resultsTitle.textContent = `${state.currentYear}年累计绩效评价`;
+            }
+            if (els.resultsPeriod) {
+                const { evaluations } = state.resultsData;
+                if (evaluations && evaluations.length > 0) {
+                    const firstPeriod = evaluations[0].startDate;
+                    const lastPeriod = evaluations[evaluations.length - 1].endDate;
+                    els.resultsPeriod.textContent = `${firstPeriod} 至 ${lastPeriod}`;
+                } else {
+                    els.resultsPeriod.textContent = `${state.currentYear}年暂无评价数据`;
                 }
             }
         },

@@ -320,6 +320,7 @@ router.get('/:id/results', authenticateToken, async (req, res) => {
 router.get('/trend/:entityName', authenticateToken, async (req, res) => {
     try {
         const { entityName } = req.params;
+
         const trendData = await performanceEvaluationService.getTrendData(entityName);
 
         res.json({
@@ -331,6 +332,30 @@ router.get('/trend/:entityName', authenticateToken, async (req, res) => {
         res.status(500).json({
             success: false,
             message: error.message || '获取趋势数据失败'
+        });
+    }
+});
+
+/**
+ * 获取年度累计数据
+ * GET /api/evaluations/accumulated/:year
+ */
+router.get('/accumulated/:year', authenticateToken, async (req, res) => {
+    try {
+        const { year } = req.params;
+        const { type } = req.query; // type: 'purchase' | 'external'
+
+        const accumulatedData = await performanceEvaluationService.getAccumulatedResults(year, type);
+
+        res.json({
+            success: true,
+            data: accumulatedData
+        });
+    } catch (error) {
+        logger.error('获取年度累计数据失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '获取年度累计数据失败'
         });
     }
 });

@@ -1,4 +1,4 @@
-const { Sequelize } = require('sequelize');
+const { Sequelize, Op } = require('sequelize');
 const path = require('path');
 const logger = require('../utils/logger');
 
@@ -68,6 +68,7 @@ const connectDB = async () => {
 
 module.exports = {
     sequelize,
+    Op,
     connectDB,
     getModels: loadModels
 };
