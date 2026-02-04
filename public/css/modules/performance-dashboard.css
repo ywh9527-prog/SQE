@@ -416,3 +416,269 @@
         padding: calc(var(--border-radius-xs) * 0.5) calc(var(--border-radius-xs) * 0.75);
     }
 }
+
+/* ============================================
+   Tab导航
+   ============================================ */
+
+.results-tabs {
+    display: flex;
+    gap: var(--border-radius-sm);
+    margin-bottom: var(--border-radius-lg);
+    padding: calc(var(--border-radius-sm) * 0.75);
+    background: var(--gray-100);
+    border-radius: var(--border-radius-md);
+}
+
+.results-tab-btn {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--border-radius-xs) * 0.75);
+    padding: calc(var(--border-radius-sm) * 0.75) var(--border-radius-md);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-600);
+    background: transparent;
+    border: 2px solid transparent;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.results-tab-btn:hover {
+    background: var(--gray-200);
+    color: var(--gray-900);
+}
+
+.results-tab-btn.active {
+    background: var(--primary-500);
+    border-color: var(--primary-500);
+    color: var(--gray-50);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    font-weight: 600;
+}
+
+.results-tab-btn i {
+    font-size: 1.125rem;
+}
+
+.results-tab-content {
+    display: none;
+}
+
+.results-tab-content.active {
+    display: block;
+}
+
+.results-tab-content.hidden {
+    display: none;
+}
+
+/* ============================================
+   热力图样式
+   ============================================ */
+
+.heatmap-section {
+    background: var(--gray-50);
+    padding: var(--border-radius-lg);
+    border-radius: var(--border-radius-lg);
+}
+
+.heatmap-container {
+    display: flex;
+    flex-direction: column;
+    gap: var(--border-radius-md);
+}
+
+.heatmap-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: var(--border-radius-md);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.heatmap-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin: 0;
+}
+
+.heatmap-legend {
+    display: flex;
+    gap: var(--border-radius-md);
+    align-items: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--border-radius-xs) * 0.5);
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+}
+
+.legend-color.high {
+    background: var(--success);
+}
+
+.legend-color.medium {
+    background: var(--info);
+}
+
+.legend-color.low {
+    background: var(--danger);
+}
+
+.heatmap-table-wrapper {
+    overflow-x: auto;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--gray-200);
+}
+
+.heatmap-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+}
+
+.heatmap-table thead tr {
+    background: var(--gray-100);
+}
+
+.heatmap-table th {
+    padding: calc(var(--border-radius-sm) * 0.75);
+    text-align: center;
+    font-weight: 600;
+    color: var(--gray-700);
+    border: 1px solid var(--gray-200);
+    white-space: nowrap;
+}
+
+.heatmap-table tbody tr {
+    border-bottom: 1px solid var(--gray-200);
+}
+
+.heatmap-table tbody tr:last-child {
+    border-bottom: none;
+}
+
+.heatmap-table td {
+    padding: calc(var(--border-radius-sm) * 0.75);
+    text-align: center;
+    border: 1px solid var(--gray-200);
+    white-space: nowrap;
+}
+
+/* 热力图分数颜色 */
+.heatmap-score {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 40px;
+    padding: calc(var(--border-radius-xs) * 0.5);
+    border-radius: var(--border-radius-sm);
+    font-weight: 500;
+    color: var(--gray-50);
+}
+
+.heatmap-score.high {
+    background: var(--success);
+}
+
+.heatmap-score.medium {
+    background: var(--info);
+}
+
+.heatmap-score.low {
+    background: var(--danger);
+}
+
+.heatmap-score.empty {
+    background: var(--gray-200);
+    color: var(--gray-400);
+}
+
+/* 排名徽章 */
+.heatmap-rank-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+.heatmap-rank-badge.rank-1 {
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: var(--gray-900);
+    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+}
+
+.heatmap-rank-badge.rank-2 {
+    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+    color: var(--gray-50);
+}
+
+.heatmap-rank-badge.rank-3 {
+    background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+    color: var(--gray-50);
+}
+
+.heatmap-rank-badge.rank-other {
+    background: var(--gray-200);
+    color: var(--gray-600);
+}
+
+/* 未评价供应商折叠区 */
+.heatmap-unevaluated-section {
+    background: var(--warning-50);
+    border: 1px solid var(--warning-200);
+    border-radius: var(--border-radius-md);
+    margin-top: var(--border-radius-md);
+}
+
+.heatmap-unevaluated-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--border-radius-sm) var(--border-radius-md);
+    background: var(--warning-100);
+    border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+    cursor: pointer;
+    user-select: none;
+}
+
+.heatmap-unevaluated-header h4 {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--warning-700);
+    margin: 0;
+}
+
+.heatmap-unevaluated-header .toggle-icon {
+    transition: transform var(--transition-base);
+}
+
+.heatmap-unevaluated-header.collapsed .toggle-icon {
+    transform: rotate(-90deg);
+}
+
+.heatmap-unevaluated-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+}
+
+.heatmap-unevaluated-body.expanded {
+    max-height: 2000px;
+}

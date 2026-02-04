@@ -69,11 +69,15 @@
             els.trendChart = document.getElementById('trendChart');
             els.gradeChart = document.getElementById('gradeChart');
             els.radarChart = document.getElementById('radarChart');
-            els.resultsTableBody = document.getElementById('resultsTableBody');
             // 外购/外购切换卡片
             els.resultsTypeCards = document.querySelectorAll('#resultsInterface .performance__type-card');
             els.resultsPurchaseCount = document.getElementById('resultsPurchaseCount');
             els.resultsExternalCount = document.getElementById('resultsExternalCount');
+            // Tab导航
+            els.tabButtons = document.querySelectorAll('.results-tab-btn');
+            els.tabContents = document.querySelectorAll('.results-tab-content');
+            // 热力图
+            els.heatmapTable = document.getElementById('heatmapTable');
         },
 
         // 绑定事件
@@ -96,6 +100,16 @@
                     card.addEventListener('click', () => {
                         const type = card.getAttribute('data-type');
                         this.switchType(type);
+                    });
+                });
+            }
+
+            // Tab导航切换事件
+            if (els.tabButtons.length > 0) {
+                els.tabButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const tabId = btn.getAttribute('data-tab');
+                        this.switchTab(tabId);
                     });
                 });
             }
@@ -139,24 +153,9 @@
             if (els.evaluatedCount) els.evaluatedCount.textContent = '0';
             if (els.unevaluatedCount) els.unevaluatedCount.textContent = '0';
             if (els.totalCount) els.totalCount.textContent = '0';
-            
+
             // 显示空状态图表
             this.renderEmptyCharts();
-            
-            // 显示空状态表格
-            if (els.resultsTableBody) {
-                els.resultsTableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" style="text-align: center; padding: 3rem 1rem; color: #718096;">
-                            <div style="margin-bottom: 1rem;">
-                                <i class="ph ph-chart-bar" style="font-size: 48px; opacity: 0.5;"></i>
-                            </div>
-                            <div style="font-size: 16px; font-weight: 500; margin-bottom: 0.5rem;">暂无评价数据</div>
-                            <div style="font-size: 14px;">请先创建评价周期开始评价</div>
-                        </td>
-                    </tr>
-                `;
-            }
         },
 
         // 渲染空状态图表
@@ -200,7 +199,6 @@
                     this.showResultsInterface();
                     this.updateStats();
                     this.renderCharts();
-                    this.renderTable();
                 } else {
                     if (window.App && window.App.Toast) {
                         window.App.Toast.error('加载评价结果失败：' + result.message);
@@ -251,7 +249,6 @@
                     this.showAccumulatedResults();
                     this.updateStats();
                     this.renderCharts();
-                    this.renderTable();
                     this.updateTypeCounts();
                 } else {
                     if (window.App && window.App.Toast) {
@@ -386,6 +383,230 @@
                     els.resultsPeriod.textContent = `${state.currentYear}年暂无评价数据`;
                 }
             }
+
+            // 渲染热力图
+            this.renderSimpleHeatmap();
+        },
+
+        // 切换Tab
+        switchTab(tabId) {
+            // 更新按钮样式
+            if (els.tabButtons.length > 0) {
+                els.tabButtons.forEach(btn => {
+                    const btnTabId = btn.getAttribute('data-tab');
+                    if (btnTabId === tabId) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            // 切换内容显示
+            if (els.tabContents.length > 0) {
+                els.tabContents.forEach(content => {
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.remove('active');
+                        content.classList.add('hidden');
+                    }
+                });
+            }
+        },
+
+        // 渲染年度排名热力图
+        renderSimpleHeatmap() {
+            if (!els.heatmapTable || !state.resultsData) return;
+
+            const { details, annualRankings } = state.resultsData;
+
+            // 生成月份列表（1-12月）
+            const months = [];
+            for (let i = 1; i <= 12; i++) {
+                months.push(`${i}月`);
+            }
+
+            // 构建供应商分数映射：供应商名称 -> 月份 -> 分数
+            const vendorScores = new Map();
+            const vendorAnnualData = new Map();
+
+            // 从details中提取每个月的数据
+            if (details && details.length > 0) {
+                details.forEach(detail => {
+                    const vendorName = detail.entityName;
+                    if (!vendorScores.has(vendorName)) {
+                        vendorScores.set(vendorName, new Map());
+                    }
+
+                    // 假设detail中有period信息，需要根据period的startDate判断月份
+                    if (detail.period && detail.period.startDate) {
+                        const month = new Date(detail.period.startDate).getMonth() + 1;
+                        const monthKey = `${month}月`;
+                        vendorScores.get(vendorName).set(monthKey, detail.totalScore);
+                    }
+                });
+            }
+
+            // 从annualRankings中提取年度平均分和等级
+            if (annualRankings && annualRankings.length > 0) {
+                annualRankings.forEach(ranking => {
+                    vendorAnnualData.set(ranking.entityName, {
+                        averageScore: ranking.totalScore,
+                        grade: ranking.grade
+                    });
+                });
+            }
+
+            // 获取所有供应商（从annualRankings中获取）
+            const allVendors = annualRankings && annualRankings.length > 0
+                ? annualRankings.map(r => r.entityName)
+                : Array.from(vendorScores.keys());
+
+            // 分离有数据和无数据的供应商
+            const vendorsWithData = allVendors.filter(vendor => {
+                const scores = vendorScores.get(vendor);
+                return scores && scores.size > 0;
+            });
+
+            const vendorsWithoutData = allVendors.filter(vendor => {
+                const scores = vendorScores.get(vendor);
+                return !scores || scores.size === 0;
+            });
+
+            // 渲染表格
+            let heatmapHtml = '<thead><tr>';
+            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; width: 50px;">序号</th>';
+            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; width: 60px;">排名</th>';
+            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; min-width: 150px;">供应商</th>';
+            months.forEach(month => {
+                heatmapHtml += `<th style="padding: 8px; background: #f8fafc; text-align: center; width: 70px;">${month}</th>`;
+            });
+            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; text-align: center; width: 80px;">年度平均分</th>';
+            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; text-align: center; width: 60px;">等级</th>';
+            heatmapHtml += '</tr></thead>';
+
+            // 渲染有数据的供应商
+            heatmapHtml += '<tbody>';
+            vendorsWithData.forEach((vendor, index) => {
+                heatmapHtml += '<tr>';
+
+                // 序号
+                heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 500;">${index + 1}</td>`;
+
+                // 排名徽章
+                const annualData = vendorAnnualData.get(vendor);
+                const sortedVendors = [...vendorAnnualData.entries()]
+                    .sort((a, b) => b[1].averageScore - a[1].averageScore);
+                const rank = sortedVendors.findIndex(([name]) => name === vendor) + 1;
+
+                let rankBadgeClass = 'rank-other';
+                if (rank === 1) rankBadgeClass = 'rank-1';
+                else if (rank === 2) rankBadgeClass = 'rank-2';
+                else if (rank === 3) rankBadgeClass = 'rank-3';
+
+                heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                    <span class="heatmap-rank-badge ${rankBadgeClass}">${rank}</span>
+                </td>`;
+
+                // 供应商名称
+                heatmapHtml += `<td style="padding: 8px; font-weight: 500;">${vendor}</td>`;
+
+                // 月份分数
+                const scores = vendorScores.get(vendor);
+                months.forEach(month => {
+                    const score = scores.get(month);
+                    if (score !== undefined && score !== null) {
+                        let scoreClass = 'medium';
+                        if (score >= 95) scoreClass = 'high';
+                        else if (score < 85) scoreClass = 'low';
+                        heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                            <span class="heatmap-score ${scoreClass}">${score.toFixed(1)}</span>
+                        </td>`;
+                    } else {
+                        heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                            <span class="heatmap-score empty">-</span>
+                        </td>`;
+                    }
+                });
+
+                // 年度平均分
+                const avgScore = annualData ? annualData.averageScore : '-';
+                heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 600;">
+                    ${avgScore !== '-' ? avgScore.toFixed(1) : avgScore}
+                </td>`;
+
+                // 等级
+                const grade = annualData ? annualData.grade : '-';
+                let gradeClass = 'grade-good';
+                if (grade === '优秀') gradeClass = 'grade-excellent';
+                else if (grade === '不合格') gradeClass = 'grade-poor';
+                else if (grade === '整改后合格') gradeClass = 'grade-improve';
+                heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                    <span class="grade-badge ${gradeClass}">${grade}</span>
+                </td>`;
+
+                heatmapHtml += '</tr>';
+            });
+
+            // 渲染无数据的供应商（可折叠）
+            if (vendorsWithoutData.length > 0) {
+                heatmapHtml += '</tbody>';
+                heatmapHtml += `
+                    <tr>
+                        <td colspan="${months.length + 5}" style="padding: 0;">
+                            <div class="heatmap-unevaluated-section">
+                                <div class="heatmap-unevaluated-header" id="unevaluatedHeader">
+                                    <h4>未评价供应商 (${vendorsWithoutData.length}家)</h4>
+                                    <i class="ph ph-caret-down toggle-icon"></i>
+                                </div>
+                                <div class="heatmap-unevaluated-body" id="unevaluatedBody">
+                                    <table style="width: 100%; border-collapse: collapse;">
+                                        <tbody>
+                `;
+
+                vendorsWithoutData.forEach((vendor, index) => {
+                    heatmapHtml += '<tr>';
+                    heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 500;">${vendorsWithData.length + index + 1}</td>`;
+                    heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                        <span class="heatmap-rank-badge rank-other">-</span>
+                    </td>`;
+                    heatmapHtml += `<td style="padding: 8px; font-weight: 500;">${vendor}</td>`;
+                    months.forEach(() => {
+                        heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                            <span class="heatmap-score empty">-</span>
+                        </td>`;
+                    });
+                    heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 600;">-</td>`;
+                    heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                        <span class="grade-badge grade-good">-</span>
+                    </td>`;
+                    heatmapHtml += '</tr>';
+                });
+
+                heatmapHtml += `
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }
+
+            heatmapHtml += '</tbody>';
+            els.heatmapTable.innerHTML = heatmapHtml;
+
+            // 绑定折叠事件
+            const unevaluatedHeader = document.getElementById('unevaluatedHeader');
+            const unevaluatedBody = document.getElementById('unevaluatedBody');
+            if (unevaluatedHeader && unevaluatedBody) {
+                unevaluatedHeader.addEventListener('click', () => {
+                    unevaluatedHeader.classList.toggle('collapsed');
+                    unevaluatedBody.classList.toggle('expanded');
+                });
+            }
         },
 
         // 显示结果界面
@@ -440,9 +661,109 @@
 
         // 渲染趋势图
         renderTrendChart() {
-            // TODO: 实现趋势图渲染
-            // 需要获取历史周期的平均得分数据
-            console.log('渲染趋势图');
+            const { trendData } = state.resultsData;
+
+            if (!trendData || trendData.length === 0) {
+                // 显示空状态
+                if (els.trendChart) {
+                    els.trendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无趋势数据</span></div>';
+                }
+                return;
+            }
+
+            const ctx = els.trendChart.getContext('2d');
+
+            if (state.charts.trend) {
+                state.charts.trend.destroy();
+            }
+
+            const labels = trendData.map(d => d.periodName);
+            const data = trendData.map(d => d.averageScore);
+
+            state.charts.trend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '平均得分',
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const index = context.dataIndex;
+                                    const trendItem = trendData[index];
+                                    return [
+                                        `平均得分: ${context.parsed.y.toFixed(1)}分`,
+                                        `评价供应商: ${trendItem.detailsCount}家`,
+                                        `日期: ${trendItem.startDate} ~ ${trendItem.endDate}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            min: 60,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + '分';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
         },
 
         // 渲染等级分布图
@@ -542,71 +863,10 @@
             });
         },
 
-        // 渲染表格
+        // 渲染表格（已删除，改用热力图）
         renderTable() {
-            const { details } = state.resultsData;
-            
-            // 按总分排序
-            const sortedDetails = [...details].sort((a, b) => b.totalScore - a.totalScore);
-
-            els.resultsTableBody.innerHTML = '';
-
-            sortedDetails.forEach((detail, index) => {
-                const row = document.createElement('tr');
-                
-                // 排名
-                let rankHtml = '';
-                if (index === 0) {
-                    rankHtml = '<span class="rank-badge rank-1">1</span>';
-                } else if (index === 1) {
-                    rankHtml = '<span class="rank-badge rank-2">2</span>';
-                } else if (index === 2) {
-                    rankHtml = '<span class="rank-badge rank-3">3</span>';
-                } else {
-                    rankHtml = `<span class="rank-badge rank-other">${index + 1}</span>`;
-                }
-
-                // 分数颜色
-                const scoreClass = detail.totalScore >= 95 ? 'score-high' 
-                                  : detail.totalScore >= 85 ? 'score-medium' 
-                                  : 'score-low';
-
-                // 等级徽章
-                const gradeClass = `grade-${detail.grade === '优秀' ? 'excellent' 
-                                              : detail.grade === '合格' ? 'good' 
-                                              : detail.grade === '整改后合格' ? 'improve' 
-                                              : 'poor'}`;
-
-                // 维度进度条
-                const scores = detail.scores || {};
-                const dimensionBars = Object.entries(scores).map(([key, value]) => {
-                    const colorClass = key === '质量' ? 'quality' 
-                                     : key === '交付' ? 'delivery' 
-                                     : 'service';
-                    return `<div class="dimension-bar">
-                        <div class="dimension-fill ${colorClass}" style="width: ${value}%"></div>
-                    </div>`;
-                }).join('');
-
-                row.innerHTML = `
-                    <td class="rank-cell">${rankHtml}</td>
-                    <td>${detail.entityName}</td>
-                    <td class="score-cell">
-                        <span class="score-value ${scoreClass}">${detail.totalScore !== null && detail.totalScore !== undefined ? detail.totalScore.toFixed(1) : '-'}</span>
-                    </td>
-                    <td>
-                        <span class="grade-badge ${gradeClass}">${detail.grade || '-'}</span>
-                    </td>
-                    <td class="dimensions-cell">
-                        ${dimensionBars}
-                    </td>
-                    <td class="trend-cell">
-                        <span class="trend-flat">-</span>
-                    </td>
-                `;
-
-                els.resultsTableBody.appendChild(row);
-            });
+            // 排名表格已删除，改用年度排名热力图
+            // 不需要实现此方法
         },
 
         // 退出结果界面

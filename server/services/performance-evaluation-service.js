@@ -1513,6 +1513,36 @@ class PerformanceEvaluationService {
                 };
             });
 
+            // 计算年度排名（基于供应商的平均分）
+            const vendorRankings = new Map();
+            allDetails.forEach(d => {
+                const entityName = d.evaluation_entity_name;
+                if (!vendorRankings.has(entityName)) {
+                    vendorRankings.set(entityName, {
+                        entityName,
+                        totalScore: 0,
+                        count: 0,
+                        grades: []
+                    });
+                }
+                const vendor = vendorRankings.get(entityName);
+                if (d.total_score !== null) {
+                    vendor.totalScore += d.total_score;
+                    vendor.count++;
+                    vendor.grades.push(d.grade);
+                }
+            });
+
+            // 计算每个供应商的年度平均分和最新等级
+            const annualRankings = Array.from(vendorRankings.values())
+                .filter(v => v.count > 0)
+                .map(vendor => ({
+                    entityName: vendor.entityName,
+                    totalScore: vendor.totalScore / vendor.count,
+                    grade: vendor.grades[vendor.grades.length - 1] // 使用最新的等级
+                }))
+                .sort((a, b) => b.totalScore - a.totalScore); // 按平均分降序排列
+
             return {
                 year,
                 type,
@@ -1538,9 +1568,15 @@ class PerformanceEvaluationService {
                     totalScore: d.total_score,
                     grade: d.grade,
                     remarks: d.remarks,
-                    qualityData: d.quality_data_snapshot
+                    qualityData: d.quality_data_snapshot,
+                    period: {
+                        periodName: d.evaluation.period_name,
+                        startDate: d.evaluation.start_date,
+                        endDate: d.evaluation.end_date
+                    }
                 })),
-                trendData
+                trendData,
+                annualRankings
             };
         } catch (error) {
             logger.error('获取年度累计数据失败:', error);
