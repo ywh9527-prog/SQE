@@ -1,0 +1,1140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>2025年供应商绩效全量监控看板</title>
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --primary-light: #1e293b;
+            --accent: #3b82f6;
+            --accent-light: #60a5fa;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            --radius: 12px;
+            --radius-sm: 8px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: 'Inter', 'Noto Sans SC', sans-serif;
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+            color: white;
+            padding: 32px 40px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-xl);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 400px;
+            height: 400px;
+            background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
+            border-radius: 50%;
+        }
+
+        .header-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.8;
+            font-weight: 300;
+        }
+
+        /* Tab Navigation */
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .tab-btn {
+            padding: 10px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            color: rgba(255, 255, 255, 0.8);
+            cursor: pointer;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+        }
+
+        .tab-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            transform: translateY(-1px);
+        }
+
+        .tab-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            font-weight: 600;
+        }
+
+        /* Info Bar */
+        .info-bar {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            border: 1px solid #bfdbfe;
+            padding: 16px 24px;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+            font-size: 14px;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-bar .icon {
+            font-size: 20px;
+        }
+
+        /* Card Container */
+        .card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 24px;
+            box-shadow: var(--shadow-md);
+            margin-bottom: 24px;
+            border: 1px solid var(--border);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            box-shadow: var(--shadow-lg);
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-title::before {
+            content: '';
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            border-radius: 2px;
+        }
+
+        /* Chart Container */
+        .chart-container {
+            height: 500px;
+            width: 100%;
+            position: relative;
+        }
+
+        .chart-container.large {
+            height: 600px;
+        }
+
+        /* Grid Layout */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .grid-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        /* Type Toggle */
+        .type-toggle {
+            display: flex;
+            background: #f1f5f9;
+            border-radius: var(--radius-sm);
+            padding: 4px;
+            margin-bottom: 20px;
+            width: fit-content;
+        }
+
+        .type-toggle button {
+            padding: 8px 24px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .type-toggle button.active {
+            background: white;
+            color: var(--text-primary);
+            box-shadow: var(--shadow-sm);
+            font-weight: 600;
+        }
+
+        /* Top/Bottom Cards */
+        .vendor-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .vendor-card {
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .vendor-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .vendor-card.top {
+            border-left: 4px solid var(--success);
+        }
+
+        .vendor-card.bottom {
+            border-left: 4px solid var(--danger);
+        }
+
+        .vendor-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .vendor-card-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .vendor-card-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .vendor-card-badge.success {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .vendor-card-badge.danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .vendor-card-score {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .vendor-card-meta {
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+
+        /* Trend Dropdown */
+        .trend-selector {
+            margin-bottom: 20px;
+        }
+
+        .trend-selector select {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 14px;
+            color: var(--text-primary);
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .trend-selector select:hover {
+            border-color: var(--accent);
+        }
+
+        .trend-selector select:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        /* Trend List */
+        .trend-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .trend-item {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+        }
+
+        .trend-item.improved {
+            border-left: 4px solid var(--success);
+        }
+
+        .trend-item.declined {
+            border-left: 4px solid var(--danger);
+        }
+
+        .trend-item-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .trend-item-icon {
+            font-size: 18px;
+        }
+
+        .trend-item-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .trend-item-vendors {
+            font-size: 13px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* Stability Table */
+        .stability-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .stability-table th,
+        .stability-table td {
+            padding: 12px 16px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .stability-table th {
+            background: #f8fafc;
+            font-weight: 600;
+            color: var(--text-primary);
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stability-table tr:hover {
+            background: #f8fafc;
+        }
+
+        .stability-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .stability-badge.high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .stability-badge.medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .stability-badge.low {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+            animation: fadeIn 0.4s ease;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .grid-3 {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 16px;
+            }
+
+            .header {
+                padding: 24px;
+            }
+
+            .header h1 {
+                font-size: 22px;
+            }
+
+            .grid-2,
+            .grid-3 {
+                grid-template-columns: 1fr;
+            }
+
+            .vendor-cards,
+            .trend-list {
+                grid-template-columns: 1fr;
+            }
+
+            .tabs {
+                flex-direction: column;
+            }
+
+            .tab-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <div class="header-content">
+            <h1>2025年供应商绩效全量监控看板</h1>
+            <p>数据已根据原始报表 100% 对标还原 · 年度评价总结</p>
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchPage('heatmap')">热力图</button>
+                <button class="tab-btn" onclick="switchPage('ranking')">年度排名</button>
+                <button class="tab-btn" onclick="switchPage('trend')">趋势分析</button>
+                <button class="tab-btn" onclick="switchPage('distribution')">分布统计</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-bar">
+        <span class="icon">💡</span>
+        <span><b>交互说明：</b> 热力图中，单元格内的数字为绩效得分。<b>灰色区域</b> 代表该月无评价数据（无来料）。颜色深度随得分变化：<b>红色(<70)</b> → <b>橙色(70-85)</b> → <b>黄色(85-95)</b> → <b>绿色(>95)</b>。</span>
+    </div>
+
+    <!-- 页面1：热力图（外协+外购） -->
+    <div id="page-heatmap" class="page-content active">
+        <div class="card">
+            <div class="card-title">交付评价汇总</div>
+            <div class="type-toggle">
+                <button class="active" onclick="switchHeatmapType('waixie')">外协</button>
+                <button onclick="switchHeatmapType('waigou')">外购</button>
+            </div>
+            <div id="chart-heatmap" class="chart-container large"></div>
+        </div>
+    </div>
+
+    <!-- 页面3：年度排名 -->
+    <div id="page-ranking" class="page-content">
+        <div class="type-toggle">
+            <button class="active" onclick="switchRankingType('waixie')">外协</button>
+            <button onclick="switchRankingType('waigou')">外购</button>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">年度绩效排名</div>
+                <div id="chart-ranking-bar" class="chart-container"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">绩效等级分布</div>
+                <div id="chart-ranking-pie" class="chart-container"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">重点关注供应商</div>
+            <div class="vendor-cards" id="vendor-cards-ranking"></div>
+        </div>
+    </div>
+
+    <!-- 页面4：趋势分析 -->
+    <div id="page-trend" class="page-content">
+        <div class="type-toggle">
+            <button class="active" onclick="switchTrendType('waixie')">外协</button>
+            <button onclick="switchTrendType('waigou')">外购</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">单供应商绩效趋势</div>
+            <div class="trend-selector">
+                <select id="trend-vendor-select" onchange="updateVendorTrend()">
+                    <option value="">选择供应商查看趋势...</option>
+                </select>
+            </div>
+            <div id="chart-trend-vendor" class="chart-container"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">整体平均分月度趋势</div>
+            <div id="chart-trend-overall" class="chart-container"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">改进/恶化识别</div>
+            <div class="trend-list" id="trend-list"></div>
+        </div>
+    </div>
+
+    <!-- 页面5：分布统计 -->
+    <div id="page-distribution" class="page-content">
+        <div class="type-toggle">
+            <button class="active" onclick="switchDistributionType('waixie')">外协</button>
+            <button onclick="switchDistributionType('waigou')">外购</button>
+        </div>
+
+        <div class="card">
+            <div class="card-title">每月各等级供应商数量分布</div>
+            <div id="chart-distribution-monthly" class="chart-container"></div>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">年度累计绩效分布</div>
+                <div id="chart-distribution-pie" class="chart-container"></div>
+            </div>
+            <div class="card">
+                <div class="card-title">稳定性分析</div>
+                <div id="chart-distribution-stability" class="chart-container"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">波动性供应商列表（标准差 > 10）</div>
+            <table class="stability-table">
+                <thead>
+                    <tr>
+                        <th>供应商名称</th>
+                        <th>年度平均分</th>
+                        <th>标准差</th>
+                        <th>波动描述</th>
+                    </tr>
+                </thead>
+                <tbody id="stability-table-body"></tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    const months = ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'];
+
+    // --- 数据源：严格按照图片数据 1:1 录入 ---
+    const dataSet = {
+        waixie: {
+            vendors: ['华弘鑫','惠开','晶蓝','晶星','辽源','锐盛','盛宥','祥威','新显','幸福电子','旭虹','宣益','亦高','源合达','中科','仁轩'],
+            // [vendorIdx, monthIdx, score]
+            scores: [
+                // 华弘鑫
+                [0,1,60.00],[0,2,60.00],[0,3,84.29],[0,4,95.00],[0,5,82.98],[0,6,88.13],[0,7,88.13],[0,8,88.13],[0,9,96.76],[0,10,88.30],[0,11,88.30],
+                // 惠开
+                [1,5,94.60],[1,6,85.95],[1,7,85.95],[1,8,85.95],[1,9,87.43],[1,10,88.33],[1,11,88.33],
+                // 晶蓝
+                [2,0,51.21],[2,2,73.33],[2,3,94.29],[2,4,80.00],[2,5,51.00],[2,6,80.00],[2,7,80.00],[2,8,80.00],[2,9,67.86],[2,10,75.33],[2,11,85.33],
+                // 晶星
+                [3,11,92.50],
+                // 辽源
+                [4,2,100.00],[4,3,95.00],[4,4,86.67],[4,5,88.00],[4,6,80.00],[4,7,80.00],[4,8,80.00],[4,9,90.00],[4,10,90.00],
+                // 锐盛
+                [5,5,60.00],[5,6,100.00],[5,7,100.00],[5,8,100.00],[5,9,80.00],[5,10,80.00],
+                // 盛宥
+                [6,2,60.00],[6,3,90.00],[6,4,100.00],[6,5,100.00],[6,6,80.00],[6,7,100.00],[6,9,81.43],[6,10,84.00],[6,11,84.00],
+                // 祥威
+                [7,11,89.09],
+                // 新显
+                [8,5,70.91],[8,6,62.22],[8,7,62.22],[8,8,62.22],[8,9,64.21],[8,10,64.21],[8,11,100.00],
+                // 幸福电子
+                [9,3,100.00],[9,4,100.00],[9,5,100.00],[9,6,92.26],[9,7,92.26],[9,8,82.26],[9,9,97.14],[9,10,97.14],
+                // 旭虹
+                [10,1,75.45],[10,2,65.75],[10,3,83.85],[10,4,77.14],[10,5,89.83],[10,6,60.00],[10,7,60.00],[10,8,60.00],[10,9,88.57],[10,10,100.00],[10,11,100.00],
+                // 宣益
+                [11,10,76.00],[11,11,76.00],
+                // 亦高
+                [12,9,62.96],[12,10,62.96],[12,11,100.00],
+                // 源合达
+                [13,6,60.00],[13,7,60.00],[13,8,60.00],[13,9,80.00],[13,10,80.00],[13,11,80.00],
+                // 中科
+                [14,10,92.50],[14,11,92.50],
+                // 仁轩
+                [15,0,75.80],[15,1,58.50],[15,2,98.00],[15,5,80.00],[15,6,100.00],[15,7,100.00],[15,8,84.78],[15,9,90.00],[15,10,84.67],[15,11,84.67]
+            ]
+        },
+        waigou: {
+            vendors: ['虹科','格莱特','森耐','宇皓','BKTECH CO., LTD','百川兴','创新','鑫诚','弘擎','利丰达','旭虹(ASF)','触尔发','舜利','旭虹(1:1)','致费','点赞','富行','龙源','常兴','索威斯','旭航','一米新'],
+            scores: [
+                [0,5,100],[0,6,100],[0,7,100],[0,8,100],[0,10,100],[0,11,100],[1,6,100],[1,7,100],[1,8,100],[1,9,100],[1,11,100],
+                [2,6,100],[2,7,100],[2,8,100],[2,9,100],[2,10,100],[2,11,100],[3,6,100],[3,7,100],[3,8,100],[3,9,100],[3,10,100],[3,11,100],
+                [4,0,100],[4,1,100],[4,2,100],[4,3,100],[4,4,100],[4,5,100],[4,6,100],[4,7,100],[4,8,100],[4,9,100],[4,10,92],[4,11,92],
+                [5,0,100],[5,1,100],[5,2,92.5],[5,3,87.73],[5,4,100],[5,5,100],[5,6,100],[5,7,100],[5,8,100],[5,9,100],[5,10,94.29],[5,11,94.29],
+                [6,0,86.67],[6,2,86.67],[6,3,60],[6,4,60],[6,5,100],[6,6,100],[6,7,100],[6,8,100],[6,9,100],[6,10,100],[6,11,100],
+                [7,0,80],[7,1,100],[7,2,100],[7,3,100],[7,4,95],[7,5,93],[7,7,100],[7,8,100],[7,9,100],[7,10,100],[7,11,100],
+                [8,11,100],[9,0,100],[9,2,100],[9,3,100],[9,5,100],[9,6,100],[9,7,100],[9,8,100],[9,9,100],[9,10,100],[9,11,100],
+                [10,6,100],[10,7,100],[10,8,100],[10,9,100],[10,10,100],[10,11,100],
+                [11,0,90],[11,1,81],[11,2,100],[11,3,90],[11,4,98],[11,5,99],[11,6,100],[11,7,100],[11,8,85],[11,9,90],[11,10,100],[11,11,90],
+                [12,0,100],[12,1,100],[12,2,100],[12,3,100],[12,4,100],[12,5,100],[12,6,98.62],[12,7,98.62],[12,8,88.62],[12,9,95],[12,10,94.23],[12,11,95],
+                [13,0,86.67],[13,1,100],[13,2,100],[13,3,100],[13,4,100],[13,5,100],[13,6,100],[13,7,100],[13,8,100],[13,9,100],[13,10,100],[13,11,100],
+                [14,8,100],[14,9,100],[14,10,100],[14,11,100],[15,3,100],[15,11,100],
+                [16,0,100],[16,2,100],[16,3,95],[16,6,100],[16,7,100],[16,10,100],[16,11,100],
+                [17,6,100],[17,7,100],[17,8,100],[17,9,100],[17,10,100],[17,11,100],
+                [18,0,100],[18,1,98.26],[18,2,100],[18,3,100],[18,4,100],[18,5,100],[18,6,100],[18,7,100],[18,8,100],[18,9,100],[18,10,96],[18,11,100],
+                [19,6,100],[19,7,100],[19,10,100],[19,11,100],[20,11,100],[21,6,100],[21,7,100],[21,8,100],[21,9,100]
+            ]
+        }
+    };
+
+    // 全局变量
+    let currentRankingType = 'waixie';
+    let currentTrendType = 'waixie';
+    let currentDistributionType = 'waixie';
+    let currentHeatmapType = 'waixie';
+
+    // 页面切换
+    function switchPage(page) {
+        document.querySelectorAll('.page-content').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+
+        document.getElementById(`page-${page}`).classList.add('active');
+        event.target.classList.add('active');
+
+        // 初始化对应页面的图表
+        if (page === 'heatmap') {
+            setTimeout(() => renderHeatmap(currentHeatmapType), 100);
+        } else if (page === 'ranking') {
+            setTimeout(() => renderRanking(), 100);
+        } else if (page === 'trend') {
+            setTimeout(() => renderTrend(), 100);
+        } else if (page === 'distribution') {
+            setTimeout(() => renderDistribution(), 100);
+        }
+    }
+
+    // ==================== 热力图 ====================
+    function switchHeatmapType(type) {
+        currentHeatmapType = type;
+        document.querySelectorAll('#page-heatmap .type-toggle button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        renderHeatmap(type);
+    }
+
+    function renderHeatmap(type) {
+        const chart = echarts.init(document.getElementById('chart-heatmap'));
+        const source = dataSet[type];
+
+        chart.setOption({
+            tooltip: {
+                position: 'top',
+                formatter: (p) => `${source.vendors[p.data[1]]}<br>${months[p.data[0]]} 评价得分: <b>${p.data[2]}</b>`
+            },
+            grid: { top: '2%', bottom: '10%', left: '14%', right: '5%' },
+            xAxis: { type: 'category', data: months, splitArea: { show: true } },
+            yAxis: { type: 'category', data: source.vendors, splitArea: { show: true }, axisLabel: { fontSize: 12, fontWeight: 'bold' } },
+            visualMap: {
+                min: 50, max: 100, orient: 'horizontal', left: 'center', bottom: 0,
+                inRange: { color: ['#ef4444', '#f97316', '#eab308', '#10b981'] }
+            },
+            series: [{
+                type: 'heatmap',
+                data: source.scores.map(item => [item[1], item[0], item[2]]),
+                label: { show: true, fontSize: 11, color: '#333' },
+                itemStyle: { borderWidth: 1, borderColor: '#fff' }
+            }],
+            backgroundColor: '#f9fafb'
+        }, true);
+
+        window.addEventListener('resize', () => chart.resize());
+    }
+
+    // ==================== 年度排名 ====================
+    function calculateAnnualAvg(type) {
+        const vendors = dataSet[type].vendors;
+        const scores = dataSet[type].scores;
+
+        return vendors.map((vendor, idx) => {
+            const vendorScores = scores.filter(s => s[0] === idx).map(s => s[2]);
+            const avg = vendorScores.length > 0
+                ? (vendorScores.reduce((a,b) => a+b, 0) / vendorScores.length).toFixed(2)
+                : 0;
+            return { name: vendor, avg: parseFloat(avg), count: vendorScores.length };
+        }).filter(v => v.count > 0).sort((a, b) => b.avg - a.avg);
+    }
+
+    function getGrade(score) {
+        if (score > 95) return { grade: '优秀', color: '#10b981', bgColor: '#dcfce7' };
+        if (score >= 85) return { grade: '合格', color: '#eab308', bgColor: '#fef9c3' };
+        if (score >= 70) return { grade: '整改后合格', color: '#f97316', bgColor: '#ffedd5' };
+        return { grade: '不合格', color: '#ef4444', bgColor: '#fee2e2' };
+    }
+
+    function switchRankingType(type) {
+        currentRankingType = type;
+        document.querySelectorAll('#page-ranking .type-toggle button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        renderRanking();
+    }
+
+    function renderRanking() {
+        const data = calculateAnnualAvg(currentRankingType);
+
+        // 排名柱状图
+        const barChart = echarts.init(document.getElementById('chart-ranking-bar'));
+        barChart.setOption({
+            tooltip: { trigger: 'axis' },
+            grid: { left: '3%', right: '15%', bottom: '3%', containLabel: true },
+            xAxis: { type: 'value', name: '年度平均分' },
+            yAxis: { type: 'category', data: data.map(d => d.name), inverse: true },
+            series: [{
+                type: 'bar',
+                data: data.map(d => ({
+                    value: d.avg,
+                    itemStyle: { color: getGrade(d.avg).color }
+                })),
+                label: { show: true, position: 'right', formatter: '{c}', fontSize: 12 }
+            }]
+        });
+
+        // 等级分布饼图
+        const distribution = { excellent: 0, good: 0, improve: 0, fail: 0 };
+        data.forEach(d => {
+            if (d.avg > 95) distribution.excellent++;
+            else if (d.avg >= 85) distribution.good++;
+            else if (d.avg >= 70) distribution.improve++;
+            else distribution.fail++;
+        });
+
+        const pieChart = echarts.init(document.getElementById('chart-ranking-pie'));
+        pieChart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { orient: 'vertical', left: 'left' },
+            series: [{
+                type: 'pie',
+                radius: '60%',
+                data: [
+                    { value: distribution.excellent, name: '优秀 (>95)', itemStyle: { color: '#10b981' } },
+                    { value: distribution.good, name: '合格 (85-95)', itemStyle: { color: '#eab308' } },
+                    { value: distribution.improve, name: '整改后合格 (70-85)', itemStyle: { color: '#f97316' } },
+                    { value: distribution.fail, name: '不合格 (<70)', itemStyle: { color: '#ef4444' } }
+                ]
+            }]
+        });
+
+        // Top/Bottom 卡片
+        const top5 = data.slice(0, 5);
+        const bottom5 = data.slice(-5).reverse();
+
+        const cardsHtml = `
+            <div>
+                <h3 style="margin-bottom: 16px; color: #10b981; font-size: 14px; font-weight: 600;">🏆 Top 5 优秀供应商</h3>
+                ${top5.map(d => `
+                    <div class="vendor-card top">
+                        <div class="vendor-card-header">
+                            <span class="vendor-card-title">${d.name}</span>
+                            <span class="vendor-card-badge success">${getGrade(d.avg).grade}</span>
+                        </div>
+                        <div class="vendor-card-score">${d.avg}</div>
+                        <div class="vendor-card-meta">评价月份数: ${d.count} 个月</div>
+                    </div>
+                `).join('')}
+            </div>
+            <div>
+                <h3 style="margin-bottom: 16px; color: #ef4444; font-size: 14px; font-weight: 600;">⚠️ Bottom 5 待改进供应商</h3>
+                ${bottom5.map(d => `
+                    <div class="vendor-card bottom">
+                        <div class="vendor-card-header">
+                            <span class="vendor-card-title">${d.name}</span>
+                            <span class="vendor-card-badge danger">${getGrade(d.avg).grade}</span>
+                        </div>
+                        <div class="vendor-card-score">${d.avg}</div>
+                        <div class="vendor-card-meta">评价月份数: ${d.count} 个月</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        document.getElementById('vendor-cards-ranking').innerHTML = cardsHtml;
+
+        window.addEventListener('resize', () => {
+            barChart.resize();
+            pieChart.resize();
+        });
+    }
+
+    // ==================== 趋势分析 ====================
+    function switchTrendType(type) {
+        currentTrendType = type;
+        document.querySelectorAll('#page-trend .type-toggle button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        renderTrend();
+    }
+
+    function getVendorTrend(type, vendorIdx) {
+        const scores = dataSet[type].scores.filter(s => s[0] === vendorIdx);
+        const monthlyData = new Array(12).fill(null);
+        scores.forEach(s => { monthlyData[s[1]] = s[2]; });
+        return monthlyData;
+    }
+
+    function getOverallTrend(type) {
+        const monthlyAvg = new Array(12).fill(0);
+        const monthlyCount = new Array(12).fill(0);
+
+        dataSet[type].scores.forEach(s => {
+            monthlyAvg[s[1]] += s[2];
+            monthlyCount[s[1]]++;
+        });
+
+        return monthlyAvg.map((sum, idx) =>
+            monthlyCount[idx] > 0 ? (sum / monthlyCount[idx]).toFixed(2) : null
+        );
+    }
+
+    function identifyTrendChanges(type) {
+        const vendors = dataSet[type].vendors;
+        const improved = [], declined = [];
+
+        vendors.forEach((vendor, idx) => {
+            const trend = getVendorTrend(type, idx);
+            // 检查连续3个月上升
+            for (let i = 2; i < 12; i++) {
+                if (trend[i] && trend[i-1] && trend[i-2] &&
+                    trend[i] > trend[i-1] && trend[i-1] > trend[i-2]) {
+                    improved.push({ vendor, months: `${i-1}-${i+1}月` });
+                    break;
+                }
+            }
+            // 检查连续3个月下降
+            for (let i = 2; i < 12; i++) {
+                if (trend[i] && trend[i-1] && trend[i-2] &&
+                    trend[i] < trend[i-1] && trend[i-1] < trend[i-2]) {
+                    declined.push({ vendor, months: `${i-1}-${i+1}月` });
+                    break;
+                }
+            }
+        });
+
+        return { improved, declined };
+    }
+
+    function renderTrend() {
+        const type = currentTrendType;
+        const vendors = dataSet[type].vendors;
+
+        // 填充下拉选择框
+        const select = document.getElementById('trend-vendor-select');
+        select.innerHTML = '<option value="">选择供应商查看趋势...</option>';
+        vendors.forEach((v, i) => {
+            select.innerHTML += `<option value="${i}">${v}</option>`;
+        });
+
+        // 整体趋势图
+        const overallTrend = getOverallTrend(type);
+        const overallChart = echarts.init(document.getElementById('chart-trend-overall'));
+        overallChart.setOption({
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: months },
+            yAxis: { type: 'value', name: '平均分' },
+            series: [{
+                type: 'line',
+                data: overallTrend,
+                smooth: true,
+                lineStyle: { width: 3, color: '#3b82f6' },
+                areaStyle: { color: 'rgba(59, 130, 246, 0.1)' },
+                markLine: {
+                    data: [{ yAxis: 85, name: '目标线' }],
+                    lineStyle: { color: '#f59e0b', type: 'dashed' }
+                }
+            }]
+        });
+
+        // 趋势识别列表
+        const { improved, declined } = identifyTrendChanges(type);
+        const trendListHtml = `
+            <div class="trend-item improved">
+                <div class="trend-item-header">
+                    <span class="trend-item-icon">📈</span>
+                    <span class="trend-item-title">连续3个月上升</span>
+                </div>
+                <div class="trend-item-vendors">
+                    ${improved.length > 0 ? improved.map(d => `${d.vendor} (${d.months})`).join('<br>') : '无'}
+                </div>
+            </div>
+            <div class="trend-item declined">
+                <div class="trend-item-header">
+                    <span class="trend-item-icon">📉</span>
+                    <span class="trend-item-title">连续3个月下降</span>
+                </div>
+                <div class="trend-item-vendors">
+                    ${declined.length > 0 ? declined.map(d => `${d.vendor} (${d.months})`).join('<br>') : '无'}
+                </div>
+            </div>
+        `;
+        document.getElementById('trend-list').innerHTML = trendListHtml;
+
+        window.addEventListener('resize', () => overallChart.resize());
+    }
+
+    function updateVendorTrend() {
+        const vendorIdx = parseInt(document.getElementById('trend-vendor-select').value);
+        if (isNaN(vendorIdx)) return;
+
+        const trend = getVendorTrend(currentTrendType, vendorIdx);
+        const vendorChart = echarts.init(document.getElementById('chart-trend-vendor'));
+        vendorChart.setOption({
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: months },
+            yAxis: { type: 'value', name: '得分' },
+            series: [{
+                type: 'line',
+                data: trend,
+                smooth: true,
+                lineStyle: { width: 3, color: '#10b981' },
+                areaStyle: { color: 'rgba(16, 185, 129, 0.1)' },
+                markLine: {
+                    data: [{ yAxis: 85, name: '目标线' }],
+                    lineStyle: { color: '#f59e0b', type: 'dashed' }
+                }
+            }]
+        });
+    }
+
+    // ==================== 分布统计 ====================
+    function switchDistributionType(type) {
+        currentDistributionType = type;
+        document.querySelectorAll('#page-distribution .type-toggle button').forEach(b => b.classList.remove('active'));
+        event.target.classList.add('active');
+        renderDistribution();
+    }
+
+    function getMonthlyGradeDistribution(type) {
+        const monthlyData = [];
+
+        for (let month = 0; month < 12; month++) {
+            let excellent = 0, good = 0, improve = 0, fail = 0;
+
+            dataSet[type].vendors.forEach((vendor, idx) => {
+                const score = dataSet[type].scores.find(s => s[0] === idx && s[1] === month);
+                if (score) {
+                    if (score[2] > 95) excellent++;
+                    else if (score[2] >= 85) good++;
+                    else if (score[2] >= 70) improve++;
+                    else fail++;
+                }
+            });
+
+            monthlyData.push({ month: month + 1, excellent, good, improve, fail });
+        }
+        return monthlyData;
+    }
+
+    function getAnnualDistribution(type) {
+        const excellent = [], good = [], improve = [], fail = [];
+
+        dataSet[type].vendors.forEach((vendor, idx) => {
+            const vendorScores = dataSet[type].scores.filter(s => s[0] === idx).map(s => s[2]);
+
+            if (vendorScores.length > 0) {
+                const avg = vendorScores.reduce((a,b) => a+b, 0) / vendorScores.length;
+                if (avg > 95) excellent.push(vendor);
+                else if (avg >= 85) good.push(vendor);
+                else if (avg >= 70) improve.push(vendor);
+                else fail.push(vendor);
+            }
+        });
+
+        return { excellent, good, improve, fail };
+    }
+
+    function calculateStability(type) {
+        const results = [];
+
+        dataSet[type].vendors.forEach((vendor, idx) => {
+            const vendorScores = dataSet[type].scores.filter(s => s[0] === idx).map(s => s[2]);
+
+            if (vendorScores.length > 1) {
+                const avg = vendorScores.reduce((a,b) => a+b, 0) / vendorScores.length;
+                const variance = vendorScores.reduce((sum, score) =>
+                    sum + Math.pow(score - avg, 2), 0) / vendorScores.length;
+                const stdDev = Math.sqrt(variance);
+
+                if (stdDev > 10) {
+                    results.push({
+                        vendor,
+                        avg: avg.toFixed(2),
+                        stdDev: stdDev.toFixed(2),
+                        description: stdDev > 20 ? '波动极大' : stdDev > 15 ? '波动较大' : '有一定波动'
+                    });
+                }
+            }
+        });
+
+        return results.sort((a, b) => b.stdDev - a.stdDev);
+    }
+
+    function renderDistribution() {
+        const type = currentDistributionType;
+
+        // 每月等级分布堆叠柱状图
+        const monthlyData = getMonthlyGradeDistribution(type);
+        const monthlyChart = echarts.init(document.getElementById('chart-distribution-monthly'));
+        monthlyChart.setOption({
+            tooltip: { trigger: 'axis', axisPointer: { type: 'shadow' } },
+            legend: { data: ['优秀', '合格', '整改后合格', '不合格'] },
+            xAxis: { type: 'category', data: monthlyData.map(d => d.month + '月') },
+            yAxis: { type: 'value', name: '供应商数量' },
+            series: [
+                { name: '优秀', type: 'bar', stack: 'total', data: monthlyData.map(d => d.excellent), itemStyle: { color: '#10b981' } },
+                { name: '合格', type: 'bar', stack: 'total', data: monthlyData.map(d => d.good), itemStyle: { color: '#eab308' } },
+                { name: '整改后合格', type: 'bar', stack: 'total', data: monthlyData.map(d => d.improve), itemStyle: { color: '#f97316' } },
+                { name: '不合格', type: 'bar', stack: 'total', data: monthlyData.map(d => d.fail), itemStyle: { color: '#ef4444' } }
+            ]
+        });
+
+        // 年度累计分布饼图
+        const distribution = getAnnualDistribution(type);
+        const pieChart = echarts.init(document.getElementById('chart-distribution-pie'));
+        pieChart.setOption({
+            tooltip: { trigger: 'item' },
+            legend: { orient: 'vertical', left: 'left' },
+            series: [{
+                type: 'pie',
+                radius: '60%',
+                data: [
+                    { value: distribution.excellent.length, name: '优秀', itemStyle: { color: '#10b981' } },
+                    { value: distribution.good.length, name: '合格', itemStyle: { color: '#eab308' } },
+                    { value: distribution.improve.length, name: '整改后合格', itemStyle: { color: '#f97316' } },
+                    { value: distribution.fail ? distribution.fail.length : 0, name: '不合格', itemStyle: { color: '#ef4444' } }
+                ]
+            }]
+        });
+
+        // 稳定性分析柱状图
+        const stability = calculateStability(type);
+        const stabilityChart = echarts.init(document.getElementById('chart-distribution-stability'));
+        stabilityChart.setOption({
+            tooltip: { trigger: 'axis' },
+            xAxis: { type: 'category', data: stability.map(d => d.vendor), axisLabel: { rotate: 45 } },
+            yAxis: { type: 'value', name: '标准差' },
+            series: [{
+                type: 'bar',
+                data: stability.map(d => ({
+                    value: d.stdDev,
+                    itemStyle: { color: d.stdDev > 20 ? '#ef4444' : d.stdDev > 15 ? '#f59e0b' : '#3b82f6' }
+                })),
+                label: { show: true, position: 'top' }
+            }]
+        });
+
+        // 波动性表格
+        const tableHtml = stability.map(d => `
+            <tr>
+                <td>${d.vendor}</td>
+                <td>${d.avg}</td>
+                <td>${d.stdDev}</td>
+                <td><span class="stability-badge ${d.stdDev > 20 ? 'high' : d.stdDev > 15 ? 'medium' : 'low'}">${d.description}</span></td>
+            </tr>
+        `).join('');
+        document.getElementById('stability-table-body').innerHTML = tableHtml || '<tr><td colspan="4" style="text-align:center; color:#64748b;">无波动性供应商</td></tr>';
+
+        window.addEventListener('resize', () => {
+            monthlyChart.resize();
+            pieChart.resize();
+            stabilityChart.resize();
+        });
+    }
+
+    // ==================== 初始化 ====================
+    window.onload = function() {
+        renderHeatmap(currentHeatmapType);
+    };
+</script>
+</body>
+</html>

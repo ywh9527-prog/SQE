@@ -203,6 +203,128 @@
     margin-bottom: var(--border-radius-xl);
 }
 
+/* 趋势分析Tab的图表布局 - 垂直排列 */
+#tab-trend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--border-radius-lg);
+}
+
+#tab-trend .card {
+    background: var(--gray-50);
+    padding: calc(var(--border-radius-lg) * 1.5);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-sm);
+}
+
+#tab-trend .card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-900);
+    margin-bottom: var(--border-radius-lg);
+}
+
+/* 趋势选择器 */
+.trend-selector {
+    margin-bottom: var(--border-radius-md);
+}
+
+.trend-selector select {
+    width: 100%;
+    padding: calc(var(--border-radius-sm) * 0.75);
+    font-size: 0.875rem;
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-sm);
+    background: var(--gray-50);
+    color: var(--gray-900);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.trend-selector select:hover {
+    border-color: var(--primary-400);
+}
+
+.trend-selector select:focus {
+    outline: none;
+    border-color: var(--primary-500);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* 趋势列表 */
+.trend-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--border-radius-sm);
+}
+
+.trend-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--border-radius-sm) var(--border-radius-md);
+    background: var(--gray-100);
+    border-radius: var(--border-radius-sm);
+    transition: all var(--transition-base);
+}
+
+.trend-item:hover {
+    background: var(--gray-200);
+}
+
+.trend-item.improved {
+    border-left: 4px solid var(--success);
+    background: var(--success-50);
+}
+
+.trend-item.worsened {
+    border-left: 4px solid var(--danger);
+    background: var(--danger-50);
+}
+
+.trend-item-info {
+    flex: 1;
+}
+
+.trend-item-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-900);
+    margin-bottom: calc(var(--border-radius-xs) * 0.5);
+}
+
+.trend-item-change {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+.trend-item-badge {
+    display: flex;
+    align-items: center;
+    gap: calc(var(--border-radius-xs) * 0.5);
+    padding: calc(var(--border-radius-xs) * 0.5) var(--border-radius-sm);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.trend-item-badge.success {
+    background: var(--success);
+    color: var(--gray-50);
+}
+
+.trend-item-badge.danger {
+    background: var(--danger);
+    color: var(--gray-50);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    #tab-trend .card {
+        padding: var(--border-radius-md);
+    }
+}
+
 .chart-card {
     background: var(--gray-50);
     padding: calc(var(--border-radius-lg) * 1.5);
@@ -218,8 +340,13 @@
 }
 
 .chart-container {
-    height: 200px;
+    height: 600px;
     position: relative;
+}
+
+/* 年度排名图表特别高度 */
+#rankingChart {
+    height: 100%;
 }
 
 /* ============================================
@@ -681,4 +808,89 @@
 
 .heatmap-unevaluated-body.expanded {
     max-height: 2000px;
+}
+
+/* ============================================
+   供应商卡片
+   ============================================ */
+
+.vendor-cards {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--border-radius-md);
+}
+
+.vendor-card {
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-md);
+    padding: var(--border-radius-md);
+    transition: all var(--transition-base);
+}
+
+.vendor-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.vendor-card.top {
+    border-left: 4px solid var(--success);
+}
+
+.vendor-card.bottom {
+    border-left: 4px solid var(--danger);
+}
+
+.vendor-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--border-radius-sm);
+}
+
+.vendor-card-title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.vendor-card-badge {
+    padding: calc(var(--border-radius-xs) * 0.5) var(--border-radius-sm);
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.vendor-card-badge.success {
+    background: var(--success-50);
+    color: var(--success-600);
+}
+
+.vendor-card-badge.danger {
+    background: var(--danger-50);
+    color: var(--danger-600);
+}
+
+.vendor-card-badge.warning {
+    background: var(--warning-50);
+    color: var(--warning-600);
+}
+
+.vendor-card-score {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--gray-900);
+    margin-bottom: calc(var(--border-radius-xs) * 0.5);
+}
+
+.vendor-card-meta {
+    font-size: 0.75rem;
+    color: var(--gray-600);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .vendor-cards {
+        grid-template-columns: 1fr;
+    }
 }

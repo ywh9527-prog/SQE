@@ -78,6 +78,14 @@
             els.tabContents = document.querySelectorAll('.results-tab-content');
             // 热力图
             els.heatmapTable = document.getElementById('heatmapTable');
+            // 年度排名和饼图
+            els.rankingChart = document.getElementById('rankingChart');
+            els.gradePieChart = document.getElementById('gradePieChart');
+            els.vendorCardsRanking = document.getElementById('vendorCardsRanking');
+            // 趋势分析
+            els.trendVendorSelect = document.getElementById('trendVendorSelect');
+            els.vendorTrendChart = document.getElementById('vendorTrendChart');
+            els.trendList = document.getElementById('trendList');
         },
 
         // 绑定事件
@@ -657,6 +665,12 @@
             this.renderTrendChart();
             this.renderGradeChart();
             this.renderRadarChart();
+            this.renderRankingChart();
+            this.renderGradePieChart();
+            this.renderVendorCards();
+            this.renderVendorTrendSelect();
+            this.renderVendorTrendChart();
+            this.renderTrendImprovement();
         },
 
         // 渲染趋势图
@@ -861,6 +875,524 @@
                     }
                 }
             });
+        },
+
+        // 渲染年度排名柱状图
+        renderRankingChart() {
+            const { annualRankings } = state.resultsData;
+
+            if (!annualRankings || annualRankings.length === 0) {
+                // 显示空状态
+                if (els.rankingChart) {
+                    els.rankingChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-chart-bar" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无排名数据</span></div>';
+                }
+                return;
+            }
+
+            const ctx = els.rankingChart.getContext('2d');
+
+            if (state.charts.ranking) {
+                state.charts.ranking.destroy();
+            }
+
+            // 显示所有供应商
+            const labels = annualRankings.map(r => r.entityName);
+            const data = annualRankings.map(r => r.totalScore);
+            const colors = annualRankings.map(r => {
+                if (r.totalScore >= 95) return 'rgba(16, 185, 129, 0.8)';
+                if (r.totalScore >= 85) return 'rgba(245, 158, 11, 0.8)';
+                if (r.totalScore >= 70) return 'rgba(249, 115, 22, 0.8)';
+                return 'rgba(239, 68, 68, 0.8)';
+            });
+
+            state.charts.ranking = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '年度平均分',
+                        data: data,
+                        backgroundColor: colors,
+                        borderColor: colors.map(c => c.replace('0.8', '1')),
+                        borderWidth: 2,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    return `平均得分: ${context.parsed.x.toFixed(1)}分`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            beginAtZero: false,
+                            min: 60,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + '分';
+                                }
+                            }
+                        },
+                        y: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 12
+                                },
+                                autoSkip: false,
+                                maxRotation: 0,
+                                minRotation: 0
+                            }
+                        }
+                    }
+                }
+            });
+        },
+
+        // 渲染绩效等级分布饼图
+        renderGradePieChart() {
+            const { statistics } = state.resultsData;
+
+            if (!statistics) return;
+
+            const ctx = els.gradePieChart.getContext('2d');
+
+            if (state.charts.gradePie) {
+                state.charts.gradePie.destroy();
+            }
+
+            const data = [
+                statistics.gradeCount['优秀'] || 0,
+                statistics.gradeCount['合格'] || 0,
+                statistics.gradeCount['整改后合格'] || 0,
+                statistics.gradeCount['不合格'] || 0
+            ];
+
+            const total = data.reduce((a, b) => a + b, 0);
+
+            if (total === 0) {
+                // 显示空状态
+                if (els.gradePieChart) {
+                    els.gradePieChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-chart-pie-slice" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无等级数据</span></div>';
+                }
+                return;
+            }
+
+            state.charts.gradePie = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['优秀', '合格', '整改后合格', '不合格'],
+                    datasets: [{
+                        data: data,
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.8)',
+                            'rgba(245, 158, 11, 0.8)',
+                            'rgba(249, 115, 22, 0.8)',
+                            'rgba(239, 68, 68, 0.8)'
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                font: {
+                                    size: 12
+                                },
+                                padding: 12,
+                                usePointStyle: true
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const value = context.parsed;
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${context.label}: ${value}家 (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        },
+
+        // 渲染供应商卡片（Top5/Bottom5）
+        renderVendorCards() {
+            const { annualRankings } = state.resultsData;
+
+            if (!annualRankings || annualRankings.length === 0) {
+                if (els.vendorCardsRanking) {
+                    els.vendorCardsRanking.innerHTML = '<div style="text-align: center; padding: 2rem; color: #718096;">暂无数据</div>';
+                }
+                return;
+            }
+
+            const top5 = annualRankings.slice(0, 5);
+            const bottom5 = annualRankings.slice(-5).reverse();
+
+            const getGradeInfo = (score) => {
+                if (score >= 95) return { grade: '优秀', class: 'success' };
+                if (score >= 85) return { grade: '合格', class: 'success' };
+                if (score >= 70) return { grade: '整改后合格', class: 'warning' };
+                return { grade: '不合格', class: 'danger' };
+            };
+
+            const top5Html = top5.map(vendor => {
+                const gradeInfo = getGradeInfo(vendor.totalScore);
+                return `
+                    <div class="vendor-card top">
+                        <div class="vendor-card-header">
+                            <span class="vendor-card-title">${vendor.entityName}</span>
+                            <span class="vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
+                        </div>
+                        <div class="vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
+                        <div class="vendor-card-meta">年度平均分</div>
+                    </div>
+                `;
+            }).join('');
+
+            const bottom5Html = bottom5.map(vendor => {
+                const gradeInfo = getGradeInfo(vendor.totalScore);
+                return `
+                    <div class="vendor-card bottom">
+                        <div class="vendor-card-header">
+                            <span class="vendor-card-title">${vendor.entityName}</span>
+                            <span class="vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
+                        </div>
+                        <div class="vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
+                        <div class="vendor-card-meta">年度平均分</div>
+                    </div>
+                `;
+            }).join('');
+
+            const cardsHtml = `
+                <div>
+                    <h4 style="margin-bottom: var(--border-radius-md); color: var(--success); font-size: 1rem; font-weight: 600;">
+                        <i class="ph ph-trophy"></i> Top 5 优秀供应商
+                    </h4>
+                    ${top5Html}
+                </div>
+                <div>
+                    <h4 style="margin-bottom: var(--border-radius-md); color: var(--danger); font-size: 1rem; font-weight: 600;">
+                        <i class="ph ph-warning-circle"></i> Bottom 5 待改进供应商
+                    </h4>
+                    ${bottom5Html}
+                </div>
+            `;
+
+            if (els.vendorCardsRanking) {
+                els.vendorCardsRanking.innerHTML = cardsHtml;
+            }
+        },
+
+        // 渲染单供应商趋势选择器
+        renderVendorTrendSelect() {
+            const { annualRankings } = state.resultsData;
+
+            if (!annualRankings || annualRankings.length === 0) return;
+
+            // 清空选择器
+            if (els.trendVendorSelect) {
+                els.trendVendorSelect.innerHTML = '<option value="">选择供应商查看趋势...</option>';
+
+                // 添加所有供应商选项
+                annualRankings.forEach(vendor => {
+                    const option = document.createElement('option');
+                    option.value = vendor.entityName;
+                    option.textContent = vendor.entityName;
+                    els.trendVendorSelect.appendChild(option);
+                });
+
+                // 绑定变化事件
+                els.trendVendorSelect.addEventListener('change', () => {
+                    this.renderVendorTrendChart();
+                });
+            }
+        },
+
+        // 渲染单供应商趋势图
+        renderVendorTrendChart() {
+            const selectedVendor = els.trendVendorSelect ? els.trendVendorSelect.value : null;
+            const { details } = state.resultsData;
+
+            if (!selectedVendor || !details || details.length === 0) {
+                // 显示空状态
+                if (els.vendorTrendChart) {
+                    els.vendorTrendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">请选择供应商查看趋势</span></div>';
+                }
+                return;
+            }
+
+            // 筛选选中供应商的数据
+            const vendorDetails = details.filter(d => d.entityName === selectedVendor);
+
+            if (vendorDetails.length === 0) {
+                if (els.vendorTrendChart) {
+                    els.vendorTrendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">该供应商暂无评价数据</span></div>';
+                }
+                return;
+            }
+
+            // 按周期排序
+            vendorDetails.sort((a, b) => {
+                const dateA = new Date(a.period.startDate);
+                const dateB = new Date(b.period.startDate);
+                return dateA - dateB;
+            });
+
+            const ctx = els.vendorTrendChart.getContext('2d');
+
+            if (state.charts.vendorTrend) {
+                state.charts.vendorTrend.destroy();
+            }
+
+            const labels = vendorDetails.map(d => d.period.periodName);
+            const data = vendorDetails.map(d => d.totalScore);
+
+            state.charts.vendorTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: selectedVendor,
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const index = context.dataIndex;
+                                    const detail = vendorDetails[index];
+                                    return [
+                                        `得分: ${context.parsed.y.toFixed(1)}分`,
+                                        `等级: ${detail.grade || '-'}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            min: 60,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + '分';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        },
+
+        // 渲染改进/恶化识别
+        renderTrendImprovement() {
+            const { details, annualRankings } = state.resultsData;
+
+            if (!details || details.length === 0) {
+                if (els.trendList) {
+                    els.trendList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #718096;">暂无数据</div>';
+                }
+                return;
+            }
+
+            // 计算每个供应商在相邻周期之间的得分变化
+            const vendorChanges = new Map();
+
+            details.forEach(detail => {
+                const vendorName = detail.entityName;
+                if (!vendorChanges.has(vendorName)) {
+                    vendorChanges.set(vendorName, []);
+                }
+                vendorChanges.get(vendorName).push({
+                    periodName: detail.period.periodName,
+                    score: detail.totalScore,
+                    date: new Date(detail.period.startDate)
+                });
+            });
+
+            // 按日期排序
+            vendorChanges.forEach((changes, vendorName) => {
+                changes.sort((a, b) => a.date - b.date);
+            });
+
+            // 计算改进和恶化
+            const improvements = [];
+            const worsenings = [];
+
+            vendorChanges.forEach((changes, vendorName) => {
+                if (changes.length >= 2) {
+                    const lastScore = changes[changes.length - 1].score;
+                    const prevScore = changes[changes.length - 2].score;
+                    const change = lastScore - prevScore;
+
+                    if (change > 5) {
+                        // 改进（得分提升超过5分）
+                        improvements.push({
+                            vendorName,
+                            prevScore,
+                            lastScore,
+                            change: change.toFixed(1),
+                            lastPeriod: changes[changes.length - 1].periodName
+                        });
+                    } else if (change < -5) {
+                        // 恶化（得分下降超过5分）
+                        worsenings.push({
+                            vendorName,
+                            prevScore,
+                            lastScore,
+                            change: change.toFixed(1),
+                            lastPeriod: changes[changes.length - 1].periodName
+                        });
+                    }
+                }
+            });
+
+            // 渲染列表
+            let trendListHtml = '';
+
+            if (improvements.length > 0) {
+                trendListHtml += '<h4 style="margin-bottom: var(--border-radius-md); color: var(--success); font-size: 0.875rem; font-weight: 600;">📈 改进供应商</h4>';
+                improvements.forEach(item => {
+                    trendListHtml += `
+                        <div class="trend-item improved">
+                            <div class="trend-item-info">
+                                <div class="trend-item-name">${item.vendorName}</div>
+                                <div class="trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
+                            </div>
+                            <div class="trend-item-badge success">
+                                <i class="ph ph-arrow-up"></i>
+                                +${item.change}分
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (worsenings.length > 0) {
+                if (improvements.length > 0) {
+                    trendListHtml += '<div style="margin-top: var(--border-radius-md);"></div>';
+                }
+                trendListHtml += '<h4 style="margin-bottom: var(--border-radius-md); color: var(--danger); font-size: 0.875rem; font-weight: 600;">📉 恶化供应商</h4>';
+                worsenings.forEach(item => {
+                    trendListHtml += `
+                        <div class="trend-item worsened">
+                            <div class="trend-item-info">
+                                <div class="trend-item-name">${item.vendorName}</div>
+                                <div class="trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
+                            </div>
+                            <div class="trend-item-badge danger">
+                                <i class="ph ph-arrow-down"></i>
+                                ${item.change}分
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            if (improvements.length === 0 && worsenings.length === 0) {
+                trendListHtml = '<div style="text-align: center; padding: 2rem; color: #718096;">暂无明显改进或恶化的供应商</div>';
+            }
+
+            if (els.trendList) {
+                els.trendList.innerHTML = trendListHtml;
+            }
         },
 
         // 渲染表格（已删除，改用热力图）

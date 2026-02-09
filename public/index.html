@@ -983,6 +983,10 @@
                                 <i class="ph ph-grid-four"></i>
                                 热力图
                             </button>
+                            <button class="results-tab-btn" data-tab="tab-ranking">
+                                <i class="ph ph-chart-bar"></i>
+                                年度排名
+                            </button>
                             <button class="results-tab-btn" data-tab="tab-trend">
                                 <i class="ph ph-trend-up"></i>
                                 趋势分析
@@ -1015,20 +1019,68 @@
                             </div>
                         </div>
 
-                        <!-- Tab 2: 趋势分析 -->
-                        <div id="tab-trend" class="results-tab-content hidden">
+                        <!-- Tab 2: 年度排名 -->
+                        <div id="tab-ranking" class="results-tab-content hidden">
                             <div class="charts-section">
-                                <!-- 趋势折线图 -->
+                                <!-- 年度绩效排名柱状图 -->
                                 <div class="chart-card">
-                                    <h3>得分趋势</h3>
+                                    <h3>年度绩效排名</h3>
                                     <div class="chart-container">
-                                        <canvas id="trendChart"></canvas>
+                                        <canvas id="rankingChart"></canvas>
                                     </div>
+                                </div>
+
+                                <!-- 绩效等级分布饼图 -->
+                                <div class="chart-card">
+                                    <h3>绩效等级分布</h3>
+                                    <div class="chart-container">
+                                        <canvas id="gradePieChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 重点关注供应商 -->
+                            <div class="card">
+                                <h3>重点关注供应商</h3>
+                                <div class="vendor-cards" id="vendorCardsRanking">
+                                    <!-- Top5和Bottom5卡片将动态生成 -->
                                 </div>
                             </div>
                         </div>
 
-                        <!-- Tab 3: 分布统计 -->
+                        <!-- Tab 3: 趋势分析 -->
+                        <div id="tab-trend" class="results-tab-content hidden">
+                            <!-- 单供应商绩效趋势 -->
+                            <div class="card">
+                                <h3>单供应商绩效趋势</h3>
+                                <div class="trend-selector">
+                                    <select id="trendVendorSelect">
+                                        <option value="">选择供应商查看趋势...</option>
+                                    </select>
+                                </div>
+                                <div class="chart-container">
+                                    <canvas id="vendorTrendChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 整体平均分月度趋势 -->
+                            <div class="card">
+                                <h3>整体平均分月度趋势</h3>
+                                <div class="chart-container">
+                                    <canvas id="trendChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- 改进/恶化识别 -->
+                            <div class="card">
+                                <h3>改进/恶化识别</h3>
+                                <div class="trend-list" id="trendList">
+                                    <!-- 改进和恶化的供应商列表将动态生成 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 4: 分布统计 -->
                         <div id="tab-distribution" class="results-tab-content hidden">
                             <div class="charts-section">
                                 <!-- 等级分布环形图 -->
