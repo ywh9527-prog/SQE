@@ -42,8 +42,42 @@
 }
 
 /* ============================================
+   综合评价概览标题
+   ============================================ */
+
+.performance__overview-section {
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    padding: var(--border-radius-lg);
+    border: 1px solid var(--gray-200);
+    margin-bottom: var(--border-radius-xl);
+}
+
+.performance__section-title {
+    margin-bottom: var(--border-radius-md);
+}
+
+.performance__section-title h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--gray-800);
+    margin: 0;
+    padding-left: var(--border-radius-sm);
+    border-left: 3px solid var(--primary-500);
+}
+
+/* ============================================
    顶部统计区
    ============================================ */
+
+.performance__stats-section {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    margin-bottom: 0;
+    box-shadow: none;
+    border: none;
+}
 
 .performance__stats-section {
     background: var(--gray-50);
