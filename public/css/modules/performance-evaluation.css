@@ -26,12 +26,12 @@
     font-weight: 600;
 }
 
-.period-actions {
+.performance__period-actions {
     display: flex;
     gap: calc(var(--border-radius-sm) * 1.5);
 }
 
-.period-actions .btn {
+.performance__period-actions .btn {
     background: rgba(255, 255, 255, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.3);
     color: var(--gray-50);
@@ -39,7 +39,7 @@
     transition: all var(--transition-base);
 }
 
-.period-actions .btn:hover {
+.performance__period-actions .btn:hover {
     background: rgba(255, 255, 255, 0.3);
     transform: translateY(-2px);
 }
@@ -355,7 +355,7 @@
    评价头部
    ============================================ */
 
-.evaluation-header {
+.performance__evaluation-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -366,19 +366,19 @@
     box-shadow: var(--shadow-sm);
 }
 
-.evaluation-header h2 {
+.performance__evaluation-header h2 {
     margin: 0;
     font-size: 1.75rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.evaluation-info {
+.performance__evaluation-info {
     display: flex;
     gap: var(--border-radius-lg);
 }
 
-.evaluation-info .info-item {
+.performance__evaluation-info .info-item {
     display: flex;
     align-items: center;
     gap: calc(var(--border-radius-sm) * 0.5);
@@ -386,7 +386,7 @@
     font-size: 0.95rem;
 }
 
-.evaluation-info .info-item i {
+.performance__evaluation-info .info-item i {
     font-size: 1.1rem;
     color: var(--primary-600);
 }
@@ -395,7 +395,7 @@
    评价内容区
    ============================================ */
 
-.evaluation-content {
+.performance__evaluation-content {
     display: flex;
     flex-direction: column;
     gap: calc(var(--border-radius-lg) * 2);
@@ -406,7 +406,7 @@
    供应商区域分组
    ============================================ */
 
-.entity-section {
+.performance__entity-section {
     background: #ffffff;
     border-radius: var(--border-radius-xl);
     padding: calc(var(--border-radius-lg) * 1.5);
@@ -415,23 +415,23 @@
     transition: all var(--transition-base);
 }
 
-.entity-section:hover {
+.performance__entity-section:hover {
     box-shadow: var(--shadow-md);
     border-color: var(--primary-200);
 }
 
-.entity-section--no-material {
+.performance__entity-section--no-material {
     background: var(--gray-50);
     border-color: var(--gray-200);
     opacity: 0.9;
 }
 
-.entity-section--no-material:hover {
+.performance__entity-section--no-material:hover {
     opacity: 1;
     border-color: var(--gray-300);
 }
 
-.entity-section-header {
+.performance__entity-section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -440,11 +440,11 @@
     border-bottom: 2px solid var(--primary-100);
 }
 
-.entity-section--no-material .entity-section-header {
+.performance__entity-section--no-material .performance__entity-section-header {
     border-bottom-color: var(--gray-200);
 }
 
-.entity-section-header h3 {
+.performance__entity-section-header h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
@@ -454,15 +454,15 @@
     gap: var(--border-radius-sm);
 }
 
-.entity-section--no-material .entity-section-header h3 {
+.performance__entity-section--no-material .performance__entity-section-header h3 {
     color: var(--gray-600);
 }
 
-.entity-section-header h3 i {
+.performance__entity-section-header h3 i {
     font-size: 1.5rem;
 }
 
-.entity-section-count {
+.performance__entity-section-count {
     background: var(--primary-50);
     color: var(--primary-700);
     padding: var(--border-radius-sm) var(--border-radius-md);
@@ -471,7 +471,7 @@
     font-size: 0.875rem;
 }
 
-.entity-section--no-material .entity-section-count {
+.performance__entity-section--no-material .performance__entity-section-count {
     background: var(--gray-200);
     color: var(--gray-600);
 }
@@ -1611,7 +1611,7 @@
    ============================================ */
 
 @media (max-width: 1024px) {
-    .evaluation-content {
+    .performance__evaluation-content {
         flex-direction: column;
     }
 
@@ -1627,18 +1627,18 @@
         text-align: center;
     }
 
-    .period-actions {
+    .performance__period-actions {
         width: 100%;
         justify-content: center;
     }
 
-    .evaluation-header {
+    .performance__evaluation-header {
         flex-direction: column;
         gap: var(--border-radius-lg);
         text-align: center;
     }
 
-    .evaluation-info {
+    .performance__evaluation-info {
         flex-direction: column;
         gap: calc(var(--border-radius-sm) * 0.5);
     }

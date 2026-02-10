@@ -523,7 +523,7 @@
                     <!-- 评价周期选择区 -->
                     <div class="performance__period-selector">
                         <h3>评价周期</h3>
-                        <div class="period-actions">
+                        <div class="performance__period-actions">
                             <button class="btn btn-primary" id="createEvaluationBtn">
                                 <span class="btn-icon"><i class="ph ph-plus"></i></span>
                                 创建评价周期
@@ -747,9 +747,9 @@
                         </div>
 
                         <!-- 顶部信息 -->
-                        <div class="evaluation-header">
+                        <div class="performance__evaluation-header">
                             <h2 id="evaluationTitle">2025年1月评价</h2>
-                            <div class="evaluation-info">
+                            <div class="performance__evaluation-info">
                                 <span class="info-item">
                                     <i class="ph ph-calendar"></i>
                                     <span id="evaluationPeriod">2025-01-01 至 2025-01-31</span>
@@ -765,21 +765,21 @@
                         </div>
 
                         <!-- 主内容区 -->
-                        <div class="evaluation-content">
+                        <div class="performance__evaluation-content">
                             <!-- 需评价供应商（有来料） -->
-                            <div class="entity-section">
-                                <div class="entity-section-header">
+                            <div class="performance__entity-section">
+                                <div class="performance__entity-section-header">
                                     <h3><i class="ph ph-check-circle"></i> 需评价供应商</h3>
-                                    <span class="entity-section-count" id="withMaterialCount">0 家</span>
+                                    <span class="performance__entity-section-count" id="withMaterialCount">0 家</span>
                                 </div>
                                 <div id="entityCardsListWithMaterial" class="entity-cards"></div>
                             </div>
 
                             <!-- 无来料供应商 -->
-                            <div class="entity-section entity-section--no-material">
-                                <div class="entity-section-header">
+                            <div class="performance__entity-section performance__entity-section--no-material">
+                                <div class="performance__entity-section-header">
                                     <h3><i class="ph ph-minus-circle"></i> 因无来料不参与评价</h3>
-                                    <span class="entity-section-count" id="withoutMaterialCount">0 家</span>
+                                    <span class="performance__entity-section-count" id="withoutMaterialCount">0 家</span>
                                 </div>
                                 <div id="entityCardsListWithoutMaterial" class="entity-cards"></div>
                             </div>
