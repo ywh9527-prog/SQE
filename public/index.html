@@ -785,31 +785,31 @@
                             </div>
 
                             <!-- 评价模态框 -->
-                            <div id="evaluationModal" class="evaluation-modal hidden">
-                                <div class="evaluation-modal-content">
-                                    <div class="evaluation-modal-header">
+                            <div id="evaluationModal" class="performance__evaluation-modal hidden">
+                                <div class="performance__evaluation-modal-content">
+                                    <div class="performance__evaluation-modal-header">
                                         <h3 id="modalEntityName">评价供应商名称</h3>
                                         <button class="btn-icon" id="closeModalBtn">
                                             <i class="ph ph-x"></i>
                                         </button>
                                     </div>
 
-                                    <div class="evaluation-modal-body">
+                                    <div class="performance__evaluation-modal-body">
                                         <!-- 供应商信息卡片 -->
-                                        <div class="supplier-info-card">
-                                            <div class="supplier-info-title">质量数据</div>
-                                            <div class="supplier-info-content">
-                                                <div class="supplier-info-item">
-                                                    <div class="supplier-info-label">总批次</div>
-                                                    <div class="supplier-info-value" id="qualityTotalBatches">-</div>
+                                        <div class="performance__supplier-info-card">
+                                            <div class="performance__supplier-info-title">质量数据</div>
+                                            <div class="performance__supplier-info-content">
+                                                <div class="performance__supplier-info-item">
+                                                    <div class="performance__supplier-info-label">总批次</div>
+                                                    <div class="performance__supplier-info-value" id="qualityTotalBatches">-</div>
                                                 </div>
-                                                <div class="supplier-info-item">
-                                                    <div class="supplier-info-label">合格批次</div>
-                                                    <div class="supplier-info-value highlight" id="qualityOkBatches">-</div>
+                                                <div class="performance__supplier-info-item">
+                                                    <div class="performance__supplier-info-label">合格批次</div>
+                                                    <div class="performance__supplier-info-value highlight" id="qualityOkBatches">-</div>
                                                 </div>
-                                                <div class="supplier-info-item">
-                                                    <div class="supplier-info-label">合格率</div>
-                                                    <div class="supplier-info-value highlight" id="qualityPassRate">-</div>
+                                                <div class="performance__supplier-info-item">
+                                                    <div class="performance__supplier-info-label">合格率</div>
+                                                    <div class="performance__supplier-info-value highlight" id="qualityPassRate">-</div>
                                                 </div>
                                             </div>
                                         </div>
@@ -837,7 +837,7 @@
                                     </div>
 
                                     <!-- 模态框底部 -->
-                                    <div class="evaluation-modal-footer">
+                                    <div class="performance__evaluation-modal-footer">
                                         <button type="button" class="btn btn-secondary" id="cancelEvaluationBtn">
                                             <i class="ph ph-x"></i> 取消
                                         </button>
@@ -850,14 +850,14 @@
                     </div>
 
                     <!-- 确认对话框模态框 -->
-                    <div id="confirmDialog" class="confirm-dialog hidden">
-                        <div class="confirm-dialog-content">
-                            <div class="confirm-dialog-icon">
+                    <div id="confirmDialog" class="performance__confirm-dialog hidden">
+                        <div class="performance__confirm-dialog-content">
+                            <div class="performance__confirm-dialog-icon">
                                 <i class="ph ph-warning-circle"></i>
                             </div>
-                            <h3 class="confirm-dialog-title" id="confirmDialogTitle">确认操作</h3>
-                            <p class="confirm-dialog-message" id="confirmDialogMessage">确定要执行此操作吗？</p>
-                            <div class="confirm-dialog-actions">
+                            <h3 class="performance__confirm-dialog-title" id="confirmDialogTitle">确认操作</h3>
+                            <p class="performance__confirm-dialog-message" id="confirmDialogMessage">确定要执行此操作吗？</p>
+                            <div class="performance__confirm-dialog-actions">
                                 <button type="button" class="btn btn-secondary" id="confirmDialogCancel">
                                     <i class="ph ph-x"></i> 取消
                                 </button>
