@@ -1041,7 +1041,7 @@
     margin-bottom: 24px;
 }
 
-.dimension-card {
+.performance__dimension-card {
     background: var(--white);
     border-radius: var(--border-radius-md);
     padding: 16px 20px;
@@ -1049,20 +1049,20 @@
     transition: all 0.2s ease;
 }
 
-.dimension-card-header {
+.performance__dimension-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 12px;
 }
 
-.dimension-card-title {
+.performance__dimension-card-title {
     font-size: 0.9375rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.dimension-card-weight {
+.performance__dimension-card-weight {
     font-size: 0.75rem;
     color: var(--gray-500);
     font-weight: 500;
@@ -1073,14 +1073,14 @@
 
 /* ========== 滑块组件 ========== */
 
-.dimension-slider-row {
+.performance__dimension-slider-row {
     display: flex;
     align-items: center;
     gap: 12px;
 }
 
 /* 滑块轨道容器 */
-.dimension-slider-track {
+.performance__dimension-slider-track {
     position: relative;
     flex: 1;
     height: 24px;
@@ -1091,7 +1091,7 @@
 }
 
 /* 滑块填充 */
-.dimension-slider-fill {
+.performance__dimension-slider-fill {
     position: absolute;
     top: 0;
     left: 0;
@@ -1103,7 +1103,7 @@
 }
 
 /* 滑块Thumb - 增大尺寸完全覆盖圆角 */
-.dimension-slider-thumb {
+.performance__dimension-slider-thumb {
     position: absolute;
     top: 50%;
     left: 0;
@@ -1120,17 +1120,17 @@
     transition: background 0.15s ease;
 }
 
-.dimension-slider-thumb:hover {
+.performance__dimension-slider-thumb:hover {
     background: var(--primary-600);
 }
 
-.dimension-slider-thumb:active {
+.performance__dimension-slider-thumb:active {
     cursor: grabbing;
     background: var(--primary-700);
 }
 
 /* 隐藏原生range input */
-.dimension-slider-input {
+.performance__dimension-slider-input {
     position: absolute;
     top: 0;
     left: 0;
@@ -1144,7 +1144,7 @@
 }
 
 /* 数值输入框容器 */
-.dimension-number-box-wrapper {
+.performance__dimension-number-box-wrapper {
     position: relative;
     width: 80px;
     display: flex;
@@ -1152,7 +1152,7 @@
 }
 
 /* 数值输入框 */
-.dimension-number-box {
+.performance__dimension-number-box {
     width: 100%;
     padding: 8px 28px 8px 10px;
     font-size: 0.9375rem;
@@ -1166,13 +1166,13 @@
     -moz-appearance: textfield;
 }
 
-.dimension-number-box::-webkit-outer-spin-button,
-.dimension-number-box::-webkit-inner-spin-button {
+.performance__dimension-number-box::-webkit-outer-spin-button,
+.performance__dimension-number-box::-webkit-inner-spin-button {
     -webkit-appearance: none;
     margin: 0;
 }
 
-.dimension-number-box:focus {
+.performance__dimension-number-box:focus {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.15);
@@ -1180,7 +1180,7 @@
 }
 
 /* 自定义spinner按钮 */
-.dimension-spinner {
+.performance__dimension-spinner {
     position: absolute;
     right: 4px;
     top: 50%;
@@ -1191,7 +1191,7 @@
     pointer-events: none;
 }
 
-.dimension-spinner span {
+.performance__dimension-spinner span {
     font-size: 0.5rem;
     color: var(--gray-400);
     line-height: 1;
@@ -1200,16 +1200,16 @@
     padding: 2px 4px;
 }
 
-.dimension-spinner span:hover {
+.performance__dimension-spinner span:hover {
     color: var(--primary-500);
 }
 
-.dimension-spinner span:active {
+.performance__dimension-spinner span:active {
     color: var(--primary-700);
 }
 
 /* 自动评分提示 */
-.auto-calc-info {
+.performance__auto-calc-info {
     font-size: 0.75rem;
     color: var(--gray-500);
     margin-top: 8px;
@@ -1220,7 +1220,7 @@
 
 /* ========== 总分预览卡片 ========== */
 
-.total-score-card {
+.performance__total-score-card {
     background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
     border-radius: var(--border-radius-lg);
     padding: 24px;
@@ -1243,14 +1243,14 @@
     }
 }
 
-.total-score-card-header {
+.performance__total-score-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 16px;
 }
 
-.total-score-card-title {
+.performance__total-score-card-title {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--primary-700);
@@ -1258,26 +1258,26 @@
     letter-spacing: 0.05em;
 }
 
-.total-score-display {
+.performance__total-score-display {
     display: flex;
     align-items: baseline;
     gap: 8px;
 }
 
-.total-score-value {
+.performance__total-score-value {
     font-size: 3rem;
     font-weight: 800;
     color: var(--primary-700);
     line-height: 1;
 }
 
-.total-score-label {
+.performance__total-score-label {
     font-size: 1rem;
     font-weight: 600;
     color: var(--primary-600);
 }
 
-.total-score-grade {
+.performance__total-score-grade {
     font-size: 1.5rem;
     font-weight: 700;
     padding: 8px 16px;
@@ -1288,7 +1288,7 @@
 
 /* ========== 备注输入框 ========== */
 
-.remarks-input {
+.performance__remarks-input {
     margin-bottom: 24px;
     animation: remarks-appear 0.4s ease-out 0.45s both;
 }
@@ -1304,7 +1304,7 @@
     }
 }
 
-.remarks-input label {
+.performance__remarks-input label {
     display: block;
     font-size: 0.875rem;
     font-weight: 600;
@@ -1312,7 +1312,7 @@
     margin-bottom: 8px;
 }
 
-.remarks-input textarea {
+.performance__remarks-input textarea {
     width: 100%;
     padding: 12px 16px;
     font-size: 0.875rem;
@@ -1326,7 +1326,7 @@
     font-family: inherit;
 }
 
-.remarks-input textarea:focus {
+.performance__remarks-input textarea:focus {
     outline: none;
     border-color: var(--primary-500);
     background: var(--white);
@@ -1335,7 +1335,7 @@
 
 /* ========== 模态框底部 ========== */
 
-.evaluation-modal-footer {
+.performance__evaluation-modal-footer {
     flex-shrink: 0;
     padding: 24px 32px;
     background: var(--white);
@@ -1390,7 +1390,7 @@
 }
 
 /* 质量数据展示 */
-.quality-data-section {
+.performance__quality-data-section {
     margin-bottom: calc(var(--border-radius-lg) * 1.5);
     padding: calc(var(--border-radius-lg) * 1.5);
     background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
@@ -1398,7 +1398,7 @@
     border-left: 4px solid #10b981;
 }
 
-.quality-data-section h4 {
+.performance__quality-data-section h4 {
     margin: 0 0 var(--border-radius-lg) 0;
     font-size: 1rem;
     font-weight: 600;
@@ -1408,13 +1408,13 @@
     gap: calc(var(--border-radius-sm) * 0.5);
 }
 
-.quality-stats {
+.performance__quality-stats {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: var(--border-radius-lg);
 }
 
-.quality-stats .stat-item {
+.performance__quality-stats .stat-item {
     display: flex;
     flex-direction: column;
     gap: calc(var(--border-radius-sm) * 0.5);
@@ -1424,26 +1424,26 @@
     border-radius: var(--border-radius-sm);
 }
 
-.quality-stats .stat-item label {
+.performance__quality-stats .stat-item label {
     font-size: 0.75rem;
     color: #64748b;
     font-weight: 500;
 }
 
-.quality-stats .stat-item span {
+.performance__quality-stats .stat-item span {
     font-size: 1.5rem;
     font-weight: 700;
     color: #059669;
 }
 
 /* 评价表单 */
-.evaluation-form {
+.performance__evaluation-form {
     padding: calc(var(--border-radius-lg) * 1.5);
     background: #f8fafc;
     border-radius: var(--border-radius-lg);
 }
 
-.evaluation-form h4 {
+.performance__evaluation-form h4 {
     margin: 0 0 var(--border-radius-lg) 0;
     font-size: 1rem;
     font-weight: 600;
@@ -1453,11 +1453,11 @@
     gap: calc(var(--border-radius-sm) * 0.5);
 }
 
-.evaluation-form .form-group {
+.performance__evaluation-form .form-group {
     margin-bottom: calc(var(--border-radius-lg) * 1.5);
 }
 
-.evaluation-form .form-group label {
+.performance__evaluation-form .form-group label {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
@@ -1465,8 +1465,8 @@
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
 }
 
-.evaluation-form .form-group input[type="number"],
-.evaluation-form .form-group textarea {
+.performance__evaluation-form .form-group input[type="number"],
+.performance__evaluation-form .form-group textarea {
     width: 100%;
     padding: calc(var(--border-radius-sm) * 0.75);
     border: 1px solid var(--gray-200);
@@ -1475,26 +1475,26 @@
     transition: all var(--transition-base);
 }
 
-.evaluation-form .form-group input[type="number"]:focus,
-.evaluation-form .form-group textarea:focus {
+.performance__evaluation-form .form-group input[type="number"]:focus,
+.performance__evaluation-form .form-group textarea:focus {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
 }
 
-.evaluation-form .form-group textarea {
+.performance__evaluation-form .form-group textarea {
     resize: vertical;
     min-height: 80px;
 }
 
-.evaluation-form .form-actions {
+.performance__evaluation-form .form-actions {
     display: flex;
     justify-content: flex-end;
     gap: calc(var(--border-radius-sm) * 0.75);
     margin-top: var(--border-radius-lg);
 }
 
-.evaluation-form .form-actions .btn {
+.performance__evaluation-form .form-actions .btn {
     padding: 10px 24px;
     border-radius: var(--border-radius-sm);
     font-size: 0.95rem;
@@ -1502,25 +1502,25 @@
     transition: all var(--transition-base);
 }
 
-.evaluation-form .form-actions .btn-primary {
+.performance__evaluation-form .form-actions .btn-primary {
     background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-800) 100%);
     color: white;
     border: none;
 }
 
-.evaluation-form .form-actions .btn-primary:hover {
+.performance__evaluation-form .form-actions .btn-primary:hover {
     background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-900) 100%);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(20, 184, 166, 0.3);
 }
 
-.evaluation-form .form-actions .btn-secondary {
+.performance__evaluation-form .form-actions .btn-secondary {
     background: white;
     color: #64748b;
     border: 1px solid #cbd5e1;
 }
 
-.evaluation-form .form-actions .btn-secondary:hover {
+.performance__evaluation-form .form-actions .btn-secondary:hover {
     background: #f1f5f9;
     border-color: #94a3b8;
 }

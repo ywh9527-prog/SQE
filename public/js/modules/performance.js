@@ -1004,7 +1004,7 @@
             state.config.dimensions.forEach(dimension => {
                 // 创建维度卡片
                 const dimensionCard = document.createElement('div');
-                dimensionCard.className = 'dimension-card';
+                dimensionCard.className = 'performance__dimension-card';
                 
                 // 检查是否是质量维度
                 const isQualityDimension = dimension.key === 'quality';
@@ -1021,7 +1021,7 @@
 
                     inputValue = passRate.toFixed(1);
                     autoCalcInfo = `
-                        <div class="auto-calc-info">
+                        <div class="performance__auto-calc-info">
                             自动评分：当月合格批次 ${okBatches}/${totalBatches} = ${passRate}%
                         </div>
                     `;
@@ -1030,28 +1030,28 @@
                 }
 
                 dimensionCard.innerHTML = `
-                    <div class="dimension-card-header">
-                        <div class="dimension-card-title">${dimension.name}</div>
-                        <div class="dimension-card-weight">权重 ${(dimension.weight * 100).toFixed(0)}%</div>
+                    <div class="performance__dimension-card-header">
+                        <div class="performance__dimension-card-title">${dimension.name}</div>
+                        <div class="performance__dimension-card-weight">权重 ${(dimension.weight * 100).toFixed(0)}%</div>
                     </div>
-                    <div class="dimension-slider-row">
-                        <div class="dimension-slider-track" data-key="${dimension.key}" data-dimension-name="${dimension.name}" ${isQualityDimension ? 'data-quality="true"' : ''}>
-                            <div class="dimension-slider-fill" style="width: ${inputValue}%"></div>
-                            <div class="dimension-slider-thumb" style="left: ${inputValue}%"></div>
-                            <input type="range" class="dimension-slider-input" 
+                    <div class="performance__dimension-slider-row">
+                        <div class="performance__dimension-slider-track" data-key="${dimension.key}" data-dimension-name="${dimension.name}" ${isQualityDimension ? 'data-quality="true"' : ''}>
+                            <div class="performance__dimension-slider-fill" style="width: ${inputValue}%"></div>
+                            <div class="performance__dimension-slider-thumb" style="left: ${inputValue}%"></div>
+                            <input type="range" class="performance__dimension-slider-input" 
                                    name="${dimension.key}_slider" 
                                    min="0" max="100" step="0.1" 
                                    value="${inputValue}" 
                                    data-dimension-key="${dimension.key}"
                                    ${isQualityDimension ? 'data-quality="true"' : ''}>
                         </div>
-                        <div class="dimension-number-box-wrapper">
-                            <input type="number" class="dimension-number-box" 
+                        <div class="performance__dimension-number-box-wrapper">
+                            <input type="number" class="performance__dimension-number-box" 
                                    name="${dimension.key}" 
                                    min="0" max="100" step="0.1" 
                                    value="${inputValue}"
                                    data-dimension-key="${dimension.key}">
-                            <div class="dimension-spinner">
+                            <div class="performance__dimension-spinner">
                                 <span data-action="up">▲</span>
                                 <span data-action="down">▼</span>
                             </div>
@@ -1071,16 +1071,16 @@
 
         // 设置滑块交互
         setupSliderInteractions() {
-            const sliderTracks = els.dimensionInputs.querySelectorAll('.dimension-slider-track');
-            const numberInputs = els.dimensionInputs.querySelectorAll('.dimension-number-box');
+            const sliderTracks = els.dimensionInputs.querySelectorAll('.performance__dimension-slider-track');
+            const numberInputs = els.dimensionInputs.querySelectorAll('.performance__dimension-number-box');
 
             sliderTracks.forEach(track => {
                 const key = track.getAttribute('data-key');
                 const isQuality = track.getAttribute('data-quality') === 'true';
-                const sliderInput = track.querySelector('.dimension-slider-input');
-                const fill = track.querySelector('.dimension-slider-fill');
-                const thumb = track.querySelector('.dimension-slider-thumb');
-                const numberInput = els.dimensionInputs.querySelector(`.dimension-number-box[name="${key}"]`);
+                const sliderInput = track.querySelector('.performance__dimension-slider-input');
+                const fill = track.querySelector('.performance__dimension-slider-fill');
+                const thumb = track.querySelector('.performance__dimension-slider-thumb');
+                const numberInput = els.dimensionInputs.querySelector(`.performance__dimension-number-box[name="${key}"]`);
 
                 // 保存质量维度的原始值
                 const originalValue = parseFloat(sliderInput.value);
@@ -1191,7 +1191,7 @@
                 }
 
                 // Spinner按钮点击事件
-                const spinner = track.parentElement.querySelector('.dimension-spinner');
+                const spinner = track.parentElement.querySelector('.performance__dimension-spinner');
                 if (spinner) {
                     spinner.querySelectorAll('span').forEach(btn => {
                         btn.addEventListener('click', (e) => {
@@ -1249,7 +1249,7 @@
             tooltip.textContent = '质量维度由系统根据当月合格率自动评分，如需修改分数，请在右侧输入框中直接输入数值';
             
             // 查找标题位置
-            const header = track.closest('.dimension-card').querySelector('.dimension-card-title');
+            const header = track.closest('.performance__dimension-card').querySelector('.performance__dimension-card-title');
             const headerRect = header.getBoundingClientRect();
             
             tooltip.style.position = 'fixed';
@@ -1267,7 +1267,7 @@
             }
 
             // 只获取数字输入框，避免和range输入框重复计算
-            const inputs = els.dimensionInputs.querySelectorAll('.dimension-number-box');
+            const inputs = els.dimensionInputs.querySelectorAll('.performance__dimension-number-box');
             const scores = {};
 
             inputs.forEach(input => {
@@ -1321,7 +1321,7 @@
             }
 
             // 只获取数字输入框，避免和range输入框重复
-            const inputs = els.dimensionInputs.querySelectorAll('.dimension-number-box');
+            const inputs = els.dimensionInputs.querySelectorAll('.performance__dimension-number-box');
             const scores = {};
 
             inputs.forEach(input => {
