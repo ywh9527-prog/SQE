@@ -43,8 +43,23 @@
 - [x] 等级徽章颜色CSS选择器双重匹配修复
 - [x] 用户验证 ✅ 2026-02-10
 
+### 第六批：地毯式逐行排查修复 ✅ 已完成 2026-02-10
+- [x] `progress-custom-2` ~ `progress-custom-5` 添加 `performance__` 前缀
+- [x] `.progress-fill` 动画选择器修复为 `.performance__progress-fill`
+- [x] `.evaluation-modal-header::before` 伪元素修复为 `.performance__evaluation-modal-header::before`
+- [x] `.quality-tooltip` CSS和JS类名统一为 `.performance__quality-tooltip`
+- [x] `.performance__evaluation-modal.hidden` 修复为 `.performance__evaluation-modal.performance__hidden`
+- [x] 用户验证 ✅ 2026-02-10
+
 ### 全部完成 🎉
 所有CSS类名已按照BEM规范统一使用 `performance__` 前缀。
+
+## 第六批详细修改
+**提交**: `d3c9fd3` - refactor: CSS类名BEM规范化地毯式排查修复完成
+
+**修改文件**:
+- `public/css/modules/performance-evaluation.css` - 50行
+- `public/js/modules/performance.js` - 28行
 
 ## 详细修改清单
 
