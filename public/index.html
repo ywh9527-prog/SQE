@@ -665,7 +665,7 @@
                             </div>
                             <div class="performance__performance-modal-body">
                                 <!-- 配置变更警告横幅 -->
-                                <div id="configWarningBanner" class="config-warning-banner hidden">
+                                <div id="configWarningBanner" class="performance__config-warning-banner hidden">
                                     <i class="ph ph-warning"></i>
                                     <div class="warning-content">
                                         <h4>⚠️ 配置变更提醒</h4>
@@ -675,37 +675,37 @@
                                 </div>
 
                                 <!-- 维度配置 -->
-                                <div class="config-section">
-                                    <div class="config-section-header">
+                                <div class="performance__config-section">
+                                    <div class="performance__config-section-header">
                                         <h4>评价维度</h4>
                                         <button class="btn btn-sm btn-primary" id="addDimensionBtn">
                                             <i class="ph ph-plus"></i> 添加维度
                                         </button>
                                     </div>
-                                    <div id="dimensionsList" class="dimensions-list">
+                                    <div id="dimensionsList" class="performance__dimensions-list">
                                         <!-- 维度列表将在这里动态生成 -->
                                     </div>
-                                    <div class="weight-summary">
+                                    <div class="performance__weight-summary">
                                         <span>权重总和：</span>
                                         <span id="totalWeight">1.00</span>
                                     </div>
                                 </div>
 
                                 <!-- 等级规则配置 -->
-                                <div class="config-section">
-                                    <div class="config-section-header">
+                                <div class="performance__config-section">
+                                    <div class="performance__config-section-header">
                                         <h4>等级规则</h4>
                                         <button class="btn btn-sm btn-primary" id="addGradeRuleBtn">
                                             <i class="ph ph-plus"></i> 添加等级
                                         </button>
                                     </div>
-                                    <div id="gradeRulesList" class="grade-rules-list">
+                                    <div id="gradeRulesList" class="performance__grade-rules-list">
                                         <!-- 等级规则列表将在这里动态生成 -->
                                     </div>
                                 </div>
 
                                 <!-- 操作按钮 -->
-                                <div class="config-actions">
+                                <div class="performance__config-actions">
                                     <button class="btn btn-secondary" id="resetConfigBtn">
                                         <i class="ph ph-arrow-counter-clockwise"></i> 重置默认
                                     </button>
@@ -923,75 +923,75 @@
                         </div>
 
                         <!-- 顶部统计区 -->
-                        <div class="stats-section">
-                            <div class="stats-grid">
+                        <div class="performance__stats-section">
+                            <div class="performance__stats-grid">
                                 <!-- 平均综合得分 -->
-                                <div class="main-score">
+                                <div class="performance__main-score">
                                     <h3>平均综合得分</h3>
-                                    <div class="score-value" id="averageScore">-</div>
-                                    <div class="trend" id="scoreTrend">-</div>
+                                    <div class="performance__score-value" id="averageScore">-</div>
+                                    <div class="performance__trend" id="scoreTrend">-</div>
                                 </div>
 
                                 <!-- 等级分布 -->
-                                <div class="grade-distribution">
-                                    <div class="grade-card excellent">
+                                <div class="performance__grade-distribution">
+                                    <div class="performance__grade-card excellent">
                                         <h3>优秀</h3>
-                                        <div class="count" id="gradeExcellent">0</div>
-                                        <div class="percentage" id="gradeExcellentPercent">0%</div>
+                                        <div class="performance__count" id="gradeExcellent">0</div>
+                                        <div class="performance__percentage" id="gradeExcellentPercent">0%</div>
                                     </div>
-                                    <div class="grade-card good">
+                                    <div class="performance__grade-card good">
                                         <h3>合格</h3>
-                                        <div class="count" id="gradeGood">0</div>
-                                        <div class="percentage" id="gradeGoodPercent">0%</div>
+                                        <div class="performance__count" id="gradeGood">0</div>
+                                        <div class="performance__percentage" id="gradeGoodPercent">0%</div>
                                     </div>
-                                    <div class="grade-card improve">
+                                    <div class="performance__grade-card improve">
                                         <h3>整改后合格</h3>
-                                        <div class="count" id="gradeImprove">0</div>
-                                        <div class="percentage" id="gradeImprovePercent">0%</div>
+                                        <div class="performance__count" id="gradeImprove">0</div>
+                                        <div class="performance__percentage" id="gradeImprovePercent">0%</div>
                                     </div>
-                                    <div class="grade-card poor">
+                                    <div class="performance__grade-card poor">
                                         <h3>不合格</h3>
-                                        <div class="count" id="gradePoor">0</div>
-                                        <div class="percentage" id="gradePoorPercent">0%</div>
+                                        <div class="performance__count" id="gradePoor">0</div>
+                                        <div class="performance__percentage" id="gradePoorPercent">0%</div>
                                     </div>
                                 </div>
 
                                 <!-- 关键指标 -->
-                                <div class="key-metrics">
-                                    <div class="metric-item">
+                                <div class="performance__key-metrics">
+                                    <div class="performance__metric-item">
                                         <h3>已评价</h3>
-                                        <div class="value" id="evaluatedCount">0</div>
-                                        <div class="label">家评价供应商</div>
+                                        <div class="performance__value" id="evaluatedCount">0</div>
+                                        <div class="performance__label">家评价供应商</div>
                                     </div>
-                                    <div class="metric-item">
+                                    <div class="performance__metric-item">
                                         <h3>未评价</h3>
-                                        <div class="value" id="unevaluatedCount">0</div>
-                                        <div class="label">家评价供应商</div>
+                                        <div class="performance__value" id="unevaluatedCount">0</div>
+                                        <div class="performance__label">家评价供应商</div>
                                     </div>
-                                    <div class="metric-item">
+                                    <div class="performance__metric-item">
                                         <h3>总计</h3>
-                                        <div class="value" id="totalCount">0</div>
-                                        <div class="label">家评价供应商</div>
+                                        <div class="performance__value" id="totalCount">0</div>
+                                        <div class="performance__label">家评价供应商</div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
                         <!-- Tab导航按钮 -->
-                        <div class="results-tabs">
-                            <button class="results-tab-btn active" data-tab="tab-heatmap">
+                        <div class="performance__results-tabs">
+                            <button class="performance__results-tab-btn active" data-tab="tab-heatmap">
                                 <i class="ph ph-grid-four"></i>
                                 热力图
                             </button>
-                            <button class="results-tab-btn" data-tab="tab-ranking">
+                            <button class="performance__results-tab-btn" data-tab="tab-ranking">
                                 <i class="ph ph-chart-bar"></i>
                                 年度排名
                             </button>
-                            <button class="results-tab-btn" data-tab="tab-trend">
+                            <button class="performance__results-tab-btn" data-tab="tab-trend">
                                 <i class="ph ph-trend-up"></i>
                                 趋势分析
                             </button>
-                            <button class="results-tab-btn" data-tab="tab-distribution">
+                            <button class="performance__results-tab-btn" data-tab="tab-distribution">
                                 <i class="ph ph-chart-pie-slice"></i>
                                 分布统计
                             </button>
@@ -999,19 +999,19 @@
 
                         <!-- Tab内容区域 -->
                         <!-- Tab 1: 热力图 -->
-                        <div id="tab-heatmap" class="results-tab-content active">
-                            <div class="heatmap-section">
-                                <div class="heatmap-container">
-                                    <div class="heatmap-header">
+                        <div id="tab-heatmap" class="performance__results-tab-content active">
+                            <div class="performance__heatmap-section">
+                                <div class="performance__heatmap-container">
+                                    <div class="performance__heatmap-header">
                                         <h3>年度排名热力图</h3>
-                                        <div class="heatmap-legend">
-                                            <span class="legend-item"><span class="legend-color high"></span> 优秀 (≥95分)</span>
-                                            <span class="legend-item"><span class="legend-color medium"></span> 合格 (85-94分)</span>
-                                            <span class="legend-item"><span class="legend-color low"></span> 不合格 (&lt;85分)</span>
+                                        <div class="performance__heatmap-legend">
+                                            <span class="performance__legend-item"><span class="performance__legend-color high"></span> 优秀 (≥95分)</span>
+                                            <span class="performance__legend-item"><span class="performance__legend-color medium"></span> 合格 (85-94分)</span>
+                                            <span class="performance__legend-item"><span class="performance__legend-color low"></span> 不合格 (&lt;85分)</span>
                                         </div>
                                     </div>
-                                    <div class="heatmap-table-wrapper">
-                                        <table class="heatmap-table" id="heatmapTable">
+                                    <div class="performance__heatmap-table-wrapper">
+                                        <table class="performance__heatmap-table" id="heatmapTable">
                                             <!-- 热力图内容将动态生成 -->
                                         </table>
                                     </div>
@@ -1020,20 +1020,20 @@
                         </div>
 
                         <!-- Tab 2: 年度排名 -->
-                        <div id="tab-ranking" class="results-tab-content hidden">
-                            <div class="charts-section">
+                        <div id="tab-ranking" class="performance__results-tab-content hidden">
+                            <div class="performance__charts-section">
                                 <!-- 年度绩效排名柱状图 -->
-                                <div class="chart-card">
+                                <div class="performance__chart-card">
                                     <h3>年度绩效排名</h3>
-                                    <div class="chart-container">
+                                    <div class="performance__chart-container">
                                         <canvas id="rankingChart"></canvas>
                                     </div>
                                 </div>
 
                                 <!-- 绩效等级分布饼图 -->
-                                <div class="chart-card">
+                                <div class="performance__chart-card">
                                     <h3>绩效等级分布</h3>
-                                    <div class="chart-container">
+                                    <div class="performance__chart-container">
                                         <canvas id="gradePieChart"></canvas>
                                     </div>
                                 </div>
@@ -1049,16 +1049,16 @@
                         </div>
 
                         <!-- Tab 3: 趋势分析 -->
-                        <div id="tab-trend" class="results-tab-content hidden">
+                        <div id="tab-trend" class="performance__results-tab-content hidden">
                             <!-- 单供应商绩效趋势 -->
                             <div class="card">
                                 <h3>单供应商绩效趋势</h3>
-                                <div class="trend-selector">
+                                <div class="performance__trend-selector">
                                     <select id="trendVendorSelect">
                                         <option value="">选择供应商查看趋势...</option>
                                     </select>
                                 </div>
-                                <div class="chart-container">
+                                <div class="performance__chart-container">
                                     <canvas id="vendorTrendChart"></canvas>
                                 </div>
                             </div>
@@ -1066,7 +1066,7 @@
                             <!-- 整体平均分月度趋势 -->
                             <div class="card">
                                 <h3>整体平均分月度趋势</h3>
-                                <div class="chart-container">
+                                <div class="performance__chart-container">
                                     <canvas id="trendChart"></canvas>
                                 </div>
                             </div>
@@ -1074,25 +1074,25 @@
                             <!-- 改进/恶化识别 -->
                             <div class="card">
                                 <h3>改进/恶化识别</h3>
-                                <div class="trend-list" id="trendList">
+                                <div class="performance__trend-list" id="trendList">
                                     <!-- 改进和恶化的供应商列表将动态生成 -->
                                 </div>
                             </div>
                         </div>
 
                         <!-- Tab 4: 分布统计 -->
-                        <div id="tab-distribution" class="results-tab-content hidden">
-                            <div class="charts-section">
+                        <div id="tab-distribution" class="performance__results-tab-content hidden">
+                            <div class="performance__charts-section">
                                 <!-- 等级分布环形图 -->
-                                <div class="chart-card">
+                                <div class="performance__chart-card">
                                     <h3>等级分布</h3>
-                                    <div class="chart-container">
+                                    <div class="performance__chart-container">
                                         <canvas id="gradeChart"></canvas>
                                     </div>
                                 </div>
 
                                 <!-- TOP3雷达图 -->
-                                <div class="chart-card">
+                                <div class="performance__chart-card">
                                     <h3>TOP3评价供应商</h3>
                                     <div class="chart-container">
                                         <canvas id="radarChart"></canvas>

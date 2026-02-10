@@ -74,8 +74,8 @@
             els.resultsPurchaseCount = document.getElementById('resultsPurchaseCount');
             els.resultsExternalCount = document.getElementById('resultsExternalCount');
             // Tab导航
-            els.tabButtons = document.querySelectorAll('.results-tab-btn');
-            els.tabContents = document.querySelectorAll('.results-tab-content');
+            els.tabButtons = document.querySelectorAll('.performance__results-tab-btn');
+            els.tabContents = document.querySelectorAll('.performance__results-tab-content');
             // 热力图
             els.heatmapTable = document.getElementById('heatmapTable');
             // 年度排名和饼图
@@ -515,7 +515,7 @@
                 else if (rank === 3) rankBadgeClass = 'rank-3';
 
                 heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                    <span class="heatmap-rank-badge ${rankBadgeClass}">${rank}</span>
+                    <span class="performance__heatmap-rank-badge ${rankBadgeClass}">${rank}</span>
                 </td>`;
 
                 // 供应商名称
@@ -530,11 +530,11 @@
                         if (score >= 95) scoreClass = 'high';
                         else if (score < 85) scoreClass = 'low';
                         heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                            <span class="heatmap-score ${scoreClass}">${score.toFixed(1)}</span>
+                            <span class="performance__heatmap-score ${scoreClass}">${score.toFixed(1)}</span>
                         </td>`;
                     } else {
                         heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                            <span class="heatmap-score empty">-</span>
+                            <span class="performance__heatmap-score empty">-</span>
                         </td>`;
                     }
                 });
@@ -552,7 +552,7 @@
                 else if (grade === '不合格') gradeClass = 'grade-poor';
                 else if (grade === '整改后合格') gradeClass = 'grade-improve';
                 heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                    <span class="grade-badge ${gradeClass}">${grade}</span>
+                    <span class="performance__grade-badge ${gradeClass}">${grade}</span>
                 </td>`;
 
                 heatmapHtml += '</tr>';
@@ -565,9 +565,9 @@
                     <tr>
                         <td colspan="${months.length + 5}" style="padding: 0;">
                             <div class="heatmap-unevaluated-section">
-                                <div class="heatmap-unevaluated-header" id="unevaluatedHeader">
+                                <div class="performance__heatmap-unevaluated-header" id="unevaluatedHeader">
                                     <h4>未评价供应商 (${vendorsWithoutData.length}家)</h4>
-                                    <i class="ph ph-caret-down toggle-icon"></i>
+                                    <i class="ph ph-caret-down performance__toggle-icon"></i>
                                 </div>
                                 <div class="heatmap-unevaluated-body" id="unevaluatedBody">
                                     <table style="width: 100%; border-collapse: collapse;">
@@ -578,7 +578,7 @@
                     heatmapHtml += '<tr>';
                     heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 500;">${vendorsWithData.length + index + 1}</td>`;
                     heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                        <span class="heatmap-rank-badge rank-other">-</span>
+                        <span class="performance__heatmap-rank-badge rank-other">-</span>
                     </td>`;
                     heatmapHtml += `<td style="padding: 8px; font-weight: 500;">${vendor}</td>`;
                     months.forEach(() => {
@@ -588,7 +588,7 @@
                     });
                     heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 600;">-</td>`;
                     heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                        <span class="grade-badge grade-good">-</span>
+                        <span class="performance__grade-badge grade-good">-</span>
                     </td>`;
                     heatmapHtml += '</tr>';
                 });
@@ -611,8 +611,8 @@
             const unevaluatedBody = document.getElementById('unevaluatedBody');
             if (unevaluatedHeader && unevaluatedBody) {
                 unevaluatedHeader.addEventListener('click', () => {
-                    unevaluatedHeader.classList.toggle('collapsed');
-                    unevaluatedBody.classList.toggle('expanded');
+                    unevaluatedHeader.classList.toggle('performance__collapsed');
+                    unevaluatedBody.classList.toggle('performance__expanded');
                 });
             }
         },

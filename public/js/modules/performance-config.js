@@ -157,7 +157,7 @@
 
             state.config.dimensions.forEach((dimension, index) => {
                 const item = document.createElement('div');
-                item.className = 'dimension-item';
+                item.className = 'performance__dimension-item';
                 item.innerHTML = `
                     <div class="form-group">
                         <label>维度名称</label>
@@ -190,7 +190,7 @@
 
             state.config.gradeRules.forEach((rule, index) => {
                 const item = document.createElement('div');
-                item.className = 'grade-rule-item';
+                item.className = 'performance__grade-rule-item';
                 item.innerHTML = `
                     <div class="form-group">
                         <label>等级名称</label>

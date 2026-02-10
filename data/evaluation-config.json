@@ -13,12 +13,7 @@
     {
       "name": "服务",
       "key": "service",
-      "weight": 0.1
-    },
-    {
-      "name": "新维度",
-      "key": "dimension_1768928298721",
-      "weight": 0.1
+      "weight": 0.2
     }
   ],
   "gradeRules": [

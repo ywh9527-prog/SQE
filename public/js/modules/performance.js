@@ -874,7 +874,7 @@
                         }
 
                         dimensionsHtml += `
-                            <div class="dimension-item">
+                            <div class="performance__dimension-item">
                                 <div class="dimension-header">
                                     <span class="dimension-name">${dimension.name}</span>
                                     <span class="dimension-score">${score}</span>

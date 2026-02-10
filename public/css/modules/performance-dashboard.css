@@ -11,7 +11,7 @@
     padding: calc(var(--border-radius-lg) * 1.5);
 }
 
-.results-header {
+.performance__results-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -20,20 +20,20 @@
     border-bottom: 1px solid var(--gray-200);
 }
 
-.results-header h2 {
+.performance__results-header h2 {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--gray-900);
     margin: 0;
 }
 
-.results-info {
+.performance__results-info {
     display: flex;
     gap: var(--border-radius-lg);
     align-items: center;
 }
 
-.results-info .info-item {
+.performance__results-info .info-item {
     display: flex;
     align-items: center;
     gap: calc(var(--border-radius-sm) * 0.5);
@@ -45,15 +45,16 @@
    顶部统计区
    ============================================ */
 
-.stats-section {
+.performance__stats-section {
     background: var(--gray-50);
     padding: calc(var(--border-radius-lg) * 1.5);
     border-radius: var(--border-radius-lg);
     margin-bottom: var(--border-radius-xl);
     box-shadow: var(--shadow-sm);
+    border: 1px solid var(--gray-200);
 }
 
-.stats-grid {
+.performance__stats-grid {
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     gap: var(--border-radius-lg);
@@ -61,7 +62,7 @@
 }
 
 /* 平均综合得分 */
-.main-score {
+.performance__main-score {
     text-align: center;
     padding: calc(var(--border-radius-xl) * 1.5);
     background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-700) 100%);
@@ -69,123 +70,123 @@
     color: var(--gray-50);
 }
 
-.main-score h3 {
+.performance__main-score h3 {
     font-size: 0.875rem;
     opacity: 0.9;
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
     font-weight: 500;
 }
 
-.main-score .score-value {
+.performance__main-score .performance__score-value {
     font-size: 4rem;
     font-weight: 700;
     line-height: 1;
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
 }
 
-.main-score .trend {
+.performance__main-score .performance__trend {
     font-size: 1rem;
     opacity: 0.9;
     font-weight: 500;
 }
 
-.main-score .trend.up {
+.performance__trend.performance__trend--up {
     color: var(--success-light);
 }
 
-.main-score .trend.down {
+.performance__trend.performance__trend--down {
     color: var(--danger-light);
 }
 
-.main-score .trend.flat {
+.performance__trend.performance__trend--flat {
     color: var(--gray-300);
 }
 
 /* 等级分布 */
-.grade-distribution {
+.performance__grade-distribution {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: calc(var(--border-radius-sm) * 0.75);
 }
 
-.grade-card {
+.performance__grade-card {
     padding: calc(var(--border-radius-lg) * 1.5);
     border-radius: var(--border-radius-md);
     text-align: center;
     border: 2px solid transparent;
 }
 
-.grade-card.excellent {
+.performance__grade-card.excellent {
     background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
     border-color: var(--success-dark);
 }
 
-.grade-card.good {
+.performance__grade-card.good {
     background: linear-gradient(135deg, var(--info-light) 0%, var(--info) 100%);
     border-color: var(--info-dark);
 }
 
-.grade-card.improve {
+.performance__grade-card.improve {
     background: linear-gradient(135deg, var(--warning-light) 0%, var(--warning) 100%);
     border-color: var(--warning-dark);
 }
 
-.grade-card.poor {
+.performance__grade-card.poor {
     background: linear-gradient(135deg, var(--danger-light) 0%, var(--danger) 100%);
     border-color: var(--danger-dark);
 }
 
-.grade-card h3 {
+.performance__grade-card h3 {
     font-size: 0.8125rem;
     color: var(--gray-700);
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
     font-weight: 500;
 }
 
-.grade-card .count {
+.performance__grade-card .performance__count {
     font-size: 2.25rem;
     font-weight: 700;
     margin-bottom: calc(var(--border-radius-sm) * 0.25);
 }
 
-.grade-card.excellent .count { color: var(--success-dark); }
-.grade-card.good .count { color: var(--info-dark); }
-.grade-card.improve .count { color: var(--warning-dark); }
-.grade-card.poor .count { color: var(--danger-dark); }
+.performance__grade-card.excellent .performance__count { color: var(--success-dark); }
+.performance__grade-card.good .performance__count { color: var(--info-dark); }
+.performance__grade-card.improve .performance__count { color: var(--warning-dark); }
+.performance__grade-card.poor .performance__count { color: var(--danger-dark); }
 
-.grade-card .percentage {
+.performance__grade-card .performance__percentage {
     font-size: 0.75rem;
     color: var(--gray-700);
     font-weight: 500;
 }
 
 /* 关键指标 */
-.key-metrics {
+.performance__key-metrics {
     display: flex;
     flex-direction: column;
     gap: calc(var(--border-radius-sm) * 0.75);
 }
 
-.metric-item {
+.performance__metric-item {
     padding: calc(var(--border-radius-lg) * 1.5);
     background: var(--gray-100);
     border-radius: var(--border-radius-md);
 }
 
-.metric-item h3 {
+.performance__metric-item h3 {
     font-size: 0.8125rem;
     color: var(--gray-600);
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
     font-weight: 500;
 }
 
-.metric-item .value {
+.performance__metric-item .performance__value {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--gray-900);
 }
 
-.metric-item .label {
+.performance__metric-item .performance__label {
     font-size: 0.75rem;
     color: var(--gray-600);
     margin-top: calc(var(--border-radius-sm) * 0.25);
@@ -196,7 +197,7 @@
    中部图表区
    ============================================ */
 
-.charts-section {
+.performance__charts-section {
     display: grid;
     grid-template-columns: 2fr 1fr 1fr;
     gap: var(--border-radius-lg);
@@ -225,11 +226,11 @@
 }
 
 /* 趋势选择器 */
-.trend-selector {
+.performance__trend-selector {
     margin-bottom: var(--border-radius-md);
 }
 
-.trend-selector select {
+.performance__trend-selector select {
     width: 100%;
     padding: calc(var(--border-radius-sm) * 0.75);
     font-size: 0.875rem;
@@ -241,24 +242,24 @@
     transition: all var(--transition-base);
 }
 
-.trend-selector select:hover {
+.performance__trend-selector select:hover {
     border-color: var(--primary-400);
 }
 
-.trend-selector select:focus {
+.performance__trend-selector select:focus {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
 /* 趋势列表 */
-.trend-list {
+.performance__trend-list {
     display: flex;
     flex-direction: column;
     gap: var(--border-radius-sm);
 }
 
-.trend-item {
+.performance__trend-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -268,37 +269,37 @@
     transition: all var(--transition-base);
 }
 
-.trend-item:hover {
+.performance__trend-item:hover {
     background: var(--gray-200);
 }
 
-.trend-item.improved {
+.performance__trend-item.improved {
     border-left: 4px solid var(--success);
     background: var(--success-50);
 }
 
-.trend-item.worsened {
+.performance__trend-item.worsened {
     border-left: 4px solid var(--danger);
     background: var(--danger-50);
 }
 
-.trend-item-info {
+.performance__trend-item-info {
     flex: 1;
 }
 
-.trend-item-name {
+.performance__trend-item-name {
     font-size: 0.875rem;
     font-weight: 500;
     color: var(--gray-900);
     margin-bottom: calc(var(--border-radius-xs) * 0.5);
 }
 
-.trend-item-change {
+.performance__trend-item-change {
     font-size: 0.75rem;
     color: var(--gray-600);
 }
 
-.trend-item-badge {
+.performance__trend-item-badge {
     display: flex;
     align-items: center;
     gap: calc(var(--border-radius-xs) * 0.5);
@@ -308,12 +309,12 @@
     font-weight: 600;
 }
 
-.trend-item-badge.success {
+.performance__trend-item-badge.success {
     background: var(--success);
     color: var(--gray-50);
 }
 
-.trend-item-badge.danger {
+.performance__trend-item-badge.danger {
     background: var(--danger);
     color: var(--gray-50);
 }
@@ -325,21 +326,21 @@
     }
 }
 
-.chart-card {
+.performance__chart-card {
     background: var(--gray-50);
     padding: calc(var(--border-radius-lg) * 1.5);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
 }
 
-.chart-card h3 {
+.performance__chart-card h3 {
     font-size: 1rem;
     font-weight: 600;
     color: var(--gray-900);
     margin-bottom: var(--border-radius-lg);
 }
 
-.chart-container {
+.performance__chart-container {
     height: 600px;
     position: relative;
 }
@@ -353,35 +354,35 @@
    底部表格区
    ============================================ */
 
-.table-section {
+.performance__table-section {
     background: var(--gray-50);
     padding: calc(var(--border-radius-lg) * 1.5);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-sm);
 }
 
-.table-card h3 {
+.performance__table-card h3 {
     font-size: 1rem;
     font-weight: 600;
     color: var(--gray-900);
     margin-bottom: var(--border-radius-lg);
 }
 
-.table-container {
+.performance__table-container {
     overflow-x: auto;
 }
 
-.results-table {
+.performance__results-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.875rem;
 }
 
-.results-table thead {
+.performance__results-table thead {
     background: var(--gray-100);
 }
 
-.results-table th {
+.performance__results-table th {
     padding: calc(var(--border-radius-sm) * 0.75) calc(var(--border-radius-sm) * 1);
     text-align: left;
     font-weight: 600;
@@ -389,22 +390,22 @@
     border-bottom: 2px solid var(--gray-300);
 }
 
-.results-table td {
+.performance__results-table td {
     padding: calc(var(--border-radius-sm) * 0.75) calc(var(--border-radius-sm) * 1);
     border-bottom: 1px solid var(--gray-200);
 }
 
-.results-table tbody tr:hover {
+.performance__results-table tbody tr:hover {
     background: var(--gray-100);
 }
 
 /* 排名列 */
-.rank-cell {
+.performance__rank-cell {
     text-align: center;
     width: 80px;
 }
 
-.rank-badge {
+.performance__rank-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -416,39 +417,39 @@
     color: var(--gray-50);
 }
 
-.rank-1 {
+.performance__rank-1 {
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
 }
 
-.rank-2 {
+.performance__rank-2 {
     background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-600) 100%);
 }
 
-.rank-3 {
+.performance__rank-3 {
     background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
 }
 
-.rank-other {
+.performance__rank-other {
     background: var(--gray-300);
     color: var(--gray-700);
 }
 
 /* 分数列 */
-.score-cell {
+.performance__score-cell {
     text-align: center;
 }
 
-.score-value {
+.performance__score-value {
     font-size: 1.25rem;
     font-weight: 700;
 }
 
-.score-high { color: var(--success-dark); }
-.score-medium { color: var(--info-dark); }
-.score-low { color: var(--danger-dark); }
+.performance__score-high { color: var(--success-dark); }
+.performance__score-medium { color: var(--info-dark); }
+.performance__score-low { color: var(--danger-dark); }
 
 /* 等级徽章 */
-.grade-badge {
+.performance__grade-badge {
     display: inline-block;
     padding: calc(var(--border-radius-xs) * 0.5) calc(var(--border-radius-sm) * 1);
     border-radius: 9999px;
@@ -456,42 +457,46 @@
     font-weight: 600;
 }
 
-.grade-excellent {
+.performance__grade-badge.grade-excellent,
+.performance__grade-excellent {
     background: linear-gradient(135deg, var(--success-light) 0%, var(--success) 100%);
     color: var(--success-dark);
 }
 
-.grade-good {
+.performance__grade-badge.grade-good,
+.performance__grade-good {
     background: linear-gradient(135deg, var(--info-light) 0%, var(--info) 100%);
     color: var(--info-dark);
 }
 
-.grade-improve {
+.performance__grade-badge.grade-improve,
+.performance__grade-improve {
     background: linear-gradient(135deg, var(--warning-light) 0%, var(--warning) 100%);
     color: var(--warning-dark);
 }
 
-.grade-poor {
+.performance__grade-badge.grade-poor,
+.performance__grade-poor {
     background: linear-gradient(135deg, var(--danger-light) 0%, var(--danger) 100%);
     color: var(--danger-dark);
 }
 
 /* 趋势列 */
-.trend-cell {
+.performance__trend-cell {
     text-align: center;
 }
 
-.trend-up { color: var(--success); font-weight: 600; }
-.trend-down { color: var(--danger); font-weight: 600; }
-.trend-flat { color: var(--gray-500); font-weight: 600; }
+.performance__trend-up { color: var(--success); font-weight: 600; }
+.performance__trend-down { color: var(--danger); font-weight: 600; }
+.performance__trend-flat { color: var(--gray-500); font-weight: 600; }
 
 /* 维度进度条 */
-.dimensions-cell {
+.performance__dimensions-cell {
     display: flex;
     gap: calc(var(--border-radius-sm) * 0.5);
 }
 
-.dimension-bar {
+.performance__dimension-bar {
     flex: 1;
     height: 6px;
     background: var(--gray-200);
@@ -499,47 +504,47 @@
     overflow: hidden;
 }
 
-.dimension-fill {
+.performance__dimension-fill {
     height: 100%;
     border-radius: 3px;
     transition: width var(--transition-base);
 }
 
-.dimension-fill.quality { background: var(--success); }
-.dimension-fill.delivery { background: var(--info); }
-.dimension-fill.service { background: var(--warning); }
+.performance__dimension-fill.quality { background: var(--success); }
+.performance__dimension-fill.delivery { background: var(--info); }
+.performance__dimension-fill.service { background: var(--warning); }
 
 /* ============================================
    响应式设计
    ============================================ */
 
 @media (max-width: 1024px) {
-    .stats-grid {
+    .performance__stats-grid {
         grid-template-columns: 1fr;
     }
 
-    .charts-section {
+    .performance__charts-section {
         grid-template-columns: 1fr;
     }
 }
 
 @media (max-width: 768px) {
-    .results-header {
+    .performance__results-header {
         flex-direction: column;
         gap: var(--border-radius-lg);
         text-align: center;
     }
 
-    .grade-distribution {
+    .performance__grade-distribution {
         grid-template-columns: repeat(2, 1fr);
     }
 
-    .results-table {
+    .performance__results-table {
         font-size: 0.75rem;
     }
 
-    .results-table th,
-    .results-table td {
+    .performance__results-table th,
+    .performance__results-table td {
         padding: calc(var(--border-radius-xs) * 0.5) calc(var(--border-radius-xs) * 0.75);
     }
 }
@@ -548,7 +553,7 @@
    Tab导航
    ============================================ */
 
-.results-tabs {
+.performance__results-tabs {
     display: flex;
     gap: var(--border-radius-sm);
     margin-bottom: var(--border-radius-lg);
@@ -557,7 +562,7 @@
     border-radius: var(--border-radius-md);
 }
 
-.results-tab-btn {
+.performance__results-tab-btn {
     display: flex;
     align-items: center;
     gap: calc(var(--border-radius-xs) * 0.75);
@@ -572,12 +577,12 @@
     transition: all var(--transition-base);
 }
 
-.results-tab-btn:hover {
+.performance__results-tab-btn:hover {
     background: var(--gray-200);
     color: var(--gray-900);
 }
 
-.results-tab-btn.active {
+.performance__results-tab-btn.active {
     background: var(--primary-500);
     border-color: var(--primary-500);
     color: var(--gray-50);
@@ -585,19 +590,19 @@
     font-weight: 600;
 }
 
-.results-tab-btn i {
+.performance__results-tab-btn i {
     font-size: 1.125rem;
 }
 
-.results-tab-content {
+.performance__results-tab-content {
     display: none;
 }
 
-.results-tab-content.active {
+.performance__results-tab-content.active {
     display: block;
 }
 
-.results-tab-content.hidden {
+.performance__results-tab-content.hidden {
     display: none;
 }
 
@@ -605,19 +610,21 @@
    热力图样式
    ============================================ */
 
-.heatmap-section {
+.performance__heatmap-section {
     background: var(--gray-50);
     padding: var(--border-radius-lg);
     border-radius: var(--border-radius-lg);
+    border: 1px solid var(--gray-200);
+    box-shadow: var(--shadow-sm);
 }
 
-.heatmap-container {
+.performance__heatmap-container {
     display: flex;
     flex-direction: column;
     gap: var(--border-radius-md);
 }
 
-.heatmap-header {
+.performance__heatmap-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -625,20 +632,20 @@
     border-bottom: 1px solid var(--gray-200);
 }
 
-.heatmap-header h3 {
+.performance__heatmap-header h3 {
     font-size: 1.125rem;
     font-weight: 600;
     color: var(--gray-900);
     margin: 0;
 }
 
-.heatmap-legend {
+.performance__heatmap-legend {
     display: flex;
     gap: var(--border-radius-md);
     align-items: center;
 }
 
-.legend-item {
+.performance__legend-item {
     display: flex;
     align-items: center;
     gap: calc(var(--border-radius-xs) * 0.5);
@@ -646,41 +653,41 @@
     color: var(--gray-600);
 }
 
-.legend-color {
+.performance__legend-color {
     width: 16px;
     height: 16px;
     border-radius: 3px;
 }
 
-.legend-color.high {
+.performance__legend-color.high {
     background: var(--success);
 }
 
-.legend-color.medium {
+.performance__legend-color.medium {
     background: var(--info);
 }
 
-.legend-color.low {
+.performance__legend-color.low {
     background: var(--danger);
 }
 
-.heatmap-table-wrapper {
+.performance__heatmap-table-wrapper {
     overflow-x: auto;
     border-radius: var(--border-radius-md);
     border: 1px solid var(--gray-200);
 }
 
-.heatmap-table {
+.performance__heatmap-table {
     width: 100%;
     border-collapse: collapse;
     font-size: 0.875rem;
 }
 
-.heatmap-table thead tr {
+.performance__heatmap-table thead tr {
     background: var(--gray-100);
 }
 
-.heatmap-table th {
+.performance__heatmap-table th {
     padding: calc(var(--border-radius-sm) * 0.75);
     text-align: center;
     font-weight: 600;
@@ -689,15 +696,15 @@
     white-space: nowrap;
 }
 
-.heatmap-table tbody tr {
+.performance__heatmap-table tbody tr {
     border-bottom: 1px solid var(--gray-200);
 }
 
-.heatmap-table tbody tr:last-child {
+.performance__heatmap-table tbody tr:last-child {
     border-bottom: none;
 }
 
-.heatmap-table td {
+.performance__heatmap-table td {
     padding: calc(var(--border-radius-sm) * 0.75);
     text-align: center;
     border: 1px solid var(--gray-200);
@@ -705,7 +712,7 @@
 }
 
 /* 热力图分数颜色 */
-.heatmap-score {
+.performance__heatmap-score {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -716,25 +723,25 @@
     color: var(--gray-50);
 }
 
-.heatmap-score.high {
+.performance__heatmap-score.high {
     background: var(--success);
 }
 
-.heatmap-score.medium {
+.performance__heatmap-score.medium {
     background: var(--info);
 }
 
-.heatmap-score.low {
+.performance__heatmap-score.low {
     background: var(--danger);
 }
 
-.heatmap-score.empty {
+.performance__heatmap-score.empty {
     background: var(--gray-200);
     color: var(--gray-400);
 }
 
 /* 排名徽章 */
-.heatmap-rank-badge {
+.performance__heatmap-rank-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -745,36 +752,36 @@
     font-size: 0.875rem;
 }
 
-.heatmap-rank-badge.rank-1 {
+.performance__heatmap-rank-badge.rank-1 {
     background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
     color: var(--gray-900);
     box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
 }
 
-.heatmap-rank-badge.rank-2 {
+.performance__heatmap-rank-badge.rank-2 {
     background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
     color: var(--gray-50);
 }
 
-.heatmap-rank-badge.rank-3 {
+.performance__heatmap-rank-badge.rank-3 {
     background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
     color: var(--gray-50);
 }
 
-.heatmap-rank-badge.rank-other {
+.performance__heatmap-rank-badge.rank-other {
     background: var(--gray-200);
     color: var(--gray-600);
 }
 
 /* 未评价供应商折叠区 */
-.heatmap-unevaluated-section {
+.performance__heatmap-unevaluated-section {
     background: var(--warning-50);
     border: 1px solid var(--warning-200);
     border-radius: var(--border-radius-md);
     margin-top: var(--border-radius-md);
 }
 
-.heatmap-unevaluated-header {
+.performance__heatmap-unevaluated-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -785,28 +792,28 @@
     user-select: none;
 }
 
-.heatmap-unevaluated-header h4 {
+.performance__heatmap-unevaluated-header h4 {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--warning-700);
     margin: 0;
 }
 
-.heatmap-unevaluated-header .toggle-icon {
+.performance__heatmap-unevaluated-header .toggle-icon {
     transition: transform var(--transition-base);
 }
 
-.heatmap-unevaluated-header.collapsed .toggle-icon {
+.performance__heatmap-unevaluated-header.performance__collapsed .performance__toggle-icon {
     transform: rotate(-90deg);
 }
 
-.heatmap-unevaluated-body {
+.performance__heatmap-unevaluated-body {
     max-height: 0;
     overflow: hidden;
     transition: max-height 0.3s ease-out;
 }
 
-.heatmap-unevaluated-body.expanded {
+.performance__heatmap-unevaluated-body.performance__expanded {
     max-height: 2000px;
 }
 

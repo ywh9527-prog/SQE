@@ -6,9 +6,9 @@
 ## 文件清单
 | 文件 | 行数 | 状态 |
 |------|------|------|
-| performance-evaluation.css | 2075 | 部分完成（布局+卡片） |
-| performance-dashboard.css | 896 | 部分完成（卡片） |
-| performance-config.css | 263 | 待处理 |
+| performance-evaluation.css | 2075 | ✅ 已完成 |
+| performance-dashboard.css | 899 | ✅ 已完成 |
+| performance-config.css | 263 | ✅ 已完成 |
 
 ## 重构进度
 
@@ -33,10 +33,18 @@
 - [x] HTML/JS修改
 - [x] 用户验证
 
-### 第五批：辅助工具类 ⏳ 待开始
-- [ ] CSS修改
-- [ ] HTML/JS修改
-- [ ] 用户验证
+### 第五批：Dashboard和Config样式修复 ✅ 已完成
+- [x] CSS选择器与HTML类名不匹配问题修复
+- [x] `.grade-card .count` → `.performance__grade-card .performance__count`
+- [x] `.main-score .score-value` → `.performance__main-score .performance__score-value`
+- [x] `.trend` 类名前缀修复
+- [x] `collapsed/expanded/toggle-icon` BEM规范修复
+- [x] 热力图动态生成类名添加前缀
+- [x] 等级徽章颜色CSS选择器双重匹配修复
+- [x] 用户验证 ✅ 2026-02-10
+
+### 全部完成 🎉
+所有CSS类名已按照BEM规范统一使用 `performance__` 前缀。
 
 ## 详细修改清单
 
