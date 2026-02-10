@@ -253,15 +253,15 @@
 
             evaluations.forEach(evaluation => {
                 const item = document.createElement('div');
-                item.className = 'period-item';
+                item.className = 'performance__period-item';
                 item.innerHTML = `
-                    <div class="period-item-info">
+                    <div class="performance__period-item-info">
                         <h4>${evaluation.period_name}</h4>
                         <p>${evaluation.start_date} 至 ${evaluation.end_date}</p>
                     </div>
-                    <div class="period-item-status">
+                    <div class="performance__period-item-status">
                         <span class="status-badge ${evaluation.status}">${this.getStatusText(evaluation.status)}</span>
-                        <div class="period-item-actions">
+                        <div class="performance__period-item-actions">
                             ${evaluation.status === 'draft' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">开始评价</button>` : ''}
                             ${evaluation.status === 'in_progress' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">继续评价</button>` : ''}
                             ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-secondary" onclick="window.App.Modules.Performance.viewResults(${evaluation.id})">查看结果</button>` : ''}
@@ -397,7 +397,7 @@
             const self = this;
 
             // 周期类型选择
-            document.querySelectorAll('.period-type-card').forEach(card => {
+            document.querySelectorAll('.performance__period-type-card').forEach(card => {
                 card.onclick = function() {
                     const periodType = this.dataset.type;
                     self.selectPeriodType(periodType);
@@ -891,33 +891,33 @@
 
                 card.innerHTML = `
                     <div class="performance__entity-card-header">
-                        <span class="rank-badge rank-other">#</span>
+                        <span class="performance__rank-badge performance__rank-other">#</span>
                         <h4 class="performance__entity-card-title">${entity.name || entity.entityName}</h4>
                         ${!hasMaterial ? '<span class="performance__entity-card-badge no-material">本评价周期无来料</span>' : ''}
                     </div>
                     <div class="performance__entity-card-score">
-                        <div class="total-score">${entity.totalScore}</div>
-                        <span class="grade-badge ${gradeClass}">${gradeText}</span>
+                        <div class="performance__total-score">${entity.totalScore}</div>
+                        <span class="performance__grade-badge ${gradeClass}">${gradeText}</span>
                     </div>
                     <div class="performance__entity-card-quality">
-                        <div class="quality-item">
+                        <div class="performance__quality-item">
                             <label>总批次</label>
                             <span>${qualityData.totalBatches}</span>
                         </div>
-                        <div class="quality-item">
+                        <div class="performance__quality-item">
                             <label>合格批次</label>
                             <span>${qualityData.okBatches}</span>
                         </div>
-                        <div class="quality-item">
+                        <div class="performance__quality-item">
                             <label>合格率</label>
-                            <span class="pass-rate">${qualityData.passRate}%</span>
+                            <span class="performance__pass-rate">${qualityData.passRate}%</span>
                         </div>
                     </div>
                     <div class="performance__entity-card-dimensions">
                         ${dimensionsHtml}
                     </div>
                     <div class="performance__entity-card-footer">
-                        <span>趋势: <span class="trend-flat">-</span></span>
+                        <span>趋势: <span class="performance__trend-flat">-</span></span>
                         <span>${new Date().toISOString().split('T')[0]}</span>
                     </div>
                 `;
@@ -930,17 +930,17 @@
                         ${!hasMaterial ? '<span class="performance__entity-card-badge no-material">本评价周期无来料</span>' : '<span class="performance__entity-card-status pending">待评价</span>'}
                     </div>
                     <div class="performance__entity-card-quality">
-                        <div class="quality-item">
+                        <div class="performance__quality-item">
                             <label>总批次</label>
                             <span>${qualityData.totalBatches}</span>
                         </div>
-                        <div class="quality-item">
+                        <div class="performance__quality-item">
                             <label>合格批次</label>
                             <span>${qualityData.okBatches}</span>
                         </div>
-                        <div class="quality-item">
+                        <div class="performance__quality-item">
                             <label>合格率</label>
-                            <span class="pass-rate">${qualityData.passRate}%</span>
+                            <span class="performance__pass-rate">${qualityData.passRate}%</span>
                         </div>
                     </div>
                     <div class="performance__entity-card-footer">
@@ -966,12 +966,12 @@
         // 获取等级样式类
         getGradeClass(grade) {
             const classMap = {
-                '优秀': 'grade-excellent',
-                '合格': 'grade-good',
-                '整改后合格': 'grade-improve',
-                '不合格': 'grade-poor'
+                '优秀': 'performance__grade-excellent',
+                '合格': 'performance__grade-good',
+                '整改后合格': 'performance__grade-improve',
+                '不合格': 'performance__grade-poor'
             };
-            return classMap[grade] || 'grade-good';
+            return classMap[grade] || 'performance__grade-good';
         },
 
         // 打开侧边栏
@@ -999,7 +999,7 @@
 
             // 创建维度卡片网格（垂直排列）
             const dimensionsGrid = document.createElement('div');
-            dimensionsGrid.className = 'dimensions-grid';
+            dimensionsGrid.className = 'performance__dimensions-grid';
 
             state.config.dimensions.forEach(dimension => {
                 // 创建维度卡片

@@ -546,7 +546,7 @@
 }
 
 /* 排名徽章 */
-.rank-badge {
+.performance__rank-badge {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -558,10 +558,10 @@
     color: white;
 }
 
-.rank-1 { background: #fbbf24; }
-.rank-2 { background: #94a3b8; }
-.rank-3 { background: #b45309; }
-.rank-other { background: var(--gray-200); color: var(--gray-500); }
+.performance__rank-1 { background: #fbbf24; }
+.performance__rank-2 { background: #94a3b8; }
+.performance__rank-3 { background: #b45309; }
+.performance__rank-other { background: var(--gray-200); color: var(--gray-500); }
 
 .performance__entity-card-header {
     display: flex;
@@ -603,14 +603,14 @@
     margin-bottom: var(--border-radius-lg);
 }
 
-.performance__entity-card-score .total-score {
+.performance__entity-card-score .performance__total-score {
     font-size: 2.25rem;
     font-weight: 700;
     color: var(--gray-800);
     line-height: 1;
 }
 
-.performance__entity-card-score .grade-badge {
+.performance__entity-card-score .performance__grade-badge {
     display: inline-block;
     padding: calc(var(--border-radius-sm) * 0.25) calc(var(--border-radius-sm) * 0.75);
     border-radius: 9999px;
@@ -619,10 +619,10 @@
     margin-top: calc(var(--border-radius-sm) * 0.5);
 }
 
-.grade-excellent { background: var(--success-light); color: var(--success); }
-.grade-good { background: var(--info-light); color: var(--info); }
-.grade-improve { background: var(--warning-light); color: var(--warning); }
-.grade-poor { background: var(--danger-light); color: var(--danger); }
+.performance__grade-excellent { background: var(--success-light); color: var(--success); }
+.performance__grade-good { background: var(--info-light); color: var(--info); }
+.performance__grade-improve { background: var(--warning-light); color: var(--warning); }
+.performance__grade-poor { background: var(--danger-light); color: var(--danger); }
 
 /* 各维度进度条 */
 .performance__entity-card-dimensions {
@@ -756,11 +756,11 @@
     border-radius: var(--border-radius-sm);
 }
 
-.performance__entity-card-quality .quality-item {
+.performance__entity-card-quality .performance__quality-item {
     text-align: center;
 }
 
-.performance__entity-card-quality .quality-item label {
+.performance__entity-card-quality .performance__quality-item label {
     display: block;
     font-size: 0.75rem;
     color: var(--gray-500);
@@ -768,14 +768,14 @@
     white-space: nowrap;
 }
 
-.performance__entity-card-quality .quality-item span {
+.performance__entity-card-quality .performance__quality-item span {
     display: block;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.performance__entity-card-quality .quality-item span.pass-rate {
+.performance__entity-card-quality .performance__quality-item span.performance__pass-rate {
     color: var(--primary-600);
 }
 
@@ -814,9 +814,9 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 8v4'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
 }
 
-.trend-up { color: var(--success); }
-.trend-down { color: var(--danger); }
-.trend-flat { color: var(--gray-500); }
+.performance__trend-up { color: var(--success); }
+.performance__trend-down { color: var(--danger); }
+.performance__trend-flat { color: var(--gray-500); }
 
 /* ============================================
    评价模态框
@@ -1034,7 +1034,7 @@
 
 /* ========== 维度评分卡片网格 ========== */
 
-.dimensions-grid {
+.performance__dimensions-grid {
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -1545,7 +1545,7 @@
     gap: var(--border-radius-lg);
 }
 
-.period-item {
+.performance__period-item {
     background: var(--gray-50);
     border-radius: var(--border-radius-lg);
     padding: calc(var(--border-radius-lg) * 1.5);
@@ -1556,52 +1556,52 @@
     transition: all var(--transition-base);
 }
 
-.period-item:hover {
+.performance__period-item:hover {
     box-shadow: var(--shadow-md);
 }
 
-.period-item-info h4 {
+.performance__period-item-info h4 {
     margin: 0 0 calc(var(--border-radius-sm) * 0.5) 0;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.period-item-info p {
+.performance__period-item-info p {
     margin: 0;
     font-size: 0.875rem;
     color: var(--gray-500);
 }
 
-.period-item-status {
+.performance__period-item-status {
     display: flex;
     align-items: center;
     gap: var(--border-radius-lg);
 }
 
-.period-item-status .status-badge {
+.performance__period-item-status .status-badge {
     padding: calc(var(--border-radius-sm) * 0.25) calc(var(--border-radius-sm) * 0.75);
     border-radius: 9999px;
     font-size: 0.75rem;
     font-weight: 500;
 }
 
-.period-item-status .status-badge.draft {
+.performance__period-item-status .status-badge.draft {
     background: var(--warning-light);
     color: var(--warning);
 }
 
-.period-item-status .status-badge.in_progress {
+.performance__period-item-status .status-badge.in_progress {
     background: var(--info-light);
     color: var(--info);
 }
 
-.period-item-status .status-badge.completed {
+.performance__period-item-status .status-badge.completed {
     background: var(--success-light);
     color: var(--success);
 }
 
-.period-item-actions {
+.performance__period-item-actions {
     display: flex;
     gap: calc(var(--border-radius-sm) * 0.5);
 }
@@ -1652,7 +1652,7 @@
    创建评价周期对话框
    ============================================ */
 
-.performance-modal {
+.performance__performance-modal {
     position: fixed;
     top: 0;
     left: 0;
@@ -1675,7 +1675,7 @@
     }
 }
 
-.performance-modal-content {
+.performance__performance-modal-content {
     background: var(--gray-50);
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-xl);
@@ -1687,7 +1687,7 @@
     animation: performance-modal-slide-up var(--transition-base) ease-out;
 }
 
-.performance-modal-header {
+.performance__performance-modal-header {
     flex-shrink: 0;
     display: flex;
     justify-content: space-between;
@@ -1698,13 +1698,13 @@
     border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
 }
 
-.performance-modal-header h3 {
+.performance__performance-modal-header h3 {
     margin: 0;
     font-size: 1.25rem;
     font-weight: 600;
 }
 
-.performance-modal-header .btn-icon {
+.performance__performance-modal-header .btn-icon {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: var(--gray-50);
@@ -1718,36 +1718,36 @@
     transition: all var(--transition-base);
 }
 
-.performance-modal-header .btn-icon:hover {
+.performance__performance-modal-header .btn-icon:hover {
     background: rgba(255, 255, 255, 0.3);
 }
 
-.performance-modal-body {
+.performance__performance-modal-body {
     flex: 1;
     overflow-y: auto;
     padding: calc(var(--border-radius-lg) * 1.5);
 }
 
 /* 自定义滚动条样式 */
-.performance-modal-body::-webkit-scrollbar {
+.performance__performance-modal-body::-webkit-scrollbar {
     width: 8px;
 }
 
-.performance-modal-body::-webkit-scrollbar-track {
+.performance__performance-modal-body::-webkit-scrollbar-track {
     background: var(--gray-100);
     border-radius: 4px;
 }
 
-.performance-modal-body::-webkit-scrollbar-thumb {
+.performance__performance-modal-body::-webkit-scrollbar-thumb {
     background: var(--gray-300);
     border-radius: 4px;
 }
 
-.performance-modal-body::-webkit-scrollbar-thumb:hover {
+.performance__performance-modal-body::-webkit-scrollbar-thumb:hover {
     background: var(--gray-400);
 }
 
-.create-step {
+.performance__create-step {
     animation: step-fade-in var(--transition-base) ease-out;
 }
 
@@ -1762,7 +1762,7 @@
     }
 }
 
-.create-step h4 {
+.performance__create-step h4 {
     margin: 0 0 calc(var(--border-radius-lg) * 1.5) 0;
     font-size: 1.1rem;
     font-weight: 600;
@@ -1770,13 +1770,13 @@
 }
 
 /* 周期类型选择网格 */
-.period-type-grid {
+.performance__period-type-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--border-radius-lg);
 }
 
-.period-type-card {
+.performance__period-type-card {
     padding: calc(var(--border-radius-lg) * 1.5);
     background: var(--gray-100);
     border: 2px solid transparent;
@@ -1786,41 +1786,41 @@
     text-align: center;
 }
 
-.period-type-card:hover {
+.performance__period-type-card:hover {
     background: var(--gray-200);
     border-color: var(--primary-500);
     transform: translateY(-2px);
 }
 
-.period-type-card i {
+.performance__period-type-card i {
     font-size: 2rem;
     color: var(--primary-600);
     margin-bottom: var(--border-radius-sm);
 }
 
-.period-type-card h5 {
+.performance__period-type-card h5 {
     margin: var(--border-radius-sm) 0 calc(var(--border-radius-sm) * 0.5) 0;
     font-size: 1rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.period-type-card p {
+.performance__period-type-card p {
     margin: 0;
     font-size: 0.875rem;
     color: var(--gray-500);
 }
 
 /* 日期选择器 */
-.date-selector {
+.performance__date-selector {
     margin-bottom: var(--border-radius-lg);
 }
 
-.date-selector .form-group {
+.performance__date-selector .form-group {
     margin-bottom: var(--border-radius-lg);
 }
 
-.date-selector .form-group label {
+.performance__date-selector .form-group label {
     display: block;
     font-size: 0.875rem;
     font-weight: 500;
@@ -1828,7 +1828,7 @@
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
 }
 
-.date-selector .form-control {
+.performance__date-selector .form-control {
     width: 100%;
     padding: calc(var(--border-radius-sm) * 0.75);
     border: 1px solid var(--gray-200);
@@ -1837,7 +1837,7 @@
     transition: all var(--transition-base);
 }
 
-.date-selector .form-control:focus {
+.performance__date-selector .form-control:focus {
     outline: none;
     border-color: var(--primary-500);
     box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
@@ -1847,7 +1847,7 @@
    结果界面样式
    ============================================ */
 
-.results-header {
+.performance__results-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -1856,20 +1856,20 @@
     border-bottom: 2px solid var(--gray-200);
 }
 
-.results-header h2 {
+.performance__results-header h2 {
     margin: 0;
     font-size: 1.75rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.results-info {
+.performance__results-info {
     display: flex;
     gap: var(--border-radius-lg);
     align-items: center;
 }
 
-.results-info .info-item {
+.performance__results-info .info-item {
     display: flex;
     align-items: center;
     gap: calc(var(--border-radius-sm) * 0.5);
@@ -1877,32 +1877,32 @@
     font-size: 0.95rem;
 }
 
-.results-info .info-item i {
+.performance__results-info .info-item i {
     font-size: 1.1rem;
     color: var(--primary-600);
 }
 
-.results-actions {
+.performance__results-actions {
     display: flex;
     gap: calc(var(--border-radius-sm) * 1);
 }
 
 /* 预览信息 */
-.period-preview {
+.performance__period-preview {
     padding: var(--border-radius-lg);
     background: var(--gray-100);
     border-radius: var(--border-radius-sm);
     margin-bottom: var(--border-radius-lg);
 }
 
-.period-preview h5 {
+.performance__period-preview h5 {
     margin: 0 0 var(--border-radius-lg) 0;
     font-size: 0.95rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.preview-item {
+.performance__preview-item {
     display: flex;
     justify-content: space-between;
     margin-bottom: calc(var(--border-radius-sm) * 0.5);
@@ -1913,17 +1913,17 @@
     margin-bottom: 0;
 }
 
-.preview-label {
+.performance__preview-label {
     color: var(--gray-500);
 }
 
-.preview-value {
+.performance__preview-value {
     font-weight: 600;
     color: var(--gray-800);
 }
 
 /* 表单操作 */
-.form-actions {
+.performance__form-actions {
     display: flex;
     justify-content: flex-end;
     gap: calc(var(--border-radius-sm) * 0.75);
@@ -1932,7 +1932,7 @@
 
 /* 响应式 */
 @media (max-width: 640px) {
-    .period-type-grid {
+    .performance__period-type-grid {
         grid-template-columns: 1fr;
     }
 
@@ -1946,13 +1946,13 @@
    按钮样式扩展
    ============================================ */
 
-.btn-danger {
+.performance__btn-danger {
     background: var(--danger);
     border-color: var(--danger);
     color: var(--gray-50);
 }
 
-.btn-danger:hover {
+.performance__btn-danger:hover {
     background: #dc2626;
     border-color: #dc2626;
     transform: translateY(-2px);

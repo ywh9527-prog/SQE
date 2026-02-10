@@ -536,35 +536,35 @@
                     </div>
 
                     <!-- 创建评价周期对话框 -->
-                    <div id="createEvaluationModal" class="performance-modal hidden">
-                        <div class="performance-modal-content">
-                            <div class="performance-modal-header">
+                    <div id="createEvaluationModal" class="performance__performance-modal hidden">
+                        <div class="performance__performance-modal-content">
+                            <div class="performance__performance-modal-header">
                                 <h3>创建评价周期</h3>
                                 <button class="btn-icon" id="closeCreateModalBtn">
                                     <i class="ph ph-x"></i>
                                 </button>
                             </div>
-                            <div class="performance-modal-body">
+                            <div class="performance__performance-modal-body">
                                 <!-- 步骤1：选择周期类型 -->
-                                <div id="createStep1" class="create-step">
+                                <div id="createStep1" class="performance__create-step">
                                     <h4>选择周期类型</h4>
-                                    <div class="period-type-grid">
-                                        <button class="period-type-card" data-type="monthly">
+                                    <div class="performance__period-type-grid">
+                                        <button class="performance__period-type-card" data-type="monthly">
                                             <i class="ph ph-calendar"></i>
                                             <h5>月度评价</h5>
                                             <p>按月进行评价</p>
                                         </button>
-                                        <button class="period-type-card" data-type="quarterly">
+                                        <button class="performance__period-type-card" data-type="quarterly">
                                             <i class="ph ph-calendar-dots"></i>
                                             <h5>季度评价</h5>
                                             <p>按季度进行评价</p>
                                         </button>
-                                        <button class="period-type-card" data-type="yearly">
+                                        <button class="performance__period-type-card" data-type="yearly">
                                             <i class="ph ph-calendar-check"></i>
                                             <h5>年度评价</h5>
                                             <p>按年进行评价</p>
                                         </button>
-                                        <button class="period-type-card" data-type="custom">
+                                        <button class="performance__period-type-card" data-type="custom">
                                             <i class="ph ph-calendar-plus"></i>
                                             <h5>自定义</h5>
                                             <p>自定义日期范围</p>
@@ -573,11 +573,11 @@
                                 </div>
 
                                 <!-- 步骤2：选择日期 -->
-                                <div id="createStep2" class="create-step hidden">
+                                <div id="createStep2" class="performance__create-step hidden">
                                     <h4 id="step2Title">选择日期</h4>
                                     <form id="createEvaluationForm">
                                         <!-- 月度选择 -->
-                                        <div id="monthlySelector" class="date-selector hidden">
+                                        <div id="monthlySelector" class="performance__date-selector hidden">
                                             <div class="form-group">
                                                 <label>选择月份</label>
                                                 <select id="monthlyYear" class="form-control"></select>
@@ -624,23 +624,23 @@
                                         </div>
 
                                         <!-- 预览信息 -->
-                                        <div id="periodPreview" class="period-preview hidden">
+                                        <div id="periodPreview" class="performance__period-preview hidden">
                                             <h5>评价周期信息</h5>
-                                            <div class="preview-item">
-                                                <span class="preview-label">周期名称：</span>
-                                                <span class="preview-value" id="previewName">-</span>
+                                            <div class="performance__preview-item">
+                                                <span class="performance__preview-label">周期名称：</span>
+                                                <span class="performance__preview-value" id="previewName">-</span>
                                             </div>
-                                            <div class="preview-item">
-                                                <span class="preview-label">开始日期：</span>
-                                                <span class="preview-value" id="previewStartDate">-</span>
+                                            <div class="performance__preview-item">
+                                                <span class="performance__preview-label">开始日期：</span>
+                                                <span class="performance__preview-value" id="previewStartDate">-</span>
                                             </div>
-                                            <div class="preview-item">
-                                                <span class="preview-label">结束日期：</span>
-                                                <span class="preview-value" id="previewEndDate">-</span>
+                                            <div class="performance__preview-item">
+                                                <span class="performance__preview-label">结束日期：</span>
+                                                <span class="performance__preview-value" id="previewEndDate">-</span>
                                             </div>
                                         </div>
 
-                                        <div class="form-actions">
+                                        <div class="performance__form-actions">
                                             <button type="button" class="btn btn-secondary" id="backToStep1">
                                                 <i class="ph ph-arrow-left"></i> 返回
                                             </button>
@@ -655,15 +655,15 @@
                     </div>
 
                     <!-- 配置管理对话框 -->
-                    <div id="configModal" class="performance-modal hidden">
-                        <div class="performance-modal-content">
-                            <div class="performance-modal-header">
+                    <div id="configModal" class="performance__performance-modal hidden">
+                        <div class="performance__performance-modal-content">
+                            <div class="performance__performance-modal-header">
                                 <h3>评价配置管理</h3>
                                 <button class="btn-icon" id="closeConfigModalBtn">
                                     <i class="ph ph-x"></i>
                                 </button>
                             </div>
-                            <div class="performance-modal-body">
+                            <div class="performance__performance-modal-body">
                                 <!-- 配置变更警告横幅 -->
                                 <div id="configWarningBanner" class="config-warning-banner hidden">
                                     <i class="ph ph-warning"></i>
@@ -871,9 +871,9 @@
                     <!-- 主界面展示（默认显示） -->
                     <div id="resultsInterface" class="performance__results-interface">
                         <!-- 顶部信息 -->
-                        <div class="results-header">
+                        <div class="performance__results-header">
                             <h2 id="resultsTitle">评价结果</h2>
-                            <div class="results-info">
+                            <div class="performance__results-info">
                                 <span class="info-item">
                                     <i class="ph ph-calendar"></i>
                                     <select id="yearSelector" class="form-control year-selector">
@@ -885,7 +885,7 @@
                                     <span id="resultsPeriod">2025-01-01 至 2025-01-31</span>
                                 </span>
                             </div>
-                            <div class="results-actions">
+                            <div class="performance__results-actions">
                                 <button class="btn btn-secondary" id="showPeriodsBtn">
                                     <i class="ph ph-clock-counter-clockwise"></i> 历史评价
                                 </button>
