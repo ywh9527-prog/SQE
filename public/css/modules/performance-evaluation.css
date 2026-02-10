@@ -540,7 +540,7 @@
     letter-spacing: 0.5px;
 }
 
-.performance__entity-card-badge.no-material {
+.performance__entity-card-badge.performance__no-material {
     background: var(--gray-200);
     color: var(--gray-600);
 }
@@ -587,12 +587,12 @@
     font-weight: 500;
 }
 
-.performance__entity-card-status.pending {
+.performance__entity-card-status.performance__pending {
     background: var(--danger-light);
     color: var(--danger);
 }
 
-.performance__entity-card-status.completed {
+.performance__entity-card-status.performance__completed {
     background: var(--success-light);
     color: var(--success);
 }
@@ -629,7 +629,7 @@
     margin-top: var(--border-radius-lg);
 }
 
-.performance__entity-card-dimensions .dimension-item {
+.performance__entity-card-dimensions .performance__dimension-item {
     padding: calc(var(--border-radius-sm) * 0.75);
     background: var(--gray-50);
     border-radius: var(--border-radius-sm);
@@ -637,7 +637,7 @@
     display: block;
 }
 
-.performance__entity-card-dimensions .dimension-header {
+.performance__entity-card-dimensions .performance__dimension-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -645,14 +645,14 @@
     width: 100%;
 }
 
-.performance__entity-card-dimensions .dimension-name {
+.performance__entity-card-dimensions .performance__dimension-name {
     font-size: 0.875rem;
     color: var(--gray-700);
     font-weight: 500;
     white-space: nowrap;
 }
 
-.performance__entity-card-dimensions .dimension-score {
+.performance__entity-card-dimensions .performance__dimension-score {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-600);
@@ -661,7 +661,7 @@
     min-width: 3rem;
 }
 
-.performance__entity-card-dimensions .progress-bar {
+.performance__entity-card-dimensions .performance__progress-bar {
     height: 10px;
     background: var(--gray-100);
     border-radius: 5px;
@@ -671,7 +671,7 @@
     position: relative;
 }
 
-.performance__entity-card-dimensions .progress-fill {
+.performance__entity-card-dimensions .performance__progress-fill {
     height: 100%;
     border-radius: 5px;
     transition: width 0.4s ease-out;
@@ -679,56 +679,56 @@
 }
 
 /* 质量维度 - 绿色系 */
-.progress-quality {
+.performance__progress-quality {
     background: linear-gradient(90deg,
         #10b981 0%,
         #34d399 100%);
 }
 
 /* 交付维度 - 蓝色系 */
-.progress-delivery {
+.performance__progress-delivery {
     background: linear-gradient(90deg,
         #3b82f6 0%,
         #60a5fa 100%);
 }
 
 /* 服务维度 - 紫色系 */
-.progress-service {
+.performance__progress-service {
     background: linear-gradient(90deg,
         #8b5cf6 0%,
         #a78bfa 100%);
 }
 
 /* 自定义维度1 - 粉红渐变 */
-.progress-custom-1 {
+.performance__progress-custom-1 {
     background: linear-gradient(90deg,
         #ec4899 0%,
         #f472b6 100%);
 }
 
 /* 自定义维度2 - 青色渐变 */
-.progress-custom-2 { 
+.performance__progress-custom-2 { 
     background: linear-gradient(90deg, 
         #06b6d4 0%, 
         #22d3ee 100%);
 }
 
 /* 自定义维度3 - 天蓝渐变 */
-.progress-custom-3 { 
+.performance__progress-custom-3 { 
     background: linear-gradient(90deg, 
         #0ea5e9 0%, 
         #38bdf8 100%);
 }
 
 /* 自定义维度4 - 靛蓝渐变 */
-.progress-custom-4 { 
+.performance__progress-custom-4 { 
     background: linear-gradient(90deg, 
         #6366f1 0%, 
         #818cf8 100%);
 }
 
 /* 自定义维度5 - 绿松石渐变 */
-.progress-custom-5 { 
+.performance__progress-custom-5 { 
     background: linear-gradient(90deg, 
         #14b8a6 0%, 
         #2dd4bf 100%);
@@ -741,7 +741,7 @@
     }
 }
 
-.performance__entity-card-dimensions .progress-fill {
+.performance__entity-card-dimensions .performance__progress-fill {
     animation: progressLoad 0.6s ease-out forwards;
 }
 
@@ -794,12 +794,12 @@
 }
 
 /* 无来料卡片的 footer */
-.entity-card--no-material .entity-card-footer {
+.performance__entity-card--no-material .performance__entity-card-footer {
     color: var(--gray-500);
     border-top-color: var(--gray-200);
 }
 
-.entity-card-footer::before {
+.performance__entity-card-footer::before {
     content: '';
     display: inline-block;
     width: 16px;
@@ -810,7 +810,7 @@
     opacity: 0.8;
 }
 
-.entity-card--no-material .entity-card-footer::before {
+.performance__entity-card--no-material .performance__entity-card-footer::before {
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cpath d='M12 8v4'/%3E%3Cpath d='M12 16h.01'/%3E%3C/svg%3E");
 }
 
@@ -846,7 +846,7 @@
     }
 }
 
-.performance__evaluation-modal.hidden {
+.performance__evaluation-modal.performance__hidden {
     display: none;
 }
 
@@ -888,7 +888,7 @@
     overflow: hidden;
 }
 
-.evaluation-modal-header::before {
+.performance__evaluation-modal-header::before {
     content: '';
     position: absolute;
     top: 0;
@@ -1983,7 +1983,7 @@
     }
 }
 
-.performance__confirm-dialog.hidden {
+.performance__confirm-dialog.performance__hidden {
     display: none;
 }
 
@@ -2051,7 +2051,7 @@
 }
 
 /* 质量维度提示框 */
-.quality-tooltip {
+.performance__quality-tooltip {
     background: var(--primary-700);
     color: var(--white);
     padding: 10px 14px;

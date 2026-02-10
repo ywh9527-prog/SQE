@@ -862,25 +862,25 @@
                         // 根据维度类型选择进度条样式
                         let progressClass = '';
                         if (dimension.key === 'quality') {
-                            progressClass = 'progress-quality';
+                            progressClass = 'performance__progress-quality';
                         } else if (dimension.key === 'delivery') {
-                            progressClass = 'progress-delivery';
+                            progressClass = 'performance__progress-delivery';
                         } else if (dimension.key === 'service') {
-                            progressClass = 'progress-service';
+                            progressClass = 'performance__progress-service';
                         } else {
                             // 自定义维度使用预设的5种颜色策略
-                            progressClass = customDimensionColors[customIndex % customDimensionColors.length];
+                            progressClass = 'performance__' + customDimensionColors[customIndex % customDimensionColors.length];
                             customIndex++;
                         }
 
                         dimensionsHtml += `
                             <div class="performance__dimension-item">
-                                <div class="dimension-header">
-                                    <span class="dimension-name">${dimension.name}</span>
-                                    <span class="dimension-score">${score}</span>
+                                <div class="performance__dimension-header">
+                                    <span class="performance__dimension-name">${dimension.name}</span>
+                                    <span class="performance__dimension-score">${score}</span>
                                 </div>
-                                <div class="progress-bar">
-                                    <div class="progress-fill ${progressClass}" style="width: ${score}%" data-score="${score}"></div>
+                                <div class="performance__progress-bar">
+                                    <div class="performance__progress-fill ${progressClass}" style="width: ${score}%" data-score="${score}"></div>
                                 </div>
                             </div>
                         `;
@@ -893,7 +893,7 @@
                     <div class="performance__entity-card-header">
                         <span class="performance__rank-badge performance__rank-other">#</span>
                         <h4 class="performance__entity-card-title">${entity.name || entity.entityName}</h4>
-                        ${!hasMaterial ? '<span class="performance__entity-card-badge no-material">本评价周期无来料</span>' : ''}
+                        ${!hasMaterial ? '<span class="performance__entity-card-badge performance__no-material">本评价周期无来料</span>' : ''}
                     </div>
                     <div class="performance__entity-card-score">
                         <div class="performance__total-score">${entity.totalScore}</div>
@@ -927,7 +927,7 @@
                 card.innerHTML = `
                     <div class="performance__entity-card-header">
                         <h4 class="performance__entity-card-title">${entity.name || entity.entityName}</h4>
-                        ${!hasMaterial ? '<span class="performance__entity-card-badge no-material">本评价周期无来料</span>' : '<span class="performance__entity-card-status pending">待评价</span>'}
+                        ${!hasMaterial ? '<span class="performance__entity-card-badge performance__no-material">本评价周期无来料</span>' : '<span class="performance__entity-card-status performance__pending">待评价</span>'}
                     </div>
                     <div class="performance__entity-card-quality">
                         <div class="performance__quality-item">
@@ -1097,7 +1097,7 @@
                     
                     const hideTooltip = () => {
                         tooltipTimeout = setTimeout(() => {
-                            const existing = document.querySelector('.quality-tooltip');
+                            const existing = document.querySelector('.performance__quality-tooltip');
                             if (existing) existing.remove();
                         }, 200);
                     };
@@ -1241,11 +1241,11 @@
 
         // 在标题位置显示质量维度提示（不遮挡内容）
         showQualityTooltipAtTitle(track, title) {
-            const existing = document.querySelector('.quality-tooltip');
+            const existing = document.querySelector('.performance__quality-tooltip');
             if (existing) existing.remove();
 
             const tooltip = document.createElement('div');
-            tooltip.className = 'quality-tooltip';
+            tooltip.className = 'performance__quality-tooltip';
             tooltip.textContent = '质量维度由系统根据当月合格率自动评分，如需修改分数，请在右侧输入框中直接输入数值';
             
             // 查找标题位置
