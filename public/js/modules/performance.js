@@ -822,7 +822,7 @@
         // 创建单个供应商卡片
         createEntityCard(entity) {
             const card = document.createElement('div');
-            card.className = 'entity-card';
+            card.className = 'performance__entity-card';
 
             // 判断是否已评价
             const isEvaluated = entity.totalScore !== null && entity.totalScore !== undefined;
@@ -832,7 +832,7 @@
             const hasMaterial = qualityData.totalBatches > 0;
 
             if (!hasMaterial) {
-                card.classList.add('entity-card--no-material');
+                card.classList.add('performance__entity-card--no-material');
             }
 
             if (isEvaluated) {
@@ -890,16 +890,16 @@
                 }
 
                 card.innerHTML = `
-                    <div class="entity-card-header">
+                    <div class="performance__entity-card-header">
                         <span class="rank-badge rank-other">#</span>
-                        <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
-                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本评价周期无来料</span>' : ''}
+                        <h4 class="performance__entity-card-title">${entity.name || entity.entityName}</h4>
+                        ${!hasMaterial ? '<span class="performance__entity-card-badge no-material">本评价周期无来料</span>' : ''}
                     </div>
-                    <div class="entity-card-score">
+                    <div class="performance__entity-card-score">
                         <div class="total-score">${entity.totalScore}</div>
                         <span class="grade-badge ${gradeClass}">${gradeText}</span>
                     </div>
-                    <div class="entity-card-quality">
+                    <div class="performance__entity-card-quality">
                         <div class="quality-item">
                             <label>总批次</label>
                             <span>${qualityData.totalBatches}</span>
@@ -913,10 +913,10 @@
                             <span class="pass-rate">${qualityData.passRate}%</span>
                         </div>
                     </div>
-                    <div class="entity-card-dimensions">
+                    <div class="performance__entity-card-dimensions">
                         ${dimensionsHtml}
                     </div>
-                    <div class="entity-card-footer">
+                    <div class="performance__entity-card-footer">
                         <span>趋势: <span class="trend-flat">-</span></span>
                         <span>${new Date().toISOString().split('T')[0]}</span>
                     </div>
@@ -925,11 +925,11 @@
             } else {
                 // 未评价：只显示质量数据，不显示总分和维度
                 card.innerHTML = `
-                    <div class="entity-card-header">
-                        <h4 class="entity-card-title">${entity.name || entity.entityName}</h4>
-                        ${!hasMaterial ? '<span class="entity-card-badge no-material">本评价周期无来料</span>' : '<span class="entity-card-status pending">待评价</span>'}
+                    <div class="performance__entity-card-header">
+                        <h4 class="performance__entity-card-title">${entity.name || entity.entityName}</h4>
+                        ${!hasMaterial ? '<span class="performance__entity-card-badge no-material">本评价周期无来料</span>' : '<span class="performance__entity-card-status pending">待评价</span>'}
                     </div>
-                    <div class="entity-card-quality">
+                    <div class="performance__entity-card-quality">
                         <div class="quality-item">
                             <label>总批次</label>
                             <span>${qualityData.totalBatches}</span>
@@ -943,7 +943,7 @@
                             <span class="pass-rate">${qualityData.passRate}%</span>
                         </div>
                     </div>
-                    <div class="entity-card-footer">
+                    <div class="performance__entity-card-footer">
                         <span>${hasMaterial ? '点击卡片开始评价' : '无需评价'}</span>
                     </div>
                 `;

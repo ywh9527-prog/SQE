@@ -814,13 +814,13 @@
    供应商卡片
    ============================================ */
 
-.vendor-cards {
+.performance__vendor-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: var(--border-radius-md);
 }
 
-.vendor-card {
+.performance__vendor-card {
     background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
     border: 1px solid var(--gray-200);
     border-radius: var(--border-radius-md);
@@ -828,69 +828,69 @@
     transition: all var(--transition-base);
 }
 
-.vendor-card:hover {
+.performance__vendor-card:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
 }
 
-.vendor-card.top {
+.performance__vendor-card.top {
     border-left: 4px solid var(--success);
 }
 
-.vendor-card.bottom {
+.performance__vendor-card.bottom {
     border-left: 4px solid var(--danger);
 }
 
-.vendor-card-header {
+.performance__vendor-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--border-radius-sm);
 }
 
-.vendor-card-title {
+.performance__vendor-card-title {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--gray-900);
 }
 
-.vendor-card-badge {
+.performance__vendor-card-badge {
     padding: calc(var(--border-radius-xs) * 0.5) var(--border-radius-sm);
     border-radius: 20px;
     font-size: 0.75rem;
     font-weight: 600;
 }
 
-.vendor-card-badge.success {
+.performance__vendor-card-badge.success {
     background: var(--success-50);
     color: var(--success-600);
 }
 
-.vendor-card-badge.danger {
+.performance__vendor-card-badge.danger {
     background: var(--danger-50);
     color: var(--danger-600);
 }
 
-.vendor-card-badge.warning {
+.performance__vendor-card-badge.warning {
     background: var(--warning-50);
     color: var(--warning-600);
 }
 
-.vendor-card-score {
+.performance__vendor-card-score {
     font-size: 1.75rem;
     font-weight: 700;
     color: var(--gray-900);
     margin-bottom: calc(var(--border-radius-xs) * 0.5);
 }
 
-.vendor-card-meta {
+.performance__vendor-card-meta {
     font-size: 0.75rem;
     color: var(--gray-600);
 }
 
 /* 响应式 */
 @media (max-width: 768px) {
-    .vendor-cards {
+    .performance__vendor-cards {
         grid-template-columns: 1fr;
     }
 }

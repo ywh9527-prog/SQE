@@ -6,21 +6,22 @@
 ## 文件清单
 | 文件 | 行数 | 状态 |
 |------|------|------|
-| performance-evaluation.css | 2075 | 待处理 |
-| performance-dashboard.css | 896 | 待处理 |
+| performance-evaluation.css | 2075 | 部分完成（布局+卡片） |
+| performance-dashboard.css | 896 | 部分完成（卡片） |
 | performance-config.css | 263 | 待处理 |
 
 ## 重构进度
 
 ### 第一批：布局容器类 ✅ 已完成
 - [x] CSS修改 (8个类名)
-- [x] HTML修改 (10处)
-- [ ] 用户验证 ⏳ 待验证
+- [x] HTML/JS修改
+- [x] 用户验证 ✅ 2026-02-10
 
-### 第二批：卡片组件类 ⏳ 待开始
-- [ ] CSS修改
-- [ ] HTML/JS修改
-- [ ] 用户验证
+### 第二批：卡片组件类 ✅ 已完成
+- [x] CSS修改 (20+类名) - performance-evaluation.css
+- [x] CSS修改 (14类名) - performance-dashboard.css
+- [x] HTML/JS修改
+- [x] 用户验证 ✅ 2026-02-10
 
 ### 第三批：表单元素类 ⏳ 待开始
 - [ ] CSS修改
@@ -42,23 +43,35 @@
 ### performance-evaluation.css 待修改类名
 ```
 .period-actions → .performance__period-actions
-.evaluation-header → .performance__evaluation-header
-.evaluation-info → .performance__evaluation-info
-.evaluation-content → .performance__evaluation-content
-.entity-section → .performance__entity-section
-.entity-section--no-material → .performance__entity-section--no-material
-.entity-section-header → .performance__entity-section-header
-.entity-section-count → .performance__entity-section-count
-.vendor-cards → .performance__vendor-cards
-.entity-card → .performance__entity-card
-.entity-card-badge → .performance__entity-card-badge
-.entity-card-header → .performance__entity-card-header
-.entity-card-title → .performance__entity-card-title
-.entity-card-status → .performance__entity-card-status
-.entity-card-score → .performance__entity-card-score
-.entity-card-dimensions → .performance__entity-card-dimensions
-.entity-card-quality → .performance__entity-card-quality
-.entity-card-footer → .performance__entity-card-footer
+.evaluation-header → .performance__evaluation-header ✅
+.evaluation-info → .performance__evaluation-info ✅
+.evaluation-content → .performance__evaluation-content ✅
+.entity-section → .performance__entity-section ✅
+.entity-section--no-material → .performance__entity-section--no-material ✅
+.entity-section-header → .performance__entity-section-header ✅
+.entity-section-count → .performance__entity-section-count ✅
+
+// 第二批：卡片组件类 ✅ 已完成
+.vendor-cards → .performance__vendor-cards ✅
+.entity-card → .performance__entity-card ✅
+.entity-card-badge → .performance__entity-card-badge ✅
+.entity-card-header → .performance__entity-card-header ✅
+.entity-card-title → .performance__entity-card-title ✅
+.entity-card-status → .performance__entity-card-status ✅
+.entity-card-score → .performance__entity-card-score ✅
+.entity-card-dimensions → .performance__entity-card-dimensions ✅
+.entity-card-quality → .performance__entity-card-quality ✅
+.entity-card-footer → .performance__entity-card-footer ✅
+.entity-card--no-material → .performance__entity-card--no-material ✅
+.rank-badge → .rank-badge (通用类名，保持不变)
+
+// performance-dashboard.css
+.vendor-card → .performance__vendor-card ✅
+.vendor-card-header → .performance__vendor-card-header ✅
+.vendor-card-title → .performance__vendor-card-title ✅
+.vendor-card-badge → .performance__vendor-card-badge ✅
+.vendor-card-score → .performance__vendor-card-score ✅
+.vendor-card-meta → .performance__vendor-card-meta ✅
 .evaluation-modal → .performance__evaluation-modal
 .evaluation-modal-content → .performance__evaluation-modal-content
 .evaluation-modal-header → .performance__evaluation-modal-header

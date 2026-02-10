@@ -1086,13 +1086,13 @@
             const top5Html = top5.map(vendor => {
                 const gradeInfo = getGradeInfo(vendor.totalScore);
                 return `
-                    <div class="vendor-card top">
-                        <div class="vendor-card-header">
-                            <span class="vendor-card-title">${vendor.entityName}</span>
-                            <span class="vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
+                    <div class="performance__vendor-card top">
+                        <div class="performance__vendor-card-header">
+                            <span class="performance__vendor-card-title">${vendor.entityName}</span>
+                            <span class="performance__vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
                         </div>
-                        <div class="vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
-                        <div class="vendor-card-meta">年度平均分</div>
+                        <div class="performance__vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
+                        <div class="performance__vendor-card-meta">年度平均分</div>
                     </div>
                 `;
             }).join('');
@@ -1100,13 +1100,13 @@
             const bottom5Html = bottom5.map(vendor => {
                 const gradeInfo = getGradeInfo(vendor.totalScore);
                 return `
-                    <div class="vendor-card bottom">
-                        <div class="vendor-card-header">
-                            <span class="vendor-card-title">${vendor.entityName}</span>
-                            <span class="vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
+                    <div class="performance__vendor-card bottom">
+                        <div class="performance__vendor-card-header">
+                            <span class="performance__vendor-card-title">${vendor.entityName}</span>
+                            <span class="performance__vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
                         </div>
-                        <div class="vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
-                        <div class="vendor-card-meta">年度平均分</div>
+                        <div class="performance__vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
+                        <div class="performance__vendor-card-meta">年度平均分</div>
                     </div>
                 `;
             }).join('');

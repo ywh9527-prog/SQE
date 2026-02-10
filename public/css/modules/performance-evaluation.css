@@ -480,15 +480,15 @@
    供应商卡片列表
    ============================================ */
 
-.entity-cards,
-.vendor-cards {
+.performance__entity-cards,
+.performance__vendor-cards {
     flex: 1;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
     gap: var(--border-radius-lg);
 }
 
-.entity-card {
+.performance__entity-card {
     background: var(--gray-50);
     border-radius: var(--border-radius-lg);
     padding: calc(var(--border-radius-lg) * 1.5);
@@ -498,30 +498,30 @@
     border: 2px solid transparent;
 }
 
-.entity-card:hover {
+.performance__entity-card:hover {
     transform: translateY(-4px);
     box-shadow: var(--shadow-lg);
     border-color: var(--primary-500);
 }
 
-.entity-card.evaluated {
+.performance__entity-card.evaluated {
     border-color: var(--success);
 }
 
-.entity-card.current {
+.performance__entity-card.current {
     border-color: var(--primary-500);
     box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.2);
 }
 
 /* 无来料卡片特殊样式 */
-.entity-card--no-material {
+.performance__entity-card--no-material {
     background: #f8f9fa;
     opacity: 0.9;
     border: 2px dashed var(--gray-300);
     cursor: not-allowed;
 }
 
-.entity-card--no-material:hover {
+.performance__entity-card--no-material:hover {
     transform: none;
     box-shadow: var(--shadow-sm);
     border-color: var(--gray-400);
@@ -529,7 +529,7 @@
 }
 
 /* 本月无来料标签 */
-.entity-card-badge {
+.performance__entity-card-badge {
     display: inline-flex;
     align-items: center;
     padding: 4px 12px;
@@ -540,7 +540,7 @@
     letter-spacing: 0.5px;
 }
 
-.entity-card-badge.no-material {
+.performance__entity-card-badge.no-material {
     background: var(--gray-200);
     color: var(--gray-600);
 }
@@ -563,21 +563,21 @@
 .rank-3 { background: #b45309; }
 .rank-other { background: var(--gray-200); color: var(--gray-500); }
 
-.entity-card-header {
+.performance__entity-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: var(--border-radius-lg);
 }
 
-.entity-card-title {
+.performance__entity-card-title {
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
     margin: 0;
 }
 
-.entity-card-status {
+.performance__entity-card-status {
     display: inline-flex;
     align-items: center;
     gap: calc(var(--border-radius-sm) * 0.25);
@@ -587,30 +587,30 @@
     font-weight: 500;
 }
 
-.entity-card-status.pending {
+.performance__entity-card-status.pending {
     background: var(--danger-light);
     color: var(--danger);
 }
 
-.entity-card-status.completed {
+.performance__entity-card-status.completed {
     background: var(--success-light);
     color: var(--success);
 }
 
 /* 总分显示 */
-.entity-card-score {
+.performance__entity-card-score {
     text-align: center;
     margin-bottom: var(--border-radius-lg);
 }
 
-.entity-card-score .total-score {
+.performance__entity-card-score .total-score {
     font-size: 2.25rem;
     font-weight: 700;
     color: var(--gray-800);
     line-height: 1;
 }
 
-.entity-card-score .grade-badge {
+.performance__entity-card-score .grade-badge {
     display: inline-block;
     padding: calc(var(--border-radius-sm) * 0.25) calc(var(--border-radius-sm) * 0.75);
     border-radius: 9999px;
@@ -625,11 +625,11 @@
 .grade-poor { background: var(--danger-light); color: var(--danger); }
 
 /* 各维度进度条 */
-.entity-card-dimensions {
+.performance__entity-card-dimensions {
     margin-top: var(--border-radius-lg);
 }
 
-.entity-card-dimensions .dimension-item {
+.performance__entity-card-dimensions .dimension-item {
     padding: calc(var(--border-radius-sm) * 0.75);
     background: var(--gray-50);
     border-radius: var(--border-radius-sm);
@@ -637,7 +637,7 @@
     display: block;
 }
 
-.entity-card-dimensions .dimension-header {
+.performance__entity-card-dimensions .dimension-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -645,14 +645,14 @@
     width: 100%;
 }
 
-.entity-card-dimensions .dimension-name {
+.performance__entity-card-dimensions .dimension-name {
     font-size: 0.875rem;
     color: var(--gray-700);
     font-weight: 500;
     white-space: nowrap;
 }
 
-.entity-card-dimensions .dimension-score {
+.performance__entity-card-dimensions .dimension-score {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-600);
@@ -661,7 +661,7 @@
     min-width: 3rem;
 }
 
-.entity-card-dimensions .progress-bar {
+.performance__entity-card-dimensions .progress-bar {
     height: 10px;
     background: var(--gray-100);
     border-radius: 5px;
@@ -671,7 +671,7 @@
     position: relative;
 }
 
-.entity-card-dimensions .progress-fill {
+.performance__entity-card-dimensions .progress-fill {
     height: 100%;
     border-radius: 5px;
     transition: width 0.4s ease-out;
@@ -679,30 +679,30 @@
 }
 
 /* 质量维度 - 绿色系 */
-.progress-quality { 
-    background: linear-gradient(90deg, 
-        #10b981 0%, 
+.progress-quality {
+    background: linear-gradient(90deg,
+        #10b981 0%,
         #34d399 100%);
 }
 
 /* 交付维度 - 蓝色系 */
-.progress-delivery { 
-    background: linear-gradient(90deg, 
-        #3b82f6 0%, 
+.progress-delivery {
+    background: linear-gradient(90deg,
+        #3b82f6 0%,
         #60a5fa 100%);
 }
 
 /* 服务维度 - 紫色系 */
-.progress-service { 
-    background: linear-gradient(90deg, 
-        #8b5cf6 0%, 
+.progress-service {
+    background: linear-gradient(90deg,
+        #8b5cf6 0%,
         #a78bfa 100%);
 }
 
 /* 自定义维度1 - 粉红渐变 */
-.progress-custom-1 { 
-    background: linear-gradient(90deg, 
-        #ec4899 0%, 
+.progress-custom-1 {
+    background: linear-gradient(90deg,
+        #ec4899 0%,
         #f472b6 100%);
 }
 
@@ -741,12 +741,12 @@
     }
 }
 
-.entity-card-dimensions .progress-fill {
+.performance__entity-card-dimensions .progress-fill {
     animation: progressLoad 0.6s ease-out forwards;
 }
 
 /* 质量数据（所有卡片都显示） */
-.entity-card-quality {
+.performance__entity-card-quality {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: calc(var(--border-radius-sm) * 0.75);
@@ -756,11 +756,11 @@
     border-radius: var(--border-radius-sm);
 }
 
-.entity-card-quality .quality-item {
+.performance__entity-card-quality .quality-item {
     text-align: center;
 }
 
-.entity-card-quality .quality-item label {
+.performance__entity-card-quality .quality-item label {
     display: block;
     font-size: 0.75rem;
     color: var(--gray-500);
@@ -768,19 +768,19 @@
     white-space: nowrap;
 }
 
-.entity-card-quality .quality-item span {
+.performance__entity-card-quality .quality-item span {
     display: block;
     font-size: 1.1rem;
     font-weight: 600;
     color: var(--gray-800);
 }
 
-.entity-card-quality .quality-item span.pass-rate {
+.performance__entity-card-quality .quality-item span.pass-rate {
     color: var(--primary-600);
 }
 
 /* 卡片底部信息（趋势、日期） */
-.entity-card-footer {
+.performance__entity-card-footer {
     margin-top: var(--border-radius-lg);
     padding-top: var(--border-radius-md);
     border-top: 1px dashed var(--gray-300);
@@ -1643,7 +1643,7 @@
         gap: calc(var(--border-radius-sm) * 0.5);
     }
 
-    .entity-cards {
+    .performance__entity-cards {
         grid-template-columns: 1fr;
     }
 }
