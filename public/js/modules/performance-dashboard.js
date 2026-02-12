@@ -508,14 +508,20 @@
                 const sortedVendors = [...vendorAnnualData.entries()]
                     .sort((a, b) => b[1].averageScore - a[1].averageScore);
                 const rank = sortedVendors.findIndex(([name]) => name === vendor) + 1;
+                const totalCount = sortedVendors.length;
 
-                let rankBadgeClass = 'rank-other';
-                if (rank === 1) rankBadgeClass = 'rank-1';
-                else if (rank === 2) rankBadgeClass = 'rank-2';
-                else if (rank === 3) rankBadgeClass = 'rank-3';
+                // 根据排名设置data属性，用于CSS选择
+                let rankDataAttr = '';
+                if (rank <= 5) {
+                    rankDataAttr = `data-rank="top-${rank}"`;
+                } else if (rank > totalCount - 5) {
+                    rankDataAttr = 'data-rank="last"';
+                } else {
+                    rankDataAttr = 'data-rank="middle"';
+                }
 
                 heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                    <span class="performance__heatmap-rank-badge ${rankBadgeClass}">${rank}</span>
+                    <span class="performance__heatmap-rank-badge" ${rankDataAttr}>${rank}</span>
                 </td>`;
 
                 // 供应商名称
@@ -578,7 +584,7 @@
                     heatmapHtml += '<tr>';
                     heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 500;">${vendorsWithData.length + index + 1}</td>`;
                     heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                        <span class="performance__heatmap-rank-badge rank-other">-</span>
+                        <span class="performance__heatmap-rank-badge">-</span>
                     </td>`;
                     heatmapHtml += `<td style="padding: 8px; font-weight: 500;">${vendor}</td>`;
                     months.forEach(() => {

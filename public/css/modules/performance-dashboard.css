@@ -149,12 +149,12 @@
 /* 平均综合得分 - 视觉焦点卡片 */
 .performance__main-score {
     text-align: center;
-    padding: var(--border-radius-xl) var(--border-radius-lg);
+    padding: var(--border-radius-lg);
     background: linear-gradient(145deg, 
         var(--primary-500) 0%, 
         var(--primary-600) 50%, 
         var(--primary-700) 100%);
-    border-radius: var(--border-radius-lg);
+    border-radius: var(--border-radius-md);
     color: var(--white);
     box-shadow: 
         0 4px 15px rgba(20, 184, 166, 0.35),
@@ -163,9 +163,10 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    min-height: 180px;
     position: relative;
     overflow: hidden;
+    height: 100%;
+    min-height: 120px;
 }
 
 .performance__main-score::before {
@@ -193,24 +194,24 @@
 }
 
 .performance__main-score h3 {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     opacity: 0.95;
-    margin-bottom: var(--border-radius-md);
+    margin-bottom: var(--border-radius-sm);
     font-weight: 500;
     letter-spacing: 0.05em;
     text-transform: uppercase;
 }
 
 .performance__main-score .performance__score-value {
-    font-size: 3.5rem;
+    font-size: 2.75rem;
     font-weight: 700;
     line-height: 1.1;
-    margin-bottom: var(--border-radius-sm);
+    margin-bottom: var(--border-radius-xs);
     text-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .performance__main-score .performance__trend {
-    font-size: 0.9375rem;
+    font-size: 0.8125rem;
     opacity: 0.9;
     font-weight: 500;
     display: inline-flex;
@@ -218,7 +219,7 @@
     justify-content: center;
     gap: calc(var(--border-radius-xs) * 0.5);
     background: rgba(255, 255, 255, 0.15);
-    padding: calc(var(--border-radius-xs) * 0.75) var(--border-radius-sm);
+    padding: 4px var(--border-radius-sm);
     border-radius: 999px;
     backdrop-filter: blur(4px);
 }
@@ -241,13 +242,14 @@
 .performance__grade-distribution {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--border-radius-md);
+    gap: var(--border-radius-sm);
     position: relative;
+    align-items: stretch;
 }
 
 .performance__grade-card {
-    padding: var(--border-radius-lg);
-    border-radius: var(--border-radius-lg);
+    padding: var(--border-radius-md);
+    border-radius: var(--border-radius-md);
     text-align: center;
     border: 1px solid transparent;
     transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
@@ -260,6 +262,9 @@
         0 2px 6px rgba(0, 0, 0, 0.02),
         inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
         inset 0 -1px 0 0 rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 /* 卡片光效动画 */
@@ -330,9 +335,9 @@
 }
 
 .performance__grade-card h3 {
-    font-size: 0.8125rem;
+    font-size: 0.75rem;
     color: currentColor;
-    margin-bottom: var(--border-radius-xs);
+    margin-bottom: 2px;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -340,25 +345,47 @@
 }
 
 .performance__grade-card .performance__count {
-    font-size: 2rem;
+    font-size: 1.75rem;
     font-weight: 700;
-    margin-bottom: calc(var(--border-radius-xs) * 0.5);
+    margin-bottom: 2px;
     color: currentColor;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
 .performance__grade-card .performance__percentage {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: currentColor;
     font-weight: 500;
     opacity: 0.8;
 }
 
-/* 关键指标 - 垂直列表 */
+/* 关键指标 - 水平排列卡片 */
 .performance__key-metrics {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     gap: var(--border-radius-sm);
+    align-items: stretch;
+}
+
+.performance__metric-item {
+    flex: 1;
+    padding: var(--border-radius-sm) var(--border-radius-md);
+    border-radius: var(--border-radius-md);
+    text-align: center;
+    border: 1px solid transparent;
+    transition: all 400ms cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(249, 250, 251, 0.95) 100%);
+    box-shadow:
+        0 4px 12px rgba(0, 0, 0, 0.05),
+        0 2px 6px rgba(0, 0, 0, 0.02),
+        inset 0 1px 0 0 rgba(255, 255, 255, 0.9),
+        inset 0 -1px 0 0 rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .performance__metric-item {
@@ -390,7 +417,7 @@
 }
 
 .performance__metric-item:hover {
-    transform: translateX(4px);
+    transform: translateY(-2px);
     box-shadow:
         0 8px 24px rgba(0, 0, 0, 0.08),
         0 4px 12px rgba(0, 0, 0, 0.04),
@@ -400,16 +427,16 @@
 }
 
 .performance__metric-item h3 {
-    font-size: 0.75rem;
+    font-size: 0.6875rem;
     color: var(--gray-500);
-    margin-bottom: calc(var(--border-radius-xs) * 0.75);
+    margin-bottom: 2px;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 0.05em;
 }
 
 .performance__metric-item .performance__value {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     font-weight: 700;
     color: var(--gray-900);
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -421,18 +448,10 @@
 }
 
 .performance__metric-item .performance__label {
-    font-size: 0.6875rem;
+    font-size: 0.625rem;
     color: var(--gray-400);
     margin-top: 2px;
     font-weight: 400;
-}
-}
-
-.performance__metric-item .performance__label {
-    font-size: 0.75rem;
-    color: var(--gray-600);
-    margin-top: calc(var(--border-radius-sm) * 0.25);
-    font-weight: 500;
 }
 
 /* ============================================
@@ -953,36 +972,42 @@
     white-space: nowrap;
 }
 
-/* 热力图分数颜色 */
+/* 热力图分数颜色 - 扁平化设计 */
 .performance__heatmap-score {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 40px;
-    padding: calc(var(--border-radius-xs) * 0.5);
+    min-width: 48px;
+    padding: calc(var(--border-radius-xs) * 0.75) var(--border-radius-sm);
     border-radius: var(--border-radius-sm);
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 0.8125rem;
     color: var(--gray-50);
+    transition: all 150ms ease;
 }
 
+/* 高分 - 绿色 */
 .performance__heatmap-score.high {
-    background: var(--success);
+    background: #16a34a;
 }
 
+/* 中等分 - 蓝色 */
 .performance__heatmap-score.medium {
-    background: var(--info);
+    background: #2563eb;
 }
 
+/* 低分 - 红色 */
 .performance__heatmap-score.low {
-    background: var(--danger);
+    background: #dc2626;
 }
 
+/* 无数据 */
 .performance__heatmap-score.empty {
-    background: var(--gray-200);
-    color: var(--gray-400);
+    background: var(--gray-300);
+    color: var(--gray-500);
 }
 
-/* 排名徽章 */
+/* 排名徽章 - 前5绿色，中间黄色，后5红色 */
 .performance__heatmap-rank-badge {
     display: inline-flex;
     align-items: center;
@@ -990,29 +1015,76 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    font-weight: 600;
-    font-size: 0.875rem;
-}
-
-.performance__heatmap-rank-badge.rank-1 {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    font-weight: 700;
+    font-size: 0.8125rem;
+    background: #f59e0b;
     color: var(--gray-900);
-    box-shadow: 0 2px 8px rgba(251, 191, 36, 0.4);
+    transition: all 200ms ease;
 }
 
-.performance__heatmap-rank-badge.rank-2 {
-    background: linear-gradient(135deg, #9ca3af 0%, #6b7280 100%);
+.performance__heatmap-rank-badge:hover {
+    transform: scale(1.1);
+}
+
+/* 前5名 - 绿色 */
+.performance__heatmap-rank-badge[data-rank="top-1"],
+.performance__heatmap-rank-badge[data-rank="top-2"],
+.performance__heatmap-rank-badge[data-rank="top-3"],
+.performance__heatmap-rank-badge[data-rank="top-4"],
+.performance__heatmap-rank-badge[data-rank="top-5"] {
+    background: #16a34a;
     color: var(--gray-50);
 }
 
-.performance__heatmap-rank-badge.rank-3 {
-    background: linear-gradient(135deg, #cd7f32 0%, #a0522d 100%);
+/* 后5名 - 红色 */
+.performance__heatmap-rank-badge[data-rank="last"] {
+    background: #dc2626;
     color: var(--gray-50);
 }
 
-.performance__heatmap-rank-badge.rank-other {
-    background: var(--gray-200);
-    color: var(--gray-600);
+/* 中间名次 - 黄色（默认） */
+
+/* 等级徽章 - 扁平化设计 */
+.performance__grade-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    padding: calc(var(--border-radius-xs) * 0.5) var(--border-radius-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    transition: all 150ms ease;
+}
+
+/* 优秀 - 绿色扁平 */
+.performance__grade-badge.grade-excellent {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+/* 合格 - 蓝色扁平 */
+.performance__grade-badge.grade-good {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+/* 整改后合格 - 橙色扁平 */
+.performance__grade-badge.grade-improve {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+/* 不合格 - 红色扁平 */
+.performance__grade-badge.grade-poor {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
 }
 
 /* 未评价供应商折叠区 */
