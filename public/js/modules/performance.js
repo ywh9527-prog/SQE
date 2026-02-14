@@ -1215,6 +1215,40 @@
                             this.updateTotalScorePreview();
                         });
                     });
+
+                    // 【关键修复】Number输入框实时验证，限制最大值不超过100
+                    // 使用 input 事件而非 change 事件，实现实时修正
+                    numberInput.addEventListener('input', () => {
+                        let value = parseFloat(numberInput.value) || 0;
+                        
+                        // 输入过程中实时限制范围
+                        if (value > 100) {
+                            numberInput.value = 100;
+                            value = 100;
+                        } else if (value < 0) {
+                            numberInput.value = 0;
+                            value = 0;
+                        }
+                        
+                        // 实时更新 Fill 和 Thumb 位置
+                        sliderInput.value = value;
+                        fill.style.width = value + '%';
+                        thumb.style.left = value + '%';
+                        this.updateTotalScorePreview();
+                    });
+
+                    // 失去焦点时最终确认值
+                    numberInput.addEventListener('change', () => {
+                        let value = parseFloat(numberInput.value) || 0;
+                        if (value > 100) value = 100;
+                        if (value < 0) value = 0;
+                        
+                        numberInput.value = value;
+                        sliderInput.value = value;
+                        fill.style.width = value + '%';
+                        thumb.style.left = value + '%';
+                        this.updateTotalScorePreview();
+                    });
                 }
             });
         },
