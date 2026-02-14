@@ -1323,28 +1323,38 @@
             const worsenings = [];
 
             vendorChanges.forEach((changes, vendorName) => {
-                if (changes.length >= 2) {
-                    const lastScore = changes[changes.length - 1].score;
-                    const prevScore = changes[changes.length - 2].score;
+                // 【关键修复】过滤掉没有分数的月份数据
+                // 原因：某些供应商可能某月没有来料记录，导致该月分数为 null
+                // 影响：如果不过滤，prevScore 或 lastScore 可能为 null，导致 toFixed() 调用报错
+                // 解决：使用 validChanges 只保留有有效分数的月份
+                const validChanges = changes.filter(change => change.score !== null);
+
+                // 只有2个以上有效分数才能计算趋势变化（需要至少2个月份对比）
+                if (validChanges.length >= 2) {
+                    // 取最后2个有效月份计算趋势
+                    const lastScore = validChanges[validChanges.length - 1].score;
+                    const prevScore = validChanges[validChanges.length - 2].score;
+
+                    // 计算得分变化（当前期 - 上一期）
                     const change = lastScore - prevScore;
 
+                    // 得分提升超过5分视为改进
                     if (change > 5) {
-                        // 改进（得分提升超过5分）
                         improvements.push({
                             vendorName,
                             prevScore,
                             lastScore,
                             change: change.toFixed(1),
-                            lastPeriod: changes[changes.length - 1].periodName
+                            lastPeriod: validChanges[validChanges.length - 1].periodName
                         });
                     } else if (change < -5) {
-                        // 恶化（得分下降超过5分）
+                        // 得分下降超过5分视为恶化
                         worsenings.push({
                             vendorName,
                             prevScore,
                             lastScore,
                             change: change.toFixed(1),
-                            lastPeriod: changes[changes.length - 1].periodName
+                            lastPeriod: validChanges[validChanges.length - 1].periodName
                         });
                     }
                 }
