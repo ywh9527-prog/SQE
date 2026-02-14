@@ -1533,14 +1533,29 @@ class PerformanceEvaluationService {
                 }
             });
 
-            // 计算每个供应商的年度平均分和最新等级
+            // 【关键修改】在方法内部获取配置，避免顶层await问题
+            const configService = require('./evaluation-config-service');
+            const currentConfig = await configService.getCurrentConfig();
+
+            // 计算每个供应商的年度平均分和等级
             const annualRankings = Array.from(vendorRankings.values())
                 .filter(v => v.count > 0)
-                .map(vendor => ({
-                    entityName: vendor.entityName,
-                    totalScore: vendor.totalScore / vendor.count,
-                    grade: vendor.grades[vendor.grades.length - 1] // 使用最新的等级
-                }))
+                .map(vendor => {
+                    const avgScore = vendor.totalScore / vendor.count;
+                    // 根据年度平均分计算等级，而不是使用最新月份的等级
+                    let grade = '不合格';
+                    for (const rule of currentConfig.gradeRules) {
+                        if (avgScore >= rule.min && avgScore <= rule.max) {
+                            grade = rule.label;
+                            break;
+                        }
+                    }
+                    return {
+                        entityName: vendor.entityName,
+                        totalScore: avgScore,
+                        grade: grade
+                    };
+                })
                 .sort((a, b) => b.totalScore - a.totalScore); // 按平均分降序排列
 
             return {
