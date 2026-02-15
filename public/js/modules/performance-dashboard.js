@@ -12,9 +12,7 @@
         gradeRules: [], // 等级规则（从配置动态获取）
         gradeColors: [], // 预设颜色数组（按顺序分配）
         charts: {
-            trend: null,
-            grade: null,
-            radar: null
+            trend: null
         }
     };
 
@@ -153,8 +151,6 @@
             els.unevaluatedCount = document.getElementById('unevaluatedCount');
             els.totalCount = document.getElementById('totalCount');
             els.trendChart = document.getElementById('trendChart');
-            els.gradeChart = document.getElementById('gradeChart');
-            els.radarChart = document.getElementById('radarChart');
             // 外购/外购切换卡片
             els.resultsTypeCards = document.querySelectorAll('#resultsInterface .performance__type-card');
             els.resultsPurchaseCount = document.getElementById('resultsPurchaseCount');
@@ -260,24 +256,10 @@
                 state.charts.trend.destroy();
                 state.charts.trend = null;
             }
-            if (state.charts.grade) {
-                state.charts.grade.destroy();
-                state.charts.grade = null;
-            }
-            if (state.charts.radar) {
-                state.charts.radar.destroy();
-                state.charts.radar = null;
-            }
             
             // 显示占位符
             if (els.trendChart) {
                 els.trendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
-            }
-            if (els.gradeChart) {
-                els.gradeChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-chart-pie-slice" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
-            }
-            if (els.radarChart) {
-                els.radarChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-polygon" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
             }
         },
 
@@ -756,8 +738,6 @@
         // 渲染图表
         renderCharts() {
             this.renderTrendChart();
-            this.renderGradeChart();
-            this.renderRadarChart();
             this.renderRankingChart();
             this.renderGradePieChart();
             this.renderVendorCards();
@@ -868,110 +848,13 @@
                     interaction: {
                         intersect: false,
                         mode: 'index'
-                    }
-                }
-            });
-        },
-
-        // 渲染等级分布图
-        renderGradeChart() {
-            const { statistics } = state.resultsData;
-            const ctx = els.gradeChart.getContext('2d');
-
-            if (state.charts.grade) {
-                state.charts.grade.destroy();
-            }
-
-            state.charts.grade = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: ['优秀', '合格', '整改后合格', '不合格'],
-                    datasets: [{
-                        data: [
-                            statistics.gradeCount['优秀'] || 0,
-                            statistics.gradeCount['合格'] || 0,
-                            statistics.gradeCount['整改后合格'] || 0,
-                            statistics.gradeCount['不合格'] || 0
-                        ],
-                        backgroundColor: [
-                            'rgba(16, 185, 129, 0.8)',
-                            'rgba(59, 130, 246, 0.8)',
-                            'rgba(245, 158, 11, 0.8)',
-                            'rgba(239, 68, 68, 0.8)'
-                        ],
-                        borderWidth: 2,
-                        borderColor: '#ffffff'
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        },
-
-        // 渲染雷达图
-        renderRadarChart() {
-            const { details } = state.resultsData;
-            const top3 = details
-                .sort((a, b) => b.totalScore - a.totalScore)
-                .slice(0, 3);
-
-            const ctx = els.radarChart.getContext('2d');
-
-            if (state.charts.radar) {
-                state.charts.radar.destroy();
-            }
-
-            const labels = top3.map(d => d.entityName);
-            const dimensions = [];
-            const datasets = [];
-
-            // 提取维度数据
-            const dimensionKeys = top3[0].scores ? Object.keys(top3[0].scores) : ['质量', '交付', '服务'];
-
-            dimensionKeys.forEach((key, index) => {
-                const dataset = {
-                    label: key,
-                    data: top3.map(d => d.scores[key] || 0),
-                    backgroundColor: `rgba(${index * 60 + 20}, ${index * 80 + 40}, ${index * 100 + 60}, 0.2)`,
-                    borderColor: `rgba(${index * 60 + 20}, ${index * 80 + 40}, ${index * 100 + 60}, 1)`,
-                    borderWidth: 2
-                };
-                datasets.push(dataset);
-            });
-
-            state.charts.radar = new Chart(ctx, {
-                type: 'radar',
-                data: {
-                    labels: labels,
-                    datasets: datasets
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            beginAtZero: true,
-                            max: 100
-                        }
-                    },
-                    plugins: {
-                        legend: {
-                            position: 'bottom'
-                        }
-                    }
-                }
-            });
-        },
-
-        // 渲染年度排名柱状图
-        renderRankingChart() {
+                                        }
+                                    }
+                                });
+                            },
+                    
+                            // 渲染年度排名柱状图
+                            renderRankingChart() {
             const { annualRankings } = state.resultsData;
 
             if (!annualRankings || annualRankings.length === 0) {
