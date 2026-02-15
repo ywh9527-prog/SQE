@@ -66,6 +66,22 @@
             return '#6b7280';
         },
 
+        // 辅助函数：根据等级名称获取颜色
+        getGradeColorByName(gradeName) {
+            if (!gradeName || gradeName === '-') return '#6b7280';
+            
+            // 按min从大到小排序
+            const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
+            
+            for (let i = 0; i < sortedRules.length; i++) {
+                if (sortedRules[i].label === gradeName) {
+                    return state.gradeColors[i] || state.gradeColors[state.gradeColors.length - 1] || '#6b7280';
+                }
+            }
+            
+            return '#6b7280';
+        },
+
         // 加载配置
         async loadConfig() {
             try {
@@ -83,24 +99,6 @@
             } catch (error) {
                 console.error('加载等级配置失败:', error);
             }
-        },
-
-        // 辅助函数：根据分数获取颜色（按等级顺序自动分配）
-        getScoreColor(score) {
-            if (score === null || score === undefined) return '#d1d5db';
-            
-            // 按min从大到小排序（优先匹配更高的等级）
-            const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
-            
-            for (let i = 0; i < sortedRules.length; i++) {
-                const rule = sortedRules[i];
-                if (score >= rule.min && score <= rule.max) {
-                    // 按排序后的索引获取颜色
-                    return state.gradeColors[i] || state.gradeColors[state.gradeColors.length - 1] || '#6b7280';
-                }
-            }
-            
-            return '#6b7280';
         },
 
         // 渲染图例（根据配置动态生成）
@@ -582,7 +580,6 @@
 
             // 渲染表格
             let heatmapHtml = '<thead><tr>';
-            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; width: 50px;">序号</th>';
             heatmapHtml += '<th style="padding: 8px; background: #f8fafc; width: 60px;">排名</th>';
             heatmapHtml += '<th style="padding: 8px; background: #f8fafc; min-width: 150px;">供应商</th>';
             months.forEach(month => {
@@ -596,9 +593,6 @@
             heatmapHtml += '<tbody>';
             vendorsWithData.forEach((vendor, index) => {
                 heatmapHtml += '<tr>';
-
-                // 序号
-                heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 500;">${index + 1}</td>`;
 
                 // 排名徽章
                 const annualData = vendorAnnualData.get(vendor);
@@ -647,14 +641,11 @@
                     ${avgScore !== '-' ? avgScore.toFixed(1) : avgScore}
                 </td>`;
 
-                // 等级
+                // 等级（使用配置中的颜色）
                 const grade = annualData ? annualData.grade : '-';
-                let gradeClass = 'grade-good';
-                if (grade === '优秀') gradeClass = 'grade-excellent';
-                else if (grade === '不合格') gradeClass = 'grade-poor';
-                else if (grade === '整改后合格') gradeClass = 'grade-improve';
+                const gradeColor = this.getGradeColorByName(grade);
                 heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                    <span class="performance__grade-badge ${gradeClass}">${grade}</span>
+                    <span class="performance__grade-badge" style="background: ${gradeColor}; color: white;">${grade}</span>
                 </td>`;
 
                 heatmapHtml += '</tr>';
