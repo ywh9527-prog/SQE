@@ -135,7 +135,18 @@
 
         // 关闭配置对话框
         closeConfigModal() {
-            // 使用全局确认对话框
+            // 检查是否有未保存的更改
+            const hasChanges = this.hasUnsavedChanges();
+            
+            if (!hasChanges) {
+                // 没有变更，直接关闭
+                els.configModal.classList.add('hidden');
+                state.config = null;
+                state.originalConfig = null;
+                return;
+            }
+
+            // 有变更，显示确认对话框
             if (window.App && window.App.Modules && window.App.Modules.Performance) {
                 window.App.Modules.Performance.showConfirmDialog(
                     '确认关闭配置',
@@ -147,6 +158,15 @@
                     }
                 );
             }
+        },
+
+        // 检查是否有未保存的更改
+        hasUnsavedChanges() {
+            if (!state.config || !state.originalConfig) {
+                return false;
+            }
+            // 深度比较两个对象
+            return JSON.stringify(state.config) !== JSON.stringify(state.originalConfig);
         },
 
         // 渲染维度列表

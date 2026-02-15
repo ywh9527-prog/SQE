@@ -1533,6 +1533,45 @@
     margin-top: var(--border-radius-xl);
 }
 
+.performance__periods-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--border-radius-lg);
+}
+
+.performance__periods-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--gray-800);
+}
+
+.performance__back-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-xs);
+    padding: var(--border-radius-sm) var(--border-radius-lg);
+    background: var(--white);
+    border: 1px solid var(--gray-300);
+    border-radius: var(--border-radius-lg);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--gray-700);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.performance__back-btn:hover {
+    background: var(--gray-50);
+    border-color: var(--primary-500);
+    color: var(--primary-600);
+}
+
+.performance__back-btn i {
+    font-size: 1rem;
+}
+
 .performance__periods-list h3 {
     margin-bottom: var(--border-radius-lg);
     font-size: 1.25rem;

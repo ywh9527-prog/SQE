@@ -90,6 +90,7 @@
             els.resultsInterface = document.getElementById('resultsInterface');
             els.evaluationPeriodsList = document.getElementById('evaluationPeriodsList');
             els.showPeriodsBtn = document.getElementById('showPeriodsBtn');
+            els.backToMainBtn = document.getElementById('backToMainBtn');
             
             // 外购/外协切换卡片
             els.performanceTypeCards = document.querySelectorAll('.performance__type-card');
@@ -137,6 +138,11 @@
             // 切换到历史评价列表
             if (els.showPeriodsBtn) {
                 els.showPeriodsBtn.addEventListener('click', () => this.showPeriodsList());
+            }
+
+            // 返回主界面
+            if (els.backToMainBtn) {
+                els.backToMainBtn.addEventListener('click', () => this.backToMain());
             }
 
             if (els.closeModalBtn) {
@@ -226,6 +232,16 @@
                 els.evaluationPeriodsList.classList.remove('hidden');
             }
             this.loadEvaluationPeriods();
+        },
+
+        // 返回主界面
+        backToMain() {
+            if (els.evaluationPeriodsList) {
+                els.evaluationPeriodsList.classList.add('hidden');
+            }
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.remove('hidden');
+            }
         },
 
         // 加载评价周期列表
