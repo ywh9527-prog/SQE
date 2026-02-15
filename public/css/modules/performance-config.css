@@ -198,6 +198,13 @@
     color: var(--gray-700);
 }
 
+.performance__grade-rule-item .color-preview {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+}
+
 .performance__grade-rule-item .btn-icon {
     width: 32px;
     height: 32px;

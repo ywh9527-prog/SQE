@@ -16,6 +16,14 @@ class EvaluationConfigService {
                 { name: '交付', key: 'delivery', weight: 0.3 },
                 { name: '服务', key: 'service', weight: 0.2 }
             ],
+            gradeColors: [
+                '#16a34a',
+                '#2563eb',
+                '#f59e0b',
+                '#dc2626',
+                '#6b7280',
+                '#1f2937'
+            ],
             gradeRules: [
                 { min: 95, max: 100, label: '优秀' },
                 { min: 85, max: 94.99, label: '合格' },

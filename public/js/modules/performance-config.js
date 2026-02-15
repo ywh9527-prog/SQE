@@ -186,9 +186,17 @@
         renderGradeRules() {
             if (!state.config || !state.config.gradeRules) return;
 
+            // 预设颜色（按顺序自动分配）
+            const gradeColors = state.config.gradeColors || [
+                '#16a34a', '#2563eb', '#f59e0b', '#dc2626', '#6b7280', '#1f2937'
+            ];
+
             els.gradeRulesList.innerHTML = '';
 
             state.config.gradeRules.forEach((rule, index) => {
+                // 按顺序自动获取颜色
+                const color = gradeColors[index] || gradeColors[gradeColors.length - 1];
+
                 const item = document.createElement('div');
                 item.className = 'performance__grade-rule-item';
                 item.innerHTML = `
@@ -208,6 +216,7 @@
                             onchange="window.App.Modules.PerformanceConfig.updateGradeRule(${index}, 'max', parseFloat(this.value))">
                     </div>
                     <div class="range-display">
+                        <span class="color-preview" style="background: ${color}"></span>
                         ${rule.min} - ${rule.max}
                     </div>
                     <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeGradeRule(${index})">

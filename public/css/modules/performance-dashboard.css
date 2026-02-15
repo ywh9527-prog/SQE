@@ -928,6 +928,10 @@
     background: var(--info);
 }
 
+.performance__legend-color.warning {
+    background: var(--warning);
+}
+
 .performance__legend-color.low {
     background: var(--danger);
 }
@@ -994,6 +998,11 @@
 /* 中等分 - 蓝色 */
 .performance__heatmap-score.medium {
     background: #2563eb;
+}
+
+/* 警告分 - 橙色 */
+.performance__heatmap-score.warning {
+    background: #f59e0b;
 }
 
 /* 低分 - 红色 */

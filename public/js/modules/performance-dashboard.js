@@ -10,6 +10,7 @@
         currentYear: null,
         currentType: 'purchase', // purchase-外购/external-外协
         gradeRules: [], // 等级规则（从配置动态获取）
+        gradeColors: [], // 预设颜色数组（按顺序分配）
         charts: {
             trend: null,
             grade: null,
@@ -47,24 +48,22 @@
             });
         },
 
-        // 辅助函数：根据分数获取颜色等级（根据配置动态决定）
-        getScoreClass(score) {
-            if (score === null || score === undefined) return 'empty';
+        // 辅助函数：根据分数获取颜色（按等级顺序自动分配）
+        getScoreColor(score) {
+            if (score === null || score === undefined) return '#d1d5db';
             
             // 按min从大到小排序（优先匹配更高的等级）
             const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
             
-            for (const rule of sortedRules) {
+            for (let i = 0; i < sortedRules.length; i++) {
+                const rule = sortedRules[i];
                 if (score >= rule.min && score <= rule.max) {
-                    // 根据等级标签返回对应的颜色类
-                    if (rule.label === '优秀') return 'high';
-                    if (rule.label === '不合格') return 'low';
-                    return 'medium';
+                    // 按排序后的索引获取颜色
+                    return state.gradeColors[i] || state.gradeColors[state.gradeColors.length - 1] || '#6b7280';
                 }
             }
             
-            // 默认返回 medium
-            return 'medium';
+            return '#6b7280';
         },
 
         // 加载配置
@@ -73,12 +72,35 @@
                 const response = await this.authenticatedFetch('/api/evaluation-config');
                 const result = await response.json();
                 
-                if (result.success && result.data && result.data.gradeRules) {
-                    state.gradeRules = result.data.gradeRules;
+                if (result.success && result.data) {
+                    if (result.data.gradeRules) {
+                        state.gradeRules = result.data.gradeRules;
+                    }
+                    if (result.data.gradeColors) {
+                        state.gradeColors = result.data.gradeColors;
+                    }
                 }
             } catch (error) {
                 console.error('加载等级配置失败:', error);
             }
+        },
+
+        // 辅助函数：根据分数获取颜色（按等级顺序自动分配）
+        getScoreColor(score) {
+            if (score === null || score === undefined) return '#d1d5db';
+            
+            // 按min从大到小排序（优先匹配更高的等级）
+            const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
+            
+            for (let i = 0; i < sortedRules.length; i++) {
+                const rule = sortedRules[i];
+                if (score >= rule.min && score <= rule.max) {
+                    // 按排序后的索引获取颜色
+                    return state.gradeColors[i] || state.gradeColors[state.gradeColors.length - 1] || '#6b7280';
+                }
+            }
+            
+            return '#6b7280';
         },
 
         // 渲染图例（根据配置动态生成）
@@ -89,12 +111,7 @@
             const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
 
             let legendHtml = '';
-            sortedRules.forEach(rule => {
-                // 根据等级标签确定颜色类
-                let colorClass = 'medium';
-                if (rule.label === '优秀') colorClass = 'high';
-                else if (rule.label === '不合格') colorClass = 'low';
-
+            sortedRules.forEach((rule, index) => {
                 // 生成描述文本
                 let desc = '';
                 if (rule.max === 100) {
@@ -105,8 +122,11 @@
                     desc = `${rule.min}-${rule.max}分`;
                 }
 
+                // 按索引获取颜色
+                const color = state.gradeColors[index] || state.gradeColors[state.gradeColors.length - 1] || '#6b7280';
+
                 legendHtml += `<span class="performance__legend-item">
-                    <span class="performance__legend-color ${colorClass}"></span>
+                    <span class="performance__legend-color" style="background: ${color}"></span>
                     ${rule.label} (${desc})
                 </span>`;
             });
@@ -498,7 +518,7 @@
             if (!els.heatmapTable || !state.resultsData) return;
 
             // 获取配置（如果还没有加载）
-            if (state.gradeRules.length === 0) {
+            if (state.gradeRules.length === 0 || state.gradeColors.length === 0) {
                 await this.loadConfig();
             }
 
@@ -609,10 +629,10 @@
                 months.forEach(month => {
                     const score = scores.get(month);
                     if (score !== undefined && score !== null) {
-                        // 根据配置动态获取分数颜色类
-                        const scoreClass = this.getScoreClass(score);
+                        // 从配置获取颜色
+                        const scoreColor = this.getScoreColor(score);
                         heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                            <span class="performance__heatmap-score ${scoreClass}">${score.toFixed(1)}</span>
+                            <span class="performance__heatmap-score" style="background: ${scoreColor}">${score.toFixed(1)}</span>
                         </td>`;
                     } else {
                         heatmapHtml += `<td style="padding: 8px; text-align: center;">
