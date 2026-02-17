@@ -178,10 +178,60 @@
                 }
             });
 
-            // 填充数据表 (调用 UI 模块的方法，如果有的话，或者直接在这里处理)
-            // 由于这是 Charts 模块，最好只负责图表。数据表填充逻辑应在 UI 模块。
-            // 但为了保持逻辑连贯，我们可以返回计算好的 cumulativePassRates 供 UI 模块使用
+            // 填充数据表
+            this.populateMonthlyPassRateTable(monthDataMap, cumulativePassRates, monthLabels);
+
             return cumulativePassRates;
+        },
+
+        // 填充平均合格率趋势详细数据表
+        populateMonthlyPassRateTable(monthDataMap, cumulativePassRates, monthLabels) {
+            const tableBody = document.querySelector('#monthlyPassRateTable tbody');
+            if (!tableBody) return;
+
+            let cumulativeTotal = 0;
+            let cumulativeOk = 0;
+            let html = '';
+
+            monthLabels.forEach((label, index) => {
+                const month = String(index + 1).padStart(2, '0');
+                const monthData = monthDataMap[month];
+                
+                if (monthData) {
+                    cumulativeTotal += monthData.total;
+                    cumulativeOk += monthData.ok;
+                }
+
+                const avgPassRate = cumulativeTotal > 0 ? (cumulativeOk / cumulativeTotal * 100).toFixed(2) : '0.00';
+
+                if (monthData) {
+                    html += `
+                        <tr>
+                            <td>${label}</td>
+                            <td>${monthData.total}</td>
+                            <td>${monthData.ok}</td>
+                            <td>${monthData.special}</td>
+                            <td>${monthData.return}</td>
+                            <td>${monthData.passRate.toFixed(2)}%</td>
+                            <td>${avgPassRate}%</td>
+                        </tr>
+                    `;
+                } else {
+                    html += `
+                        <tr>
+                            <td>${label}</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>${avgPassRate}%</td>
+                        </tr>
+                    `;
+                }
+            });
+
+            tableBody.innerHTML = html;
         },
 
         // 🎯 [DATA-FLOW] 供应商良率排名图渲染 - 将API数据转换为柱状图
