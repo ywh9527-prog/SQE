@@ -523,56 +523,15 @@
                     state.originalConfig = JSON.parse(JSON.stringify(state.config));
                     els.configModal.classList.add('hidden');
                     
-                    // 通知评价模块重新加载配置并刷新界面
-                    try {
-                        console.log('准备刷新评价界面...');
-                        console.log('window.App:', window.App);
-                        console.log('window.App.Modules:', window.App?.Modules);
-                        console.log('window.App.Modules.Performance:', window.App?.Modules?.Performance);
-                        
-                        if (window.App && window.App.Modules && window.App.Modules.Performance) {
-                            const perfModule = window.App.Modules.Performance;
-                            console.log('Performance模块存在');
-                            console.log('perfModule.state:', perfModule.state);
-                            console.log('perfModule.state.currentEvaluation:', perfModule.state?.currentEvaluation);
-                            
-                            // 重新加载配置
-                            console.log('开始重新加载配置...');
-                            await perfModule.loadConfig();
-                            console.log('配置重新加载完成');
-                            
-                            // 如果当前正在评价界面，重新加载实体数据并渲染卡片
-                            if (perfModule.state && perfModule.state.currentEvaluation) {
-                                console.log('检测到当前正在评价界面，开始刷新实体数据...');
-                                console.log('评价周期ID:', perfModule.state.currentEvaluation.id);
-                                
-                                // 重新加载评价实体数据
-                                const response = await perfModule.authenticatedFetch(
-                                    `/api/evaluations/${perfModule.state.currentEvaluation.id}/entities`
-                                );
-                                const result = await response.json();
-                                
-                                console.log('实体数据响应:', result);
-                                
-                                if (result.success) {
-                                    perfModule.state.entities = result.data;
-                                    console.log('评价实体数据已更新:', perfModule.state.entities);
-                                    
-                                    // 重新渲染卡片
-                                    console.log('开始重新渲染卡片...');
-                                    perfModule.renderEntityCards();
-                                    console.log('卡片重新渲染完成');
-                                }
-                            } else {
-                                console.log('当前不在评价界面，跳过实体数据刷新');
-                            }
-                        } else {
-                            console.warn('Performance模块不存在');
-                        }
-                    } catch (error) {
-                        console.error('刷新评价界面失败:', error);
-                        // 即使刷新失败也不影响配置保存
+                    // 提示用户配置已保存，并刷新页面以应用最新配置
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success('配置已保存，页面将刷新以应用最新配置');
                     }
+                    
+                    // 延迟刷新页面，确保Toast显示完成
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1000);
                 } else {
                     console.error('保存配置失败:', result);
                     // 使用 Toast 通知
