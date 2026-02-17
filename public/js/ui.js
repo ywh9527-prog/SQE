@@ -11,7 +11,6 @@
             sheetTabContainer: 'sheetTabContainer',
             supplierOptions: 'supplierOptions',
             monthlyData: 'monthlyData',
-            cumulativePassRateTableBody: '#cumulativePassRateTable tbody',
             filterInfo: 'filter-info'
         },
 
@@ -115,10 +114,6 @@
             // 4. 显示图表 (调用 Charts 模块)
             if (window.App && window.App.Charts) {
                 window.App.Charts.displayCharts(data);
-
-                // 填充平均合格率趋势表 (需要重新计算累计合格率，或从Charts模块获取)
-                const cumulativePassRates = window.App.Charts.calculateCumulativePassRates(data.monthlyTrend);
-                this.populateCumulativePassRateTable(data.monthlyTrend, cumulativePassRates);
             }
 
             // 5. 显示筛选信息
@@ -448,37 +443,6 @@
                 requestAnimationFrame(() => {
                     renderVisibleItems(start, end);
                 });
-            });
-        },
-
-        populateCumulativePassRateTable(monthlyTrendData, cumulativePassRates) {
-            const tbody = document.querySelector(this.elements.cumulativePassRateTableBody);
-            if (!tbody) return;
-            tbody.innerHTML = '';
-
-            const allMonths = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
-            const monthDataMap = {};
-            monthlyTrendData.forEach(item => {
-                const monthKey = item.month.split('-')[1];
-                monthDataMap[monthKey] = item;
-            });
-
-            allMonths.forEach((month, index) => {
-                const data = monthDataMap[month];
-                if (data) {
-                    const tr = document.createElement('tr');
-                    const okCount = Math.round(data.passRate * data.total / 100);
-                    tr.innerHTML = `
-                        <td>${month}月</td>
-                        <td>${data.total}</td>
-                        <td>${okCount}</td>
-                        <td>${data.specialCount || 0}</td>
-                        <td>${data.returnCount || 0}</td>
-                        <td>${Number(data.passRate).toFixed(2)}%</td>
-                        <td>${Number(cumulativePassRates[index]).toFixed(2)}%</td>
-                    `;
-                    tbody.appendChild(tr);
-                }
             });
         },
 
