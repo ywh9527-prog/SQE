@@ -44,11 +44,13 @@
             data.monthlyTrend.forEach(item => {
                 const monthKey = item.month.split('-')[1];
                 if (allMonths.includes(monthKey)) {
-                    const okValue = Math.round(item.passRate * item.total / 100);
+                    // 确保 passRate 是数字类型，防止 toFixed 报错
+                    const passRate = parseFloat(item.passRate) || 0;
+                    const okValue = Math.round(passRate * item.total / 100);
                     monthDataMap[monthKey] = {
                         total: item.total,
                         ok: okValue,
-                        passRate: item.passRate,
+                        passRate: passRate,
                         return: item.returnCount || 0,
                         special: item.specialCount || 0
                     };
@@ -205,6 +207,8 @@
                 const avgPassRate = cumulativeTotal > 0 ? (cumulativeOk / cumulativeTotal * 100).toFixed(2) : '0.00';
 
                 if (monthData) {
+                    // 确保 passRate 是数字类型后再调用 toFixed
+                    const passRateValue = parseFloat(monthData.passRate) || 0;
                     html += `
                         <tr>
                             <td>${label}</td>
@@ -212,7 +216,7 @@
                             <td>${monthData.ok}</td>
                             <td>${monthData.special}</td>
                             <td>${monthData.return}</td>
-                            <td>${monthData.passRate.toFixed(2)}%</td>
+                            <td>${passRateValue.toFixed(2)}%</td>
                             <td>${avgPassRate}%</td>
                         </tr>
                     `;
