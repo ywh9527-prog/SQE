@@ -25,6 +25,7 @@
             console.log('Performance Dashboard Module: Initializing...');
             this.cacheElements();
             this.bindEvents();
+            this.initYearSelector();
             console.log('Performance Dashboard Module: Initialization complete');
         },
 
@@ -296,16 +297,12 @@
         // 加载年度累计数据
         async loadAccumulatedResults(year, type = 'purchase') {
             try {
-                state.currentYear = year;
-                state.currentType = type;
-
-                // 初始化年份选择器
-                this.initYearSelector();
-
-                // 设置年份选择器的值
+                // 同步年份选择器的值
                 if (els.yearSelector) {
                     els.yearSelector.value = year;
                 }
+                state.currentYear = year;
+                state.currentType = type;
 
                 const response = await this.authenticatedFetch(`/api/evaluations/accumulated/${year}?type=${type}`);
                 const result = await response.json();
@@ -416,16 +413,25 @@
             const startYear = currentYear - 4;
             const endYear = currentYear + 1;
 
+            // 读取localStorage中保存的上一次年份选择
+            const savedYear = localStorage.getItem('performance_year');
+            const defaultYear = savedYear && parseInt(savedYear) >= startYear && parseInt(savedYear) <= endYear 
+                ? parseInt(savedYear) 
+                : currentYear;
+
             els.yearSelector.innerHTML = '';
             for (let year = endYear; year >= startYear; year--) {
                 const option = document.createElement('option');
                 option.value = year;
                 option.textContent = `${year}年`;
-                if (year === currentYear) {
+                if (year === defaultYear) {
                     option.selected = true;
                 }
                 els.yearSelector.appendChild(option);
             }
+
+            // 同步状态
+            state.currentYear = defaultYear;
         },
 
         // 切换年份
@@ -433,6 +439,7 @@
             if (state.currentYear === year) return;
 
             state.currentYear = year;
+            localStorage.setItem('performance_year', year);
 
             // 重新加载数据
             this.loadAccumulatedResults(year, state.currentType);

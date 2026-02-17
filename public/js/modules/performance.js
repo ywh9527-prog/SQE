@@ -197,10 +197,11 @@
         // 加载主界面
         async loadDashboard() {
             try {
-                // 获取当前年份
-                const currentYear = new Date().getFullYear();
+                // 从localStorage读取保存的年份，如果没有则使用当前年份
+                const savedYear = localStorage.getItem('performance_year');
+                const currentYear = savedYear ? parseInt(savedYear) : new Date().getFullYear();
 
-                // 加载当前年份的累计数据（外购）
+                // 加载累计数据（外购）
                 if (window.App.Modules.PerformanceDashboard) {
                     window.App.Modules.PerformanceDashboard.loadAccumulatedResults(currentYear, 'purchase');
                 }

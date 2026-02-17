@@ -531,7 +531,7 @@
                     // 延迟刷新页面，确保Toast显示完成
                     setTimeout(() => {
                         window.location.reload();
-                    }, 1000);
+                    }, 100);
                 } else {
                     console.error('保存配置失败:', result);
                     // 使用 Toast 通知
