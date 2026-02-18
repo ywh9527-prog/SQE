@@ -12,7 +12,6 @@
         gradeRules: [], // 等级规则（从配置动态获取）
         gradeColors: [], // 预设颜色数组（按顺序分配）
         charts: {
-            trend: null,
             ranking: null,
             gradePie: null
         }
@@ -153,7 +152,6 @@
             els.evaluatedCount = document.getElementById('evaluatedCount');
             els.unevaluatedCount = document.getElementById('unevaluatedCount');
             els.totalCount = document.getElementById('totalCount');
-            els.trendChart = document.getElementById('trendChart');
             // 外购/外购切换卡片
             els.resultsTypeCards = document.querySelectorAll('#resultsInterface .performance__type-card');
             els.resultsPurchaseCount = document.getElementById('resultsPurchaseCount');
@@ -254,16 +252,7 @@
 
         // 渲染空状态图表
         renderEmptyCharts() {
-            // 清空现有图表
-            if (state.charts.trend) {
-                state.charts.trend.destroy();
-                state.charts.trend = null;
-            }
-            
             // 显示占位符
-            if (els.trendChart) {
-                els.trendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
-            }
         },
 
         // 加载评价结果
@@ -757,7 +746,6 @@
 
         // 渲染图表
         renderCharts() {
-            this.renderTrendChart();
             this.renderRankingChart();
             this.renderGradePieChart();
             this.renderVendorCards();
@@ -766,114 +754,7 @@
             this.renderTrendImprovement();
         },
 
-        // 渲染趋势图
-        renderTrendChart() {
-            const { trendData } = state.resultsData;
-
-            if (!trendData || trendData.length === 0) {
-                // 显示空状态
-                if (els.trendChart) {
-                    els.trendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无趋势数据</span></div>';
-                }
-                return;
-            }
-
-            const ctx = els.trendChart.getContext('2d');
-
-            if (state.charts.trend) {
-                state.charts.trend.destroy();
-            }
-
-            const labels = trendData.map(d => d.periodName);
-            const data = trendData.map(d => d.averageScore);
-
-            state.charts.trend = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: '平均得分',
-                        data: data,
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.4,
-                        pointBackgroundColor: 'rgb(59, 130, 246)',
-                        pointBorderColor: '#ffffff',
-                        pointBorderWidth: 2,
-                        pointRadius: 4,
-                        pointHoverRadius: 6
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-                            titleFont: {
-                                size: 14,
-                                weight: 'bold'
-                            },
-                            bodyFont: {
-                                size: 12
-                            },
-                            padding: 12,
-                            cornerRadius: 6,
-                            callbacks: {
-                                label: function(context) {
-                                    const index = context.dataIndex;
-                                    const trendItem = trendData[index];
-                                    return [
-                                        `平均得分: ${context.parsed.y.toFixed(1)}分`,
-                                        `评价供应商: ${trendItem.detailsCount}家`,
-                                        `日期: ${trendItem.startDate} ~ ${trendItem.endDate}`
-                                    ];
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: {
-                            grid: {
-                                display: false
-                            },
-                            ticks: {
-                                font: {
-                                    size: 11
-                                }
-                            }
-                        },
-                        y: {
-                            beginAtZero: false,
-                            min: 60,
-                            max: 100,
-                            grid: {
-                                color: 'rgba(0, 0, 0, 0.05)'
-                            },
-                            ticks: {
-                                font: {
-                                    size: 11
-                                },
-                                callback: function(value) {
-                                    return value + '分';
-                                }
-                            }
-                        }
-                    },
-                    interaction: {
-                        intersect: false,
-                        mode: 'index'
-                                        }
-                                    }
-                                });
-                            },
-                    
-                            // 渲染年度排名柱状图
+        // 渲染年度排名柱状图
                             renderRankingChart() {
             const { annualRankings } = state.resultsData;
 
