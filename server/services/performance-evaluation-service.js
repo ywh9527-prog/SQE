@@ -1575,6 +1575,10 @@ class PerformanceEvaluationService {
                     averageScore: parseFloat(averageScore.toFixed(2)),
                     gradeCount
                 },
+                // 添加未评价的供应商列表
+                unevaluatedVendors: Array.from(entityStatusMap.entries())
+                    .filter(([name, status]) => status === 'unevaluated')
+                    .map(([entityName]) => entityName),
                 details: allDetails.map(d => ({
                     evaluationId: d.evaluation_id,
                     periodName: d.evaluation.period_name,

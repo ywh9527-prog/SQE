@@ -512,7 +512,7 @@
             // 渲染图例
             this.renderLegend();
 
-            const { details, annualRankings } = state.resultsData;
+            const { details, annualRankings, unevaluatedVendors } = state.resultsData;
 
             // 生成月份列表（1-12月）
             const months = [];
@@ -551,21 +551,14 @@
                 });
             }
 
-            // 获取所有供应商（从annualRankings中获取）
+            // 获取所有供应商（从annualRankings和unevaluatedVendors中获取）
             const allVendors = annualRankings && annualRankings.length > 0
                 ? annualRankings.map(r => r.entityName)
-                : Array.from(vendorScores.keys());
-
-            // 分离有数据和无数据的供应商
-            const vendorsWithData = allVendors.filter(vendor => {
-                const scores = vendorScores.get(vendor);
-                return scores && scores.size > 0;
-            });
-
-            const vendorsWithoutData = allVendors.filter(vendor => {
-                const scores = vendorScores.get(vendor);
-                return !scores || scores.size === 0;
-            });
+                : [];
+            
+            // 添加未评价的供应商
+            const vendorsWithoutData = unevaluatedVendors || [];
+            const vendorsWithData = allVendors;
 
             // 渲染表格
             let heatmapHtml = '<thead><tr>';
@@ -645,32 +638,43 @@
                 heatmapHtml += '</tbody>';
                 heatmapHtml += `
                     <tr>
-                        <td colspan="${months.length + 5}" style="padding: 0;">
-                            <div class="heatmap-unevaluated-section">
-                                <div class="performance__heatmap-unevaluated-header" id="unevaluatedHeader">
-                                    <h4>未评价供应商 (${vendorsWithoutData.length}家)</h4>
+                        <td colspan="${months.length + 5}" style="padding: 0; border: none;">
+                            <div class="performance__heatmap-unevaluated-section">
+                                <div class="performance__heatmap-unevaluated-header performance__collapsed" id="unevaluatedHeader">
+                                    <h4><i class="ph ph-warning-circle"></i> 未评价供应商 (${vendorsWithoutData.length}家)</h4>
                                     <i class="ph ph-caret-down performance__toggle-icon"></i>
                                 </div>
-                                <div class="heatmap-unevaluated-body" id="unevaluatedBody">
+                                <div class="performance__heatmap-unevaluated-body" id="unevaluatedBody">
                                     <table style="width: 100%; border-collapse: collapse;">
+                                        <thead><tr>
+                                            <th style="padding: 8px; background: #f8fafc; width: 60px;">排名</th>
+                                            <th style="padding: 8px; background: #f8fafc; min-width: 150px;">供应商</th>
+                                            ${months.map(m => `<th style="padding: 8px; background: #f8fafc; text-align: center; width: 70px;">${m}</th>`).join('')}
+                                            <th style="padding: 8px; background: #f8fafc; text-align: center; width: 80px;">年度平均分</th>
+                                            <th style="padding: 8px; background: #f8fafc; text-align: center; width: 60px;">等级</th>
+                                        </tr></thead>
                                         <tbody>
                 `;
 
                 vendorsWithoutData.forEach((vendor, index) => {
                     heatmapHtml += '<tr>';
-                    heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 500;">${vendorsWithData.length + index + 1}</td>`;
-                    heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                        <span class="performance__heatmap-rank-badge">-</span>
+                    // 排名列 - 60px
+                    heatmapHtml += `<td style="padding: 8px; text-align: center; width: 60px;">
+                        <span class="performance__heatmap-rank-badge" style="background: #9ca3af;">-</span>
                     </td>`;
-                    heatmapHtml += `<td style="padding: 8px; font-weight: 500;">${vendor}</td>`;
+                    // 供应商名称列 - min-width 150px
+                    heatmapHtml += `<td style="padding: 8px; font-weight: 500; color: #6b7280; min-width: 150px;">${vendor}</td>`;
+                    // 月份列 - 70px each
                     months.forEach(() => {
-                        heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                            <span class="heatmap-score empty">-</span>
+                        heatmapHtml += `<td style="padding: 8px; text-align: center; width: 70px;">
+                            <span class="performance__heatmap-score empty">-</span>
                         </td>`;
                     });
-                    heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 600;">-</td>`;
-                    heatmapHtml += `<td style="padding: 8px; text-align: center;">
-                        <span class="performance__grade-badge grade-good">-</span>
+                    // 年度平均分列 - 80px
+                    heatmapHtml += `<td style="padding: 8px; text-align: center; font-weight: 600; color: #6b7280; width: 80px;">-</td>`;
+                    // 等级列 - 60px
+                    heatmapHtml += `<td style="padding: 8px; text-align: center; width: 60px;">
+                        <span class="performance__grade-badge" style="background: #9ca3af; color: white;">-</span>
                     </td>`;
                     heatmapHtml += '</tr>';
                 });
@@ -692,9 +696,16 @@
             const unevaluatedHeader = document.getElementById('unevaluatedHeader');
             const unevaluatedBody = document.getElementById('unevaluatedBody');
             if (unevaluatedHeader && unevaluatedBody) {
+                // 点击头部切换折叠状态
                 unevaluatedHeader.addEventListener('click', () => {
-                    unevaluatedHeader.classList.toggle('performance__collapsed');
-                    unevaluatedBody.classList.toggle('performance__expanded');
+                    const isExpanded = unevaluatedBody.classList.contains('performance__expanded');
+                    if (isExpanded) {
+                        unevaluatedBody.classList.remove('performance__expanded');
+                        unevaluatedHeader.classList.add('performance__collapsed');
+                    } else {
+                        unevaluatedBody.classList.add('performance__expanded');
+                        unevaluatedHeader.classList.remove('performance__collapsed');
+                    }
                 });
             }
         },
