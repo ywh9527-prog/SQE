@@ -987,10 +987,6 @@
                                 <i class="ph ph-grid-four"></i>
                                 热力图
                             </button>
-                            <button class="performance__results-tab-btn" data-tab="tab-ranking">
-                                <i class="ph ph-chart-bar"></i>
-                                年度排名
-                            </button>
                             <button class="performance__results-tab-btn" data-tab="tab-trend">
                                 <i class="ph ph-trend-up"></i>
                                 趋势分析
@@ -1015,30 +1011,29 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <!-- Tab 2: 年度排名 -->
-                        <div id="tab-ranking" class="performance__results-tab-content hidden">
-                            <div class="performance__charts-section">
-                                <!-- 年度绩效排名柱状图 -->
-                                <div class="performance__chart-card">
-                                    <h3>年度绩效排名</h3>
-                                    <div class="performance__chart-container">
-                                        <canvas id="rankingChart"></canvas>
+                            <!-- 容器1：包含容器2和3，与热力图等宽 -->
+                            <div class="performance__heatmap-section" style="margin-top: 24px;">
+                                <div class="performance__heatmap-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                                    <!-- 容器2：年度绩效排名 -->
+                                    <div class="performance__chart-card" style="min-width: 0;">
+                                        <h3>年度绩效排名</h3>
+                                        <div class="performance__chart-container">
+                                            <canvas id="rankingChart"></canvas>
+                                        </div>
                                     </div>
-                                </div>
-
-                                <!-- 绩效等级分布饼图 -->
-                                <div class="performance__chart-card">
-                                    <h3>绩效等级分布</h3>
-                                    <div class="performance__chart-container">
-                                        <canvas id="gradePieChart"></canvas>
+                                    <!-- 容器3：绩效等级分布 -->
+                                    <div class="performance__chart-card" style="min-width: 0;">
+                                        <h3>绩效等级分布</h3>
+                                        <div class="performance__chart-container">
+                                            <canvas id="gradePieChart"></canvas>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
                             <!-- 重点关注供应商 -->
-                            <div class="card">
+                            <div class="card" style="margin-top: 24px;">
                                 <h3>重点关注供应商</h3>
                                 <div class="performance__vendor-cards" id="vendorCardsRanking">
                                     <!-- Top5和Bottom5卡片将动态生成 -->
@@ -1046,7 +1041,7 @@
                             </div>
                         </div>
 
-                        <!-- Tab 3: 趋势分析 -->
+                        <!-- Tab 2: 趋势分析 -->
                         <div id="tab-trend" class="performance__results-tab-content hidden">
                             <!-- 单供应商绩效趋势 -->
                             <div class="card">

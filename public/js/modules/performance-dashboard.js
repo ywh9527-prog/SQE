@@ -12,7 +12,9 @@
         gradeRules: [], // 等级规则（从配置动态获取）
         gradeColors: [], // 预设颜色数组（按顺序分配）
         charts: {
-            trend: null
+            trend: null,
+            ranking: null,
+            gradePie: null
         }
     };
 
@@ -940,8 +942,8 @@
                     },
                     scales: {
                         x: {
-                            beginAtZero: false,
-                            min: 60,
+                            beginAtZero: true,
+                            min: 0,
                             max: 100,
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.05)'
