@@ -1463,10 +1463,16 @@ class PerformanceEvaluationService {
             const entityStatusMap = new Map();
             allDetails.forEach(d => {
                 const entityName = d.evaluation_entity_name;
-                // 如果该供应商已经有评价记录，就标记为已评价
-                if (d.total_score !== null && !entityStatusMap.has(entityName)) {
+                // 如果该供应商已经有评价记录，标记为已评价
+                // 无论之前是什么状态，只要有一次评价就应该是已评价
+                if (d.total_score !== null) {
                     entityStatusMap.set(entityName, 'evaluated');
-                } else if (!entityStatusMap.has(entityName)) {
+                }
+            });
+
+            // 补充未评价的供应商（没有任何评价记录的）
+            uniqueEntityNames.forEach(entityName => {
+                if (!entityStatusMap.has(entityName)) {
                     entityStatusMap.set(entityName, 'unevaluated');
                 }
             });
