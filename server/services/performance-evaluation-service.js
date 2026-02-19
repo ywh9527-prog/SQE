@@ -1551,7 +1551,7 @@ class PerformanceEvaluationService {
                     // 根据年度平均分计算等级，而不是使用最新月份的等级
                     let grade = '不合格';
                     for (const rule of currentConfig.gradeRules) {
-                        if (avgScore >= rule.min && avgScore <= rule.max) {
+                        if (avgScore >= rule.min && avgScore < rule.max) {
                             grade = rule.label;
                             break;
                         }

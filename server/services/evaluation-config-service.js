@@ -310,7 +310,7 @@ class EvaluationConfigService {
             // 确定等级
             let grade = '不合格';
             for (const rule of effectiveConfig.gradeRules) {
-                if (totalScore >= rule.min && totalScore <= rule.max) {
+                if (totalScore >= rule.min && totalScore < rule.max) {
                     grade = rule.label;
                     break;
                 }
