@@ -988,8 +988,8 @@
                                 月度绩效概览
                             </button>
                             <button class="performance__results-tab-btn" data-tab="tab-trend">
-                                <i class="ph ph-trend-up"></i>
-                                趋势分析
+                                <i class="ph ph-chart-pie-slice"></i>
+                                年度绩效评价
                             </button>
                         </div>
 
@@ -1048,36 +1048,20 @@
                             </div>
                             <div class="performance__drawer-overlay" id="drawerOverlay"></div>
 
-                            <!-- 重点关注供应商 -->
-                            <div class="card" style="margin-top: 24px;">
-                                <h3>重点关注供应商</h3>
-                                <div class="performance__vendor-cards" id="vendorCardsRanking">
-                                    <!-- Top5和Bottom5卡片将动态生成 -->
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Tab 2: 趋势分析 -->
-                        <div id="tab-trend" class="performance__results-tab-content hidden">
-                            <!-- 单供应商绩效趋势 -->
-                            <div class="card">
-                                <h3>单供应商绩效趋势</h3>
-                                <div class="performance__trend-selector">
-                                    <select id="trendVendorSelect">
-                                        <option value="">选择供应商查看趋势...</option>
-                                    </select>
-                                </div>
-                                <div class="performance__chart-container">
-                                    <canvas id="vendorTrendChart"></canvas>
-                                </div>
-                            </div>
-
                             <!-- 改进/恶化识别 -->
-                            <div class="card">
+                            <div class="card" style="margin-top: 24px;">
                                 <h3>改进/恶化识别</h3>
                                 <div class="performance__trend-list" id="trendList">
                                     <!-- 改进和恶化的供应商列表将动态生成 -->
                                 </div>
+                            </div>
+                        </div>
+
+                        <!-- Tab 2: 年度绩效评价 -->
+                        <div id="tab-trend" class="performance__results-tab-content hidden">
+                            <div style="text-align: center; padding: 4rem; color: #718096;">
+                                <i class="ph ph-chart-line" style="font-size: 48px; opacity: 0.5;"></i>
+                                <p style="margin-top: 16px;">年度绩效评价功能开发中...</p>
                             </div>
                         </div>
                     </div>

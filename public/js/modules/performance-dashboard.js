@@ -166,7 +166,6 @@
             // 年度排名和饼图
             els.rankingChart = document.getElementById('rankingChart');
             els.gradePieChart = document.getElementById('gradePieChart');
-            els.vendorCardsRanking = document.getElementById('vendorCardsRanking');
             // 趋势分析
             els.trendVendorSelect = document.getElementById('trendVendorSelect');
             els.vendorTrendChart = document.getElementById('vendorTrendChart');
@@ -780,7 +779,6 @@
         renderCharts() {
             this.renderRankingChart();
             this.renderGradePieChart();
-            this.renderVendorCards();
             this.renderVendorTrendSelect();
             this.renderVendorTrendChart();
             this.renderTrendImprovement();
@@ -969,75 +967,6 @@
                     }
                 }
             });
-        },
-
-        // 渲染供应商卡片（Top5/Bottom5）
-        renderVendorCards() {
-            const { annualRankings } = state.resultsData;
-
-            if (!annualRankings || annualRankings.length === 0) {
-                if (els.vendorCardsRanking) {
-                    els.vendorCardsRanking.innerHTML = '<div style="text-align: center; padding: 2rem; color: #718096;">暂无数据</div>';
-                }
-                return;
-            }
-
-            const top5 = annualRankings.slice(0, 5);
-            const bottom5 = annualRankings.slice(-5).reverse();
-
-            const getGradeInfo = (score) => {
-                if (score >= 95) return { grade: '优秀', class: 'success' };
-                if (score >= 85) return { grade: '合格', class: 'success' };
-                if (score >= 70) return { grade: '整改后合格', class: 'warning' };
-                return { grade: '不合格', class: 'danger' };
-            };
-
-            const top5Html = top5.map(vendor => {
-                const gradeInfo = getGradeInfo(vendor.totalScore);
-                return `
-                    <div class="performance__vendor-card top">
-                        <div class="performance__vendor-card-header">
-                            <span class="performance__vendor-card-title">${vendor.entityName}</span>
-                            <span class="performance__vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
-                        </div>
-                        <div class="performance__vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
-                        <div class="performance__vendor-card-meta">年度平均分</div>
-                    </div>
-                `;
-            }).join('');
-
-            const bottom5Html = bottom5.map(vendor => {
-                const gradeInfo = getGradeInfo(vendor.totalScore);
-                return `
-                    <div class="performance__vendor-card bottom">
-                        <div class="performance__vendor-card-header">
-                            <span class="performance__vendor-card-title">${vendor.entityName}</span>
-                            <span class="performance__vendor-card-badge ${gradeInfo.class}">${gradeInfo.grade}</span>
-                        </div>
-                        <div class="performance__vendor-card-score">${vendor.totalScore.toFixed(1)}</div>
-                        <div class="performance__vendor-card-meta">年度平均分</div>
-                    </div>
-                `;
-            }).join('');
-
-            const cardsHtml = `
-                <div>
-                    <h4 style="margin-bottom: var(--border-radius-md); color: var(--success); font-size: 1rem; font-weight: 600;">
-                        <i class="ph ph-trophy"></i> Top 5 优秀供应商
-                    </h4>
-                    ${top5Html}
-                </div>
-                <div>
-                    <h4 style="margin-bottom: var(--border-radius-md); color: var(--danger); font-size: 1rem; font-weight: 600;">
-                        <i class="ph ph-warning-circle"></i> Bottom 5 待改进供应商
-                    </h4>
-                    ${bottom5Html}
-                </div>
-            `;
-
-            if (els.vendorCardsRanking) {
-                els.vendorCardsRanking.innerHTML = cardsHtml;
-            }
         },
 
         // 渲染单供应商趋势选择器
@@ -1439,12 +1368,12 @@
                 trendListHtml += '<h4 style="margin-bottom: var(--border-radius-md); color: var(--success); font-size: 0.875rem; font-weight: 600;">📈 改进供应商</h4>';
                 improvements.forEach(item => {
                     trendListHtml += `
-                        <div class="trend-item improved">
-                            <div class="trend-item-info">
-                                <div class="trend-item-name">${item.vendorName}</div>
-                                <div class="trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
+                        <div class="performance__trend-item improved">
+                            <div class="performance__trend-item-info">
+                                <div class="performance__trend-item-name">${item.vendorName}</div>
+                                <div class="performance__trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
                             </div>
-                            <div class="trend-item-badge success">
+                            <div class="performance__trend-item-badge success">
                                 <i class="ph ph-arrow-up"></i>
                                 +${item.change}分
                             </div>
@@ -1460,12 +1389,12 @@
                 trendListHtml += '<h4 style="margin-bottom: var(--border-radius-md); color: var(--danger); font-size: 0.875rem; font-weight: 600;">📉 恶化供应商</h4>';
                 worsenings.forEach(item => {
                     trendListHtml += `
-                        <div class="trend-item worsened">
-                            <div class="trend-item-info">
-                                <div class="trend-item-name">${item.vendorName}</div>
-                                <div class="trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
+                        <div class="performance__trend-item worsened">
+                            <div class="performance__trend-item-info">
+                                <div class="performance__trend-item-name">${item.vendorName}</div>
+                                <div class="performance__trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
                             </div>
-                            <div class="trend-item-badge danger">
+                            <div class="performance__trend-item-badge danger">
                                 <i class="ph ph-arrow-down"></i>
                                 ${item.change}分
                             </div>
