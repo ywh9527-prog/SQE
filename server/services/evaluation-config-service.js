@@ -26,9 +26,9 @@ class EvaluationConfigService {
             ],
             gradeRules: [
                 { min: 95, max: 100, label: '优秀' },
-                { min: 85, max: 94.99, label: '合格' },
-                { min: 70, max: 84.99, label: '整改后合格' },
-                { min: 0, max: 69.99, label: '不合格' }
+                { min: 85, max: 95, label: '合格' },
+                { min: 70, max: 85, label: '整改后合格' },
+                { min: 0, max: 70, label: '不合格' }
             ]
         };
     }
