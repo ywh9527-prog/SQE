@@ -13,7 +13,8 @@
         gradeColors: [], // 预设颜色数组（按顺序分配）
         charts: {
             ranking: null,
-            gradePie: null
+            gradePie: null,
+            drawerVendorTrend: null
         }
     };
 
@@ -170,6 +171,12 @@
             els.trendVendorSelect = document.getElementById('trendVendorSelect');
             els.vendorTrendChart = document.getElementById('vendorTrendChart');
             els.trendList = document.getElementById('trendList');
+            // 底部抽屉
+            els.vendorTrendDrawer = document.getElementById('vendorTrendDrawer');
+            els.drawerOverlay = document.getElementById('drawerOverlay');
+            els.drawerCloseBtn = document.getElementById('drawerCloseBtn');
+            els.drawerVendorName = document.getElementById('drawerVendorName');
+            els.drawerVendorTrendChart = document.getElementById('drawerVendorTrendChart');
         },
 
         // 绑定事件
@@ -204,6 +211,14 @@
                         this.switchTab(tabId);
                     });
                 });
+            }
+
+            // 底部抽屉关闭事件
+            if (els.drawerCloseBtn) {
+                els.drawerCloseBtn.addEventListener('click', () => this.closeDrawer());
+            }
+            if (els.drawerOverlay) {
+                els.drawerOverlay.addEventListener('click', () => this.closeDrawer());
             }
         },
 
@@ -588,8 +603,8 @@
                     <span class="performance__heatmap-rank-badge" ${rankDataAttr}>${rank}</span>
                 </td>`;
 
-                // 供应商名称
-                heatmapHtml += `<td style="padding: 8px; font-weight: 500;">${vendor}</td>`;
+                // 供应商名称（可点击查看趋势）
+                heatmapHtml += `<td style="padding: 8px; font-weight: 500; cursor: pointer;" class="performance__heatmap-vendor-cell" data-vendor="${vendor}">${vendor}</td>`;
 
                 // 月份分数
                 const scores = vendorScores.get(vendor);
@@ -598,7 +613,7 @@
                     if (score !== undefined && score !== null) {
                         // 从配置获取颜色
                         const scoreColor = this.getScoreColor(score);
-                        heatmapHtml += `<td style="padding: 8px; text-align: center;">
+                        heatmapHtml += `<td style="padding: 8px; text-align: center; cursor: pointer;" class="performance__heatmap-score-cell" data-vendor="${vendor}" data-month="${month}">
                             <span class="performance__heatmap-score" style="background: ${scoreColor}">${score.toFixed(1)}</span>
                         </td>`;
                     } else {
@@ -699,6 +714,23 @@
                     }
                 });
             }
+
+            // 绑定热力图单元格点击事件（打开抽屉）
+            const vendorCells = document.querySelectorAll('.performance__heatmap-vendor-cell');
+            vendorCells.forEach(cell => {
+                cell.addEventListener('click', () => {
+                    const vendorName = cell.getAttribute('data-vendor');
+                    this.openDrawer(vendorName);
+                });
+            });
+
+            const scoreCells = document.querySelectorAll('.performance__heatmap-score-cell');
+            scoreCells.forEach(cell => {
+                cell.addEventListener('click', () => {
+                    const vendorName = cell.getAttribute('data-vendor');
+                    this.openDrawer(vendorName);
+                });
+            });
         },
 
         // 显示结果界面
@@ -1078,6 +1110,175 @@
                     labels: labels,
                     datasets: [{
                         label: selectedVendor,
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 5,
+                        pointHoverRadius: 7
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 12
+                            },
+                            padding: 12,
+                            cornerRadius: 6,
+                            callbacks: {
+                                label: function(context) {
+                                    const index = context.dataIndex;
+                                    const detail = vendorDetails[index];
+                                    return [
+                                        `得分: ${context.parsed.y.toFixed(1)}分`,
+                                        `等级: ${detail.grade || '-'}`
+                                    ];
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            min: 60,
+                            max: 100,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + '分';
+                                }
+                            }
+                        }
+                    },
+                    interaction: {
+                        intersect: false,
+                        mode: 'index'
+                    }
+                }
+            });
+        },
+
+        // 打开底部抽屉
+        openDrawer(vendorName) {
+            if (!els.vendorTrendDrawer || !els.drawerOverlay) return;
+
+            // 设置供应商名称
+            if (els.drawerVendorName) {
+                els.drawerVendorName.textContent = `${vendorName} 绩效趋势`;
+            }
+
+            // 渲染趋势图
+            this.renderDrawerTrendChart(vendorName);
+
+            // 显示抽屉
+            els.vendorTrendDrawer.classList.add('active');
+            els.drawerOverlay.classList.add('active');
+        },
+
+        // 关闭底部抽屉
+        closeDrawer() {
+            if (!els.vendorTrendDrawer || !els.drawerOverlay) return;
+
+            els.vendorTrendDrawer.classList.remove('active');
+            els.drawerOverlay.classList.remove('active');
+        },
+
+        // 渲染抽屉中的供应商趋势图
+        renderDrawerTrendChart(vendorName) {
+            const { details } = state.resultsData;
+
+            if (!details || details.length === 0) {
+                if (els.drawerVendorTrendChart) {
+                    els.drawerVendorTrendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
+                }
+                return;
+            }
+
+            // 筛选选中供应商的数据
+            const vendorDetails = details.filter(d => d.entityName === vendorName);
+
+            if (vendorDetails.length === 0) {
+                if (els.drawerVendorTrendChart) {
+                    els.drawerVendorTrendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">该供应商暂无评价数据</span></div>';
+                }
+                return;
+            }
+
+            // 按周期排序
+            vendorDetails.sort((a, b) => {
+                const dateA = new Date(a.period.startDate);
+                const dateB = new Date(b.period.startDate);
+                return dateA - dateB;
+            });
+
+            // 构建1-12月的数据映射
+            const monthDataMap = new Map();
+            vendorDetails.forEach(detail => {
+                if (detail.period && detail.period.startDate) {
+                    const month = new Date(detail.period.startDate).getMonth() + 1;
+                    monthDataMap.set(month, {
+                        score: detail.totalScore,
+                        grade: detail.grade
+                    });
+                }
+            });
+
+            const ctx = els.drawerVendorTrendChart.getContext('2d');
+
+            if (state.charts.drawerVendorTrend) {
+                state.charts.drawerVendorTrend.destroy();
+            }
+
+            // 生成1-12月的标签和数据
+            const labels = [];
+            const data = [];
+            for (let i = 1; i <= 12; i++) {
+                labels.push(`${i}月`);
+                if (monthDataMap.has(i)) {
+                    data.push(monthDataMap.get(i).score);
+                } else {
+                    data.push(null); // 没有数据的月份设为null
+                }
+            }
+
+            state.charts.drawerVendorTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: vendorName,
                         data: data,
                         borderColor: 'rgb(59, 130, 246)',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',

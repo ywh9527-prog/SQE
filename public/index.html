@@ -1032,6 +1032,22 @@
                                 </div>
                             </div>
 
+                            <!-- 底部抽屉：供应商绩效趋势 -->
+                            <div class="performance__drawer" id="vendorTrendDrawer">
+                                <div class="performance__drawer-header">
+                                    <h3 id="drawerVendorName">供应商绩效趋势</h3>
+                                    <button class="performance__drawer-close" id="drawerCloseBtn">
+                                        <i class="ph ph-x"></i>
+                                    </button>
+                                </div>
+                                <div class="performance__drawer-content">
+                                    <div class="performance__chart-container" style="height: 300px;">
+                                        <canvas id="drawerVendorTrendChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="performance__drawer-overlay" id="drawerOverlay"></div>
+
                             <!-- 重点关注供应商 -->
                             <div class="card" style="margin-top: 24px;">
                                 <h3>重点关注供应商</h3>
