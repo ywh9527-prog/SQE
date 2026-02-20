@@ -1339,7 +1339,8 @@
             const monthCounts = new Map();
 
             details.forEach(detail => {
-                if (detail.period && detail.period.startDate) {
+                // 只统计有分数的记录
+                if (detail.period && detail.period.startDate && detail.totalScore !== null && detail.totalScore !== undefined) {
                     const month = new Date(detail.period.startDate).getMonth() + 1;
                     const score = detail.totalScore;
 
