@@ -1337,6 +1337,12 @@
                 return dateA - dateB;
             });
 
+            // 提取年份
+            let year = '';
+            if (vendorDetails.length > 0 && vendorDetails[0].period && vendorDetails[0].period.startDate) {
+                year = new Date(vendorDetails[0].period.startDate).getFullYear();
+            }
+
             // 构建1-12月的数据映射，包含环比变化
             const monthDataMap = new Map();
             let prevScore = null;
@@ -1382,12 +1388,30 @@
                 }
             }
 
+            // 动态计算Y轴范围
+            const validScores = data.filter(v => v !== null);
+            let yMin = 0;
+            let yMax = 100;
+            if (validScores.length > 0) {
+                const minScore = Math.min(...validScores);
+                const maxScore = Math.max(...validScores);
+                // 向下取整到5的倍数，向上取整到5的倍数
+                yMin = Math.floor(minScore / 5) * 5;
+                yMax = Math.ceil(maxScore / 5) * 5;
+                // 确保至少有20分的跨度
+                if (yMax - yMin < 20) {
+                    const mid = (yMin + yMax) / 2;
+                    yMin = Math.floor((mid - 10) / 5) * 5;
+                    yMax = Math.ceil((mid + 10) / 5) * 5;
+                }
+            }
+
             state.charts.drawerVendorTrend = new Chart(ctx, {
                 type: 'line',
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: vendorName,
+                        label: `${vendorName} ${year}年绩效趋势`,
                         data: data,
                         changes: changes, // 存储变化数据
                         borderColor: 'rgb(59, 130, 246)',
@@ -1483,8 +1507,8 @@
                         },
                         y: {
                             beginAtZero: false,
-                            min: 60,
-                            max: 100,
+                            min: yMin,
+                            max: yMax,
                             grid: {
                                 color: 'rgba(0, 0, 0, 0.05)'
                             },
