@@ -1146,9 +1146,19 @@
         openDrawer(vendorName) {
             if (!els.vendorTrendDrawer || !els.drawerOverlay) return;
 
+            // 提取年份
+            let year = '';
+            const { details } = state.resultsData;
+            if (details && details.length > 0) {
+                const vendorDetails = details.filter(d => d.entityName === vendorName);
+                if (vendorDetails.length > 0 && vendorDetails[0].period && vendorDetails[0].period.startDate) {
+                    year = new Date(vendorDetails[0].period.startDate).getFullYear();
+                }
+            }
+
             // 设置供应商名称
             if (els.drawerVendorName) {
-                els.drawerVendorName.textContent = `${vendorName} 绩效趋势`;
+                els.drawerVendorName.textContent = `${vendorName} ${year}年绩效趋势`;
             }
 
             // 渲染趋势图
@@ -1411,7 +1421,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `${vendorName} ${year}年绩效趋势`,
+                        label: `${vendorName} ${year}绩效趋势`,
                         data: data,
                         changes: changes, // 存储变化数据
                         borderColor: 'rgb(59, 130, 246)',
