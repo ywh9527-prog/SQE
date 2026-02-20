@@ -606,7 +606,9 @@
                     if (window.App && window.App.Toast) {
                         window.App.Toast.success('创建评价周期成功！');
                     }
+                    // 刷新周期列表并跳转到历史评价界面
                     this.loadEvaluationPeriods();
+                    this.showPeriodsList();
                 } else {
                     // 使用 Toast 通知
                     if (window.App && window.App.Toast) {
