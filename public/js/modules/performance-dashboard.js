@@ -1337,15 +1337,26 @@
                 return dateA - dateB;
             });
 
-            // 构建1-12月的数据映射
+            // 构建1-12月的数据映射，包含环比变化
             const monthDataMap = new Map();
+            let prevScore = null;
             vendorDetails.forEach(detail => {
                 if (detail.period && detail.period.startDate) {
                     const month = new Date(detail.period.startDate).getMonth() + 1;
+                    const currentScore = detail.totalScore;
+                    let change = null;
+                    
+                    if (prevScore !== null && prevScore !== undefined) {
+                        change = currentScore - prevScore;
+                    }
+                    
                     monthDataMap.set(month, {
-                        score: detail.totalScore,
-                        grade: detail.grade
+                        score: currentScore,
+                        grade: detail.grade,
+                        change: change,
+                        prevScore: prevScore
                     });
+                    prevScore = currentScore;
                 }
             });
 
@@ -1358,12 +1369,16 @@
             // 生成1-12月的标签和数据
             const labels = [];
             const data = [];
+            const changes = [];
             for (let i = 1; i <= 12; i++) {
                 labels.push(`${i}月`);
                 if (monthDataMap.has(i)) {
-                    data.push(monthDataMap.get(i).score);
+                    const monthInfo = monthDataMap.get(i);
+                    data.push(monthInfo.score);
+                    changes.push(monthInfo.change);
                 } else {
-                    data.push(null); // 没有数据的月份设为null
+                    data.push(null);
+                    changes.push(null);
                 }
             }
 
@@ -1374,16 +1389,24 @@
                     datasets: [{
                         label: vendorName,
                         data: data,
+                        changes: changes, // 存储变化数据
                         borderColor: 'rgb(59, 130, 246)',
                         backgroundColor: 'rgba(59, 130, 246, 0.1)',
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4,
-                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBackgroundColor: function(context) {
+                            const index = context.dataIndex;
+                            const change = changes[index];
+                            if (change === null || change === undefined) return 'rgb(59, 130, 246)';
+                            if (change > 0.5) return '#16a34a'; // 绿色 - 上升
+                            if (change < -0.5) return '#dc2626'; // 红色 - 下降
+                            return 'rgb(59, 130, 246)'; // 蓝色 - 持平
+                        },
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }]
                 },
                 options: {
@@ -1395,24 +1418,54 @@
                             position: 'top'
                         },
                         tooltip: {
-                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            backgroundColor: 'rgba(30, 58, 138, 0.95)',
                             titleFont: {
                                 size: 14,
-                                weight: 'bold'
+                                weight: 'bold',
+                                family: 'Fira Code, monospace'
                             },
                             bodyFont: {
-                                size: 12
+                                size: 13,
+                                family: 'Fira Code, monospace'
                             },
-                            padding: 12,
-                            cornerRadius: 6,
+                            padding: 14,
+                            cornerRadius: 8,
                             callbacks: {
+                                title: function(context) {
+                                    return context[0].label;
+                                },
                                 label: function(context) {
                                     const index = context.dataIndex;
-                                    const detail = vendorDetails[index];
-                                    return [
+                                    const change = changes[index];
+                                    const monthInfo = monthDataMap.get(index + 1);
+                                    const grade = monthInfo ? monthInfo.grade : '-';
+                                    
+                                    const lines = [
                                         `得分: ${context.parsed.y.toFixed(1)}分`,
-                                        `等级: ${detail.grade || '-'}`
+                                        `等级: ${grade || '-'}`
                                     ];
+                                    
+                                    if (change !== null && change !== undefined) {
+                                        let changeText = '';
+                                        let changeColor = '';
+                                        if (change > 0.5) {
+                                            changeText = `↑${change.toFixed(1)} (vs ${index}月)`;
+                                            changeColor = '#22c55e';
+                                        } else if (change < -0.5) {
+                                            changeText = `↓${Math.abs(change).toFixed(1)} (vs ${index}月)`;
+                                            changeColor = '#ef4444';
+                                        } else {
+                                            changeText = `→持平 (vs ${index}月)`;
+                                            changeColor = '#6b7280';
+                                        }
+                                        lines.push('');
+                                        lines.push(`环比: ${changeText}`);
+                                    }
+                                    
+                                    return lines;
+                                },
+                                afterLabel: function(context) {
+                                    return '';
                                 }
                             }
                         }
