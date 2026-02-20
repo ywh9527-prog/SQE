@@ -15,7 +15,8 @@
         charts: {
             ranking: null,
             gradePie: null,
-            drawerVendorTrend: null
+            drawerVendorTrend: null,
+            overallTrend: null
         }
     };
 
@@ -170,6 +171,8 @@
             // 年度排名和饼图
             els.rankingChart = document.getElementById('rankingChart');
             els.gradePieChart = document.getElementById('gradePieChart');
+            // 全供应商趋势图
+            els.overallTrendChart = document.getElementById('overallTrendChart');
             // 趋势分析
             els.trendVendorSelect = document.getElementById('trendVendorSelect');
             els.vendorTrendChart = document.getElementById('vendorTrendChart');
@@ -805,6 +808,7 @@
             this.renderGradePieChart();
             this.renderVendorTrendSelect();
             this.renderVendorTrendChart();
+            this.renderOverallTrendChart();
         },
 
         // 渲染年度排名柱状图
@@ -1317,6 +1321,147 @@
                 'technical': '技术'
             };
             return nameMap[key] || key;
+        },
+
+        // 渲染全供应商绩效趋势图
+        renderOverallTrendChart() {
+            const { details } = state.resultsData;
+
+            if (!els.overallTrendChart || !details || details.length === 0) {
+                if (els.overallTrendChart) {
+                    els.overallTrendChart.innerHTML = '<div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 200px; color: #718096;"><i class="ph ph-trend-up" style="font-size: 32px; margin-bottom: 8px; opacity: 0.5;"></i><span style="font-size: 14px;">暂无数据</span></div>';
+                }
+                return;
+            }
+
+            // 构建每月所有供应商的平均分
+            const monthScores = new Map();
+            const monthCounts = new Map();
+
+            details.forEach(detail => {
+                if (detail.period && detail.period.startDate) {
+                    const month = new Date(detail.period.startDate).getMonth() + 1;
+                    const score = detail.totalScore;
+
+                    if (!monthScores.has(month)) {
+                        monthScores.set(month, 0);
+                        monthCounts.set(month, 0);
+                    }
+                    monthScores.set(month, monthScores.get(month) + score);
+                    monthCounts.set(month, monthCounts.get(month) + 1);
+                }
+            });
+
+            // 计算每月平均分
+            const labels = [];
+            const data = [];
+            for (let i = 1; i <= 12; i++) {
+                labels.push(`${i}月`);
+                if (monthScores.has(i) && monthCounts.get(i) > 0) {
+                    data.push(monthScores.get(i) / monthCounts.get(i));
+                } else {
+                    data.push(null);
+                }
+            }
+
+            // 销毁旧图表
+            if (state.charts.overallTrend) {
+                state.charts.overallTrend.destroy();
+            }
+
+            const ctx = els.overallTrendChart.getContext('2d');
+
+            // 动态计算Y轴范围
+            const validScores = data.filter(v => v !== null);
+            let yMin = 0;
+            let yMax = 100;
+            if (validScores.length > 0) {
+                const minScore = Math.min(...validScores);
+                const maxScore = Math.max(...validScores);
+                yMin = Math.floor(minScore / 5) * 5;
+                yMax = Math.ceil(maxScore / 5) * 5;
+                if (yMax - yMin < 20) {
+                    const mid = (yMin + yMax) / 2;
+                    yMin = Math.floor((mid - 10) / 5) * 5;
+                    yMax = Math.ceil((mid + 10) / 5) * 5;
+                }
+            }
+
+            state.charts.overallTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '平均得分',
+                        data: data,
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                        pointBorderColor: '#ffffff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(30, 58, 138, 0.95)',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold'
+                            },
+                            bodyFont: {
+                                size: 13
+                            },
+                            padding: 12,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return `平均得分: ${context.parsed.y ? context.parsed.y.toFixed(1) : '-'}分`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                }
+                            }
+                        },
+                        y: {
+                            beginAtZero: false,
+                            min: yMin,
+                            max: yMax,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)'
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                callback: function(value) {
+                                    return value + '分';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         },
 
         // 渲染抽屉中的供应商趋势图
