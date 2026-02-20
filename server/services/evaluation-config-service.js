@@ -12,9 +12,10 @@ class EvaluationConfigService {
         this.configFilePath = path.join(__dirname, '../../data/evaluation-config.json');
         this.defaultConfig = {
             dimensions: [
-                { name: '质量', key: 'quality', weight: 0.5 },
-                { name: '交付', key: 'delivery', weight: 0.3 },
-                { name: '服务', key: 'service', weight: 0.2 }
+                { name: '质量', key: 'quality', weight: 0.4 },
+                { name: '使用情况', key: 'usage', weight: 0.3 },
+                { name: '服务', key: 'service', weight: 0.15 },
+                { name: '交付', key: 'delivery', weight: 0.15 }
             ],
             gradeColors: [
                 '#16a34a',
