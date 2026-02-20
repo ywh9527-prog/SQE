@@ -11,6 +11,7 @@
         currentType: 'purchase', // purchase-外购/external-外协
         gradeRules: [], // 等级规则（从配置动态获取）
         gradeColors: [], // 预设颜色数组（按顺序分配）
+        dimensions: [], // 评价维度（从配置动态获取）
         charts: {
             ranking: null,
             gradePie: null,
@@ -96,6 +97,9 @@
                     if (result.data.gradeColors) {
                         state.gradeColors = result.data.gradeColors;
                     }
+                    if (result.data.dimensions) {
+                        state.dimensions = result.data.dimensions;
+                    }
                 }
             } catch (error) {
                 console.error('加载等级配置失败:', error);
@@ -169,13 +173,23 @@
             // 趋势分析
             els.trendVendorSelect = document.getElementById('trendVendorSelect');
             els.vendorTrendChart = document.getElementById('vendorTrendChart');
-            els.trendList = document.getElementById('trendList');
             // 底部抽屉
             els.vendorTrendDrawer = document.getElementById('vendorTrendDrawer');
             els.drawerOverlay = document.getElementById('drawerOverlay');
             els.drawerCloseBtn = document.getElementById('drawerCloseBtn');
             els.drawerVendorName = document.getElementById('drawerVendorName');
             els.drawerVendorTrendChart = document.getElementById('drawerVendorTrendChart');
+            // 详情模态框
+            els.scoreDetailModal = document.getElementById('scoreDetailModal');
+            els.scoreDetailOverlay = document.getElementById('scoreDetailOverlay');
+            els.scoreDetailCloseBtn = document.getElementById('scoreDetailCloseBtn');
+            els.scoreDetailTitle = document.getElementById('scoreDetailTitle');
+            els.scoreDetailVendor = document.getElementById('scoreDetailVendor');
+            els.scoreDetailPeriod = document.getElementById('scoreDetailPeriod');
+            els.scoreDetailTotal = document.getElementById('scoreDetailTotal');
+            els.scoreDetailGrade = document.getElementById('scoreDetailGrade');
+            els.scoreDetailDimensions = document.getElementById('scoreDetailDimensions');
+            els.scoreDetailRemarksText = document.getElementById('scoreDetailRemarksText');
         },
 
         // 绑定事件
@@ -218,6 +232,14 @@
             }
             if (els.drawerOverlay) {
                 els.drawerOverlay.addEventListener('click', () => this.closeDrawer());
+            }
+
+            // 详情模态框关闭事件
+            if (els.scoreDetailCloseBtn) {
+                els.scoreDetailCloseBtn.addEventListener('click', () => this.closeScoreDetailModal());
+            }
+            if (els.scoreDetailOverlay) {
+                els.scoreDetailOverlay.addEventListener('click', () => this.closeScoreDetailModal());
             }
         },
 
@@ -714,7 +736,7 @@
                 });
             }
 
-            // 绑定热力图单元格点击事件（打开抽屉）
+            // 绑定热力图单元格点击事件
             const vendorCells = document.querySelectorAll('.performance__heatmap-vendor-cell');
             vendorCells.forEach(cell => {
                 cell.addEventListener('click', () => {
@@ -725,9 +747,11 @@
 
             const scoreCells = document.querySelectorAll('.performance__heatmap-score-cell');
             scoreCells.forEach(cell => {
-                cell.addEventListener('click', () => {
+                cell.addEventListener('click', (e) => {
+                    e.stopPropagation();
                     const vendorName = cell.getAttribute('data-vendor');
-                    this.openDrawer(vendorName);
+                    const month = cell.getAttribute('data-month');
+                    this.showScoreDetailModal(vendorName, month);
                 });
             });
         },
@@ -781,7 +805,6 @@
             this.renderGradePieChart();
             this.renderVendorTrendSelect();
             this.renderVendorTrendChart();
-            this.renderTrendImprovement();
         },
 
         // 渲染年度排名柱状图
@@ -1144,6 +1167,148 @@
             els.drawerOverlay.classList.remove('active');
         },
 
+        // 关闭详情模态框
+        closeScoreDetailModal() {
+            if (!els.scoreDetailModal || !els.scoreDetailOverlay) return;
+
+            els.scoreDetailModal.classList.remove('active');
+            els.scoreDetailOverlay.classList.remove('active');
+        },
+
+        // 显示评分详情模态框
+        showScoreDetailModal(vendorName, month) {
+            const { details, evaluations } = state.resultsData;
+
+            if (!details || details.length === 0) {
+                this.showToast('暂无评价数据', 'warning');
+                return;
+            }
+
+            // 解析月份（去掉"月"字）
+            const monthNum = parseInt(month.replace('月', ''));
+
+            // 查找该供应商在该月份的评价记录
+            const vendorDetail = details.find(d => {
+                if (d.entityName !== vendorName) return false;
+                if (!d.period || !d.period.startDate) return false;
+                const detailMonth = new Date(d.period.startDate).getMonth() + 1;
+                return detailMonth === monthNum;
+            });
+
+            if (!vendorDetail) {
+                this.showToast('该月暂无评价数据', 'warning');
+                return;
+            }
+
+            // 填充基本信息
+            if (els.scoreDetailVendor) {
+                els.scoreDetailVendor.textContent = vendorName;
+            }
+            if (els.scoreDetailPeriod) {
+                els.scoreDetailPeriod.textContent = `${month}评价详情`;
+            }
+
+            // 填充总分
+            if (els.scoreDetailTotal) {
+                els.scoreDetailTotal.textContent = vendorDetail.totalScore 
+                    ? vendorDetail.totalScore.toFixed(1) 
+                    : '-';
+            }
+
+            // 填充等级
+            if (els.scoreDetailGrade) {
+                const grade = vendorDetail.grade || '-';
+                els.scoreDetailGrade.textContent = grade;
+                const gradeColor = this.getGradeColorByName(grade);
+                els.scoreDetailGrade.style.background = gradeColor;
+            }
+
+            // 填充维度得分
+            if (els.scoreDetailDimensions) {
+                let dimensionsHtml = '<h4>分项得分</h4>';
+                
+                const scores = vendorDetail.scores || {};
+                
+                if (state.dimensions && state.dimensions.length > 0) {
+                    // 使用配置中的维度
+                    state.dimensions.forEach(dim => {
+                        const score = scores[dim.key];
+                        const displayScore = score !== undefined && score !== null 
+                            ? score.toFixed(1) 
+                            : '-';
+                        const icon = this.getDimensionIcon(dim.key);
+                        dimensionsHtml += `
+                            <div class="performance__score-detail-dimension">
+                                <span class="performance__score-detail-dimension-name">
+                                    <i class="ph ${icon}"></i>
+                                    ${dim.name}
+                                </span>
+                                <span class="performance__score-detail-dimension-score">${displayScore}</span>
+                            </div>
+                        `;
+                    });
+                } else if (Object.keys(scores).length > 0) {
+                    // 如果没有配置，使用scores中的键
+                    Object.keys(scores).forEach(key => {
+                        const score = scores[key];
+                        const displayScore = score !== undefined && score !== null 
+                            ? score.toFixed(1) 
+                            : '-';
+                        const icon = this.getDimensionIcon(key);
+                        const name = this.getDimensionName(key);
+                        dimensionsHtml += `
+                            <div class="performance__score-detail-dimension">
+                                <span class="performance__score-detail-dimension-name">
+                                    <i class="ph ${icon}"></i>
+                                    ${name}
+                                </span>
+                                <span class="performance__score-detail-dimension-score">${displayScore}</span>
+                            </div>
+                        `;
+                    });
+                } else {
+                    dimensionsHtml += '<p style="color: #718096; font-size: 0.875rem;">暂无分项得分数据</p>';
+                }
+
+                els.scoreDetailDimensions.innerHTML = dimensionsHtml;
+            }
+
+            // 填充备注
+            if (els.scoreDetailRemarksText) {
+                els.scoreDetailRemarksText.textContent = vendorDetail.remarks || '无';
+            }
+
+            // 显示模态框
+            if (els.scoreDetailModal && els.scoreDetailOverlay) {
+                els.scoreDetailModal.classList.add('active');
+                els.scoreDetailOverlay.classList.add('active');
+            }
+        },
+
+        // 获取维度图标
+        getDimensionIcon(key) {
+            const iconMap = {
+                'quality': 'ph-medal',
+                'delivery': 'ph-truck',
+                'service': 'ph-hand-heart',
+                'cost': 'ph-currency-cny',
+                'technical': 'ph-wrench'
+            };
+            return iconMap[key] || 'ph-star';
+        },
+
+        // 获取维度名称
+        getDimensionName(key) {
+            const nameMap = {
+                'quality': '质量',
+                'delivery': '交付',
+                'service': '服务',
+                'cost': '成本',
+                'technical': '技术'
+            };
+            return nameMap[key] || key;
+        },
+
         // 渲染抽屉中的供应商趋势图
         renderDrawerTrendChart(vendorName) {
             const { details } = state.resultsData;
@@ -1286,130 +1451,6 @@
                     }
                 }
             });
-        },
-
-        // 渲染改进/恶化识别
-        renderTrendImprovement() {
-            const { details, annualRankings } = state.resultsData;
-
-            if (!details || details.length === 0) {
-                if (els.trendList) {
-                    els.trendList.innerHTML = '<div style="text-align: center; padding: 2rem; color: #718096;">暂无数据</div>';
-                }
-                return;
-            }
-
-            // 计算每个供应商在相邻周期之间的得分变化
-            const vendorChanges = new Map();
-
-            details.forEach(detail => {
-                const vendorName = detail.entityName;
-                if (!vendorChanges.has(vendorName)) {
-                    vendorChanges.set(vendorName, []);
-                }
-                vendorChanges.get(vendorName).push({
-                    periodName: detail.period.periodName,
-                    score: detail.totalScore,
-                    date: new Date(detail.period.startDate)
-                });
-            });
-
-            // 按日期排序
-            vendorChanges.forEach((changes, vendorName) => {
-                changes.sort((a, b) => a.date - b.date);
-            });
-
-            // 计算改进和恶化
-            const improvements = [];
-            const worsenings = [];
-
-            vendorChanges.forEach((changes, vendorName) => {
-                // 【关键修复】过滤掉没有分数的月份数据
-                // 原因：某些供应商可能某月没有来料记录，导致该月分数为 null
-                // 影响：如果不过滤，prevScore 或 lastScore 可能为 null，导致 toFixed() 调用报错
-                // 解决：使用 validChanges 只保留有有效分数的月份
-                const validChanges = changes.filter(change => change.score !== null);
-
-                // 只有2个以上有效分数才能计算趋势变化（需要至少2个月份对比）
-                if (validChanges.length >= 2) {
-                    // 取最后2个有效月份计算趋势
-                    const lastScore = validChanges[validChanges.length - 1].score;
-                    const prevScore = validChanges[validChanges.length - 2].score;
-
-                    // 计算得分变化（当前期 - 上一期）
-                    const change = lastScore - prevScore;
-
-                    // 得分提升超过5分视为改进
-                    if (change > 5) {
-                        improvements.push({
-                            vendorName,
-                            prevScore,
-                            lastScore,
-                            change: change.toFixed(1),
-                            lastPeriod: validChanges[validChanges.length - 1].periodName
-                        });
-                    } else if (change < -5) {
-                        // 得分下降超过5分视为恶化
-                        worsenings.push({
-                            vendorName,
-                            prevScore,
-                            lastScore,
-                            change: change.toFixed(1),
-                            lastPeriod: validChanges[validChanges.length - 1].periodName
-                        });
-                    }
-                }
-            });
-
-            // 渲染列表
-            let trendListHtml = '';
-
-            if (improvements.length > 0) {
-                trendListHtml += '<h4 style="margin-bottom: var(--border-radius-md); color: var(--success); font-size: 0.875rem; font-weight: 600;">📈 改进供应商</h4>';
-                improvements.forEach(item => {
-                    trendListHtml += `
-                        <div class="performance__trend-item improved">
-                            <div class="performance__trend-item-info">
-                                <div class="performance__trend-item-name">${item.vendorName}</div>
-                                <div class="performance__trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
-                            </div>
-                            <div class="performance__trend-item-badge success">
-                                <i class="ph ph-arrow-up"></i>
-                                +${item.change}分
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            if (worsenings.length > 0) {
-                if (improvements.length > 0) {
-                    trendListHtml += '<div style="margin-top: var(--border-radius-md);"></div>';
-                }
-                trendListHtml += '<h4 style="margin-bottom: var(--border-radius-md); color: var(--danger); font-size: 0.875rem; font-weight: 600;">📉 恶化供应商</h4>';
-                worsenings.forEach(item => {
-                    trendListHtml += `
-                        <div class="performance__trend-item worsened">
-                            <div class="performance__trend-item-info">
-                                <div class="performance__trend-item-name">${item.vendorName}</div>
-                                <div class="performance__trend-item-change">${item.lastPeriod}: ${item.prevScore.toFixed(1)}分 → ${item.lastScore.toFixed(1)}分</div>
-                            </div>
-                            <div class="performance__trend-item-badge danger">
-                                <i class="ph ph-arrow-down"></i>
-                                ${item.change}分
-                            </div>
-                        </div>
-                    `;
-                });
-            }
-
-            if (improvements.length === 0 && worsenings.length === 0) {
-                trendListHtml = '<div style="text-align: center; padding: 2rem; color: #718096;">暂无明显改进或恶化的供应商</div>';
-            }
-
-            if (els.trendList) {
-                els.trendList.innerHTML = trendListHtml;
-            }
         },
 
         // 渲染表格（已删除，改用热力图）

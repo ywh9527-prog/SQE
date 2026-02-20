@@ -1048,11 +1048,37 @@
                             </div>
                             <div class="performance__drawer-overlay" id="drawerOverlay"></div>
 
-                            <!-- 改进/恶化识别 -->
-                            <div class="card" style="margin-top: 24px;">
-                                <h3>改进/恶化识别</h3>
-                                <div class="performance__trend-list" id="trendList">
-                                    <!-- 改进和恶化的供应商列表将动态生成 -->
+                            <!-- 详情模态框：显示分项得分 -->
+                            <div class="performance__modal" id="scoreDetailModal">
+                                <div class="performance__modal-overlay" id="scoreDetailOverlay"></div>
+                                <div class="performance__modal-content">
+                                    <div class="performance__modal-header">
+                                        <h3 id="scoreDetailTitle">评分详情</h3>
+                                        <button class="performance__modal-close" id="scoreDetailCloseBtn">
+                                            <i class="ph ph-x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="performance__modal-body">
+                                        <div class="performance__score-detail-vendor" id="scoreDetailVendor"></div>
+                                        <div class="performance__score-detail-period" id="scoreDetailPeriod"></div>
+                                        <div class="performance__score-detail-summary">
+                                            <div class="performance__score-detail-total">
+                                                <span class="performance__score-detail-label">总分</span>
+                                                <span class="performance__score-detail-value" id="scoreDetailTotal">-</span>
+                                            </div>
+                                            <div class="performance__score-detail-grade">
+                                                <span class="performance__score-detail-label">等级</span>
+                                                <span class="performance__score-detail-badge" id="scoreDetailGrade">-</span>
+                                            </div>
+                                        </div>
+                                        <div class="performance__score-detail-dimensions" id="scoreDetailDimensions">
+                                            <!-- 维度得分将动态生成 -->
+                                        </div>
+                                        <div class="performance__score-detail-remarks" id="scoreDetailRemarks">
+                                            <span class="performance__score-detail-label">评价备注：</span>
+                                            <span id="scoreDetailRemarksText">-</span>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
