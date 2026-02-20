@@ -1421,7 +1421,7 @@
                 data: {
                     labels: labels,
                     datasets: [{
-                        label: `${vendorName} ${year}绩效趋势`,
+                        label: vendorName,
                         data: data,
                         changes: changes, // 存储变化数据
                         borderColor: 'rgb(59, 130, 246)',
