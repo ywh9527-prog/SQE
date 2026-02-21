@@ -273,10 +273,11 @@ class EvaluationConfigService {
         // 验证等级规则覆盖范围
         const sortedRules = [...config.gradeRules].sort((a, b) => a.min - b.min);
 
-        // 评级算法使用左闭右闭区间 [min, max]
-        // 例如: 优秀[95,100] 合格[85,95] 整改后合格[70,85] 不合格[0,70]
-        // 评分95分时只会匹配到"合格"(因为 <= 95)，不会同时匹配到"优秀"
-        // 评分100分时会匹配到"优秀"(因为 <= 100)
+        // 评级算法说明：
+        // - 使用 [min, max) 左闭右开区间，最后一个区间（最高等级）使用 [min, max] 支持100分
+        // - 按区间顺序匹配，第一个满足条件的生效
+        // 例如: 优秀[95,100] 合格[85,95) 整改后合格[70,85) 不合格[0,70)
+        // 评分95分时匹配"优秀"（第一个满足），评分100分时匹配"优秀"（<=支持）
         // 检查是否有重叠
         for (let i = 0; i < sortedRules.length - 1; i++) {
             if (sortedRules[i].max > sortedRules[i + 1].min) {
@@ -312,12 +313,22 @@ class EvaluationConfigService {
                 totalScore += score * dimension.weight;
             }
 
-            // 确定等级 - 使用左闭右闭区间 [min, max]
+            // 确定等级 - 按区间顺序匹配，第一个满足条件的生效
+            // 注意：使用 [min, max) 左闭右开区间，100分需要特殊处理
             let grade = '不合格';
             for (const rule of effectiveConfig.gradeRules) {
-                if (totalScore >= rule.min && totalScore <= rule.max) {
-                    grade = rule.label;
-                    break;
+                // 最后一个区间（优秀）使用 <= 支持100分
+                const isLastRule = effectiveConfig.gradeRules.indexOf(rule) === effectiveConfig.gradeRules.length - 1;
+                if (isLastRule) {
+                    if (totalScore >= rule.min && totalScore <= rule.max) {
+                        grade = rule.label;
+                        break;
+                    }
+                } else {
+                    if (totalScore >= rule.min && totalScore < rule.max) {
+                        grade = rule.label;
+                        break;
+                    }
                 }
             }
 

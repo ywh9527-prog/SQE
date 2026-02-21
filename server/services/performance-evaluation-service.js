@@ -1551,9 +1551,18 @@ class PerformanceEvaluationService {
                     // 根据年度平均分计算等级，而不是使用最新月份的等级
                     let grade = '不合格';
                     for (const rule of currentConfig.gradeRules) {
-                        if (avgScore >= rule.min && avgScore <= rule.max) {
-                            grade = rule.label;
-                            break;
+                        // 最后一个区间（优秀）使用 <= 支持100分
+                        const isLastRule = currentConfig.gradeRules.indexOf(rule) === currentConfig.gradeRules.length - 1;
+                        if (isLastRule) {
+                            if (avgScore >= rule.min && avgScore <= rule.max) {
+                                grade = rule.label;
+                                break;
+                            }
+                        } else {
+                            if (avgScore >= rule.min && avgScore < rule.max) {
+                                grade = rule.label;
+                                break;
+                            }
                         }
                     }
                     return {
