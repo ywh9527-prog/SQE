@@ -1453,6 +1453,17 @@
     color: white;
 }
 
+.performance__score-detail-strategy {
+    margin-top: 8px;
+    padding: 8px 12px;
+    background: var(--gray-100);
+    border-radius: var(--border-radius-sm);
+    font-size: 0.75rem;
+    color: var(--gray-700);
+    line-height: 1.4;
+    text-align: left;
+}
+
 .performance__score-detail-dimensions {
     margin-bottom: 20px;
 }
@@ -1511,4 +1522,25 @@
 
 .performance__score-detail-remarks span:last-child {
     color: var(--gray-600);
+}
+
+/* 等级策略列表 */
+.performance__grade-strategies {
+    margin-top: 16px;
+    padding: 12px;
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
+}
+
+.performance__grade-strategies-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--gray-700);
+}
+
+.performance__grade-strategy-item {
+    font-size: 0.875rem;
+    color: var(--gray-600);
+    margin-bottom: 6px;
+    line-height: 1.5;
 }

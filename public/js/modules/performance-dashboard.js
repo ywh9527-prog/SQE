@@ -72,17 +72,33 @@
         // 辅助函数：根据等级名称获取颜色
         getGradeColorByName(gradeName) {
             if (!gradeName || gradeName === '-') return '#6b7280';
-            
+
             // 按min从大到小排序
             const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
-            
+
             for (let i = 0; i < sortedRules.length; i++) {
                 if (sortedRules[i].label === gradeName) {
                     return state.gradeColors[i] || state.gradeColors[state.gradeColors.length - 1] || '#6b7280';
                 }
             }
-            
+
             return '#6b7280';
+        },
+
+        // 辅助函数：根据等级名称获取策略
+        getGradeStrategyByName(gradeName) {
+            if (!gradeName || gradeName === '-') return '';
+
+            // 按min从大到小排序
+            const sortedRules = [...state.gradeRules].sort((a, b) => b.min - a.min);
+
+            for (const rule of sortedRules) {
+                if (rule.label === gradeName) {
+                    return rule.strategy || '';
+                }
+            }
+
+            return '';
         },
 
         // 加载配置
@@ -191,8 +207,10 @@
             els.scoreDetailPeriod = document.getElementById('scoreDetailPeriod');
             els.scoreDetailTotal = document.getElementById('scoreDetailTotal');
             els.scoreDetailGrade = document.getElementById('scoreDetailGrade');
+            els.scoreDetailStrategy = document.getElementById('scoreDetailStrategy');
             els.scoreDetailDimensions = document.getElementById('scoreDetailDimensions');
             els.scoreDetailRemarksText = document.getElementById('scoreDetailRemarksText');
+            els.scoreDetailGradeStrategiesList = document.getElementById('scoreDetailGradeStrategiesList');
         },
 
         // 绑定事件
@@ -1237,6 +1255,13 @@
                 els.scoreDetailGrade.style.background = gradeColor;
             }
 
+            // 填充策略
+            if (els.scoreDetailStrategy) {
+                const strategy = this.getGradeStrategyByName(vendorDetail.grade);
+                els.scoreDetailStrategy.textContent = strategy || '';
+                els.scoreDetailStrategy.style.display = strategy ? 'block' : 'none';
+            }
+
             // 填充维度得分
             if (els.scoreDetailDimensions) {
                 let dimensionsHtml = '<h4>分项得分</h4>';
@@ -1290,6 +1315,21 @@
             // 填充备注
             if (els.scoreDetailRemarksText) {
                 els.scoreDetailRemarksText.textContent = vendorDetail.remarks || '无';
+            }
+
+            // 填充等级策略列表
+            if (els.scoreDetailGradeStrategiesList && state.gradeRules && state.gradeRules.length > 0) {
+                let gradeStrategiesHtml = '';
+                const sortedRules = [...state.gradeRules].sort((a, b) => a.min - b.min);
+                sortedRules.forEach(rule => {
+                    const scoreRange = rule.max === 100 ? `≥${rule.min}分` : `${rule.min}-${rule.max}分`;
+                    gradeStrategiesHtml += `<div class="performance__grade-strategy-item">`;
+                    gradeStrategiesHtml += `<strong>${rule.label}(${scoreRange}):</strong> ${rule.strategy || '无'}`;
+                    gradeStrategiesHtml += `</div>`;
+                });
+                els.scoreDetailGradeStrategiesList.innerHTML = gradeStrategiesHtml;
+            } else if (els.scoreDetailGradeStrategiesList) {
+                els.scoreDetailGradeStrategiesList.innerHTML = '<div class="performance__grade-strategy-item">暂无等级策略配置</div>';
             }
 
             // 显示模态框
