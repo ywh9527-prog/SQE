@@ -1048,6 +1048,20 @@
                     inputValue = state.currentEntity.scores[dimension.key];
                 }
 
+                // 获取计算规则和评分标准提示
+                const calculationRuleTip = dimension.calculationRule ? `
+                    <div class="performance__dimension-tip">
+                        <span class="performance__dimension-tip-label">计算规则：</span>
+                        <span class="performance__dimension-tip-content">${dimension.calculationRule}</span>
+                    </div>
+                ` : '';
+                const scoringStandardTip = dimension.scoringStandard ? `
+                    <div class="performance__dimension-tip">
+                        <span class="performance__dimension-tip-label">评分标准：</span>
+                        <span class="performance__dimension-tip-content">${dimension.scoringStandard}</span>
+                    </div>
+                ` : '';
+
                 dimensionCard.innerHTML = `
                     <div class="performance__dimension-card-header">
                         <div class="performance__dimension-card-title">${dimension.name}</div>
@@ -1077,6 +1091,8 @@
                         </div>
                     </div>
                     ${autoCalcInfo}
+                    ${calculationRuleTip}
+                    ${scoringStandardTip}
                 `;
 
                 dimensionsGrid.appendChild(dimensionCard);

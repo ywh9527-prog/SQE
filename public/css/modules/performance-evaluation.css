@@ -1218,6 +1218,26 @@
     gap: 4px;
 }
 
+/* 计算规则和评分标准提示 */
+.performance__dimension-tip {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-top: 8px;
+    padding: 8px;
+    background: var(--gray-50);
+    border-radius: var(--border-radius-sm);
+    border-left: 3px solid var(--primary-400);
+}
+
+.performance__dimension-tip-label {
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.performance__dimension-tip-content {
+    color: var(--gray-600);
+}
+
 /* ========== 总分预览卡片 ========== */
 
 .performance__total-score-card {
