@@ -12,10 +12,10 @@ class EvaluationConfigService {
         this.configFilePath = path.join(__dirname, '../../data/evaluation-config.json');
         this.defaultConfig = {
             dimensions: [
-                { name: '质量', key: 'quality', weight: 0.4 },
-                { name: '使用情况', key: 'usage', weight: 0.3 },
-                { name: '服务', key: 'service', weight: 0.15 },
-                { name: '交付', key: 'delivery', weight: 0.15 }
+                { name: '质量', key: 'quality', weight: 0.4, calculationRule: '合格批次量 / 到货批次量 × 100%', scoringStandard: '当月合格批次/当月交付总批次×100%×权重' },
+                { name: '使用情况', key: 'usage', weight: 0.3, calculationRule: '来料上线使用情况、下游客户端投诉', scoringStandard: '现场反馈性能/尺寸类-10分，外观类-5分，客诉一次-15分' },
+                { name: '服务', key: 'service', weight: 0.15, calculationRule: '供应商评价期间业务、协作、共同提升、配合度考核', scoringStandard: '异常反馈等事项每次未及时响应扣4分；当月仅发生一次事项未及时响应扣10分，仅两次的每次扣5分' },
+                { name: '交付', key: 'delivery', weight: 0.15, calculationRule: '按时按量到货批次量 / 到货批次量 × 100%', scoringStandard: '按时按量批次交付率低于100%每1%扣2分，不满1%按1%计算' }
             ],
             gradeColors: [
                 '#16a34a',
