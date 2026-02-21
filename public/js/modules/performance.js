@@ -1102,6 +1102,9 @@
 
             // 添加滑块交互事件
             this.setupSliderInteractions();
+
+            // 渲染完成后更新总分预览
+            this.updateTotalScorePreview();
         },
 
         // 设置滑块交互
