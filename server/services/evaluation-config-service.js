@@ -26,10 +26,10 @@ class EvaluationConfigService {
                 '#1f2937'
             ],
             gradeRules: [
-                { min: 95, max: 100, label: '优秀' },
-                { min: 85, max: 95, label: '合格' },
-                { min: 70, max: 85, label: '整改后合格' },
-                { min: 0, max: 70, label: '不合格' }
+                { min: 95, max: 100, label: '优秀', strategy: '同等条件优先采购' },
+                { min: 85, max: 95, label: '合格', strategy: '可保持正常采购，要求供应商自身内部改善' },
+                { min: 70, max: 85, label: '整改后合格', strategy: '可保持正常采购，要求供应商提供8D改善报告，若连续发生重复性问题（≥2次）则列入不合格管理' },
+                { min: 0, max: 70, label: '不合格', strategy: '暂停开发新产品，要求1周内提交改进计划，1个月内完成改进；若连续三个月不合格则暂停供货；6个月内未达到解除条件则剔除出合格供应商目录' }
             ]
         };
     }
