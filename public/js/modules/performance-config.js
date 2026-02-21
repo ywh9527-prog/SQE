@@ -236,7 +236,7 @@
                 item.innerHTML = `
                     <div class="form-group">
                         <label>等级名称</label>
-                        <input type="text" class="form-control" value="${rule.label}" 
+                        <input type="text" class="form-control" value="${rule.label}"
                             onchange="window.App.Modules.PerformanceConfig.updateGradeRule(${index}, 'label', this.value)">
                     </div>
                     <div class="form-group">
@@ -248,6 +248,11 @@
                         <label>最高分</label>
                         <input type="number" class="form-control" value="${rule.max}" step="0.01" min="0" max="100"
                             onchange="window.App.Modules.PerformanceConfig.updateGradeRule(${index}, 'max', parseFloat(this.value))">
+                    </div>
+                    <div class="form-group strategy-group">
+                        <label>等级策略</label>
+                        <textarea class="form-control" rows="2" placeholder="输入等级策略说明"
+                            onchange="window.App.Modules.PerformanceConfig.updateGradeRule(${index}, 'strategy', this.value)">${rule.strategy || ''}</textarea>
                     </div>
                     <div class="range-display">
                         <span class="color-preview" style="background: ${color}"></span>
@@ -315,7 +320,8 @@
             const newRule = {
                 min: 0,
                 max: 60,
-                label: '新等级'
+                label: '新等级',
+                strategy: ''
             };
 
             state.config.gradeRules.push(newRule);
