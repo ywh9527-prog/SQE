@@ -273,6 +273,9 @@ class EvaluationConfigService {
         // 验证等级规则覆盖范围
         const sortedRules = [...config.gradeRules].sort((a, b) => a.min - b.min);
 
+        // 评级算法使用左闭右开区间 [min, max)，因此允许配置文件中的边界值重叠
+        // 例如: 优秀[95,100) 合格[85,95) 整改后合格[70,85) 不合格[0,70)
+        // 评分95分时只会匹配到"合格"(因为 < 95)，不会同时匹配到"优秀"
         // 检查是否有重叠
         for (let i = 0; i < sortedRules.length - 1; i++) {
             if (sortedRules[i].max > sortedRules[i + 1].min) {
