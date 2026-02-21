@@ -179,34 +179,38 @@
                 const item = document.createElement('div');
                 item.className = 'performance__dimension-item';
                 item.innerHTML = `
-                    <div class="form-group">
-                        <label>维度名称</label>
-                        <input type="text" class="form-control" value="${dimension.name}" 
-                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'name', this.value)">
+                    <div class="dimension-edit-row">
+                        <div class="form-group">
+                            <label>维度名称</label>
+                            <input type="text" class="form-control" value="${dimension.name}" 
+                                onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'name', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>维度键值</label>
+                            <input type="text" class="form-control" value="${dimension.key}" 
+                                onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'key', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>权重（%）</label>
+                            <input type="number" class="form-control" value="${(dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100"
+                                onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'weight', parseFloat(this.value) / 100)">
+                        </div>
+                        <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeDimension(${index})">
+                            <i class="ph ph-trash"></i>
+                        </button>
                     </div>
-                    <div class="form-group">
-                        <label>维度键值</label>
-                        <input type="text" class="form-control" value="${dimension.key}" 
-                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'key', this.value)">
+                    <div class="dimension-tip-row">
+                        <div class="form-group">
+                            <label>计算规则</label>
+                            <textarea class="form-control" rows="2" placeholder="输入计算规则说明"
+                                onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'calculationRule', this.value)">${dimension.calculationRule || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>评分标准</label>
+                            <textarea class="form-control" rows="2" placeholder="输入评分标准说明"
+                                onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'scoringStandard', this.value)">${dimension.scoringStandard || ''}</textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>权重（%）</label>
-                        <input type="number" class="form-control" value="${(dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100"
-                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'weight', parseFloat(this.value) / 100)">
-                    </div>
-                    <div class="form-group">
-                        <label>计算规则</label>
-                        <textarea class="form-control" rows="2" placeholder="输入计算规则说明"
-                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'calculationRule', this.value)">${dimension.calculationRule || ''}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>评分标准</label>
-                        <textarea class="form-control" rows="2" placeholder="输入评分标准说明"
-                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'scoringStandard', this.value)">${dimension.scoringStandard || ''}</textarea>
-                    </div>
-                    <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeDimension(${index})">
-                        <i class="ph ph-trash"></i>
-                    </button>
                 `;
                 els.dimensionsList.appendChild(item);
             });

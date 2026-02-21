@@ -80,18 +80,88 @@
 
 .performance__dimension-item {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: var(--border-radius-sm);
     padding: var(--border-radius-lg);
     background: var(--gray-50);
     border-radius: var(--border-radius-sm);
     transition: all var(--transition-base);
+    margin-bottom: var(--border-radius-md);
 }
 
 .performance__dimension-item:hover {
     box-shadow: var(--shadow-sm);
 }
 
+/* 第一行：维度名称、键值、权重、删除按钮 */
+.dimension-edit-row {
+    display: flex;
+    align-items: center;
+    gap: var(--border-radius-sm);
+}
+
+.dimension-edit-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.dimension-edit-row .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+}
+
+.dimension-edit-row .form-control {
+    padding: calc(var(--border-radius-sm) * 0.5);
+    font-size: 0.875rem;
+}
+
+.dimension-edit-row .btn-icon {
+    width: 32px;
+    height: 32px;
+    background: var(--danger-light);
+    color: var(--danger);
+    border: none;
+    border-radius: var(--border-radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all var(--transition-base);
+    flex-shrink: 0;
+    margin-top: 18px;
+}
+
+.dimension-edit-row .btn-icon:hover {
+    background: var(--danger);
+    color: var(--gray-50);
+}
+
+/* 第二行：计算规则、评分标准 */
+.dimension-tip-row {
+    display: flex;
+    gap: var(--border-radius-sm);
+}
+
+.dimension-tip-row .form-group {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.dimension-tip-row .form-group label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    margin-bottom: calc(var(--border-radius-sm) * 0.25);
+}
+
+.dimension-tip-row .form-control {
+    padding: calc(var(--border-radius-sm) * 0.5);
+    font-size: 0.875rem;
+}
+
+/* 兼容旧的单行布局 */
 .performance__dimension-item .form-group {
     flex: 1;
     margin-bottom: 0;
