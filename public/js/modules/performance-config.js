@@ -194,6 +194,16 @@
                         <input type="number" class="form-control" value="${(dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100"
                             onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'weight', parseFloat(this.value) / 100)">
                     </div>
+                    <div class="form-group">
+                        <label>计算规则</label>
+                        <textarea class="form-control" rows="2" placeholder="输入计算规则说明"
+                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'calculationRule', this.value)">${dimension.calculationRule || ''}</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>评分标准</label>
+                        <textarea class="form-control" rows="2" placeholder="输入评分标准说明"
+                            onchange="window.App.Modules.PerformanceConfig.updateDimension(${index}, 'scoringStandard', this.value)">${dimension.scoringStandard || ''}</textarea>
+                    </div>
                     <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeDimension(${index})">
                         <i class="ph ph-trash"></i>
                     </button>
@@ -267,7 +277,9 @@
             const newDimension = {
                 name: '新维度',
                 key: `dimension_${Date.now()}`,
-                weight: 0.1
+                weight: 0.1,
+                calculationRule: '',
+                scoringStandard: ''
             };
 
             state.config.dimensions.push(newDimension);
