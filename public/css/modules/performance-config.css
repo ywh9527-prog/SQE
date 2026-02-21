@@ -244,6 +244,14 @@
     margin-bottom: 0;
 }
 
+.performance__grade-rule-item .form-group.strategy-group {
+    flex: 2;
+}
+
+.performance__grade-rule-item .form-group.strategy-group .form-control {
+    font-size: 0.8rem;
+}
+
 .performance__grade-rule-item .form-group label {
     display: block;
     font-size: 0.75rem;

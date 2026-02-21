@@ -1208,7 +1208,12 @@
         },
 
         // 显示评分详情模态框
-        showScoreDetailModal(vendorName, month) {
+        async showScoreDetailModal(vendorName, month) {
+            // 确保配置已加载
+            if (state.gradeRules.length === 0) {
+                await this.loadConfig();
+            }
+
             const { details, evaluations } = state.resultsData;
 
             if (!details || details.length === 0) {

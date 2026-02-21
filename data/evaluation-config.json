@@ -5,7 +5,7 @@
       "key": "quality",
       "weight": 0.4,
       "calculationRule": "合格批次量 / 到货批次量 × 100%",
-      "scoringStandard": "当月合格批次/当月交付总批次×100%"
+      "scoringStandard": "当月合格批次/当月交付总批次×100%×权重"
     },
     {
       "name": "使用情况",
