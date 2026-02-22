@@ -360,4 +360,93 @@ router.get('/accumulated/:year', authenticateToken, async (req, res) => {
     }
 });
 
+/**
+ * POST /api/evaluations/reset-period-mode
+ * 重置周期模式，删除所有非年度周期
+ */
+router.post('/reset-period-mode', authenticateToken, async (req, res) => {
+    try {
+        const result = await performanceEvaluationService.resetPeriodMode();
+
+        res.json({
+            success: true,
+            message: '周期模式重置成功',
+            data: result
+        });
+    } catch (error) {
+        logger.error('重置周期模式失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '重置周期模式失败'
+        });
+    }
+});
+
+/**
+ * GET /api/evaluations/current-mode
+ * 获取当前周期模式
+ */
+router.get('/current-mode', authenticateToken, async (req, res) => {
+    try {
+        const currentMode = await performanceEvaluationService.getCurrentPeriodMode();
+
+        res.json({
+            success: true,
+            data: currentMode
+        });
+    } catch (error) {
+        logger.error('获取当前周期模式失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '获取当前周期模式失败'
+        });
+    }
+});
+
+/**
+ * POST /api/evaluations/batch-generate-test-data
+ * 批量生成测试数据（用于测试显示效果）
+ * 
+ * 请求体参数：
+ * - year: 年份 (如 2025)
+ * - periodType: 周期类型 (monthly/quarterly)
+ * - supplierCount: 每个周期的供应商数量 (默认10)
+ */
+router.post('/batch-generate-test-data', authenticateToken, async (req, res) => {
+    try {
+        const { year, periodType, supplierCount } = req.body;
+
+        if (!year || !periodType) {
+            return res.status(400).json({
+                success: false,
+                message: '请提供年份和周期类型'
+            });
+        }
+
+        if (!['monthly', 'quarterly'].includes(periodType)) {
+            return res.status(400).json({
+                success: false,
+                message: '周期类型必须是 monthly 或 quarterly'
+            });
+        }
+
+        const result = await performanceEvaluationService.batchGenerateTestData({
+            year: parseInt(year),
+            periodType,
+            supplierCount: parseInt(supplierCount) || 10
+        });
+
+        res.json({
+            success: true,
+            data: result
+        });
+    } catch (error) {
+        logger.error('批量生成测试数据失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '批量生成测试数据失败'
+        });
+    }
+});
+
 module.exports = router;

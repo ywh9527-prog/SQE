@@ -211,12 +211,37 @@
             els.scoreDetailDimensions = document.getElementById('scoreDetailDimensions');
             els.scoreDetailRemarksText = document.getElementById('scoreDetailRemarksText');
             els.scoreDetailGradeStrategiesList = document.getElementById('scoreDetailGradeStrategiesList');
+            
+            // 生成测试数据模态框
+            els.generateTestDataModal = document.getElementById('generateTestDataModal');
+            els.closeTestDataModalBtn = document.getElementById('closeTestDataModalBtn');
+            els.cancelTestDataBtn = document.getElementById('cancelTestDataBtn');
+            els.confirmGenerateTestDataBtn = document.getElementById('confirmGenerateTestDataBtn');
+            els.testDataYear = document.getElementById('testDataYear');
+            els.testDataPeriodType = document.getElementById('testDataPeriodType');
+            els.testDataSupplierCount = document.getElementById('testDataSupplierCount');
+            els.testDataResult = document.getElementById('testDataResult');
+            els.testDataResultText = document.getElementById('testDataResultText');
         },
 
         // 绑定事件
         bindEvents() {
             if (els.exitResultsBtn) {
                 els.exitResultsBtn.addEventListener('click', () => this.exitResults());
+            }
+
+            // 生成测试数据按钮
+            if (els.generateTestDataBtn) {
+                els.generateTestDataBtn.addEventListener('click', () => this.openGenerateTestDataModal());
+            }
+            if (els.closeTestDataModalBtn) {
+                els.closeTestDataModalBtn.addEventListener('click', () => this.closeGenerateTestDataModal());
+            }
+            if (els.cancelTestDataBtn) {
+                els.cancelTestDataBtn.addEventListener('click', () => this.closeGenerateTestDataModal());
+            }
+            if (els.confirmGenerateTestDataBtn) {
+                els.confirmGenerateTestDataBtn.addEventListener('click', () => this.generateTestData());
             }
 
             // 年份选择器切换事件
@@ -324,6 +349,7 @@
 
                     this.showResultsInterface();
                     this.updateStats();
+                    this.updateHeatmapModeIndicator();
                     this.renderCharts();
                 } else {
                     if (window.App && window.App.Toast) {
@@ -562,10 +588,26 @@
 
             const { details, annualRankings, unevaluatedVendors } = state.resultsData;
 
-            // 生成月份列表（1-12月）
-            const months = [];
-            for (let i = 1; i <= 12; i++) {
-                months.push(`${i}月`);
+            // 生成时间列表（月份或季度）
+            const timeColumns = [];
+            
+            // 检查数据中是否有季度类型
+            const hasQuarterly = details && details.some(d => d.period && d.period.periodType === 'quarterly');
+            const hasYearly = details && details.some(d => d.period && d.period.periodType === 'yearly');
+            
+            if (hasQuarterly) {
+                // 季度模式：显示Q1-Q4
+                for (let i = 1; i <= 4; i++) {
+                    timeColumns.push(`Q${i}`);
+                }
+            } else if (hasYearly) {
+                // 年度模式：显示"年度"
+                timeColumns.push('年度');
+            } else {
+                // 月度模式：显示1-12月
+                for (let i = 1; i <= 12; i++) {
+                    timeColumns.push(`${i}月`);
+                }
             }
 
             // 构建供应商分数映射：供应商名称 -> 月份 -> 分数
@@ -580,11 +622,26 @@
                         vendorScores.set(vendorName, new Map());
                     }
 
-                    // 假设detail中有period信息，需要根据period的startDate判断月份
+                    // 根据period_type判断是月度还是季度
                     if (detail.period && detail.period.startDate) {
-                        const month = new Date(detail.period.startDate).getMonth() + 1;
-                        const monthKey = `${month}月`;
-                        vendorScores.get(vendorName).set(monthKey, detail.totalScore);
+                        const startDate = new Date(detail.period.startDate);
+                        let timeKey;
+                        
+                        if (detail.period.periodType === 'quarterly') {
+                            // 季度：计算是第几个季度
+                            const month = startDate.getMonth() + 1;
+                            const quarter = Math.ceil(month / 3);
+                            timeKey = `Q${quarter}`;
+                        } else if (detail.period.periodType === 'yearly') {
+                            // 年度：显示为"年度"
+                            timeKey = '年度';
+                        } else {
+                            // 月度或自定义
+                            const month = startDate.getMonth() + 1;
+                            timeKey = `${month}月`;
+                        }
+                        
+                        vendorScores.get(vendorName).set(timeKey, detail.totalScore);
                     }
                 });
             }
@@ -611,9 +668,12 @@
             // 渲染表格
             let heatmapHtml = '<thead><tr>';
             heatmapHtml += '<th style="padding: 8px; background: #f8fafc; width: 60px;">排名</th>';
-            heatmapHtml += '<th style="padding: 8px; background: #f8fafc; min-width: 150px;">供应商</th>';
-            months.forEach(month => {
-                heatmapHtml += `<th style="padding: 8px; background: #f8fafc; text-align: center; width: 70px;">${month}</th>`;
+            // 季度模式供应商列宽120px，月度模式150px
+            heatmapHtml += `<th style="padding: 8px; background: #f8fafc; min-width: ${hasQuarterly ? '120px' : '150px'}; width: ${hasQuarterly ? '120px' : '150px'};">供应商</th>`;
+            timeColumns.forEach(col => {
+                // 季度模式列宽90px，月度模式70px
+                const colWidth = hasQuarterly ? '90px' : '70px';
+                heatmapHtml += `<th style="padding: 8px; background: #f8fafc; text-align: center; width: ${colWidth};">${col}</th>`;
             });
             heatmapHtml += '<th style="padding: 8px; background: #f8fafc; text-align: center; width: 80px;">年度平均分</th>';
             heatmapHtml += '<th style="padding: 8px; background: #f8fafc; text-align: center; width: 60px;">等级</th>';
@@ -646,16 +706,17 @@
                 </td>`;
 
                 // 供应商名称（可点击查看趋势）
-                heatmapHtml += `<td style="padding: 8px; font-weight: 500; cursor: pointer;" class="performance__heatmap-vendor-cell" data-vendor="${vendor}">${vendor}</td>`;
+                const vendorWidth = hasQuarterly ? '120px' : '150px';
+                heatmapHtml += `<td style="padding: 8px; font-weight: 500; cursor: pointer; min-width: ${vendorWidth}; width: ${vendorWidth};" class="performance__heatmap-vendor-cell" data-vendor="${vendor}">${vendor}</td>`;
 
-                // 月份分数
+                // 时间分数
                 const scores = vendorScores.get(vendor);
-                months.forEach(month => {
-                    const score = scores.get(month);
+                timeColumns.forEach(col => {
+                    const score = scores.get(col);
                     if (score !== undefined && score !== null) {
                         // 从配置获取颜色
                         const scoreColor = this.getScoreColor(score);
-                        heatmapHtml += `<td style="padding: 8px; text-align: center; cursor: pointer;" class="performance__heatmap-score-cell" data-vendor="${vendor}" data-month="${month}">
+                        heatmapHtml += `<td style="padding: 8px; text-align: center; cursor: pointer;" class="performance__heatmap-score-cell" data-vendor="${vendor}" data-month="${col}">
                             <span class="performance__heatmap-score" style="background: ${scoreColor}">${score.toFixed(1)}</span>
                         </td>`;
                     } else {
@@ -686,7 +747,7 @@
                 heatmapHtml += '</tbody>';
                 heatmapHtml += `
                     <tr>
-                        <td colspan="${months.length + 5}" style="padding: 0; border: none;">
+                        <td colspan="${timeColumns.length + 5}" style="padding: 0; border: none;">
                             <div class="performance__heatmap-unevaluated-section">
                                 <div class="performance__heatmap-unevaluated-header performance__collapsed" id="unevaluatedHeader">
                                     <h4><i class="ph ph-warning-circle"></i> 未评价供应商 (${vendorsWithoutData.length}家)</h4>
@@ -696,8 +757,8 @@
                                     <table style="width: 100%; border-collapse: collapse;">
                                         <thead><tr>
                                             <th style="padding: 8px; background: #f8fafc; width: 60px;">排名</th>
-                                            <th style="padding: 8px; background: #f8fafc; min-width: 150px;">供应商</th>
-                                            ${months.map(m => `<th style="padding: 8px; background: #f8fafc; text-align: center; width: 70px;">${m}</th>`).join('')}
+                                            <th style="padding: 8px; background: #f8fafc; min-width: ${hasQuarterly ? '120px' : '150px'}; width: ${hasQuarterly ? '120px' : '150px'};">供应商</th>
+                                            ${timeColumns.map(m => `<th style="padding: 8px; background: #f8fafc; text-align: center; width: ${hasQuarterly ? '90px' : '70px'};">${m}</th>`).join('')}
                                             <th style="padding: 8px; background: #f8fafc; text-align: center; width: 80px;">年度平均分</th>
                                             <th style="padding: 8px; background: #f8fafc; text-align: center; width: 60px;">等级</th>
                                         </tr></thead>
@@ -705,16 +766,18 @@
                 `;
 
                 vendorsWithoutData.forEach((vendor, index) => {
+                    const vendorWidth = hasQuarterly ? '120px' : '150px';
+                    const colWidth = hasQuarterly ? '90px' : '70px';
                     heatmapHtml += '<tr>';
                     // 排名列 - 60px
                     heatmapHtml += `<td style="padding: 8px; text-align: center; width: 60px;">
                         <span class="performance__heatmap-rank-badge" style="background: #9ca3af;">-</span>
                     </td>`;
-                    // 供应商名称列 - min-width 150px
-                    heatmapHtml += `<td style="padding: 8px; font-weight: 500; color: #6b7280; min-width: 150px;">${vendor}</td>`;
-                    // 月份列 - 70px each
-                    months.forEach(() => {
-                        heatmapHtml += `<td style="padding: 8px; text-align: center; width: 70px;">
+                    // 供应商名称列
+                    heatmapHtml += `<td style="padding: 8px; font-weight: 500; color: #6b7280; min-width: ${vendorWidth}; width: ${vendorWidth};">${vendor}</td>`;
+                    // 时间列
+                    timeColumns.forEach(() => {
+                        heatmapHtml += `<td style="padding: 8px; text-align: center; width: ${colWidth};">
                             <span class="performance__heatmap-score empty">-</span>
                         </td>`;
                     });
@@ -785,6 +848,30 @@
             els.resultsInterface.classList.remove('hidden');
             document.getElementById('evaluationPeriodsList').classList.add('hidden');
             document.getElementById('evaluationInterface').classList.add('hidden');
+        },
+
+        // 更新热力图模式指示器
+        updateHeatmapModeIndicator() {
+            const indicator = document.getElementById('heatmapModeIndicator');
+            if (!indicator || !state.currentEvaluation) return;
+
+            const periodType = state.currentEvaluation.period_type;
+            const typeNames = {
+                'monthly': '月度',
+                'quarterly': '季度',
+                'yearly': '年度',
+                'custom': '自定义'
+            };
+
+            const typeName = typeNames[periodType] || periodType;
+            
+            if (periodType && periodType !== 'custom') {
+                indicator.textContent = `（${typeName}）`;
+                indicator.className = `period-mode-indicator ${periodType}`;
+            } else {
+                indicator.textContent = '';
+                indicator.className = 'period-mode-indicator';
+            }
         },
 
         // 更新统计数据
@@ -1207,6 +1294,85 @@
             els.scoreDetailOverlay.classList.remove('active');
         },
 
+        // 打开生成测试数据模态框
+        openGenerateTestDataModal() {
+            if (!els.generateTestDataModal) return;
+            
+            // 重置表单
+            els.testDataYear.value = new Date().getFullYear();
+            els.testDataPeriodType.value = 'quarterly';
+            els.testDataSupplierCount.value = 10;
+            els.testDataResult.classList.add('hidden');
+            
+            els.generateTestDataModal.classList.remove('hidden');
+        },
+
+        // 关闭生成测试数据模态框
+        closeGenerateTestDataModal() {
+            if (!els.generateTestDataModal) return;
+            els.generateTestDataModal.classList.add('hidden');
+        },
+
+        // 生成测试数据
+        async generateTestData() {
+            const year = parseInt(els.testDataYear.value);
+            const periodType = els.testDataPeriodType.value;
+            const supplierCount = parseInt(els.testDataSupplierCount.value);
+
+            if (!year || !periodType) {
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.warning('请选择年份和周期类型');
+                } else {
+                    alert('请选择年份和周期类型');
+                }
+                return;
+            }
+
+            try {
+                els.confirmGenerateTestDataBtn.disabled = true;
+                els.confirmGenerateTestDataBtn.textContent = '生成中...';
+
+                const response = await this.authenticatedFetch('/api/evaluations/batch-generate-test-data', {
+                    method: 'POST',
+                    body: JSON.stringify({ year, periodType, supplierCount })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    els.testDataResultText.textContent = `成功生成 ${result.data.periodsGenerated} 个${periodType === 'quarterly' ? '季度' : '月'}评价周期，共 ${result.data.suppliersUsed} 家供应商数据！`;
+                    els.testDataResult.classList.remove('hidden');
+                    
+                    // 延迟关闭并刷新
+                    setTimeout(() => {
+                        this.closeGenerateTestDataModal();
+                        // 刷新当前页面数据
+                        if (state.currentEvaluation) {
+                            this.loadResults(state.currentEvaluation.id);
+                        } else {
+                            this.loadEvaluations();
+                        }
+                    }, 1500);
+                } else {
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error(result.message || '生成失败');
+                    } else {
+                        alert(result.message || '生成失败');
+                    }
+                }
+            } catch (error) {
+                console.error('生成测试数据失败:', error);
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('生成测试数据失败');
+                } else {
+                    alert('生成测试数据失败');
+                }
+            } finally {
+                els.confirmGenerateTestDataBtn.disabled = false;
+                els.confirmGenerateTestDataBtn.innerHTML = '<i class="ph ph-flask"></i> 生成';
+            }
+        },
+
         // 显示评分详情模态框
         async showScoreDetailModal(vendorName, month) {
             // 确保配置已加载
@@ -1221,19 +1387,39 @@
                 return;
             }
 
-            // 解析月份（去掉"月"字）
-            const monthNum = parseInt(month.replace('月', ''));
-
-            // 查找该供应商在该月份的评价记录
-            const vendorDetail = details.find(d => {
-                if (d.entityName !== vendorName) return false;
-                if (!d.period || !d.period.startDate) return false;
-                const detailMonth = new Date(d.period.startDate).getMonth() + 1;
-                return detailMonth === monthNum;
-            });
+            // 解析时间标识（月或季度）
+            let vendorDetail;
+            if (month.startsWith('Q')) {
+                // 季度模式：匹配Q1-Q4
+                const quarter = parseInt(month.replace('Q', ''));
+                vendorDetail = details.find(d => {
+                    if (d.entityName !== vendorName) return false;
+                    if (!d.period || !d.period.startDate) return false;
+                    if (d.period.periodType !== 'quarterly') return false;
+                    const detailMonth = new Date(d.period.startDate).getMonth() + 1;
+                    const detailQuarter = Math.ceil(detailMonth / 3);
+                    return detailQuarter === quarter;
+                });
+            } else if (month === '年度') {
+                // 年度模式
+                vendorDetail = details.find(d => {
+                    if (d.entityName !== vendorName) return false;
+                    if (!d.period || !d.period.startDate) return false;
+                    return d.period.periodType === 'yearly';
+                });
+            } else {
+                // 月度模式
+                const monthNum = parseInt(month.replace('月', ''));
+                vendorDetail = details.find(d => {
+                    if (d.entityName !== vendorName) return false;
+                    if (!d.period || !d.period.startDate) return false;
+                    const detailMonth = new Date(d.period.startDate).getMonth() + 1;
+                    return detailMonth === monthNum;
+                });
+            }
 
             if (!vendorDetail) {
-                this.showToast('该月暂无评价数据', 'warning');
+                this.showToast('该时段暂无评价数据', 'warning');
                 return;
             }
 
@@ -1386,27 +1572,60 @@
             details.forEach(detail => {
                 // 只统计有分数的记录
                 if (detail.period && detail.period.startDate && detail.totalScore !== null && detail.totalScore !== undefined) {
-                    const month = new Date(detail.period.startDate).getMonth() + 1;
+                    let timeKey;
+                    
+                    if (detail.period.periodType === 'quarterly') {
+                        const month = new Date(detail.period.startDate).getMonth() + 1;
+                        const quarter = Math.ceil(month / 3);
+                        timeKey = `Q${quarter}`;
+                    } else if (detail.period.periodType === 'yearly') {
+                        timeKey = '年度';
+                    } else {
+                        timeKey = new Date(detail.period.startDate).getMonth() + 1;
+                    }
+                    
                     const score = detail.totalScore;
 
-                    if (!monthScores.has(month)) {
-                        monthScores.set(month, 0);
-                        monthCounts.set(month, 0);
+                    if (!monthScores.has(timeKey)) {
+                        monthScores.set(timeKey, 0);
+                        monthCounts.set(timeKey, 0);
                     }
-                    monthScores.set(month, monthScores.get(month) + score);
-                    monthCounts.set(month, monthCounts.get(month) + 1);
+                    monthScores.set(timeKey, monthScores.get(timeKey) + score);
+                    monthCounts.set(timeKey, monthCounts.get(timeKey) + 1);
                 }
             });
 
-            // 计算每月平均分
+            // 计算每时段平均分
             const labels = [];
             const data = [];
-            for (let i = 1; i <= 12; i++) {
-                labels.push(`${i}月`);
-                if (monthScores.has(i) && monthCounts.get(i) > 0) {
-                    data.push(monthScores.get(i) / monthCounts.get(i));
-                } else {
-                    data.push(null);
+            
+            // 检查是否有季度数据
+            const hasQuarterly = monthScores.has('Q1') || monthScores.has('Q2') || monthScores.has('Q3') || monthScores.has('Q4');
+            const hasYearly = monthScores.has('年度');
+            
+            if (hasQuarterly) {
+                // 季度模式
+                for (let i = 1; i <= 4; i++) {
+                    const key = `Q${i}`;
+                    labels.push(key);
+                    if (monthScores.has(key) && monthCounts.get(key) > 0) {
+                        data.push(monthScores.get(key) / monthCounts.get(key));
+                    } else {
+                        data.push(null);
+                    }
+                }
+            } else if (hasYearly) {
+                labels.push('年度');
+                data.push(monthScores.get('年度') / monthCounts.get('年度'));
+            } else {
+                // 月度模式
+                for (let i = 1; i <= 12; i++) {
+                    labels.push(`${i}月`);
+                    if (monthScores.has(i) && monthCounts.get(i) > 0) {
+                        data.push(monthScores.get(i) / monthCounts.get(i));
+                    } else {
+                        data.push(null);
+                    }
                 }
             }
 
@@ -1544,12 +1763,23 @@
                 year = new Date(vendorDetails[0].period.startDate).getFullYear();
             }
 
-            // 构建1-12月的数据映射，包含环比变化
-            const monthDataMap = new Map();
+            // 构建时间数据映射，包含环比变化
+            const timeDataMap = new Map();
             let prevScore = null;
             vendorDetails.forEach(detail => {
                 if (detail.period && detail.period.startDate) {
-                    const month = new Date(detail.period.startDate).getMonth() + 1;
+                    let timeKey;
+                    
+                    if (detail.period.periodType === 'quarterly') {
+                        const month = new Date(detail.period.startDate).getMonth() + 1;
+                        const quarter = Math.ceil(month / 3);
+                        timeKey = `Q${quarter}`;
+                    } else if (detail.period.periodType === 'yearly') {
+                        timeKey = '年度';
+                    } else {
+                        timeKey = new Date(detail.period.startDate).getMonth() + 1;
+                    }
+                    
                     const currentScore = detail.totalScore;
                     let change = null;
                     
@@ -1557,7 +1787,7 @@
                         change = currentScore - prevScore;
                     }
                     
-                    monthDataMap.set(month, {
+                    timeDataMap.set(timeKey, {
                         score: currentScore,
                         grade: detail.grade,
                         change: change,
@@ -1573,19 +1803,52 @@
                 state.charts.drawerVendorTrend.destroy();
             }
 
-            // 生成1-12月的标签和数据
+            // 生成时间标签和数据
             const labels = [];
             const data = [];
             const changes = [];
-            for (let i = 1; i <= 12; i++) {
-                labels.push(`${i}月`);
-                if (monthDataMap.has(i)) {
-                    const monthInfo = monthDataMap.get(i);
-                    data.push(monthInfo.score);
-                    changes.push(monthInfo.change);
+            
+            // 检查是否有季度数据
+            const hasQuarterly = Array.from(timeDataMap.keys()).some(k => k.startsWith('Q'));
+            const hasYearly = timeDataMap.has('年度');
+            
+            if (hasQuarterly) {
+                // 季度模式
+                for (let i = 1; i <= 4; i++) {
+                    const key = `Q${i}`;
+                    labels.push(key);
+                    if (timeDataMap.has(key)) {
+                        const info = timeDataMap.get(key);
+                        data.push(info.score);
+                        changes.push(info.change);
+                    } else {
+                        data.push(null);
+                        changes.push(null);
+                    }
+                }
+            } else if (hasYearly) {
+                // 年度模式
+                labels.push('年度');
+                if (timeDataMap.has('年度')) {
+                    const info = timeDataMap.get('年度');
+                    data.push(info.score);
+                    changes.push(null);
                 } else {
                     data.push(null);
                     changes.push(null);
+                }
+            } else {
+                // 月度模式
+                for (let i = 1; i <= 12; i++) {
+                    labels.push(`${i}月`);
+                    if (timeDataMap.has(i)) {
+                        const info = timeDataMap.get(i);
+                        data.push(info.score);
+                        changes.push(info.change);
+                    } else {
+                        data.push(null);
+                        changes.push(null);
+                    }
                 }
             }
 

@@ -51,6 +51,7 @@
     <!-- 供应商绩效评价样式 -->
     <link rel="stylesheet" href="css/modules/performance-evaluation.css?v=20250115-4">
     <link rel="stylesheet" href="css/modules/performance-dashboard.css?v=20250115">
+    <link rel="stylesheet" href="css/modules/performance-test-data.css">
     <link rel="stylesheet" href="css/modules/performance-config.css?v=20250115">
     <link rel="stylesheet" href="css/modules/vendor-config-font-hierarchy.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-filter.css?v=20250108-4">
@@ -536,7 +537,7 @@
                     <div id="createEvaluationModal" class="performance__performance-modal hidden">
                         <div class="performance__performance-modal-content">
                             <div class="performance__performance-modal-header">
-                                <h3>创建评价周期</h3>
+                                <h3>创建评价周期 <span id="currentPeriodModeTip" class="period-mode-tip"></span></h3>
                                 <button class="btn-icon" id="closeCreateModalBtn">
                                     <i class="ph ph-x"></i>
                                 </button>
@@ -647,6 +648,58 @@
                                         </div>
                                     </form>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 生成测试数据对话框 -->
+                    <div id="generateTestDataModal" class="performance__performance-modal hidden">
+                        <div class="performance__performance-modal-content">
+                            <div class="performance__performance-modal-header">
+                                <h3><i class="ph ph-flask"></i> 生成测试数据</h3>
+                                <button class="btn-icon" id="closeTestDataModalBtn">
+                                    <i class="ph ph-x"></i>
+                                </button>
+                            </div>
+                            <div class="performance__performance-modal-body">
+                                <p style="margin-bottom: 16px; color: #666;">
+                                    此功能用于生成模拟测试数据，方便验证显示效果是否正确。生成的数据会保存到数据库。
+                                </p>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">年份</label>
+                                    <select id="testDataYear" class="form-control">
+                                        <option value="2025">2025年</option>
+                                        <option value="2026" selected>2026年</option>
+                                        <option value="2027">2027年</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">周期类型</label>
+                                    <select id="testDataPeriodType" class="form-control">
+                                        <option value="monthly">月度 (1-12月)</option>
+                                        <option value="quarterly">季度 (Q1-Q4)</option>
+                                    </select>
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">每周期评分数</label>
+                                    <input type="number" id="testDataSupplierCount" class="form-control" value="10" min="1" max="50">
+                                    <small style="color: #999;">每个月份/季度评价的供应商数量</small>
+                                </div>
+                                
+                                <div id="testDataResult" class="hidden" style="margin-top: 16px; padding: 12px; background: #f0fdf4; border-radius: 6px;">
+                                    <p style="color: #16a34a; margin: 0;"><i class="ph ph-check-circle"></i> 
+                                        <span id="testDataResultText"></span>
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="performance__performance-modal-footer">
+                                <button class="btn btn-secondary" id="cancelTestDataBtn">取消</button>
+                                <button class="btn btn-primary" id="confirmGenerateTestDataBtn">
+                                    <i class="ph ph-flask"></i> 生成
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -883,6 +936,9 @@
                                 </span>
                             </div>
                             <div class="performance__results-actions">
+                                <button class="btn btn-info" id="generateTestDataBtn" title="生成测试数据用于验证显示效果">
+                                    <i class="ph ph-flask"></i> 生成测试数据
+                                </button>
                                 <button class="btn btn-secondary" id="showPeriodsBtn">
                                     <i class="ph ph-clock-counter-clockwise"></i> 历史评价
                                 </button>
@@ -999,7 +1055,7 @@
                             <div class="performance__heatmap-section">
                                 <div class="performance__heatmap-container">
                                     <div class="performance__heatmap-header">
-                                        <h3>月度绩效得分矩阵</h3>
+                                        <h3>绩效得分矩阵 <span id="heatmapModeIndicator" class="period-mode-indicator"></span></h3>
                                         <div class="performance__heatmap-legend" id="heatmapLegend">
                                             <!-- 图例将动态生成 -->
                                         </div>
@@ -1111,7 +1167,7 @@
                     <!-- 评价周期列表（默认隐藏） -->
                     <div id="evaluationPeriodsList" class="performance__periods-list hidden">
                         <div class="performance__periods-header">
-                            <h3>历史评价周期</h3>
+                            <h3>历史评价周期 <button class="btn btn-sm btn-warning" id="resetPeriodModeBtn" title="重置周期模式（删除所有月度/季度周期）" style="margin-left: 10px;">重置模式</button></h3>
                             <button class="performance__back-btn" id="backToMainBtn">
                                 <i class="ph ph-arrow-left"></i>
                                 返回主界面

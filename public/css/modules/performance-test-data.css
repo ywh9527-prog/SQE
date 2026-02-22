@@ -1,0 +1,168 @@
+
+/* ============================================
+   生成测试数据模态框样式
+   ============================================ */
+
+.performance__test-data-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.performance__test-data-modal.hidden {
+    display: none;
+}
+
+.performance__test-data-modal-content {
+    background: white;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 480px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.performance__test-data-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.performance__test-data-modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #111827;
+}
+
+.performance__test-data-modal-header .btn-icon {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #6b7280;
+    cursor: pointer;
+    padding: 4px;
+    line-height: 1;
+}
+
+.performance__test-data-modal-header .btn-icon:hover {
+    color: #111827;
+}
+
+.performance__test-data-modal-body {
+    padding: 24px;
+}
+
+.performance__test-data-form-group {
+    margin-bottom: 20px;
+}
+
+.performance__test-data-form-group label {
+    display: block;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.performance__test-data-form-group select,
+.performance__test-data-form-group input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9375rem;
+    color: #111827;
+    background: white;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.performance__test-data-form-group select:focus,
+.performance__test-data-form-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.performance__test-data-form-group .help-text {
+    font-size: 0.8125rem;
+    color: #6b7280;
+    margin-top: 6px;
+}
+
+.performance__test-data-result {
+    margin-top: 20px;
+    padding: 16px;
+    background: #ecfdf5;
+    border: 1px solid #10b981;
+    border-radius: 8px;
+    color: #065f46;
+    font-size: 0.9375rem;
+}
+
+.performance__test-data-result.hidden {
+    display: none;
+}
+
+.performance__test-data-modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 16px 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.performance__test-data-modal-footer .btn {
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.performance__test-data-modal-footer .btn-secondary {
+    background: white;
+    border: 1px solid #d1d5db;
+    color: #374151;
+}
+
+.performance__test-data-modal-footer .btn-secondary:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.performance__test-data-modal-footer .btn-primary {
+    background: #3b82f6;
+    border: 1px solid #3b82f6;
+    color: white;
+}
+
+.performance__test-data-modal-footer .btn-primary:hover {
+    background: #2563eb;
+    border-color: #2563eb;
+}
+
+.performance__test-data-modal-footer .btn-primary:disabled {
+    background: #93c5fd;
+    border-color: #93c5fd;
+    cursor: not-allowed;
+}
