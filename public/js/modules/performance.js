@@ -1006,6 +1006,12 @@
             this.renderDimensionInputs();
 
             els.evaluationModal.classList.remove('hidden');
+            
+            // 滚动到模态框内容顶部
+            const modalContent = els.evaluationModal.querySelector('.performance__evaluation-modal-content');
+            if (modalContent) {
+                modalContent.scrollTop = 0;
+            }
         },
 
         // 渲染维度输入框
