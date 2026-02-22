@@ -212,36 +212,12 @@
             els.scoreDetailRemarksText = document.getElementById('scoreDetailRemarksText');
             els.scoreDetailGradeStrategiesList = document.getElementById('scoreDetailGradeStrategiesList');
             
-            // 生成测试数据模态框
-            els.generateTestDataModal = document.getElementById('generateTestDataModal');
-            els.closeTestDataModalBtn = document.getElementById('closeTestDataModalBtn');
-            els.cancelTestDataBtn = document.getElementById('cancelTestDataBtn');
-            els.confirmGenerateTestDataBtn = document.getElementById('confirmGenerateTestDataBtn');
-            els.testDataYear = document.getElementById('testDataYear');
-            els.testDataPeriodType = document.getElementById('testDataPeriodType');
-            els.testDataSupplierCount = document.getElementById('testDataSupplierCount');
-            els.testDataResult = document.getElementById('testDataResult');
-            els.testDataResultText = document.getElementById('testDataResultText');
         },
 
         // 绑定事件
         bindEvents() {
             if (els.exitResultsBtn) {
                 els.exitResultsBtn.addEventListener('click', () => this.exitResults());
-            }
-
-            // 生成测试数据按钮
-            if (els.generateTestDataBtn) {
-                els.generateTestDataBtn.addEventListener('click', () => this.openGenerateTestDataModal());
-            }
-            if (els.closeTestDataModalBtn) {
-                els.closeTestDataModalBtn.addEventListener('click', () => this.closeGenerateTestDataModal());
-            }
-            if (els.cancelTestDataBtn) {
-                els.cancelTestDataBtn.addEventListener('click', () => this.closeGenerateTestDataModal());
-            }
-            if (els.confirmGenerateTestDataBtn) {
-                els.confirmGenerateTestDataBtn.addEventListener('click', () => this.generateTestData());
             }
 
             // 年份选择器切换事件
@@ -1292,85 +1268,6 @@
 
             els.scoreDetailModal.classList.remove('active');
             els.scoreDetailOverlay.classList.remove('active');
-        },
-
-        // 打开生成测试数据模态框
-        openGenerateTestDataModal() {
-            if (!els.generateTestDataModal) return;
-            
-            // 重置表单
-            els.testDataYear.value = new Date().getFullYear();
-            els.testDataPeriodType.value = 'quarterly';
-            els.testDataSupplierCount.value = 10;
-            els.testDataResult.classList.add('hidden');
-            
-            els.generateTestDataModal.classList.remove('hidden');
-        },
-
-        // 关闭生成测试数据模态框
-        closeGenerateTestDataModal() {
-            if (!els.generateTestDataModal) return;
-            els.generateTestDataModal.classList.add('hidden');
-        },
-
-        // 生成测试数据
-        async generateTestData() {
-            const year = parseInt(els.testDataYear.value);
-            const periodType = els.testDataPeriodType.value;
-            const supplierCount = parseInt(els.testDataSupplierCount.value);
-
-            if (!year || !periodType) {
-                if (window.App && window.App.Toast) {
-                    window.App.Toast.warning('请选择年份和周期类型');
-                } else {
-                    alert('请选择年份和周期类型');
-                }
-                return;
-            }
-
-            try {
-                els.confirmGenerateTestDataBtn.disabled = true;
-                els.confirmGenerateTestDataBtn.textContent = '生成中...';
-
-                const response = await this.authenticatedFetch('/api/evaluations/batch-generate-test-data', {
-                    method: 'POST',
-                    body: JSON.stringify({ year, periodType, supplierCount })
-                });
-
-                const result = await response.json();
-
-                if (result.success) {
-                    els.testDataResultText.textContent = `成功生成 ${result.data.periodsGenerated} 个${periodType === 'quarterly' ? '季度' : '月'}评价周期，共 ${result.data.suppliersUsed} 家供应商数据！`;
-                    els.testDataResult.classList.remove('hidden');
-                    
-                    // 延迟关闭并刷新
-                    setTimeout(() => {
-                        this.closeGenerateTestDataModal();
-                        // 刷新当前页面数据
-                        if (state.currentEvaluation) {
-                            this.loadResults(state.currentEvaluation.id);
-                        } else {
-                            this.loadEvaluations();
-                        }
-                    }, 1500);
-                } else {
-                    if (window.App && window.App.Toast) {
-                        window.App.Toast.error(result.message || '生成失败');
-                    } else {
-                        alert(result.message || '生成失败');
-                    }
-                }
-            } catch (error) {
-                console.error('生成测试数据失败:', error);
-                if (window.App && window.App.Toast) {
-                    window.App.Toast.error('生成测试数据失败');
-                } else {
-                    alert('生成测试数据失败');
-                }
-            } finally {
-                els.confirmGenerateTestDataBtn.disabled = false;
-                els.confirmGenerateTestDataBtn.innerHTML = '<i class="ph ph-flask"></i> 生成';
-            }
         },
 
         // 显示评分详情模态框
