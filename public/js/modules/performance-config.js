@@ -388,6 +388,14 @@
             state.config.dimensions.push(newDimension);
             this.renderDimensions();
             this.updateTotalWeight();
+            
+            // 滚动到新添加的维度位置
+            setTimeout(() => {
+                const items = els.dimensionsList.querySelectorAll('.performance__dimension-item');
+                if (items.length > 0) {
+                    items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
         },
 
         // 删除维度
@@ -420,6 +428,14 @@
 
             state.config.gradeRules.push(newRule);
             this.renderGradeRules();
+            
+            // 滚动到新添加的等级位置
+            setTimeout(() => {
+                const items = els.gradeRulesList.querySelectorAll('.performance__grade-rule-item');
+                if (items.length > 0) {
+                    items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
         },
 
         // 删除等级规则
@@ -586,6 +602,14 @@
             state.yearlyConfig.dimensions.push(newDimension);
             this.renderYearlyDimensions();
             this.updateYearlyTotalWeight();
+            
+            // 滚动到新添加的维度位置
+            setTimeout(() => {
+                const items = els.yearlyDimensionsList.querySelectorAll('.performance__dimension-item');
+                if (items.length > 0) {
+                    items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
         },
 
         // 删除年度维度
@@ -617,6 +641,14 @@
 
             state.yearlyConfig.gradeRules.push(newRule);
             this.renderYearlyGradeRules();
+            
+            // 滚动到新添加的等级位置
+            setTimeout(() => {
+                const items = els.yearlyGradeRulesList.querySelectorAll('.performance__grade-rule-item');
+                if (items.length > 0) {
+                    items[items.length - 1].scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }, 100);
         },
 
         // 删除年度等级规则
