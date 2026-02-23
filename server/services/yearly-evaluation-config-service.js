@@ -65,7 +65,7 @@ class YearlyEvaluationConfigService {
                     weight: 0.10,
                     type: "manual",
                     calculationRule: "市场行情无大幅度波动前提下，（上年度综合单价 - 评价期综合单价）/ 上年度综合单价 ×100%",
-                    scoringStandard: "价格下降5%以上得10分；价格下降2%~5%得8分；价格平稳得6分；价格高于2%~5%得0分"
+                    scoringStandard: "价格下降5%以上得100分；价格下降2%~5%得80分；价格平稳得60分；价格高于2%~5%得0分"
                 },
                 {
                     name: "绿色环保",
