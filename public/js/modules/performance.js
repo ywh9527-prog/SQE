@@ -1944,29 +1944,40 @@
 
         // 查看结果 - 跳转到主界面显示年度累计绩效
         viewResults(evaluationId) {
-            // 从评价周期ID中提取年份（假设格式为 "2025-01" 或类似格式）
-            let year = new Date().getFullYear(); // 默认当前年份
-            
-            // 尝试从evaluationId中提取年份
-            if (evaluationId && typeof evaluationId === 'string') {
-                const match = evaluationId.match(/^(\d{4})/);
-                if (match && match[1]) {
-                    year = parseInt(match[1], 10);
-                }
-            } else if (evaluationId && typeof evaluationId === 'number') {
-                // 如果是数字，尝试转换为年份（假设是时间戳或其他格式）
-                // 这里不做处理，使用默认年份
-            }
-            
-            // 跳转到绩效评价模块的主界面（年度累计绩效）
-            window.location.hash = 'performance';
-            
-            // 等待页面跳转完成后，加载对应年份的累计绩效数据
-            setTimeout(() => {
-                if (window.App && window.App.Modules && window.App.Modules.PerformanceDashboard) {
-                    window.App.Modules.PerformanceDashboard.loadAccumulatedResults(year);
-                }
-            }, 100);
+            // 先获取评价周期的详细信息来提取年份
+            this.authenticatedFetch(`/api/evaluations/${evaluationId}`)
+                .then(response => response.json())
+                .then(result => {
+                    if (result.success && result.data) {
+                        const evaluation = result.data;
+                        // 从start_date中提取年份
+                        let year = new Date().getFullYear(); // 默认当前年份
+                        
+                        if (evaluation.start_date) {
+                            const match = evaluation.start_date.match(/^(\d{4})/);
+                            if (match && match[1]) {
+                                year = parseInt(match[1], 10);
+                            }
+                        }
+                        
+                        // 跳转到绩效评价模块的主界面（年度累计绩效）
+                        window.location.hash = 'performance';
+                        
+                        // 等待页面跳转完成后，加载对应年份的累计绩效数据
+                        setTimeout(() => {
+                            if (window.App && window.App.Modules && window.App.Modules.PerformanceDashboard) {
+                                window.App.Modules.PerformanceDashboard.loadAccumulatedResults(year);
+                            }
+                        }, 100);
+                    } else {
+                        // 如果获取失败，直接跳转
+                        window.location.hash = 'performance';
+                    }
+                })
+                .catch(error => {
+                    console.error('获取评价周期信息失败:', error);
+                    window.location.hash = 'performance';
+                });
         }
     };
 
