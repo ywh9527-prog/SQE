@@ -101,4 +101,82 @@ router.post('/reset', authenticateToken, async (req, res) => {
     }
 });
 
+// ========== 年度评价配置API ==========
+
+const yearlyEvaluationConfigService = require('../services/yearly-evaluation-config-service');
+
+/**
+ * 获取年度评价配置
+ * GET /api/evaluation-config/yearly
+ */
+router.get('/yearly', authenticateToken, async (req, res) => {
+    try {
+        const config = await yearlyEvaluationConfigService.getConfig();
+
+        res.json({
+            success: true,
+            data: config
+        });
+    } catch (error) {
+        logger.error('获取年度评价配置失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '获取年度评价配置失败'
+        });
+    }
+});
+
+/**
+ * 更新年度评价配置
+ * PUT /api/evaluation-config/yearly
+ */
+router.put('/yearly', authenticateToken, async (req, res) => {
+    try {
+        const config = req.body;
+
+        if (!config) {
+            return res.status(400).json({
+                success: false,
+                message: '缺少配置参数'
+            });
+        }
+
+        const updatedConfig = await yearlyEvaluationConfigService.saveConfig(config);
+
+        res.json({
+            success: true,
+            data: updatedConfig,
+            message: '年度评价配置更新成功'
+        });
+    } catch (error) {
+        logger.error('更新年度评价配置失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '更新年度评价配置失败'
+        });
+    }
+});
+
+/**
+ * 重置年度评价配置为默认
+ * POST /api/evaluation-config/yearly/reset
+ */
+router.post('/yearly/reset', authenticateToken, async (req, res) => {
+    try {
+        const defaultConfig = await yearlyEvaluationConfigService.resetToDefault();
+
+        res.json({
+            success: true,
+            data: defaultConfig,
+            message: '已重置年度评价为默认配置'
+        });
+    } catch (error) {
+        logger.error('重置年度评价配置失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '重置年度评价配置失败'
+        });
+    }
+});
+
 module.exports = router;
