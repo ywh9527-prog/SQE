@@ -77,10 +77,10 @@ class YearlyEvaluationConfigService {
                 }
             ],
             gradeRules: [
-                { min: 95, max: 100, label: "优秀", color: "#16a34a", strategy: "同等条件优先采购" },
-                { min: 85, max: 95, label: "良好", color: "#2563eb", strategy: "可保持正常采购" },
-                { min: 70, max: 85, label: "合格", color: "#f59e0b", strategy: "要求供应商内部改善" },
-                { min: 0, max: 70, label: "不合格", color: "#dc2626", strategy: "暂停供货或剔除供应商目录" }
+                { min: 95, max: 100, label: "优秀", color: "#16a34a", strategy: "同等条件下优先采购" },
+                { min: 85, max: 95, label: "良好", color: "#2563eb", strategy: "保持正常采购，要求供应商自主内部改善" },
+                { min: 70, max: 85, label: "合格", color: "#f59e0b", strategy: "保持正常采购，要求供应商提交8D改善报告，杜绝重复问题；连续出现≥2次重复性问题，列入不合格管理" },
+                { min: 0, max: 70, label: "不合格", color: "#dc2626", strategy: "暂停新产品开发，供应商需1周内提交改进计划，1个月内完成改进并提交报告，审核通过后恢复开发资格；连续三个月不合格，暂停供货，要求6个月内完成改进，直至连续3个月达合格及以上方可恢复供货；6个月内未达标，剔除出合格供应商目录" }
             ]
         };
     }

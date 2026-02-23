@@ -1403,8 +1403,10 @@
 }
 
 .performance__score-detail-vendor::before {
-    content: '🏭';
-    font-size: 1rem;
+    content: '\e94d';
+    font-family: 'Phosphor';
+    font-size: 1.1rem;
+    color: var(--primary-500);
 }
 
 /* 评价周期 */
@@ -1511,16 +1513,18 @@
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.performance__score-detail-strategy {
-    margin-top: 12px;
-    padding: 10px 14px;
-    background: var(--gray-50);
-    border-radius: var(--border-radius-sm);
-    font-size: 0.8rem;
+/* 等级策略单独显示 */
+.performance__score-detail-grade-strategy {
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--border-radius-md);
+    font-size: 0.85rem;
     color: var(--gray-700);
-    line-height: 1.5;
+    line-height: 1.6;
     text-align: left;
-    border-left: 3px solid var(--primary-400);
+    border-left: 4px solid var(--primary-500);
 }
 
 .performance__score-detail-dimensions {
@@ -1540,8 +1544,10 @@
 }
 
 .performance__score-detail-dimensions h4::before {
-    content: '📊';
-    font-size: 0.9rem;
+    content: '\e9a9';
+    font-family: 'Phosphor';
+    font-size: 1rem;
+    color: var(--primary-500);
 }
 
 .performance__score-detail-dimension {
@@ -1646,8 +1652,10 @@
 }
 
 .performance__grade-strategies-title::before {
-    content: '📋';
-    font-size: 0.85rem;
+    content: '\e968';
+    font-family: 'Phosphor';
+    font-size: 0.95rem;
+    color: var(--primary-500);
 }
 
 .performance__grade-strategy-item {

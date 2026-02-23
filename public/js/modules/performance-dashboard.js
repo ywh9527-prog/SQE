@@ -85,6 +85,16 @@
             return '#6b7280';
         },
 
+        // 辅助函数：根据分数获取进度条颜色
+        getScoreProgressColor(score) {
+            if (score === undefined || score === null) return '#6b7280';
+            if (score >= 95) return '#10b981'; // 优秀 - 绿色
+            if (score >= 85) return '#22c55e'; // 良好 - 浅绿
+            if (score >= 70) return '#f59e0b'; // 合格 - 橙色
+            if (score >= 60) return '#f97316'; // 观察 - 深橙
+            return '#ef4444'; // 不合格 - 红色
+        },
+
         // 辅助函数：根据等级名称获取策略
         getGradeStrategyByName(gradeName) {
             if (!gradeName || gradeName === '-') return '';
