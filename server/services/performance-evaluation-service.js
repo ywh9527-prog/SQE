@@ -24,9 +24,17 @@ class PerformanceEvaluationService {
         const transaction = await sequelize.transaction();
 
         try {
-            // 获取当前配置
-            const configService = require('./evaluation-config-service');
-            const currentConfig = await configService.getCurrentConfig();
+            // 获取当前配置 - 根据周期类型选择正确的配置服务
+            let currentConfig;
+            if (data.period_type === 'yearly') {
+                // 年度评价：使用年度配置
+                const yearlyConfigService = require('./yearly-evaluation-config-service');
+                currentConfig = await yearlyConfigService.getCurrentConfig();
+            } else {
+                // 月度/季度评价：使用标准配置
+                const configService = require('./evaluation-config-service');
+                currentConfig = await configService.getCurrentConfig();
+            }
 
             // 创建评价周期
             const evaluation = await PerformanceEvaluation.create({
@@ -1249,12 +1257,33 @@ class PerformanceEvaluationService {
                 throw new Error('评价详情不存在');
             }
 
-            // 计算总分和等级
-            const configService = require('./evaluation-config-service');
-            const { totalScore, grade } = configService.calculateScoreAndGrade(
-                data.scores,
-                detail.evaluation.config_snapshot
-            );
+            // 计算总分和等级 - 根据评价周期类型选择正确的配置服务
+            const isYearlyEvaluation = detail.evaluation.period_type === 'yearly';
+            let totalScore, grade;
+            
+            if (isYearlyEvaluation) {
+                // 年度评价：使用年度配置服务，需要传入环保是否合格
+                const yearlyConfigService = require('./yearly-evaluation-config-service');
+                // 处理字符串 "true"/"false" 和布尔值的混合情况
+                const greenEnvValue = data.scores.green_environment ?? data.scores.green;
+                const greenEnvPass = greenEnvValue === true || greenEnvValue === 'true' || greenEnvValue === undefined || greenEnvValue === null;
+                const result = yearlyConfigService.calculateScoreAndGrade(
+                    data.scores,
+                    detail.evaluation.config_snapshot,
+                    greenEnvPass
+                );
+                totalScore = result.totalScore;
+                grade = result.grade;
+            } else {
+                // 月度/季度评价：使用标准配置服务
+                const configService = require('./evaluation-config-service');
+                const result = configService.calculateScoreAndGrade(
+                    data.scores,
+                    detail.evaluation.config_snapshot
+                );
+                totalScore = result.totalScore;
+                grade = result.grade;
+            }
 
             // 更新评价详情
             detail.scores = data.scores;
