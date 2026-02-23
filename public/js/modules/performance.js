@@ -1944,8 +1944,15 @@
 
         // 查看结果 - 跳转到主界面显示累计绩效
         viewResults(evaluationId) {
-            // 跳转到主界面显示累计绩效（通过hash导航）
+            // 跳转到绩效评价模块并加载对应评价周期的数据
             window.location.hash = 'performance';
+            
+            // 等待页面跳转完成后，加载评价结果数据
+            setTimeout(() => {
+                if (window.App && window.App.Modules && window.App.Modules.PerformanceDashboard) {
+                    window.App.Modules.PerformanceDashboard.loadResults(evaluationId);
+                }
+            }, 100);
         }
     };
 
