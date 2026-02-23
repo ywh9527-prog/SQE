@@ -1942,15 +1942,19 @@
             }
         },
 
-        // 查看结果 - 跳转到主界面显示累计绩效
+        // 查看结果 - 跳转到主界面显示年度累计绩效
         viewResults(evaluationId) {
-            // 跳转到绩效评价模块并加载对应评价周期的数据
+            // 从评价周期ID中提取年份
+            // 假设 evaluationId 格式为 "2024-01" 或包含年份信息
+            // 跳转到绩效评价模块的主界面（年度累计绩效）
             window.location.hash = 'performance';
             
-            // 等待页面跳转完成后，加载评价结果数据
+            // 等待页面跳转完成后，加载当前年份的累计绩效数据
             setTimeout(() => {
+                // 获取当前年份
+                const currentYear = new Date().getFullYear();
                 if (window.App && window.App.Modules && window.App.Modules.PerformanceDashboard) {
-                    window.App.Modules.PerformanceDashboard.loadResults(evaluationId);
+                    window.App.Modules.PerformanceDashboard.loadAccumulatedResults(currentYear);
                 }
             }, 100);
         }
