@@ -479,19 +479,12 @@
                         </div>
                         <div class="form-group">
                             <label>权重（%）</label>
-                            <input type="number" class="form-control" value="${isGreenEnv ? '-' : (dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100" ${isGreenEnv ? 'readonly' : ''}
-                                onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'weight', parseFloat(this.value) / 100)">
+                            <input type="number" class="form-control" value="${isGreenEnv ? '-' : (dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100" readonly style="background-color: #f5f5f5;">
                         </div>
                         <div class="form-group">
                             <label>类型</label>
-                            <select class="form-control" onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'type', this.value)">
-                                <option value="auto" ${dimension.type === 'auto' ? 'selected' : ''}>自动计算</option>
-                                <option value="manual" ${dimension.type === 'manual' ? 'selected' : ''}>手动评分</option>
-                            </select>
+                            <input type="text" class="form-control" value="${dimension.type === 'auto' ? '自动计算' : dimension.type === 'manual' ? '手动评分' : '否决项'}" readonly style="background-color: #f5f5f5;">
                         </div>
-                        <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeYearlyDimension(${index})">
-                            <i class="ph ph-trash"></i>
-                        </button>
                     </div>
                     <div class="dimension-tip-row">
                         <div class="form-group">
