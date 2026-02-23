@@ -25,7 +25,7 @@ class YearlyEvaluationConfigService {
                     weight: 0.30,
                     type: "auto",
                     calculationRule: "取全年各月质量维度平均分",
-                    scoringStandard: "根据月度评价记录自动计算"
+                    scoringStandard: "以月度来料质量得分平均值为准"
                 },
                 {
                     name: "使用情况",
@@ -33,7 +33,7 @@ class YearlyEvaluationConfigService {
                     weight: 0.20,
                     type: "auto",
                     calculationRule: "取全年各月使用情况维度平均分",
-                    scoringStandard: "根据月度评价记录自动计算"
+                    scoringStandard: "以月度上线使用情况得分平均值为准"
                 },
                 {
                     name: "服务态度",
@@ -41,7 +41,7 @@ class YearlyEvaluationConfigService {
                     weight: 0.10,
                     type: "auto",
                     calculationRule: "取全年各月服务态度维度平均分",
-                    scoringStandard: "根据月度评价记录自动计算"
+                    scoringStandard: "以月度服务态度得分平均值为准"
                 },
                 {
                     name: "交货时效及达成",
@@ -49,7 +49,7 @@ class YearlyEvaluationConfigService {
                     weight: 0.15,
                     type: "auto",
                     calculationRule: "取全年各月交货时效维度平均分",
-                    scoringStandard: "根据月度评价记录自动计算"
+                    scoringStandard: "以月度交货时效及达成得分平均值为准"
                 },
                 {
                     name: "持续改进能力",
