@@ -1265,8 +1265,9 @@ class PerformanceEvaluationService {
                 // 年度评价：使用年度配置服务，需要传入环保是否合格
                 const yearlyConfigService = require('./yearly-evaluation-config-service');
                 // 处理字符串 "true"/"false" 和布尔值的混合情况
+                // 只有明确选中"不合格"（值为"false"或false）时才是不合格，其他情况都为合格
                 const greenEnvValue = data.scores.green_environment ?? data.scores.green;
-                const greenEnvPass = greenEnvValue === true || greenEnvValue === 'true' || greenEnvValue === undefined || greenEnvValue === null;
+                const greenEnvPass = greenEnvValue !== 'false' && greenEnvValue !== false;
                 const result = yearlyConfigService.calculateScoreAndGrade(
                     data.scores,
                     detail.evaluation.config_snapshot,
