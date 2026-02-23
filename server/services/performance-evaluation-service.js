@@ -1858,13 +1858,12 @@ class PerformanceEvaluationService {
                     },
                     status: {
                         [Op.in]: ['completed', 'in_progress']
-                    },
-                    data_source: dataSource
+                    }
                 },
                 include: [{
                     model: PerformanceEvaluationDetail,
                     as: 'details',
-                    where: { vendor_name: vendorName },
+                    where: { evaluation_entity_name: vendorName },
                     required: true
                 }],
                 order: [['start_date', 'ASC']]
