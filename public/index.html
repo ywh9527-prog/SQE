@@ -663,12 +663,12 @@
                             <div class="performance__performance-modal-body">
                                 <!-- Tab导航 -->
                                 <div class="performance__config-tabs">
-                                    <button class="performance__config-tab active" data-tab="monthly">月度/季度</button>
-                                    <button class="performance__config-tab" data-tab="yearly">年度</button>
+                                    <button class="performance__config-tab active" id="monthlyTab" data-tab="monthly">月度/季度</button>
+                                    <button class="performance__config-tab" id="yearlyTab" data-tab="yearly">年度</button>
                                 </div>
 
                                 <!-- 月度/季度配置内容 -->
-                                <div id="monthlyConfigContent" class="performance__config-tab-content">
+                                <div id="monthlyTabContent" class="performance__config-tab-content">
                                     <!-- 配置变更警告横幅 -->
                                     <div id="configWarningBanner" class="performance__config-warning-banner hidden">
                                         <i class="ph ph-warning"></i>
@@ -721,7 +721,7 @@
                                 </div>
 
                                 <!-- 年度配置内容 -->
-                                <div id="yearlyConfigContent" class="performance__config-tab-content hidden">
+                                <div id="yearlyTabContent" class="performance__config-tab-content hidden">
                                     <!-- 年度配置变更警告横幅 -->
                                     <div id="yearlyConfigWarningBanner" class="performance__config-warning-banner hidden">
                                         <i class="ph ph-warning"></i>
