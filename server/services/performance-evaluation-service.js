@@ -1803,6 +1803,85 @@ class PerformanceEvaluationService {
             }))
         };
     }
+
+    /**
+     * 获取供应商某年度的各维度平均分
+     * @param {string} vendorName - 供应商名称
+     * @param {number} year - 年份
+     * @param {string} dataSource - 数据源类型（purchase/external）
+     * @returns {Promise<Object>} 各维度平均分
+     */
+    async getYearlyAverageScores(vendorName, year, dataSource = 'purchase') {
+        try {
+            // 获取该年度所有月度评价
+            const yearStartDate = `${year}-01-01`;
+            const yearEndDate = `${year}-12-31`;
+
+            const evaluations = await PerformanceEvaluation.findAll({
+                where: {
+                    period_type: 'monthly',
+                    start_date: {
+                        [Op.between]: [yearStartDate, yearEndDate]
+                    },
+                    status: {
+                        [Op.in]: ['completed', 'in_progress']
+                    },
+                    data_source: dataSource
+                },
+                include: [{
+                    model: PerformanceEvaluationDetail,
+                    as: 'details',
+                    where: { vendor_name: vendorName },
+                    required: true
+                }],
+                order: [['start_date', 'ASC']]
+            });
+
+            if (evaluations.length === 0) {
+                return null;
+            }
+
+            // 汇总所有月度评价的分数
+            const dimensionSums = {};
+            let validMonthCount = 0;
+
+            for (const evaluation of evaluations) {
+                if (evaluation.details && evaluation.details.length > 0) {
+                    const detail = evaluation.details[0];
+                    if (detail.scores && Object.keys(detail.scores).length > 0) {
+                        validMonthCount++;
+                        for (const [key, value] of Object.entries(detail.scores)) {
+                            dimensionSums[key] = (dimensionSums[key] || 0) + value;
+                        }
+                    }
+                }
+            }
+
+            if (validMonthCount === 0) {
+                return null;
+            }
+
+            // 计算平均分
+            const averageScores = {};
+            for (const [key, sum] of Object.entries(dimensionSums)) {
+                averageScores[key] = parseFloat((sum / validMonthCount).toFixed(2));
+            }
+
+            return {
+                year,
+                validMonthCount,
+                averageScores,
+                sourceEvaluations: evaluations.map(e => ({
+                    id: e.id,
+                    periodName: e.period_name,
+                    startDate: e.start_date
+                }))
+            };
+        } catch (error) {
+            logger.error('获取年度平均分失败:', error);
+            throw error;
+        }
+    }
 }
 
 module.exports = new PerformanceEvaluationService();

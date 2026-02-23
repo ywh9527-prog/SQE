@@ -504,6 +504,49 @@ router.post('/:id/generate-test-data', authenticateToken, async (req, res) => {
 });
 
 /**
+ * GET /api/evaluations/yearly-average/:vendorName
+ * 获取供应商某年度各维度平均分
+ */
+router.get('/yearly-average/:vendorName', authenticateToken, async (req, res) => {
+    try {
+        const { vendorName } = req.params;
+        const { year, dataSource } = req.query;
+
+        if (!year) {
+            return res.status(400).json({
+                success: false,
+                message: '缺少year参数'
+            });
+        }
+
+        const averageScores = await performanceEvaluationService.getYearlyAverageScores(
+            vendorName,
+            parseInt(year),
+            dataSource || 'purchase'
+        );
+
+        if (!averageScores) {
+            return res.json({
+                success: true,
+                data: null,
+                message: '该年度无可用评价数据'
+            });
+        }
+
+        res.json({
+            success: true,
+            data: averageScores
+        });
+    } catch (error) {
+        logger.error('获取年度平均分失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '获取年度平均分失败'
+        });
+    }
+});
+
+/**
  * ==========================================
  * 测试数据生成功能 - 结束
  * ==========================================
