@@ -520,6 +520,11 @@
 
             // 渲染热力图
             this.renderSimpleHeatmap();
+
+            // 分析并显示连续改进/恶化的供应商（需要先获取details数据）
+            const { details } = state.resultsData;
+            const hasQuarterly = details && details.some(d => d.period && d.period.periodType === 'quarterly');
+            this.analyzeTrendAlerts(details, hasQuarterly);
         },
 
         // 切换Tab
@@ -822,6 +827,133 @@
                         }
                     }
                 });
+            }
+
+            // 分析并显示连续改进/恶化的供应商
+            this.analyzeTrendAlerts(details, hasQuarterly);
+        },
+
+        // 分析并显示连续改进/恶化的供应商
+        analyzeTrendAlerts(details, isQuarterlyMode) {
+            const trendAlertSection = document.getElementById('trendAlertSection');
+            const improvingList = document.getElementById('improvingVendorsList');
+            const decliningList = document.getElementById('decliningVendorsList');
+
+            if (!trendAlertSection || !improvingList || !decliningList) return;
+
+            // 季度模式下隐藏
+            if (isQuarterlyMode) {
+                trendAlertSection.style.display = 'none';
+                return;
+            }
+
+            // 月度模式下显示
+            trendAlertSection.style.display = 'block';
+
+            if (!details || details.length === 0) {
+                improvingList.innerHTML = '<div class="performance__trend-alert-empty">暂无数据</div>';
+                decliningList.innerHTML = '<div class="performance__trend-alert-empty">暂无数据</div>';
+                return;
+            }
+
+            // 构建供应商月度得分映射
+            const vendorMonthlyScores = new Map();
+            details.forEach(detail => {
+                if (detail.period && detail.period.periodType !== 'quarterly' && detail.period.periodType !== 'yearly') {
+                    const vendorName = detail.entityName;
+                    const startDate = new Date(detail.period.startDate);
+                    const month = startDate.getMonth() + 1; // 1-12
+                    const score = detail.totalScore;
+
+                    if (!vendorMonthlyScores.has(vendorName)) {
+                        vendorMonthlyScores.set(vendorName, new Map());
+                    }
+                    vendorMonthlyScores.get(vendorName).set(month, score);
+                }
+            });
+
+            // 分析每个供应商的连续改进/恶化趋势
+            const improvingVendors = [];
+            const decliningVendors = [];
+
+            vendorMonthlyScores.forEach((monthScores, vendorName) => {
+                // 获取该供应商所有有数据的月份，按月份排序
+                const sortedMonths = Array.from(monthScores.keys()).sort((a, b) => a - b);
+
+                if (sortedMonths.length < 3) return; // 至少需要3个月的数据
+
+                let improvingCount = 0;
+                let decliningCount = 0;
+                let lastScore = null;
+                let lastMonth = null;
+
+                for (const month of sortedMonths) {
+                    const currentScore = monthScores.get(month);
+
+                    if (lastScore !== null) {
+                        if (currentScore > lastScore) {
+                            improvingCount++;
+                            decliningCount = 0; // 重置恶化计数
+                        } else if (currentScore < lastScore) {
+                            decliningCount++;
+                            improvingCount = 0; // 重置改进计数
+                        } else {
+                            // 分数相同，不计入连续改进或恶化
+                            improvingCount = 0;
+                            decliningCount = 0;
+                        }
+                    }
+
+                    // 检查是否连续改进/恶化至少3个月
+                    if (improvingCount >= 3) {
+                        improvingVendors.push({
+                            vendorName,
+                            months: sortedMonths.filter(m => m >= month - improvingCount + 1 && m <= month),
+                            score: currentScore,
+                            change: currentScore - (monthScores.get(month - improvingCount + 1) || currentScore)
+                        });
+                        break;
+                    }
+
+                    if (decliningCount >= 3) {
+                        decliningVendors.push({
+                            vendorName,
+                            months: sortedMonths.filter(m => m >= month - decliningCount + 1 && m <= month),
+                            score: currentScore,
+                            change: currentScore - (monthScores.get(month - decliningCount + 1) || currentScore)
+                        });
+                        break;
+                    }
+
+                    lastScore = currentScore;
+                    lastMonth = month;
+                }
+            });
+
+            // 渲染改进供应商列表
+            if (improvingVendors.length === 0) {
+                improvingList.innerHTML = '<div class="performance__trend-alert-empty">暂无连续改进供应商</div>';
+            } else {
+                improvingList.innerHTML = improvingVendors.map(v => `
+                    <div class="performance__trend-alert-item">
+                        <span class="performance__trend-alert-vendor">${v.vendorName}</span>
+                        <span class="performance__trend-alert-detail">连续${v.months.length}个月 (${v.months.map(m => m + '月').join('→')})</span>
+                        <span class="performance__trend-alert-score improving">+${v.change.toFixed(1)}分</span>
+                    </div>
+                `).join('');
+            }
+
+            // 渲染恶化供应商列表
+            if (decliningVendors.length === 0) {
+                decliningList.innerHTML = '<div class="performance__trend-alert-empty">暂无连续恶化供应商</div>';
+            } else {
+                decliningList.innerHTML = decliningVendors.map(v => `
+                    <div class="performance__trend-alert-item">
+                        <span class="performance__trend-alert-vendor">${v.vendorName}</span>
+                        <span class="performance__trend-alert-detail">连续${v.months.length}个月 (${v.months.map(m => m + '月').join('→')})</span>
+                        <span class="performance__trend-alert-score declining">${v.change.toFixed(1)}分</span>
+                    </div>
+                `).join('');
             }
         },
 

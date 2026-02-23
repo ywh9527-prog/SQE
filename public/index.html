@@ -1012,6 +1012,28 @@
                                 </div>
                             </div>
 
+                            <!-- 连续改进/恶化供应商模块（月度模式显示） -->
+                            <div class="performance__heatmap-section performance__trend-alert-section" id="trendAlertSection" style="margin-top: 24px; display: none;">
+                                <div class="performance__heatmap-container">
+                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                                        <!-- 连续改进供应商 -->
+                                        <div class="performance__trend-alert-card">
+                                            <h3><i class="ph ph-trend-up" style="color: #10b981;"></i> 连续改进供应商</h3>
+                                            <div class="performance__trend-alert-list" id="improvingVendorsList">
+                                                <!-- 连续改进供应商列表 -->
+                                            </div>
+                                        </div>
+                                        <!-- 连续恶化供应商 -->
+                                        <div class="performance__trend-alert-card">
+                                            <h3><i class="ph ph-trend-down" style="color: #ef4444;"></i> 连续恶化供应商</h3>
+                                            <div class="performance__trend-alert-list" id="decliningVendorsList">
+                                                <!-- 连续恶化供应商列表 -->
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- 全供应商绩效趋势图 -->
                             <div class="performance__heatmap-section" style="margin-top: 24px;">
                                 <div class="performance__heatmap-container">
