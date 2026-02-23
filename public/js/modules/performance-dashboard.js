@@ -796,24 +796,33 @@
                 });
             }
 
-            // 绑定热力图单元格点击事件
-            const vendorCells = document.querySelectorAll('.performance__heatmap-vendor-cell');
-            vendorCells.forEach(cell => {
-                cell.addEventListener('click', () => {
-                    const vendorName = cell.getAttribute('data-vendor');
-                    this.openDrawer(vendorName);
+            // 绑定热力图单元格点击事件 - 使用事件委托
+            const heatmapTable = document.getElementById('heatmapTable');
+            if (heatmapTable) {
+                heatmapTable.addEventListener('click', (e) => {
+                    // 查找供应商名称单元格
+                    const vendorCell = e.target.closest('.performance__heatmap-vendor-cell');
+                    if (vendorCell) {
+                        const vendorName = vendorCell.getAttribute('data-vendor');
+                        if (vendorName) {
+                            console.log('点击供应商:', vendorName);
+                            this.openDrawer(vendorName);
+                        }
+                        return;
+                    }
+                    
+                    // 查找分数单元格
+                    const scoreCell = e.target.closest('.performance__heatmap-score-cell');
+                    if (scoreCell) {
+                        e.stopPropagation();
+                        const vendorName = scoreCell.getAttribute('data-vendor');
+                        const month = scoreCell.getAttribute('data-month');
+                        if (vendorName && month) {
+                            this.showScoreDetailModal(vendorName, month);
+                        }
+                    }
                 });
-            });
-
-            const scoreCells = document.querySelectorAll('.performance__heatmap-score-cell');
-            scoreCells.forEach(cell => {
-                cell.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const vendorName = cell.getAttribute('data-vendor');
-                    const month = cell.getAttribute('data-month');
-                    this.showScoreDetailModal(vendorName, month);
-                });
-            });
+            }
         },
 
         // 显示结果界面
@@ -1229,7 +1238,11 @@
 
         // 打开底部抽屉
         openDrawer(vendorName) {
-            if (!els.vendorTrendDrawer || !els.drawerOverlay) return;
+            console.log('打开抽屉:', vendorName);
+            if (!els.vendorTrendDrawer || !els.drawerOverlay) {
+                console.error('抽屉元素未找到:', { drawer: !!els.vendorTrendDrawer, overlay: !!els.drawerOverlay });
+                return;
+            }
 
             // 提取年份
             let year = '';
@@ -1478,7 +1491,8 @@
                     } else if (detail.period.periodType === 'yearly') {
                         timeKey = '年度';
                     } else {
-                        timeKey = new Date(detail.period.startDate).getMonth() + 1;
+                        // 月度模式：确保timeKey是字符串格式
+                        timeKey = String(new Date(detail.period.startDate).getMonth() + 1) + '月';
                     }
                     
                     const score = detail.totalScore;
@@ -1517,9 +1531,10 @@
             } else {
                 // 月度模式
                 for (let i = 1; i <= 12; i++) {
-                    labels.push(`${i}月`);
-                    if (monthScores.has(i) && monthCounts.get(i) > 0) {
-                        data.push(monthScores.get(i) / monthCounts.get(i));
+                    const key = `${i}月`;
+                    labels.push(key);
+                    if (monthScores.has(key) && monthCounts.get(key) > 0) {
+                        data.push(monthScores.get(key) / monthCounts.get(key));
                     } else {
                         data.push(null);
                     }
@@ -1674,7 +1689,8 @@
                     } else if (detail.period.periodType === 'yearly') {
                         timeKey = '年度';
                     } else {
-                        timeKey = new Date(detail.period.startDate).getMonth() + 1;
+                        // 月度模式：确保timeKey是字符串格式
+                        timeKey = String(new Date(detail.period.startDate).getMonth() + 1) + '月';
                     }
                     
                     const currentScore = detail.totalScore;
@@ -1737,9 +1753,10 @@
             } else {
                 // 月度模式
                 for (let i = 1; i <= 12; i++) {
-                    labels.push(`${i}月`);
-                    if (timeDataMap.has(i)) {
-                        const info = timeDataMap.get(i);
+                    const key = `${i}月`;
+                    labels.push(key);
+                    if (timeDataMap.has(key)) {
+                        const info = timeDataMap.get(key);
                         data.push(info.score);
                         changes.push(info.change);
                     } else {

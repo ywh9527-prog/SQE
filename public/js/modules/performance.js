@@ -1586,10 +1586,8 @@
                         window.App.Toast.success('评价周期已完成！');
                     }
                     
-                    // 跳转到主界面显示结果
-                    if (window.App.Modules && window.App.Modules.PerformanceDashboard) {
-                        window.App.Modules.PerformanceDashboard.loadResults(state.currentEvaluation.id);
-                    }
+                    // 跳转到主界面显示累计绩效（通过hash导航）
+                    window.location.hash = 'performance';
                 } else {
                     console.error('📊 提交评价周期失败:', result.message);
                     // 使用 Toast 通知
@@ -1606,16 +1604,10 @@
             }
         },
 
-        // 查看结果
+        // 查看结果 - 跳转到主界面显示累计绩效
         viewResults(evaluationId) {
-            if (window.App.Modules.PerformanceDashboard) {
-                window.App.Modules.PerformanceDashboard.loadResults(evaluationId);
-            } else {
-                // 使用 Toast 通知
-                if (window.App && window.App.Toast) {
-                    window.App.Toast.error('绩效评价主界面模块未加载');
-                }
-            }
+            // 跳转到主界面显示累计绩效（通过hash导航）
+            window.location.hash = 'performance';
         }
     };
 

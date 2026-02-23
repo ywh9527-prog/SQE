@@ -83,8 +83,10 @@ function initializeApp() {
 
     window.App.Router.register('performance', () => {
         console.log('月度绩效评价模块已激活');
-        // 初始化绩效评价模块
+        // 每次激活时都重新加载数据，确保显示最新状态
         if (window.App.Modules && window.App.Modules.Performance) {
+            // 重置初始化状态，确保重新加载数据
+            window.App.Modules.Performance.state.isInitialized = false;
             window.App.Modules.Performance.init();
         }
     });
