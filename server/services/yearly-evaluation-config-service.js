@@ -36,20 +36,20 @@ class YearlyEvaluationConfigService {
                     scoringStandard: "以月度上线使用情况得分平均值为准"
                 },
                 {
-                    name: "服务态度",
+                    name: "服务",
                     key: "service",
                     weight: 0.10,
                     type: "auto",
-                    calculationRule: "取全年各月服务态度维度平均分",
-                    scoringStandard: "以月度服务态度得分平均值为准"
+                    calculationRule: "取全年各月服务维度平均分",
+                    scoringStandard: "以月度服务得分平均值为准"
                 },
                 {
-                    name: "交货时效及达成",
+                    name: "交付",
                     key: "delivery",
                     weight: 0.15,
                     type: "auto",
-                    calculationRule: "取全年各月交货时效维度平均分",
-                    scoringStandard: "以月度交货时效及达成得分平均值为准"
+                    calculationRule: "取全年各月交付维度平均分",
+                    scoringStandard: "以月度交付得分平均值为准"
                 },
                 {
                     name: "持续改进能力",
