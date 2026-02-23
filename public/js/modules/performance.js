@@ -1296,18 +1296,25 @@
                 let inputHTML = '';
                 
                 if (isYearly && isGreenEnv) {
-                    // 绿色环保：勾选框
+                    // 绿色环保：单选按钮（合格/不合格）
                     inputHTML = `
-                        <div class="performance__green-env-checkbox">
-                            <label class="performance__checkbox-label">
-                                <input type="checkbox" 
+                        <div class="performance__green-env-radio">
+                            <label class="performance__radio-label">
+                                <input type="radio" 
                                        name="${dimension.key}" 
                                        value="true" 
-                                       ${inputValue === 'true' ? 'checked' : ''}
+                                       ${inputValue === 'true' || inputValue === true || inputValue === undefined ? 'checked' : ''}
                                        onchange="window.App.Modules.Performance.handleGreenEnvChange(this)">
                                 <span>合格</span>
                             </label>
-                            <span class="performance__green-env-hint">不合格将一票否决</span>
+                            <label class="performance__radio-label">
+                                <input type="radio" 
+                                       name="${dimension.key}" 
+                                       value="false" 
+                                       ${inputValue === 'false' || inputValue === false ? 'checked' : ''}
+                                       onchange="window.App.Modules.Performance.handleGreenEnvChange(this)">
+                                <span>不合格</span>
+                            </label>
                         </div>
                     `;
                 } else {
