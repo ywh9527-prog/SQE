@@ -1852,7 +1852,9 @@ class PerformanceEvaluationService {
 
             const evaluations = await PerformanceEvaluation.findAll({
                 where: {
-                    period_type: 'monthly',
+                    period_type: {
+                        [Op.in]: ['monthly', 'quarterly']  // 同时支持月度和季度
+                    },
                     start_date: {
                         [Op.between]: [yearStartDate, yearEndDate]
                     },
