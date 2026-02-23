@@ -893,17 +893,19 @@
                 // 获取该供应商所有有数据的月份，按月份排序
                 const sortedMonths = Array.from(monthScores.keys()).sort((a, b) => a - b);
 
-                if (sortedMonths.length < 3) return; // 至少需要3个月的数据
+                if (sortedMonths.length < 2) return; // 至少需要2个月的数据才能比较
 
                 let improvingCount = 0;
                 let decliningCount = 0;
                 let lastScore = null;
                 let lastMonth = null;
 
-                for (const month of sortedMonths) {
+                for (let i = 0; i < sortedMonths.length; i++) {
+                    const month = sortedMonths[i];
                     const currentScore = monthScores.get(month);
 
                     if (lastScore !== null) {
+                        // 计算与上一个有数据月份的变化（跳过中间无数据的月份）
                         if (currentScore > lastScore) {
                             improvingCount++;
                             decliningCount = 0; // 重置恶化计数
@@ -918,22 +920,22 @@
                     }
 
                     // 检查是否连续改进/恶化至少3个月
-                    if (improvingCount >= 3) {
+                    if (improvingCount >= 2) {
                         improvingVendors.push({
                             vendorName,
-                            months: sortedMonths.filter(m => m >= month - improvingCount + 1 && m <= month),
+                            months: sortedMonths.filter(m => m >= month - improvingCount && m <= month),
                             score: currentScore,
-                            change: currentScore - (monthScores.get(month - improvingCount + 1) || currentScore)
+                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - improvingCount]) || currentScore)
                         });
                         break;
                     }
 
-                    if (decliningCount >= 3) {
+                    if (decliningCount >= 2) {
                         decliningVendors.push({
                             vendorName,
-                            months: sortedMonths.filter(m => m >= month - decliningCount + 1 && m <= month),
+                            months: sortedMonths.filter(m => m >= month - decliningCount && m <= month),
                             score: currentScore,
-                            change: currentScore - (monthScores.get(month - decliningCount + 1) || currentScore)
+                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - decliningCount]) || currentScore)
                         });
                         break;
                     }
