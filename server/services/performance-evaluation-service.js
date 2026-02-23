@@ -820,6 +820,22 @@ class PerformanceEvaluationService {
 
                                                                                 const allQualityDataMap = { ...purchaseQualityDataMap, ...externalQualityDataMap };
 
+                // 年度评价：计算各供应商的年度汇总数据
+                let yearlyDataMap = {};
+                if (evaluation.period_type === 'yearly') {
+                    const year = new Date(evaluation.start_date).getFullYear();
+                    for (const vendor of vendors) {
+                        try {
+                            const yearlyData = await this.getYearlyAverageScores(vendor.supplier_name, year);
+                            if (yearlyData) {
+                                yearlyDataMap[vendor.supplier_name] = yearlyData;
+                            }
+                        } catch (e) {
+                            console.error('计算供应商年度数据失败:', e);
+                        }
+                    }
+                }
+
     
 
                     
@@ -1097,6 +1113,22 @@ class PerformanceEvaluationService {
                         'external'
                     );
 
+                    // 年度评价：计算各供应商的年度汇总数据
+                    let yearlyDataMapInProgress = {};
+                    if (evaluation.period_type === 'yearly') {
+                        const year = new Date(evaluation.start_date).getFullYear();
+                        for (const vendor of vendors) {
+                            try {
+                                const yearlyData = await this.getYearlyAverageScores(vendor.supplier_name, year);
+                                if (yearlyData) {
+                                    yearlyDataMapInProgress[vendor.supplier_name] = yearlyData;
+                                }
+                            } catch (e) {
+                                console.error('计算供应商年度数据失败:', e);
+                            }
+                        }
+                    }
+
                     await transaction.commit();
 
                     logger.info(`继续评价成功: ${evaluation.period_name}`);
@@ -1124,7 +1156,8 @@ class PerformanceEvaluationService {
                                 scores: detail ? detail.scores : {},
                                 totalScore: detail ? detail.total_score : null,
                                 grade: detail ? detail.grade : null,
-                                remarks: detail ? detail.remarks : null
+                                remarks: detail ? detail.remarks : null,
+                                yearlyQualityData: yearlyDataMapInProgress ? yearlyDataMapInProgress[v.supplier_name] : null
                             };
                         })
                     };

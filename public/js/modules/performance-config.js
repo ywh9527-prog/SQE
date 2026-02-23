@@ -176,7 +176,7 @@
         // 加载年度配置
         async loadYearlyConfig() {
             try {
-                const response = await this.authenticatedFetch('/api/yearly-evaluation-config');
+                const response = await this.authenticatedFetch('/api/evaluation-config/yearly');
                 const result = await response.json();
 
                 if (result.success) {
@@ -662,7 +662,7 @@
                     '确定要重置年度评价配置为默认配置吗？这将清除所有自定义配置。',
                     async () => {
                         try {
-                            const response = await this.authenticatedFetch('/api/yearly-evaluation-config/reset', {
+                            const response = await this.authenticatedFetch('/api/evaluation-config/yearly/reset', {
                                 method: 'POST'
                             });
                             const result = await response.json();
@@ -737,7 +737,7 @@
         // 执行保存年度配置
         async doSaveYearlyConfig() {
             try {
-                const response = await this.authenticatedFetch('/api/yearly-evaluation-config', {
+                const response = await this.authenticatedFetch('/api/evaluation-config/yearly', {
                     method: 'PUT',
                     body: JSON.stringify(state.yearlyConfig)
                 });

@@ -510,7 +510,7 @@ router.post('/:id/generate-test-data', authenticateToken, async (req, res) => {
 router.get('/yearly-average/:vendorName', authenticateToken, async (req, res) => {
     try {
         const { vendorName } = req.params;
-        const { year, dataSource } = req.query;
+        const { year } = req.query;
 
         if (!year) {
             return res.status(400).json({
@@ -521,8 +521,7 @@ router.get('/yearly-average/:vendorName', authenticateToken, async (req, res) =>
 
         const averageScores = await performanceEvaluationService.getYearlyAverageScores(
             vendorName,
-            parseInt(year),
-            dataSource || 'purchase'
+            parseInt(year)
         );
 
         if (!averageScores) {

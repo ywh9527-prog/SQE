@@ -33,6 +33,7 @@
             this.cacheElements();
             this.bindEvents();
             await this.loadConfig();
+            await this.loadYearlyConfig(); // 加载年度评价配置
             await this.loadDashboard();
 
             // 标记为已初始化
@@ -191,6 +192,24 @@
                 }
             } catch (error) {
                 console.error('加载配置失败:', error);
+            }
+        },
+
+        // 加载年度评价配置
+        async loadYearlyConfig() {
+            console.log('Performance Module: Loading yearly config...');
+            try {
+                const response = await this.authenticatedFetch('/api/evaluation-config/yearly');
+                const result = await response.json();
+
+                if (result.success) {
+                    state.yearlyConfig = result.data;
+                    console.log('年度配置加载成功:', state.yearlyConfig);
+                } else {
+                    console.error('加载年度配置失败:', result.message);
+                }
+            } catch (error) {
+                console.error('加载年度配置失败:', error);
             }
         },
 
@@ -1051,7 +1070,7 @@
 
         // 打开侧边栏
         // 打开评价模态框
-        openEvaluationModal(entity) {
+        async openEvaluationModal(entity) {
             state.currentEntity = entity;
 
             els.modalEntityName.textContent = entity.entityName;
@@ -1060,8 +1079,27 @@
             const isYearlyEvaluation = state.currentEvaluation && state.currentEvaluation.period_type === 'yearly';
             
             if (isYearlyEvaluation) {
-                // 年度评价：加载年度配置并获取年度平均分
-                this.loadYearlyEvaluationData(entity);
+                // 年度评价：使用 IQC 原始数据（全年累计），同时保留月度平均分用于维度评分
+                const yearlyData = entity.yearlyQualityData;
+                
+                // 年度质量数据来自 IQC 原始累计（与月度/季度一致）
+                if (entity.qualityData && entity.qualityData.totalBatches > 0) {
+                    els.qualityTotalBatches.textContent = entity.qualityData.totalBatches;
+                    els.qualityOkBatches.textContent = entity.qualityData.okBatches;
+                    els.qualityPassRate.textContent = entity.qualityData.passRate + '%';
+                    
+                    // 如果有月度平均分，也保存起来用于维度自动评分
+                    if (yearlyData && yearlyData.averageScores) {
+                        entity.yearlyAverageScores = yearlyData.averageScores;
+                        entity.yearlyValidMonthCount = yearlyData.validMonthCount;
+                    }
+                } else {
+                    entity.yearlyAverageScores = {};
+                    entity.yearlyValidMonthCount = 0;
+                    els.qualityTotalBatches.textContent = '无数据';
+                    els.qualityOkBatches.textContent = '-';
+                    els.qualityPassRate.textContent = '-';
+                }
             } else {
                 // 月度/季度评价：显示质量数据
                 els.qualityTotalBatches.textContent = entity.qualityData.totalBatches;
@@ -1126,9 +1164,14 @@
             
             // 确定使用哪个配置
             let config = state.config;
-            let useYearlyConfig = false;
             
             if (isYearlyEvaluation) {
+                // 如果已经有年度配置，直接使用
+                if (state.yearlyConfig) {
+                    this.renderDimensionCards(state.yearlyConfig.dimensions, true);
+                    return;
+                }
+                
                 // 尝试加载年度配置
                 this.loadYearlyConfigForEvaluation().then(yearlyConfig => {
                     if (yearlyConfig) {
@@ -1149,7 +1192,7 @@
         // 加载年度配置用于评价
         async loadYearlyConfigForEvaluation() {
             try {
-                const response = await this.authenticatedFetch('/api/yearly-evaluation-config');
+                const response = await this.authenticatedFetch('/api/evaluation-config/yearly');
                 const result = await response.json();
                 
                 if (result.success) {
@@ -1191,8 +1234,22 @@
                     } else if (isManualDimension || dimension.type === 'manual') {
                         // 手动维度：可编辑
                         inputValue = state.currentEntity.scores?.[dimension.key] || 50;
+                    } else if (isQualityDimension && state.currentEntity && state.currentEntity.qualityData) {
+                        // 自动维度-来料质量：使用 IQC 原始数据计算的合格率
+                        const qualityData = state.currentEntity.qualityData;
+                        const passRate = parseFloat(qualityData.passRate) || 0;
+                        const totalBatches = qualityData.totalBatches || 0;
+                        const okBatches = qualityData.okBatches || 0;
+                        
+                        inputValue = passRate.toFixed(1);
+                        isReadOnly = true;
+                        autoCalcInfo = `
+                            <div class="performance__auto-calc-info">
+                                自动评分：年度合格率 ${okBatches}/${totalBatches} = ${passRate}%
+                            </div>
+                        `;
                     } else {
-                        // 自动维度：从年度平均分获取，只读
+                        // 其他自动维度：从年度平均分获取，只读
                         inputValue = state.currentEntity.yearlyAverageScores?.[dimension.key] || 0;
                         isReadOnly = true;
                         autoCalcInfo = `
