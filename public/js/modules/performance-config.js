@@ -578,7 +578,7 @@
                 name: '新维度',
                 key: `dimension_${Date.now()}`,
                 weight: 0.1,
-                type: 'auto',
+                type: 'manual',
                 calculationRule: '',
                 scoringStandard: ''
             };
