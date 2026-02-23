@@ -865,10 +865,13 @@
                     const month = startDate.getMonth() + 1; // 1-12
                     const score = detail.totalScore;
 
-                    if (!vendorMonthlyScores.has(vendorName)) {
-                        vendorMonthlyScores.set(vendorName, new Map());
+                    // 只纳入有有效分数的月份（排除无来料的月份，total_score为0或null）
+                    if (score && score > 0) {
+                        if (!vendorMonthlyScores.has(vendorName)) {
+                            vendorMonthlyScores.set(vendorName, new Map());
+                        }
+                        vendorMonthlyScores.get(vendorName).set(month, score);
                     }
-                    vendorMonthlyScores.get(vendorName).set(month, score);
                 }
             });
 

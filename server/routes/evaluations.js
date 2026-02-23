@@ -403,4 +403,110 @@ router.get('/current-mode', authenticateToken, async (req, res) => {
     }
 });
 
+/**
+ * ==========================================
+ * 测试数据生成功能 - 开始
+ * 代码隔离：此功能仅用于测试，后续可一键删除
+ * ==========================================
+ */
+
+/**
+ * POST /api/evaluations/:id/generate-test-data
+ * 生成测试数据（模拟真实手动评价流程）
+ */
+router.post('/:id/generate-test-data', authenticateToken, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const parsedId = parseAndValidateId(id, res);
+        if (parsedId === null) return;
+
+        // 获取评价周期
+        const evaluation = await performanceEvaluationService.getEvaluationById(parsedId);
+        if (!evaluation) {
+            return res.status(404).json({
+                success: false,
+                message: '评价周期不存在'
+            });
+        }
+
+        // 如果不是草稿状态，需要先确保周期是进行中
+        if (evaluation.status !== 'in_progress') {
+            await performanceEvaluationService.startEvaluation(parsedId);
+        }
+
+        // 获取所有有来料的供应商
+        const entities = await performanceEvaluationService.getEvaluationEntities(parsedId);
+        
+        // 过滤出有来料的供应商（qualityData.totalBatches > 0）
+        const suppliersWithMaterial = entities.filter(entity => {
+            const qualityData = entity.qualityData;
+            if (!qualityData) return false;
+            const data = typeof qualityData === 'string' ? JSON.parse(qualityData) : qualityData;
+            return data.totalBatches > 0;
+        });
+
+        if (suppliersWithMaterial.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: '该周期没有有来料的供应商，无法生成测试数据'
+            });
+        }
+
+        // 对每个供应商进行评价
+        let evaluatedCount = 0;
+        for (const entity of suppliersWithMaterial) {
+            const entityName = entity.entityName;
+            const dataType = entity.data_type;
+
+            // 生成随机分数（60-100分之间）
+            // 注意：使用英文key与配置中的dimensions.key匹配
+            const scores = {
+                'quality': Math.floor(Math.random() * 41) + 60,  // 质量 60-100
+                'usage': Math.floor(Math.random() * 41) + 60,     // 使用情况 60-100
+                'service': Math.floor(Math.random() * 41) + 60,  // 服务 60-100
+                'delivery': Math.floor(Math.random() * 41) + 60   // 交付 60-100
+            };
+
+            // 随机生成备注
+            const remarks = `测试数据 - ${new Date().toLocaleString()}`;
+
+            // 保存评价
+            await performanceEvaluationService.saveEntityEvaluation(
+                parsedId,
+                entityName,
+                dataType,
+                { scores, remarks }
+            );
+
+            evaluatedCount++;
+        }
+
+        // 提交评价
+        await performanceEvaluationService.submitEvaluation(parsedId);
+
+        logger.info(`生成测试数据成功: 周期ID=${parsedId}, 评价供应商数=${evaluatedCount}`);
+
+        res.json({
+            success: true,
+            message: `成功生成测试数据，已评价 ${evaluatedCount} 个供应商并提交`,
+            data: {
+                evaluatedCount,
+                totalSuppliers: suppliersWithMaterial.length
+            }
+        });
+    } catch (error) {
+        logger.error('生成测试数据失败:', error);
+        res.status(500).json({
+            success: false,
+            message: error.message || '生成测试数据失败'
+        });
+    }
+});
+
+/**
+ * ==========================================
+ * 测试数据生成功能 - 结束
+ * ==========================================
+ */
+
 module.exports = router;

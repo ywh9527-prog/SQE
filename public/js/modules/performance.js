@@ -271,6 +271,14 @@
             evaluations.forEach(evaluation => {
                 const item = document.createElement('div');
                 item.className = 'performance__period-item';
+                // ==========================================
+                // 测试数据生成按钮 - 开始
+                // 代码隔离：此功能仅用于测试，后续可一键删除
+                // ==========================================
+                const showGenerateTestDataBtn = (evaluation.status === 'draft' || evaluation.status === 'in_progress') && evaluation.id;
+                // ==========================================
+                // 测试数据生成按钮 - 结束
+                // ==========================================
                 item.innerHTML = `
                     <div class="performance__period-item-info">
                         <h4>${evaluation.period_name}</h4>
@@ -282,6 +290,7 @@
                             ${evaluation.status === 'draft' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">开始评价</button>` : ''}
                             ${evaluation.status === 'in_progress' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">继续评价</button>` : ''}
                             ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-secondary" onclick="window.App.Modules.Performance.viewResults(${evaluation.id})">查看结果</button>` : ''}
+                            ${showGenerateTestDataBtn ? `<button class="btn btn-sm btn-info" onclick="window.App.Modules.Performance.generateTestData(${evaluation.id})" title="生成测试数据（自动评价所有有来料的供应商）">🧪 测试数据</button>` : ''}
                             ${evaluation.id ? `<button class="btn btn-sm btn-danger" onclick="window.App.Modules.Performance.deleteEvaluation(${evaluation.id})">删除</button>` : ''}
                         </div>
                     </div>
@@ -336,6 +345,53 @@
                 }
             );
         },
+
+        // ==========================================
+        // 测试数据生成功能 - 开始
+        // 代码隔离：此功能仅用于测试，后续可一键删除
+        // ==========================================
+
+        // 生成测试数据（模拟真实手动评价）
+        async generateTestData(evaluationId) {
+            // 使用自定义确认对话框
+            this.showConfirmDialog(
+                '生成测试数据',
+                '此操作将为该周期内所有有来料的供应商自动生成评价数据（随机分数60-100分），并提交评价。是否继续？',
+                async () => {
+                    try {
+                        const response = await this.authenticatedFetch(`/api/evaluations/${evaluationId}/generate-test-data`, {
+                            method: 'POST'
+                        });
+
+                        const result = await response.json();
+
+                        if (result.success) {
+                            // 使用 Toast 通知
+                            if (window.App && window.App.Toast) {
+                                window.App.Toast.success(result.message);
+                            }
+                            // 刷新周期列表
+                            this.loadEvaluationPeriods();
+                        } else {
+                            // 使用 Toast 通知
+                            if (window.App && window.App.Toast) {
+                                window.App.Toast.error('生成失败：' + result.message);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('生成测试数据失败:', error);
+                        // 使用 Toast 通知
+                        if (window.App && window.App.Toast) {
+                            window.App.Toast.error('生成测试数据失败');
+                        }
+                    }
+                }
+            );
+        },
+
+        // ==========================================
+        // 测试数据生成功能 - 结束
+        // ==========================================
 
         // 显示创建评价周期对话框
         showCreateEvaluationDialog() {
