@@ -742,6 +742,16 @@
                         window.App.Toast.success('年度配置保存成功！');
                     }
                     state.yearlyOriginalConfig = JSON.parse(JSON.stringify(state.yearlyConfig));
+                    
+                    // 提示用户配置已保存，并刷新页面以应用最新配置
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success('配置已保存，页面将刷新以应用最新配置');
+                    }
+                    
+                    // 延迟刷新页面，确保Toast显示完成
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 100);
                 } else {
                     if (window.App && window.App.Toast) {
                         window.App.Toast.error('保存配置失败：' + result.message);
