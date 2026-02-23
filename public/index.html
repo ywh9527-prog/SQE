@@ -661,54 +661,119 @@
                                 </button>
                             </div>
                             <div class="performance__performance-modal-body">
-                                <!-- 配置变更警告横幅 -->
-                                <div id="configWarningBanner" class="performance__config-warning-banner hidden">
-                                    <i class="ph ph-warning"></i>
-                                    <div class="warning-content">
-                                        <h4>⚠️ 配置变更提醒</h4>
-                                        <p>检测到有 <span id="inProgressCount">0</span> 个评价周期正在进行中。</p>
-                                        <p>修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。</p>
-                                    </div>
+                                <!-- Tab导航 -->
+                                <div class="performance__config-tabs">
+                                    <button class="performance__config-tab active" data-tab="monthly">月度/季度</button>
+                                    <button class="performance__config-tab" data-tab="yearly">年度</button>
                                 </div>
 
-                                <!-- 维度配置 -->
-                                <div class="performance__config-section">
-                                    <div class="performance__config-section-header">
-                                        <h4>评价维度</h4>
-                                        <button class="btn btn-sm btn-primary" id="addDimensionBtn">
-                                            <i class="ph ph-plus"></i> 添加维度
+                                <!-- 月度/季度配置内容 -->
+                                <div id="monthlyConfigContent" class="performance__config-tab-content">
+                                    <!-- 配置变更警告横幅 -->
+                                    <div id="configWarningBanner" class="performance__config-warning-banner hidden">
+                                        <i class="ph ph-warning"></i>
+                                        <div class="warning-content">
+                                            <h4>⚠️ 配置变更提醒</h4>
+                                            <p>检测到有 <span id="inProgressCount">0</span> 个评价周期正在进行中。</p>
+                                            <p>修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- 维度配置 -->
+                                    <div class="performance__config-section">
+                                        <div class="performance__config-section-header">
+                                            <h4>评价维度</h4>
+                                            <button class="btn btn-sm btn-primary" id="addDimensionBtn">
+                                                <i class="ph ph-plus"></i> 添加维度
+                                            </button>
+                                        </div>
+                                        <div id="dimensionsList" class="performance__dimensions-list">
+                                            <!-- 维度列表将在这里动态生成 -->
+                                        </div>
+                                        <div class="performance__weight-summary">
+                                            <span>权重总和：</span>
+                                            <span id="totalWeight">1.00</span>
+                                        </div>
+                                    </div>
+
+                                    <!-- 等级规则配置 -->
+                                    <div class="performance__config-section">
+                                        <div class="performance__config-section-header">
+                                            <h4>等级规则</h4>
+                                            <button class="btn btn-sm btn-primary" id="addGradeRuleBtn">
+                                                <i class="ph ph-plus"></i> 添加等级
+                                            </button>
+                                        </div>
+                                        <div id="gradeRulesList" class="performance__grade-rules-list">
+                                            <!-- 等级规则列表将在这里动态生成 -->
+                                        </div>
+                                    </div>
+
+                                    <!-- 操作按钮 -->
+                                    <div class="performance__config-actions">
+                                        <button class="btn btn-secondary" id="resetConfigBtn">
+                                            <i class="ph ph-arrow-counter-clockwise"></i> 重置默认
+                                        </button>
+                                        <button class="btn btn-primary" id="saveConfigBtn">
+                                            <i class="ph ph-check"></i> 保存配置
                                         </button>
                                     </div>
-                                    <div id="dimensionsList" class="performance__dimensions-list">
-                                        <!-- 维度列表将在这里动态生成 -->
-                                    </div>
-                                    <div class="performance__weight-summary">
-                                        <span>权重总和：</span>
-                                        <span id="totalWeight">1.00</span>
-                                    </div>
                                 </div>
 
-                                <!-- 等级规则配置 -->
-                                <div class="performance__config-section">
-                                    <div class="performance__config-section-header">
-                                        <h4>等级规则</h4>
-                                        <button class="btn btn-sm btn-primary" id="addGradeRuleBtn">
-                                            <i class="ph ph-plus"></i> 添加等级
+                                <!-- 年度配置内容 -->
+                                <div id="yearlyConfigContent" class="performance__config-tab-content hidden">
+                                    <!-- 年度配置变更警告横幅 -->
+                                    <div id="yearlyConfigWarningBanner" class="performance__config-warning-banner hidden">
+                                        <i class="ph ph-warning"></i>
+                                        <div class="warning-content">
+                                            <h4>⚠️ 配置变更提醒</h4>
+                                            <p>检测到有 <span id="yearlyInProgressCount">0</span> 个年度评价周期正在进行中。</p>
+                                            <p>修改配置将影响这些周期的评价结果计算，已评价的供应商分数将自动重新计算。</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- 年度维度配置 -->
+                                    <div class="performance__config-section">
+                                        <div class="performance__config-section-header">
+                                            <h4>年度评价维度</h4>
+                                            <button class="btn btn-sm btn-primary" id="addYearlyDimensionBtn">
+                                                <i class="ph ph-plus"></i> 添加维度
+                                            </button>
+                                        </div>
+                                        <div id="yearlyDimensionsList" class="performance__dimensions-list">
+                                            <!-- 年度维度列表将在这里动态生成 -->
+                                        </div>
+                                        <div class="performance__weight-summary">
+                                            <span>权重总和（不含绿色环保）：</span>
+                                            <span id="yearlyTotalWeight">100%</span>
+                                        </div>
+                                        <div class="performance__weight-tip">
+                                            <small>注：绿色环保类型不参与权重计算，不合格将一票否决</small>
+                                        </div>
+                                    </div>
+
+                                    <!-- 年度等级规则配置 -->
+                                    <div class="performance__config-section">
+                                        <div class="performance__config-section-header">
+                                            <h4>等级规则</h4>
+                                            <button class="btn btn-sm btn-primary" id="addYearlyGradeRuleBtn">
+                                                <i class="ph ph-plus"></i> 添加等级
+                                            </button>
+                                        </div>
+                                        <div id="yearlyGradeRulesList" class="performance__grade-rules-list">
+                                            <!-- 年度等级规则列表将在这里动态生成 -->
+                                        </div>
+                                    </div>
+
+                                    <!-- 年度操作按钮 -->
+                                    <div class="performance__config-actions">
+                                        <button class="btn btn-secondary" id="resetYearlyConfigBtn">
+                                            <i class="ph ph-arrow-counter-clockwise"></i> 重置默认
+                                        </button>
+                                        <button class="btn btn-primary" id="saveYearlyConfigBtn">
+                                            <i class="ph ph-check"></i> 保存配置
                                         </button>
                                     </div>
-                                    <div id="gradeRulesList" class="performance__grade-rules-list">
-                                        <!-- 等级规则列表将在这里动态生成 -->
-                                    </div>
-                                </div>
-
-                                <!-- 操作按钮 -->
-                                <div class="performance__config-actions">
-                                    <button class="btn btn-secondary" id="resetConfigBtn">
-                                        <i class="ph ph-arrow-counter-clockwise"></i> 重置默认
-                                    </button>
-                                    <button class="btn btn-primary" id="saveConfigBtn">
-                                        <i class="ph ph-check"></i> 保存配置
-                                    </button>
                                 </div>
                             </div>
                         </div>

@@ -346,3 +346,60 @@
         justify-content: center;
     }
 }
+
+/* ============================================
+   Tab切换样式
+   ============================================ */
+
+.performance__config-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.performance__config-tab {
+    padding: 12px 24px;
+    border: none;
+    background: transparent;
+    color: var(--gray-500);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -2px;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.performance__config-tab:hover {
+    color: var(--gray-700);
+}
+
+.performance__config-tab.active {
+    color: var(--primary);
+    border-bottom-color: var(--primary);
+}
+
+.performance__config-tab-content {
+    animation: fadeIn 0.2s ease;
+}
+
+.performance__config-tab-content.hidden {
+    display: none;
+}
+
+.performance__weight-tip {
+    margin-top: 8px;
+    color: var(--gray-500);
+    font-size: 0.875rem;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
