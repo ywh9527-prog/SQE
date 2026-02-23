@@ -893,7 +893,7 @@
                 // 获取该供应商所有有数据的月份，按月份排序
                 const sortedMonths = Array.from(monthScores.keys()).sort((a, b) => a - b);
 
-                if (sortedMonths.length < 2) return; // 至少需要2个月的数据才能比较
+                if (sortedMonths.length < 3) return; // 至少需要3个月的数据
 
                 let improvingCount = 0;
                 let decliningCount = 0;
@@ -920,22 +920,22 @@
                     }
 
                     // 检查是否连续改进/恶化至少3个月
-                    if (improvingCount >= 2) {
+                    if (improvingCount >= 3) {
                         improvingVendors.push({
                             vendorName,
-                            months: sortedMonths.filter(m => m >= month - improvingCount && m <= month),
+                            months: sortedMonths.filter(m => m >= month - improvingCount + 1 && m <= month),
                             score: currentScore,
-                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - improvingCount]) || currentScore)
+                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - improvingCount + 1]) || currentScore)
                         });
                         break;
                     }
 
-                    if (decliningCount >= 2) {
+                    if (decliningCount >= 3) {
                         decliningVendors.push({
                             vendorName,
-                            months: sortedMonths.filter(m => m >= month - decliningCount && m <= month),
+                            months: sortedMonths.filter(m => m >= month - decliningCount + 1 && m <= month),
                             score: currentScore,
-                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - decliningCount]) || currentScore)
+                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - decliningCount + 1]) || currentScore)
                         });
                         break;
                     }
