@@ -948,9 +948,13 @@
 
                 let customIndex = 0;
 
+                // 根据评价周期类型选择正确的配置
+                const isYearlyEvaluation = state.currentEvaluation && state.currentEvaluation.period_type === 'yearly';
+                const cardConfig = isYearlyEvaluation && state.yearlyConfig ? state.yearlyConfig : state.config;
+
                 // 遍历配置中的所有维度
-                if (state.config && state.config.dimensions) {
-                    state.config.dimensions.forEach((dimension, index) => {
+                if (cardConfig && cardConfig.dimensions) {
+                    cardConfig.dimensions.forEach((dimension, index) => {
                         const score = entity.scores[dimension.key] || 0;
 
                         // 根据维度类型选择进度条样式
