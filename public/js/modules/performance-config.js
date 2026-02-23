@@ -484,13 +484,7 @@
                         </div>
                         <div class="form-group">
                             <label>类型</label>
-                            ${isGreenEnv ? 
-                                `<input type="text" class="form-control" value="否决项" readonly style="background-color: #f5f5f5;">` :
-                                `<select class="form-control" onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'type', this.value)">
-                                    <option value="auto" ${dimension.type === 'auto' ? 'selected' : ''}>自动计算</option>
-                                    <option value="manual" ${dimension.type === 'manual' ? 'selected' : ''}>手动评分</option>
-                                </select>`
-                            }
+                            <input type="text" class="form-control" value="${dimension.type === 'auto' ? '自动计算' : dimension.type === 'manual' ? '手动评分' : '否决项'}" readonly style="background-color: #f5f5f5;">
                         </div>
                         ${!isGreenEnv ? `
                         <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeYearlyDimension(${index})">
