@@ -2132,3 +2132,94 @@
         transform: translateY(0);
     }
 }
+
+/* 绿色环保单选按钮样式 */
+.performance__green-env-radio {
+    display: flex;
+    gap: 20px;
+    padding: 8px 0;
+}
+
+.performance__radio-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid #e5e7eb;
+    transition: all 0.2s ease;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.performance__radio-label:hover {
+    border-color: #9ca3af;
+    background-color: #f9fafb;
+}
+
+.performance__radio-label input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #d1d5db;
+    border-radius: 50%;
+    outline: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.performance__radio-label input[type="radio"]:checked {
+    border-color: #16a34a;
+}
+
+.performance__radio-label input[type="radio"]:checked::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 10px;
+    height: 10px;
+    background-color: #16a34a;
+    border-radius: 50%;
+}
+
+/* 合格选项 */
+.performance__radio-label:first-child {
+    color: #16a34a;
+}
+
+.performance__radio-label:first-child input[type="radio"]:checked {
+    border-color: #16a34a;
+    background-color: #dcfce7;
+}
+
+.performance__radio-label:first-child input[type="radio"]:checked::after {
+    background-color: #16a34a;
+}
+
+.performance__radio-label:first-child:hover {
+    border-color: #16a34a;
+    background-color: #f0fdf4;
+}
+
+/* 不合格选项 */
+.performance__radio-label:last-child {
+    color: #dc2626;
+}
+
+.performance__radio-label:last-child input[type="radio"]:checked {
+    border-color: #dc2626;
+    background-color: #fee2e2;
+}
+
+.performance__radio-label:last-child input[type="radio"]:checked::after {
+    background-color: #dc2626;
+}
+
+.performance__radio-label:last-child:hover {
+    border-color: #dc2626;
+    background-color: #fef2f2;
+}
