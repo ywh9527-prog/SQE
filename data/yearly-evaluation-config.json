@@ -38,7 +38,7 @@
       "weight": 0.15,
       "type": "manual",
       "calculationRule": "考核改进事项完成情况，改进事项包含但不限于获取新体系认证证书、内部良率改善、产能提升、自动化改造等",
-      "scoringStandard": "改善持续改进事项完成且验证有效，每项得5分，满分100分"
+      "scoringStandard": "每项33.33分，3项满分"
     },
     {
       "name": "价格水平",
