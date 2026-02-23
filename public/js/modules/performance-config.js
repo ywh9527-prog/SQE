@@ -6,7 +6,10 @@
     // 模块状态
     const state = {
         config: null,
-        originalConfig: null
+        originalConfig: null,
+        yearlyConfig: null,
+        yearlyOriginalConfig: null,
+        activeTab: 'monthly' // 'monthly' or 'yearly'
     };
 
     // DOM 元素缓存
@@ -34,6 +37,19 @@
             els.saveConfigBtn = document.getElementById('saveConfigBtn');
             els.configWarningBanner = document.getElementById('configWarningBanner');
             els.inProgressCount = document.getElementById('inProgressCount');
+            // Tab元素
+            els.monthlyTab = document.getElementById('monthlyTab');
+            els.yearlyTab = document.getElementById('yearlyTab');
+            els.monthlyTabContent = document.getElementById('monthlyTabContent');
+            els.yearlyTabContent = document.getElementById('yearlyTabContent');
+            // 年度配置元素
+            els.yearlyDimensionsList = document.getElementById('yearlyDimensionsList');
+            els.yearlyGradeRulesList = document.getElementById('yearlyGradeRulesList');
+            els.yearlyTotalWeight = document.getElementById('yearlyTotalWeight');
+            els.addYearlyDimensionBtn = document.getElementById('addYearlyDimensionBtn');
+            els.addYearlyGradeRuleBtn = document.getElementById('addYearlyGradeRuleBtn');
+            els.resetYearlyConfigBtn = document.getElementById('resetYearlyConfigBtn');
+            els.saveYearlyConfigBtn = document.getElementById('saveYearlyConfigBtn');
         },
 
         // 绑定事件
@@ -56,6 +72,45 @@
 
             if (els.saveConfigBtn) {
                 els.saveConfigBtn.addEventListener('click', () => this.saveConfig());
+            }
+
+            // Tab切换事件
+            if (els.monthlyTab) {
+                els.monthlyTab.addEventListener('click', () => this.switchTab('monthly'));
+            }
+            if (els.yearlyTab) {
+                els.yearlyTab.addEventListener('click', () => this.switchTab('yearly'));
+            }
+
+            // 年度配置事件
+            if (els.addYearlyDimensionBtn) {
+                els.addYearlyDimensionBtn.addEventListener('click', () => this.addYearlyDimension());
+            }
+            if (els.addYearlyGradeRuleBtn) {
+                els.addYearlyGradeRuleBtn.addEventListener('click', () => this.addYearlyGradeRule());
+            }
+            if (els.resetYearlyConfigBtn) {
+                els.resetYearlyConfigBtn.addEventListener('click', () => this.resetYearlyToDefault());
+            }
+            if (els.saveYearlyConfigBtn) {
+                els.saveYearlyConfigBtn.addEventListener('click', () => this.saveYearlyConfig());
+            }
+        },
+
+        // Tab切换
+        switchTab(tab) {
+            state.activeTab = tab;
+            
+            if (tab === 'monthly') {
+                els.monthlyTab?.classList.add('active');
+                els.yearlyTab?.classList.remove('active');
+                els.monthlyTabContent?.classList.remove('hidden');
+                els.yearlyTabContent?.classList.add('hidden');
+            } else {
+                els.monthlyTab?.classList.remove('active');
+                els.yearlyTab?.classList.add('active');
+                els.monthlyTabContent?.classList.add('hidden');
+                els.yearlyTabContent?.classList.remove('hidden');
             }
         },
 
@@ -82,7 +137,7 @@
             if (!els.configModal) return;
 
             try {
-                // 加载配置
+                // 加载月度/季度配置
                 const response = await this.authenticatedFetch('/api/evaluation-config');
                 const result = await response.json();
 
@@ -92,6 +147,12 @@
                     this.renderDimensions();
                     this.renderGradeRules();
                     this.updateTotalWeight();
+                    
+                    // 加载年度配置
+                    await this.loadYearlyConfig();
+                    
+                    // 默认显示月度Tab
+                    this.switchTab('monthly');
                     
                     // 检查是否有进行中的评价周期
                     await this.checkInProgressEvaluations();
@@ -109,6 +170,26 @@
                 if (window.App && window.App.Toast) {
                     window.App.Toast.error('加载配置失败');
                 }
+            }
+        },
+
+        // 加载年度配置
+        async loadYearlyConfig() {
+            try {
+                const response = await this.authenticatedFetch('/api/yearly-evaluation-config');
+                const result = await response.json();
+
+                if (result.success) {
+                    state.yearlyConfig = JSON.parse(JSON.stringify(result.data));
+                    state.yearlyOriginalConfig = JSON.parse(JSON.stringify(result.data));
+                    this.renderYearlyDimensions();
+                    this.renderYearlyGradeRules();
+                    this.updateYearlyTotalWeight();
+                } else {
+                    console.error('加载年度配置失败:', result.message);
+                }
+            } catch (error) {
+                console.error('加载年度配置失败:', error);
             }
         },
 
@@ -137,12 +218,15 @@
         closeConfigModal() {
             // 检查是否有未保存的更改
             const hasChanges = this.hasUnsavedChanges();
+            const hasYearlyChanges = this.hasYearlyUnsavedChanges();
             
-            if (!hasChanges) {
+            if (!hasChanges && !hasYearlyChanges) {
                 // 没有变更，直接关闭
                 els.configModal.classList.add('hidden');
                 state.config = null;
                 state.originalConfig = null;
+                state.yearlyConfig = null;
+                state.yearlyOriginalConfig = null;
                 return;
             }
 
@@ -155,9 +239,19 @@
                         els.configModal.classList.add('hidden');
                         state.config = null;
                         state.originalConfig = null;
+                        state.yearlyConfig = null;
+                        state.yearlyOriginalConfig = null;
                     }
                 );
             }
+        },
+
+        // 检查年度配置是否有未保存的更改
+        hasYearlyUnsavedChanges() {
+            if (!state.yearlyConfig || !state.yearlyOriginalConfig) {
+                return false;
+            }
+            return JSON.stringify(state.yearlyConfig) !== JSON.stringify(state.yearlyOriginalConfig);
         },
 
         // 检查是否有未保存的更改
@@ -356,6 +450,315 @@
                 els.totalWeight.style.color = 'var(--danger)';
             } else {
                 els.totalWeight.style.color = 'var(--gray-50)';
+            }
+        },
+
+        // ===== 年度配置方法 =====
+
+        // 渲染年度维度列表
+        renderYearlyDimensions() {
+            if (!state.yearlyConfig || !state.yearlyConfig.dimensions) return;
+
+            els.yearlyDimensionsList.innerHTML = '';
+
+            state.yearlyConfig.dimensions.forEach((dimension, index) => {
+                const isGreenEnv = dimension.key === 'green_environment';
+                const item = document.createElement('div');
+                item.className = 'performance__dimension-item';
+                item.innerHTML = `
+                    <div class="dimension-edit-row">
+                        <div class="form-group">
+                            <label>维度名称</label>
+                            <input type="text" class="form-control" value="${dimension.name}" 
+                                onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'name', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>维度键值</label>
+                            <input type="text" class="form-control" value="${dimension.key}" ${isGreenEnv ? 'readonly' : ''}
+                                onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'key', this.value)">
+                        </div>
+                        <div class="form-group">
+                            <label>权重（%）</label>
+                            <input type="number" class="form-control" value="${isGreenEnv ? '-' : (dimension.weight * 100).toFixed(0)}" step="1" min="0" max="100" ${isGreenEnv ? 'readonly' : ''}
+                                onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'weight', parseFloat(this.value) / 100)">
+                        </div>
+                        <div class="form-group">
+                            <label>类型</label>
+                            <select class="form-control" onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'type', this.value)">
+                                <option value="auto" ${dimension.type === 'auto' ? 'selected' : ''}>自动计算</option>
+                                <option value="manual" ${dimension.type === 'manual' ? 'selected' : ''}>手动评分</option>
+                            </select>
+                        </div>
+                        <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeYearlyDimension(${index})">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </div>
+                    <div class="dimension-tip-row">
+                        <div class="form-group">
+                            <label>计算规则</label>
+                            <textarea class="form-control" rows="2" placeholder="输入计算规则说明"
+                                onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'calculationRule', this.value)">${dimension.calculationRule || ''}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>评分标准</label>
+                            <textarea class="form-control" rows="2" placeholder="输入评分标准说明"
+                                onchange="window.App.Modules.PerformanceConfig.updateYearlyDimension(${index}, 'scoringStandard', this.value)">${dimension.scoringStandard || ''}</textarea>
+                        </div>
+                    </div>
+                `;
+                els.yearlyDimensionsList.appendChild(item);
+            });
+        },
+
+        // 渲染年度等级规则列表
+        renderYearlyGradeRules() {
+            if (!state.yearlyConfig || !state.yearlyConfig.gradeRules) return;
+
+            const gradeColors = state.yearlyConfig.gradeColors || [
+                '#16a34a', '#2563eb', '#f59e0b', '#dc2626', '#6b7280', '#1f2937'
+            ];
+
+            els.yearlyGradeRulesList.innerHTML = '';
+
+            state.yearlyConfig.gradeRules.forEach((rule, index) => {
+                const color = gradeColors[index] || gradeColors[gradeColors.length - 1];
+
+                const item = document.createElement('div');
+                item.className = 'performance__grade-rule-item';
+                item.innerHTML = `
+                    <div class="form-group">
+                        <label>等级名称</label>
+                        <input type="text" class="form-control" value="${rule.label}"
+                            onchange="window.App.Modules.PerformanceConfig.updateYearlyGradeRule(${index}, 'label', this.value)">
+                    </div>
+                    <div class="form-group">
+                        <label>最低分</label>
+                        <input type="number" class="form-control" value="${rule.min}" step="0.01" min="0" max="100"
+                            onchange="window.App.Modules.PerformanceConfig.updateYearlyGradeRule(${index}, 'min', parseFloat(this.value))">
+                    </div>
+                    <div class="form-group">
+                        <label>最高分</label>
+                        <input type="number" class="form-control" value="${rule.max}" step="0.01" min="0" max="100"
+                            onchange="window.App.Modules.PerformanceConfig.updateYearlyGradeRule(${index}, 'max', parseFloat(this.value))">
+                    </div>
+                    <div class="form-group strategy-group">
+                        <label>等级策略</label>
+                        <textarea class="form-control" rows="2" placeholder="输入等级策略说明"
+                            onchange="window.App.Modules.PerformanceConfig.updateYearlyGradeRule(${index}, 'strategy', this.value)">${rule.strategy || ''}</textarea>
+                    </div>
+                    <div class="range-display">
+                        <span class="color-preview" style="background: ${color}"></span>
+                        ${rule.min} - ${rule.max}
+                    </div>
+                    <button class="btn-icon" onclick="window.App.Modules.PerformanceConfig.removeYearlyGradeRule(${index})">
+                        <i class="ph ph-trash"></i>
+                    </button>
+                `;
+                els.yearlyGradeRulesList.appendChild(item);
+            });
+        },
+
+        // 更新年度维度
+        updateYearlyDimension(index, field, value) {
+            if (!state.yearlyConfig || !state.yearlyConfig.dimensions) return;
+            state.yearlyConfig.dimensions[index][field] = value;
+            this.updateYearlyTotalWeight();
+        },
+
+        // 更新年度等级规则
+        updateYearlyGradeRule(index, field, value) {
+            if (!state.yearlyConfig || !state.yearlyConfig.gradeRules) return;
+            state.yearlyConfig.gradeRules[index][field] = value;
+        },
+
+        // 添加年度维度
+        addYearlyDimension() {
+            if (!state.yearlyConfig) return;
+
+            const newDimension = {
+                name: '新维度',
+                key: `dimension_${Date.now()}`,
+                weight: 0.1,
+                type: 'auto',
+                calculationRule: '',
+                scoringStandard: ''
+            };
+
+            state.yearlyConfig.dimensions.push(newDimension);
+            this.renderYearlyDimensions();
+            this.updateYearlyTotalWeight();
+        },
+
+        // 删除年度维度
+        removeYearlyDimension(index) {
+            if (!state.yearlyConfig || !state.yearlyConfig.dimensions) return;
+
+            if (state.yearlyConfig.dimensions.length <= 1) {
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.warning('至少需要保留一个维度');
+                }
+                return;
+            }
+
+            state.yearlyConfig.dimensions.splice(index, 1);
+            this.renderYearlyDimensions();
+            this.updateYearlyTotalWeight();
+        },
+
+        // 添加年度等级规则
+        addYearlyGradeRule() {
+            if (!state.yearlyConfig) return;
+
+            const newRule = {
+                min: 0,
+                max: 60,
+                label: '新等级',
+                strategy: ''
+            };
+
+            state.yearlyConfig.gradeRules.push(newRule);
+            this.renderYearlyGradeRules();
+        },
+
+        // 删除年度等级规则
+        removeYearlyGradeRule(index) {
+            if (!state.yearlyConfig || !state.yearlyConfig.gradeRules) return;
+
+            if (state.yearlyConfig.gradeRules.length <= 1) {
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.warning('至少需要保留一个等级规则');
+                }
+                return;
+            }
+
+            state.yearlyConfig.gradeRules.splice(index, 1);
+            this.renderYearlyGradeRules();
+        },
+
+        // 更新年度权重总和显示
+        updateYearlyTotalWeight() {
+            if (!state.yearlyConfig || !state.yearlyConfig.dimensions) return;
+
+            const totalWeight = state.yearlyConfig.dimensions
+                .filter(dim => dim.key !== 'green_environment')
+                .reduce((sum, dim) => sum + (dim.weight || 0), 0);
+            
+            if (els.yearlyTotalWeight) {
+                els.yearlyTotalWeight.textContent = (totalWeight * 100).toFixed(0) + '%';
+
+                if (Math.abs(totalWeight - 1) > 0.01) {
+                    els.yearlyTotalWeight.style.color = 'var(--danger)';
+                } else {
+                    els.yearlyTotalWeight.style.color = 'var(--gray-50)';
+                }
+            }
+        },
+
+        // 重置年度配置为默认
+        async resetYearlyToDefault() {
+            if (window.App && window.App.Modules && window.App.Modules.Performance) {
+                window.App.Modules.Performance.showConfirmDialog(
+                    '确认重置年度配置',
+                    '确定要重置年度评价配置为默认配置吗？这将清除所有自定义配置。',
+                    async () => {
+                        try {
+                            const response = await this.authenticatedFetch('/api/yearly-evaluation-config/reset', {
+                                method: 'POST'
+                            });
+                            const result = await response.json();
+
+                            if (result.success) {
+                                if (window.App && window.App.Toast) {
+                                    window.App.Toast.success('已重置为默认配置');
+                                }
+                                state.yearlyConfig = JSON.parse(JSON.stringify(result.data));
+                                state.yearlyOriginalConfig = JSON.parse(JSON.stringify(result.data));
+                                this.renderYearlyDimensions();
+                                this.renderYearlyGradeRules();
+                                this.updateYearlyTotalWeight();
+                            } else {
+                                if (window.App && window.App.Toast) {
+                                    window.App.Toast.error('重置配置失败：' + result.message);
+                                }
+                            }
+                        } catch (error) {
+                            console.error('重置年度配置失败:', error);
+                            if (window.App && window.App.Toast) {
+                                window.App.Toast.error('重置配置失败');
+                            }
+                        }
+                    }
+                );
+            }
+        },
+
+        // 保存年度配置
+        async saveYearlyConfig() {
+            if (!state.yearlyConfig) return;
+
+            try {
+                const totalWeight = state.yearlyConfig.dimensions
+                    .filter(dim => dim.key !== 'green_environment')
+                    .reduce((sum, dim) => sum + (dim.weight || 0), 0);
+                
+                if (Math.abs(totalWeight - 1) > 0.01) {
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.warning(`权重总和必须为100%（绿色环保不计入权重），当前为${(totalWeight * 100).toFixed(0)}%`);
+                    }
+                    return;
+                }
+
+                for (const rule of state.yearlyConfig.gradeRules) {
+                    if (rule.min >= rule.max) {
+                        if (window.App && window.App.Toast) {
+                            window.App.Toast.warning(`等级"${rule.label}"的最低分必须小于最高分`);
+                        }
+                        return;
+                    }
+                }
+
+                if (window.App && window.App.Modules && window.App.Modules.Performance) {
+                    window.App.Modules.Performance.showConfirmDialog(
+                        '确认保存年度配置',
+                        '确定要保存年度评价配置吗？',
+                        async () => {
+                            await this.doSaveYearlyConfig();
+                        }
+                    );
+                }
+            } catch (error) {
+                console.error('保存年度配置异常:', error);
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('保存配置失败：' + error.message);
+                }
+            }
+        },
+
+        // 执行保存年度配置
+        async doSaveYearlyConfig() {
+            try {
+                const response = await this.authenticatedFetch('/api/yearly-evaluation-config', {
+                    method: 'PUT',
+                    body: JSON.stringify(state.yearlyConfig)
+                });
+                
+                const result = await response.json();
+
+                if (result.success) {
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.success('年度配置保存成功！');
+                    }
+                    state.yearlyOriginalConfig = JSON.parse(JSON.stringify(state.yearlyConfig));
+                } else {
+                    if (window.App && window.App.Toast) {
+                        window.App.Toast.error('保存配置失败：' + result.message);
+                    }
+                }
+            } catch (error) {
+                console.error('保存年度配置异常:', error);
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('保存配置失败');
+                }
             }
         },
 
