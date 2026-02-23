@@ -1055,9 +1055,19 @@
             state.currentEntity = entity;
 
             els.modalEntityName.textContent = entity.entityName;
-            els.qualityTotalBatches.textContent = entity.qualityData.totalBatches;
-            els.qualityOkBatches.textContent = entity.qualityData.okBatches;
-            els.qualityPassRate.textContent = entity.qualityData.passRate + '%';
+            
+            // 检查是否是年度评价
+            const isYearlyEvaluation = state.currentEvaluation && state.currentEvaluation.period_type === 'yearly';
+            
+            if (isYearlyEvaluation) {
+                // 年度评价：加载年度配置并获取年度平均分
+                this.loadYearlyEvaluationData(entity);
+            } else {
+                // 月度/季度评价：显示质量数据
+                els.qualityTotalBatches.textContent = entity.qualityData.totalBatches;
+                els.qualityOkBatches.textContent = entity.qualityData.okBatches;
+                els.qualityPassRate.textContent = entity.qualityData.passRate + '%';
+            }
 
             this.renderDimensionInputs();
 
@@ -1070,31 +1080,128 @@
             }
         },
 
+        // 加载年度评价数据
+        async loadYearlyEvaluationData(entity) {
+            try {
+                const year = new Date(state.currentEvaluation.start_date).getFullYear();
+                const dataSource = state.currentEvaluation.data_source || 'purchase';
+                
+                const response = await this.authenticatedFetch(
+                    `/api/evaluations/yearly-average/${encodeURIComponent(entity.entityName)}?year=${year}&dataSource=${dataSource}`
+                );
+                const result = await response.json();
+                
+                if (result.success && result.data) {
+                    // 保存年度平均分到entity
+                    entity.yearlyAverageScores = result.data.averageScores;
+                    entity.yearlyValidMonthCount = result.data.validMonthCount;
+                    state.currentEntity = entity;
+                    
+                    // 更新质量数据显示年度汇总信息
+                    els.qualityTotalBatches.textContent = `${result.data.validMonthCount}个月`;
+                    els.qualityOkBatches.textContent = '已汇总';
+                    els.qualityPassRate.textContent = '自动计算';
+                } else {
+                    // 无年度数据
+                    entity.yearlyAverageScores = {};
+                    entity.yearlyValidMonthCount = 0;
+                    els.qualityTotalBatches.textContent = '无数据';
+                    els.qualityOkBatches.textContent = '-';
+                    els.qualityPassRate.textContent = '-';
+                }
+            } catch (error) {
+                console.error('加载年度评价数据失败:', error);
+                els.qualityTotalBatches.textContent = '加载失败';
+                els.qualityOkBatches.textContent = '-';
+                els.qualityPassRate.textContent = '-';
+            }
+        },
+
         // 渲染维度输入框
         renderDimensionInputs() {
             els.dimensionInputs.innerHTML = '';
 
-            if (!state.config || !state.config.dimensions) {
+            // 检查是否是年度评价
+            const isYearlyEvaluation = state.currentEvaluation && state.currentEvaluation.period_type === 'yearly';
+            
+            // 确定使用哪个配置
+            let config = state.config;
+            let useYearlyConfig = false;
+            
+            if (isYearlyEvaluation) {
+                // 尝试加载年度配置
+                this.loadYearlyConfigForEvaluation().then(yearlyConfig => {
+                    if (yearlyConfig) {
+                        state.yearlyConfig = yearlyConfig;
+                        this.renderDimensionInputs();
+                    }
+                });
+                return; // 异步加载配置后再渲染
+            }
+
+            if (!config || !config.dimensions) {
                 return;
             }
 
+            this.renderDimensionCards(config.dimensions, false);
+        },
+
+        // 加载年度配置用于评价
+        async loadYearlyConfigForEvaluation() {
+            try {
+                const response = await this.authenticatedFetch('/api/yearly-evaluation-config');
+                const result = await response.json();
+                
+                if (result.success) {
+                    return result.data;
+                }
+                return null;
+            } catch (error) {
+                console.error('加载年度配置失败:', error);
+                return null;
+            }
+        },
+
+        // 渲染维度卡片
+        renderDimensionCards(dimensions, isYearly = false) {
             // 创建维度卡片网格（垂直排列）
             const dimensionsGrid = document.createElement('div');
             dimensionsGrid.className = 'performance__dimensions-grid';
 
-            state.config.dimensions.forEach(dimension => {
+            dimensions.forEach(dimension => {
                 // 创建维度卡片
                 const dimensionCard = document.createElement('div');
                 dimensionCard.className = 'performance__dimension-card';
                 
-                // 检查是否是质量维度
+                // 判断维度类型
                 const isQualityDimension = dimension.key === 'quality';
-
+                const isManualDimension = dimension.type === 'manual' || (isYearly && ['continuous_improvement', 'price_level'].includes(dimension.key));
+                const isGreenEnv = dimension.key === 'green_environment' || dimension.key === 'green';
+                
                 // 计算输入值
                 let inputValue = '';
                 let autoCalcInfo = '';
+                let isReadOnly = false;
 
-                if (isQualityDimension && state.currentEntity && state.currentEntity.qualityData) {
+                if (isYearly) {
+                    // 年度评价：根据维度类型决定
+                    if (isGreenEnv) {
+                        // 绿色环保：勾选框
+                        inputValue = state.currentEntity.scores?.[dimension.key] !== false ? 'true' : 'false';
+                    } else if (isManualDimension || dimension.type === 'manual') {
+                        // 手动维度：可编辑
+                        inputValue = state.currentEntity.scores?.[dimension.key] || 50;
+                    } else {
+                        // 自动维度：从年度平均分获取，只读
+                        inputValue = state.currentEntity.yearlyAverageScores?.[dimension.key] || 0;
+                        isReadOnly = true;
+                        autoCalcInfo = `
+                            <div class="performance__auto-calc-info">
+                                自动评分：年度平均分（${state.currentEntity.yearlyValidMonthCount || 0}个月数据）
+                            </div>
+                        `;
+                    }
+                } else if (isQualityDimension && state.currentEntity && state.currentEntity.qualityData) {
                     const qualityData = state.currentEntity.qualityData;
                     const passRate = parseFloat(qualityData.passRate) || 0;
                     const totalBatches = qualityData.totalBatches || 0;
@@ -1124,34 +1231,61 @@
                     </div>
                 ` : '';
 
+                // 根据维度类型渲染不同的输入控件
+                let inputHTML = '';
+                
+                if (isYearly && isGreenEnv) {
+                    // 绿色环保：勾选框
+                    inputHTML = `
+                        <div class="performance__green-env-checkbox">
+                            <label class="performance__checkbox-label">
+                                <input type="checkbox" 
+                                       name="${dimension.key}" 
+                                       value="true" 
+                                       ${inputValue === 'true' ? 'checked' : ''}
+                                       onchange="window.App.Modules.Performance.handleGreenEnvChange(this)">
+                                <span>合格</span>
+                            </label>
+                            <span class="performance__green-env-hint">不合格将一票否决</span>
+                        </div>
+                    `;
+                } else {
+                    // 滑块输入
+                    inputHTML = `
+                        <div class="performance__dimension-slider-row">
+                            <div class="performance__dimension-slider-track" data-key="${dimension.key}" data-dimension-name="${dimension.name}" ${isQualityDimension ? 'data-quality="true"' : ''}>
+                                <div class="performance__dimension-slider-fill" style="width: ${inputValue}%"></div>
+                                <div class="performance__dimension-slider-thumb" style="left: ${inputValue}%"></div>
+                                <input type="range" class="performance__dimension-slider-input" 
+                                       name="${dimension.key}_slider" 
+                                       min="0" max="100" step="0.1" 
+                                       value="${inputValue}" 
+                                       data-dimension-key="${dimension.key}"
+                                       ${isReadOnly || isQualityDimension ? 'data-readonly="true"' : ''}
+                                       ${isQualityDimension ? 'data-quality="true"' : ''}>
+                            </div>
+                            <div class="performance__dimension-number-box-wrapper">
+                                <input type="number" class="performance__dimension-number-box" 
+                                       name="${dimension.key}" 
+                                       min="0" max="100" step="0.1" 
+                                       value="${inputValue}"
+                                       data-dimension-key="${dimension.key}"
+                                       ${isReadOnly || isQualityDimension ? 'readonly' : ''}>
+                                <div class="performance__dimension-spinner">
+                                    <span data-action="up">▲</span>
+                                    <span data-action="down">▼</span>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+
                 dimensionCard.innerHTML = `
                     <div class="performance__dimension-card-header">
                         <div class="performance__dimension-card-title">${dimension.name}</div>
-                        <div class="performance__dimension-card-weight">权重 ${(dimension.weight * 100).toFixed(0)}%</div>
+                        ${!isGreenEnv ? `<div class="performance__dimension-card-weight">权重 ${((dimension.weight || 0) * 100).toFixed(0)}%</div>` : ''}
                     </div>
-                    <div class="performance__dimension-slider-row">
-                        <div class="performance__dimension-slider-track" data-key="${dimension.key}" data-dimension-name="${dimension.name}" ${isQualityDimension ? 'data-quality="true"' : ''}>
-                            <div class="performance__dimension-slider-fill" style="width: ${inputValue}%"></div>
-                            <div class="performance__dimension-slider-thumb" style="left: ${inputValue}%"></div>
-                            <input type="range" class="performance__dimension-slider-input" 
-                                   name="${dimension.key}_slider" 
-                                   min="0" max="100" step="0.1" 
-                                   value="${inputValue}" 
-                                   data-dimension-key="${dimension.key}"
-                                   ${isQualityDimension ? 'data-quality="true"' : ''}>
-                        </div>
-                        <div class="performance__dimension-number-box-wrapper">
-                            <input type="number" class="performance__dimension-number-box" 
-                                   name="${dimension.key}" 
-                                   min="0" max="100" step="0.1" 
-                                   value="${inputValue}"
-                                   data-dimension-key="${dimension.key}">
-                            <div class="performance__dimension-spinner">
-                                <span data-action="up">▲</span>
-                                <span data-action="down">▼</span>
-                            </div>
-                        </div>
-                    </div>
+                    ${inputHTML}
                     ${autoCalcInfo}
                     ${calculationRuleTip}
                     ${scoringStandardTip}
@@ -1396,7 +1530,11 @@
 
         // 更新总分预览
         updateTotalScorePreview() {
-            if (!state.config || !state.config.dimensions) {
+            // 检查是否是年度评价
+            const isYearlyEvaluation = state.currentEvaluation && state.currentEvaluation.period_type === 'yearly';
+            const config = isYearlyEvaluation && state.yearlyConfig ? state.yearlyConfig : state.config;
+            
+            if (!config || !config.dimensions) {
                 return;
             }
 
@@ -1411,15 +1549,38 @@
                 }
             });
 
+            // 检查绿色环保是否合格
+            const greenEnvCheckbox = els.dimensionInputs.querySelector('input[name="green_environment"], input[name="green"]');
+            const greenEnvPass = greenEnvCheckbox ? greenEnvCheckbox.checked : true;
+
             // 计算总分
             let totalScore = 0;
-            state.config.dimensions.forEach(dimension => {
-                const score = scores[dimension.key] || 0;
-                totalScore += score * dimension.weight;
-            });
+            
+            if (isYearlyEvaluation) {
+                // 年度评价：排除绿色环保计算权重
+                const validDimensions = config.dimensions.filter(d => d.key !== 'green_environment' && d.key !== 'green');
+                const totalWeight = validDimensions.reduce((sum, d) => sum + (d.weight || 0), 0);
+                
+                validDimensions.forEach(dimension => {
+                    const score = scores[dimension.key] || 0;
+                    // 归一化权重
+                    const normalizedWeight = dimension.weight / totalWeight;
+                    totalScore += score * normalizedWeight;
+                });
+            } else {
+                config.dimensions.forEach(dimension => {
+                    const score = scores[dimension.key] || 0;
+                    totalScore += score * dimension.weight;
+                });
+            }
+
+            // 绿色环保一票否决
+            if (isYearlyEvaluation && !greenEnvPass) {
+                totalScore = 0;
+            }
 
             // 计算等级
-            const grade = this.calculateGrade(totalScore);
+            const grade = this.calculateGrade(totalScore, config);
 
             // 更新显示
             if (els.totalScorePreview) {
@@ -1427,15 +1588,47 @@
             }
             if (els.totalScoreGrade) {
                 els.totalScoreGrade.textContent = grade;
+                
+                // 年度评价显示特殊标记
+                if (isYearlyEvaluation && !greenEnvPass) {
+                    els.totalScoreGrade.textContent = '不合格(环保否决)';
+                }
             }
         },
 
+        // 处理绿色环保勾选变化
+        handleGreenEnvChange(checkbox) {
+            this.updateTotalScorePreview();
+        },
+
         // 计算等级
-        calculateGrade(totalScore) {
-            if (totalScore >= 90) return 'A';
-            if (totalScore >= 80) return 'B';
-            if (totalScore >= 70) return 'C';
-            if (totalScore >= 60) return 'D';
+        calculateGrade(totalScore, config) {
+            // 如果没有提供config，使用默认逻辑
+            const gradeRules = config?.gradeRules || [
+                { min: 95, max: 100, label: 'A' },
+                { min: 85, max: 95, label: 'B' },
+                { min: 70, max: 85, label: 'C' },
+                { min: 60, max: 70, label: 'D' },
+                { min: 0, max: 60, label: 'E' }
+            ];
+            
+            const sortedRules = [...gradeRules].sort((a, b) => a.min - b.min);
+            
+            for (let i = 0; i < sortedRules.length; i++) {
+                const rule = sortedRules[i];
+                const isLast = i === sortedRules.length - 1;
+                
+                if (isLast) {
+                    if (totalScore >= rule.min && totalScore <= rule.max) {
+                        return rule.label;
+                    }
+                } else {
+                    if (totalScore >= rule.min && totalScore < rule.max) {
+                        return rule.label;
+                    }
+                }
+            }
+            
             return 'E';
         },
 
