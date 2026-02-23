@@ -1739,6 +1739,14 @@
                 }
             });
 
+            // 获取环保单选按钮的值（年度评价）
+            const greenEnvRadios = els.dimensionInputs.querySelectorAll('input[name="green_environment"], input[name="green"]');
+            greenEnvRadios.forEach(radio => {
+                if (radio.checked) {
+                    scores[radio.name] = radio.value;
+                }
+            });
+
             console.log('📊 提交的评价分数:', scores);
             console.log('📊 当前评价实体:', state.currentEntity);
 
