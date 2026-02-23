@@ -1307,6 +1307,7 @@
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4,
+                        spanGaps: true, // 连接断点
                         pointBackgroundColor: 'rgb(59, 130, 246)',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
@@ -1848,6 +1849,7 @@
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4,
+                        spanGaps: true, // 连接断点
                         pointBackgroundColor: 'rgb(59, 130, 246)',
                         pointBorderColor: '#ffffff',
                         pointBorderWidth: 2,
@@ -2069,6 +2071,7 @@
                         borderWidth: 2,
                         fill: true,
                         tension: 0.4,
+                        spanGaps: true, // 连接断点
                         pointBackgroundColor: function(context) {
                             const index = context.dataIndex;
                             const change = changes[index];
