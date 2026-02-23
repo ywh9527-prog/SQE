@@ -1578,6 +1578,9 @@
                 els.scoreDetailGradeStrategiesList.innerHTML = '<div class="performance__grade-strategy-item">暂无等级策略配置</div>';
             }
 
+            // 渲染雷达图
+            this.renderScoreDetailRadar(vendorDetail);
+
             // 显示模态框
             if (els.scoreDetailModal && els.scoreDetailOverlay) {
                 els.scoreDetailModal.classList.add('active');
@@ -1607,6 +1610,130 @@
                 'technical': '技术'
             };
             return nameMap[key] || key;
+        },
+
+        // 渲染评分详情雷达图
+        renderScoreDetailRadar(vendorDetail) {
+            const canvas = document.getElementById('scoreDetailRadarChart');
+            if (!canvas) return;
+
+            const scores = vendorDetail.scores || {};
+            const dimensions = state.dimensions || [];
+
+            // 收集维度数据和得分
+            const labels = [];
+            const data = [];
+
+            if (dimensions.length > 0) {
+                dimensions.forEach(dim => {
+                    labels.push(dim.name);
+                    const score = scores[dim.key];
+                    data.push(score !== undefined && score !== null ? score : 0);
+                });
+            } else {
+                // 如果没有配置，使用scores中的键
+                Object.keys(scores).forEach(key => {
+                    labels.push(this.getDimensionName(key));
+                    const score = scores[key];
+                    data.push(score !== undefined && score !== null ? score : 0);
+                });
+            }
+
+            // 只有一个维度时不显示雷达图
+            if (labels.length < 2) {
+                const radarContainer = document.getElementById('scoreDetailRadar');
+                if (radarContainer) {
+                    radarContainer.style.display = 'none';
+                }
+                return;
+            }
+
+            // 显示雷达图容器
+            const radarContainer = document.getElementById('scoreDetailRadar');
+            if (radarContainer) {
+                radarContainer.style.display = 'flex';
+            }
+
+            // 销毁旧的图表
+            if (this.scoreDetailRadarChart) {
+                this.scoreDetailRadarChart.destroy();
+            }
+
+            // 获取等级颜色
+            const grade = vendorDetail.grade || '-';
+            const gradeColor = this.getGradeColorByName(grade);
+
+            // 创建雷达图
+            this.scoreDetailRadarChart = new Chart(canvas, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '得分',
+                        data: data,
+                        backgroundColor: gradeColor + '30',
+                        borderColor: gradeColor,
+                        borderWidth: 2,
+                        pointBackgroundColor: gradeColor,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 10
+                                },
+                                color: '#6b7280'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                color: '#374151'
+                            },
+                            grid: {
+                                color: '#e5e7eb'
+                            },
+                            angleLines: {
+                                color: '#e5e7eb'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 12
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return `得分: ${context.raw.toFixed(1)}`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
         },
 
         // 渲染全供应商绩效趋势图
