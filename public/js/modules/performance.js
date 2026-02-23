@@ -1223,7 +1223,7 @@
                 // 判断维度类型
                 const isQualityDimension = dimension.key === 'quality';
                 const isManualDimension = dimension.type === 'manual' || (isYearly && ['continuous_improvement', 'price_level'].includes(dimension.key));
-                const isGreenEnv = dimension.key === 'green_environment' || dimension.key === 'green';
+                const isGreenEnv = dimension.key === 'green_environment' || dimension.key === 'green' || dimension.key === 'environmental';
                 
                 // 计算输入值
                 let inputValue = '';
@@ -1618,7 +1618,7 @@
             });
 
             // 检查绿色环保是否合格（单选按钮方式）
-            const greenEnvRadios = els.dimensionInputs.querySelectorAll('input[name="green_environment"], input[name="green"]');
+            const greenEnvRadios = els.dimensionInputs.querySelectorAll('input[name="green_environment"], input[name="green"], input[name="environmental"]');
             let greenEnvPass = true;
             if (greenEnvRadios.length > 0) {
                 // 找到选中的单选按钮
@@ -1740,7 +1740,7 @@
             });
 
             // 获取环保单选按钮的值（年度评价）
-            const greenEnvRadios = els.dimensionInputs.querySelectorAll('input[name="green_environment"], input[name="green"]');
+            const greenEnvRadios = els.dimensionInputs.querySelectorAll('input[name="green_environment"], input[name="green"], input[name="environmental"]');
             greenEnvRadios.forEach(radio => {
                 if (radio.checked) {
                     scores[radio.name] = radio.value;
