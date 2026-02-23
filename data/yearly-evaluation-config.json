@@ -1,0 +1,66 @@
+{
+  "dimensions": [
+    {
+      "name": "来料质量",
+      "key": "quality",
+      "weight": 0.30,
+      "type": "auto",
+      "calculationRule": "取全年各月质量维度平均分",
+      "scoringStandard": "根据月度评价记录自动计算"
+    },
+    {
+      "name": "使用情况",
+      "key": "usage",
+      "weight": 0.20,
+      "type": "auto",
+      "calculationRule": "取全年各月使用情况维度平均分",
+      "scoringStandard": "根据月度评价记录自动计算"
+    },
+    {
+      "name": "服务态度",
+      "key": "service",
+      "weight": 0.10,
+      "type": "auto",
+      "calculationRule": "取全年各月服务态度维度平均分",
+      "scoringStandard": "根据月度评价记录自动计算"
+    },
+    {
+      "name": "交货时效及达成",
+      "key": "delivery",
+      "weight": 0.15,
+      "type": "auto",
+      "calculationRule": "取全年各月交货时效维度平均分",
+      "scoringStandard": "根据月度评价记录自动计算"
+    },
+    {
+      "name": "持续改进能力",
+      "key": "improvement",
+      "weight": 0.15,
+      "type": "manual",
+      "calculationRule": "评估供应商持续改进能力",
+      "scoringStandard": "滑块评分（0-100分）"
+    },
+    {
+      "name": "价格水平",
+      "key": "price",
+      "weight": 0.10,
+      "type": "manual",
+      "calculationRule": "评估供应商价格竞争力",
+      "scoringStandard": "滑块评分（0-100分）"
+    },
+    {
+      "name": "绿色环保",
+      "key": "environmental",
+      "weight": 0,
+      "type": "green",
+      "calculationRule": "ROHS、REACH等环保合规",
+      "scoringStandard": "合格/不合格（不合格一票否决）"
+    }
+  ],
+  "gradeRules": [
+    { "min": 95, "max": 100, "label": "优秀", "color": "#16a34a", "strategy": "同等条件优先采购" },
+    { "min": 85, "max": 95, "label": "良好", "color": "#2563eb", "strategy": "可保持正常采购" },
+    { "min": 70, "max": 85, "label": "合格", "color": "#f59e0b", "strategy": "要求供应商内部改善" },
+    { "min": 0, "max": 70, "label": "不合格", "color": "#dc2626", "strategy": "暂停供货或剔除供应商目录" }
+  ]
+}
