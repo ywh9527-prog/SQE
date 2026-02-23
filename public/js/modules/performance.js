@@ -1617,9 +1617,22 @@
                 }
             });
 
-            // 检查绿色环保是否合格
-            const greenEnvCheckbox = els.dimensionInputs.querySelector('input[name="green_environment"], input[name="green"]');
-            const greenEnvPass = greenEnvCheckbox ? greenEnvCheckbox.checked : true;
+            // 检查绿色环保是否合格（单选按钮方式）
+            const greenEnvRadios = els.dimensionInputs.querySelectorAll('input[name="green_environment"], input[name="green"]');
+            let greenEnvPass = true;
+            if (greenEnvRadios.length > 0) {
+                // 找到选中的单选按钮
+                for (const radio of greenEnvRadios) {
+                    if (radio.checked && radio.value === 'false') {
+                        greenEnvPass = false;
+                        break;
+                    }
+                    if (radio.checked && radio.value === 'true') {
+                        greenEnvPass = true;
+                        break;
+                    }
+                }
+            }
 
             // 计算总分
             let totalScore = 0;
