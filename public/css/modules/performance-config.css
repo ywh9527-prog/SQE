@@ -284,9 +284,9 @@
 .dimension-edit-row .btn-icon {
     width: 32px;
     height: 32px;
-    background: var(--gray-100);
-    color: var(--gray-500);
-    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    color: var(--gray-400);
+    border: 1px solid var(--gray-300);
     border-radius: var(--border-radius-sm);
     display: flex;
     align-items: center;
@@ -298,9 +298,10 @@
 }
 
 .dimension-edit-row .btn-icon:hover {
-    background: var(--danger-light);
-    color: var(--danger);
+    background: var(--danger);
+    color: var(--gray-50);
     border-color: var(--danger);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
 
 /* 第二行：计算规则、评分标准 */
@@ -359,9 +360,9 @@
 .performance__dimension-item .btn-icon {
     width: 32px;
     height: 32px;
-    background: var(--gray-100);
-    color: var(--gray-500);
-    border: 1px solid var(--gray-200);
+    background: var(--gray-50);
+    color: var(--gray-400);
+    border: 1px solid var(--gray-300);
     border-radius: var(--border-radius-sm);
     display: flex;
     align-items: center;
@@ -371,9 +372,10 @@
 }
 
 .performance__dimension-item .btn-icon:hover {
-    background: var(--danger-light);
-    color: var(--danger);
+    background: var(--danger);
+    color: var(--gray-50);
     border-color: var(--danger);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
 
 /* 权重汇总 */
@@ -557,9 +559,9 @@
 .performance__grade-rule-item .btn-icon {
     width: 36px;
     height: 36px;
-    background: var(--gray-100);
+    background: var(--gray-50);
     color: var(--gray-400);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--gray-300);
     border-radius: var(--border-radius-sm);
     display: flex;
     align-items: center;
@@ -571,9 +573,10 @@
 }
 
 .performance__grade-rule-item .btn-icon:hover {
-    background: var(--danger-light);
-    color: var(--danger);
+    background: var(--danger);
+    color: var(--gray-50);
     border-color: var(--danger);
+    box-shadow: 0 2px 8px rgba(220, 38, 38, 0.3);
 }
 
 /* 等级颜色预览与标签组合 */
