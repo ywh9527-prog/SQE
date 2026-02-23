@@ -56,24 +56,24 @@ class YearlyEvaluationConfigService {
                     key: "improvement",
                     weight: 0.15,
                     type: "manual",
-                    calculationRule: "评估供应商持续改进能力",
-                    scoringStandard: "滑块评分（0-100分）"
+                    calculationRule: "考核改进事项完成情况，改进事项包含但不限于获取新体系认证证书、内部良率改善、产能提升、自动化改造等",
+                    scoringStandard: "改善持续改进事项完成且验证有效，每项得5分"
                 },
                 {
                     name: "价格水平",
                     key: "price",
                     weight: 0.10,
                     type: "manual",
-                    calculationRule: "评估供应商价格竞争力",
-                    scoringStandard: "滑块评分（0-100分）"
+                    calculationRule: "市场行情无大幅度波动前提下，（上年度综合单价 - 评价期综合单价）/ 上年度综合单价 ×100%",
+                    scoringStandard: "价格下降5%以上得10分；价格下降2%~5%得8分；价格平稳得6分；价格高于2%~5%得0分"
                 },
                 {
                     name: "绿色环保",
                     key: "environmental",
                     weight: 0,
                     type: "green",
-                    calculationRule: "ROHS、REACH等环保合规",
-                    scoringStandard: "合格/不合格（不合格一票否决）"
+                    calculationRule: "考核是否符合行业、国标环保要求",
+                    scoringStandard: "需提供REACH、RoHs检测报告且结果合格，方可继续合作；未提供报告或未签订环境物质管理协议，或报告不合格，直接判定为不合格"
                 }
             ],
             gradeRules: [
