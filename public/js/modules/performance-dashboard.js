@@ -921,21 +921,27 @@
 
                     // 检查是否连续改进/恶化至少3个月
                     if (improvingCount >= 3) {
+                        // 用索引获取连续的月份
+                        const startIdx = sortedMonths.indexOf(month) - improvingCount + 1;
+                        const consecutiveMonths = sortedMonths.slice(startIdx, startIdx + improvingCount);
                         improvingVendors.push({
                             vendorName,
-                            months: sortedMonths.filter(m => m >= month - improvingCount + 1 && m <= month),
+                            months: consecutiveMonths,
                             score: currentScore,
-                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - improvingCount + 1]) || currentScore)
+                            change: currentScore - (monthScores.get(consecutiveMonths[0]) || currentScore)
                         });
                         break;
                     }
 
                     if (decliningCount >= 3) {
+                        // 用索引获取连续的月份
+                        const startIdx = sortedMonths.indexOf(month) - decliningCount + 1;
+                        const consecutiveMonths = sortedMonths.slice(startIdx, startIdx + decliningCount);
                         decliningVendors.push({
                             vendorName,
-                            months: sortedMonths.filter(m => m >= month - decliningCount + 1 && m <= month),
+                            months: consecutiveMonths,
                             score: currentScore,
-                            change: currentScore - (monthScores.get(sortedMonths[sortedMonths.indexOf(month) - decliningCount + 1]) || currentScore)
+                            change: currentScore - (monthScores.get(consecutiveMonths[0]) || currentScore)
                         });
                         break;
                     }
