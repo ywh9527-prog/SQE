@@ -29,7 +29,7 @@ class PerformanceEvaluationService {
             if (data.period_type === 'yearly') {
                 // 年度评价：使用年度配置
                 const yearlyConfigService = require('./yearly-evaluation-config-service');
-                currentConfig = await yearlyConfigService.getCurrentConfig();
+                currentConfig = await yearlyConfigService.getConfig();
             } else {
                 // 月度/季度评价：使用标准配置
                 const configService = require('./evaluation-config-service');
@@ -1470,10 +1470,22 @@ class PerformanceEvaluationService {
      * 获取年度累计数据
      * @param {number} year - 年份
      * @param {string} type - 数据类型（purchase-外购/external-外协）
+     * @param {string} periodType - 周期类型（monthly-月度季度、yearly-年度）
      * @returns {Promise<Object>} 累计数据
      */
-    async getAccumulatedResults(year, type) {
+    async getAccumulatedResults(year, type, periodType = 'monthly') {
         try {
+            // 根据periodType决定查询哪种类型的周期
+            let periodTypeCondition;
+            if (periodType === 'yearly') {
+                periodTypeCondition = 'yearly';
+            } else {
+                // 月度Tab：查询月度/季度/自定义周期
+                periodTypeCondition = {
+                    [Op.in]: ['monthly', 'quarterly', 'custom']
+                };
+            }
+
             // 查询该年份所有已完成的评价周期
             // 使用日期范围查询（SQLite兼容）
             const startDate = `${year}-01-01`;
@@ -1482,6 +1494,7 @@ class PerformanceEvaluationService {
             const evaluations = await PerformanceEvaluation.findAll({
                 where: {
                     status: 'completed',
+                    period_type: periodTypeCondition,
                     [Op.or]: [
                         {
                             [Op.and]: [

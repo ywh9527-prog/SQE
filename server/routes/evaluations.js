@@ -343,9 +343,9 @@ router.get('/trend/:entityName', authenticateToken, async (req, res) => {
 router.get('/accumulated/:year', authenticateToken, async (req, res) => {
     try {
         const { year } = req.params;
-        const { type } = req.query; // type: 'purchase' | 'external'
+        const { type, periodType } = req.query; // type: 'purchase' | 'external', periodType: 'monthly' | 'yearly'
 
-        const accumulatedData = await performanceEvaluationService.getAccumulatedResults(year, type);
+        const accumulatedData = await performanceEvaluationService.getAccumulatedResults(year, type, periodType);
 
         res.json({
             success: true,

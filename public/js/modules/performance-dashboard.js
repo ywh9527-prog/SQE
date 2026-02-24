@@ -355,7 +355,7 @@
         },
 
         // 加载年度累计数据
-        async loadAccumulatedResults(year, type = 'purchase') {
+        async loadAccumulatedResults(year, type = 'purchase', periodType = 'monthly') {
             try {
                 // 同步年份选择器的值
                 if (els.yearSelector) {
@@ -364,7 +364,7 @@
                 state.currentYear = year;
                 state.currentType = type;
 
-                const response = await this.authenticatedFetch(`/api/evaluations/accumulated/${year}?type=${type}`);
+                const response = await this.authenticatedFetch(`/api/evaluations/accumulated/${year}?type=${type}&periodType=${periodType}`);
                 const result = await response.json();
 
                 if (result.success) {
@@ -539,6 +539,9 @@
 
         // 切换Tab
         switchTab(tabId) {
+            // 隐藏历史评价周期列表
+            document.getElementById('evaluationPeriodsList').classList.add('hidden');
+
             // 更新按钮样式
             if (els.tabButtons.length > 0) {
                 els.tabButtons.forEach(btn => {
@@ -562,6 +565,15 @@
                         content.classList.add('hidden');
                     }
                 });
+            }
+
+            // 根据Tab类型加载对应数据
+            if (tabId === 'tab-trend') {
+                // 年度评价Tab：加载年度评价数据
+                this.loadAccumulatedResults(state.currentYear, state.currentType, 'yearly');
+            } else if (tabId === 'tab-heatmap') {
+                // 月度Tab：加载月度评价数据
+                this.loadAccumulatedResults(state.currentYear, state.currentType, 'monthly');
             }
         },
 

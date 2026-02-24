@@ -1942,17 +1942,17 @@
             }
         },
 
-        // 查看结果 - 跳转到主界面显示年度累计绩效
+        // 查看结果 - 根据周期类型跳转到对应的累计绩效Tab
         viewResults(evaluationId) {
-            // 先获取评价周期的详细信息来提取年份
+            // 先获取评价周期的详细信息来提取年份和周期类型
             this.authenticatedFetch(`/api/evaluations/${evaluationId}`)
                 .then(response => response.json())
                 .then(result => {
                     if (result.success && result.data) {
                         const evaluation = result.data;
-                        // 从start_date中提取年份
-                        let year = new Date().getFullYear(); // 默认当前年份
                         
+                        // 从start_date中提取年份
+                        let year = new Date().getFullYear();
                         if (evaluation.start_date) {
                             const match = evaluation.start_date.match(/^(\d{4})/);
                             if (match && match[1]) {
@@ -1960,13 +1960,26 @@
                             }
                         }
                         
-                        // 跳转到绩效评价模块的主界面（年度累计绩效）
+                        // 获取周期类型
+                        const periodType = evaluation.period_type || 'monthly';
+                        
+                        // 跳转到绩效评价模块
                         window.location.hash = 'performance';
                         
-                        // 等待页面跳转完成后，加载对应年份的累计绩效数据
+                        // 等待页面跳转完成后，根据周期类型加载对应数据
                         setTimeout(() => {
                             if (window.App && window.App.Modules && window.App.Modules.PerformanceDashboard) {
-                                window.App.Modules.PerformanceDashboard.loadAccumulatedResults(year);
+                                const dashboard = window.App.Modules.PerformanceDashboard;
+                                
+                                if (periodType === 'yearly') {
+                                    // 年度：切换到年度Tab，加载年度数据
+                                    dashboard.switchTab('tab-trend');
+                                    dashboard.loadAccumulatedResults(year, 'purchase', 'yearly');
+                                } else {
+                                    // 月度/季度：切换到月度Tab，加载月度数据
+                                    dashboard.switchTab('tab-heatmap');
+                                    dashboard.loadAccumulatedResults(year, 'purchase', 'monthly');
+                                }
                             }
                         }, 100);
                     } else {
