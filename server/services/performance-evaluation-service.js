@@ -834,7 +834,11 @@ class PerformanceEvaluationService {
                     const year = new Date(evaluation.start_date).getFullYear();
                     for (const vendor of vendors) {
                         try {
-                            const yearlyData = await this.getYearlyAverageScores(vendor.supplier_name, year);
+                            const yearlyData = await this.getYearlyAverageScores(
+                                vendor.supplier_name, 
+                                year, 
+                                vendor.data_type || 'purchase'
+                            );
                             if (yearlyData) {
                                 yearlyDataMap[vendor.supplier_name] = yearlyData;
                             }
@@ -1127,7 +1131,11 @@ class PerformanceEvaluationService {
                         const year = new Date(evaluation.start_date).getFullYear();
                         for (const vendor of vendors) {
                             try {
-                                const yearlyData = await this.getYearlyAverageScores(vendor.supplier_name, year);
+                                const yearlyData = await this.getYearlyAverageScores(
+                                    vendor.supplier_name, 
+                                    year, 
+                                    vendor.data_type || 'purchase'
+                                );
                                 if (yearlyData) {
                                     yearlyDataMapInProgress[vendor.supplier_name] = yearlyData;
                                 }
@@ -1908,7 +1916,10 @@ class PerformanceEvaluationService {
                 include: [{
                     model: PerformanceEvaluationDetail,
                     as: 'details',
-                    where: { evaluation_entity_name: vendorName },
+                    where: { 
+                        evaluation_entity_name: vendorName,
+                        data_type: dataSource  // 按外购/外协类型过滤
+                    },
                     required: true
                 }],
                 order: [['start_date', 'ASC']]
