@@ -1855,7 +1855,7 @@
 .performance__yearly-table th,
 .performance__yearly-table td {
     padding: 10px 12px;
-    text-align: left;
+    text-align: center;
     border-bottom: 1px solid var(--gray-200);
     font-size: 13px;
 }
@@ -1866,6 +1866,12 @@
     background: white;
     font-size: 12px;
     white-space: nowrap;
+}
+
+/* 供应商名称列左对齐 */
+.performance__yearly-table td:nth-child(2),
+.performance__yearly-table th:nth-child(2) {
+    text-align: left;
 }
 
 .performance__yearly-table tbody tr {
