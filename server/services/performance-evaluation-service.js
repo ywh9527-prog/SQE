@@ -15,6 +15,14 @@ class PerformanceEvaluationService {
      * @returns {Promise<Object>} 创建的评价周期
      */
     async createEvaluation(data) {
+        // 检查是否已存在同名周期
+        const existingPeriod = await PerformanceEvaluation.findOne({
+            where: { period_name: data.period_name }
+        });
+        if (existingPeriod) {
+            throw new Error(`评价周期"${data.period_name}"已存在，请勿重复创建`);
+        }
+
         // 新增：检查周期类型冲突
         const conflictCheck = await this.checkPeriodTypeConflict(data.period_type, data.start_date);
         if (!conflictCheck.allowed) {
