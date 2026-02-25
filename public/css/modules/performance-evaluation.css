@@ -5,17 +5,26 @@
  */
 
 /* ============================================
-   评价周期管理区域
+   主界面容器
    ============================================ */
 
-/* 评价周期管理区域外层容器 - 白色背景 */
-.performance__period-management-wrapper {
+/* 主界面白色背景容器 - 包含所有内容 */
+.performance__main-container {
     background: white;
     border-radius: var(--border-radius-lg);
     box-shadow: var(--shadow-md);
     border: 1px solid var(--gray-200);
     padding: 24px;
     margin-bottom: 28px;
+}
+
+/* ============================================
+   评价周期管理区域
+   ============================================ */
+
+/* 评价周期管理区域 - 内部布局容器 */
+.performance__period-management-wrapper {
+    margin-bottom: 20px;
 }
 
 /* 历史评价周期列表在容器内的样式 */

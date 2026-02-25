@@ -517,35 +517,37 @@
                     </section>
                 </div>
                 <div id="module-performance" class="module-view hidden">
-                    <!-- 评价周期管理区域（白色背景容器） -->
-                    <div class="performance__period-management-wrapper">
-                        <!-- 评价周期选择区 -->
-                        <div class="performance__period-selector">
-                            <h3>评价周期</h3>
-                            <div class="performance__period-actions">
-                                <button class="btn btn-primary" id="createEvaluationBtn">
-                                    <span class="btn-icon"><i class="ph ph-plus"></i></span>
-                                    创建评价周期
-                                </button>
-                                <button class="btn btn-secondary" id="configBtn">
-                                    <span class="btn-icon"><i class="ph ph-gear"></i></span>
-                                    配置
-                                </button>
+                    <!-- 主界面白色背景容器 - 包含所有内容（除模态框外） -->
+                    <div class="performance__main-container">
+                        <!-- 评价周期管理区域 -->
+                        <div class="performance__period-management-wrapper">
+                            <!-- 评价周期选择区 -->
+                            <div class="performance__period-selector">
+                                <h3>评价周期</h3>
+                                <div class="performance__period-actions">
+                                    <button class="btn btn-primary" id="createEvaluationBtn">
+                                        <span class="btn-icon"><i class="ph ph-plus"></i></span>
+                                        创建评价周期
+                                    </button>
+                                    <button class="btn btn-secondary" id="configBtn">
+                                        <span class="btn-icon"><i class="ph ph-gear"></i></span>
+                                        配置
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- 历史评价周期列表 -->
-                        <div id="evaluationPeriodsList" class="performance__periods-list hidden">
-                            <div class="performance__periods-header">
-                                <h3>历史评价周期 <button class="btn btn-sm btn-warning" id="resetPeriodModeBtn" title="重置周期模式（删除所有月度/季度周期）" style="margin-left: 10px;">重置模式</button></h3>
-                                <button class="performance__back-btn" id="backToMainBtn">
-                                    <i class="ph ph-arrow-left"></i>
-                                    返回主界面
-                                </button>
+                            <!-- 历史评价周期列表 -->
+                            <div id="evaluationPeriodsList" class="performance__periods-list hidden">
+                                <div class="performance__periods-header">
+                                    <h3>历史评价周期 <button class="btn btn-sm btn-warning" id="resetPeriodModeBtn" title="重置周期模式（删除所有月度/季度周期）" style="margin-left: 10px;">重置模式</button></h3>
+                                    <button class="performance__back-btn" id="backToMainBtn">
+                                        <i class="ph ph-arrow-left"></i>
+                                        返回主界面
+                                    </button>
+                                </div>
+                                <div id="periodsList"></div>
                             </div>
-                            <div id="periodsList"></div>
                         </div>
-                    </div>
 
                     <!-- 创建评价周期对话框 -->
                     <div id="createEvaluationModal" class="performance__performance-modal hidden">
@@ -1316,6 +1318,7 @@
                         </div>
                     </div>
 
+                    </div><!-- performance__main-container 结束 -->
                 </div>
                 <div id="module-vendor-config" class="module-view hidden">
                     <div class="module-header">
