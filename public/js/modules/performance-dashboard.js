@@ -2500,11 +2500,143 @@
                 remarksEl.textContent = detail.remarks || '-';
             }
 
+            // 渲染雷达图
+            this.renderYearlyRadarChart(detail);
+
             // 显示模态框（使用active类触发动画）
             modal.classList.remove('hidden');
             // 延迟添加active类以触发过渡动画
             requestAnimationFrame(() => {
                 modal.classList.add('active');
+            });
+        },
+
+        // 渲染年度绩效雷达图
+        renderYearlyRadarChart(detail) {
+            const canvas = document.getElementById('yearlyRadarChart');
+            if (!canvas) return;
+
+            const scores = detail.scores || {};
+            const dimensions = state.yearlyDimensions || [];
+
+            // 收集维度数据和得分（排除环保维度）
+            const labels = [];
+            const data = [];
+
+            if (dimensions.length > 0) {
+                dimensions.forEach(dim => {
+                    // 排除绿色环保维度
+                    if (dim.type !== 'green' && dim.key !== 'environmental') {
+                        labels.push(dim.name);
+                        const score = scores[dim.key];
+                        data.push(score !== undefined && score !== null ? score : 0);
+                    }
+                });
+            } else {
+                // 如果没有配置，使用scores中的键（排除环保）
+                Object.keys(scores).forEach(key => {
+                    if (key !== 'environmental' && key !== 'green_environment' && key !== 'green_environmental') {
+                        labels.push(this.getDimensionName(key));
+                        const score = scores[key];
+                        data.push(score !== undefined && score !== null ? score : 0);
+                    }
+                });
+            }
+
+            // 只有一个维度时不显示雷达图
+            if (labels.length < 2) {
+                const radarContainer = document.getElementById('yearlyModalRadar');
+                if (radarContainer) {
+                    radarContainer.style.display = 'none';
+                }
+                return;
+            }
+
+            // 显示雷达图容器
+            const radarContainer = document.getElementById('yearlyModalRadar');
+            if (radarContainer) {
+                radarContainer.style.display = 'flex';
+            }
+
+            // 销毁旧的图表
+            if (this.yearlyRadarChart) {
+                this.yearlyRadarChart.destroy();
+            }
+
+            // 获取等级颜色
+            const grade = detail.grade || '-';
+            const gradeColor = this.getYearlyGradeColor(grade);
+
+            // 创建雷达图
+            this.yearlyRadarChart = new Chart(canvas, {
+                type: 'radar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: '得分',
+                        data: data,
+                        backgroundColor: gradeColor + '30',
+                        borderColor: gradeColor,
+                        borderWidth: 2,
+                        pointBackgroundColor: gradeColor,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            min: 0,
+                            max: 100,
+                            ticks: {
+                                stepSize: 20,
+                                font: {
+                                    size: 10
+                                },
+                                color: '#6b7280'
+                            },
+                            pointLabels: {
+                                font: {
+                                    size: 11,
+                                    weight: '500'
+                                },
+                                color: '#374151'
+                            },
+                            grid: {
+                                color: '#e5e7eb'
+                            },
+                            angleLines: {
+                                color: '#e5e7eb'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            titleFont: {
+                                size: 12
+                            },
+                            bodyFont: {
+                                size: 14
+                            },
+                            padding: 10,
+                            cornerRadius: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return `得分: ${context.raw.toFixed(1)}`;
+                                }
+                            }
+                        }
+                    }
+                }
             });
         },
 

@@ -2271,6 +2271,42 @@
     color: var(--gray-800);
 }
 
+/* 雷达图 */
+.performance__yearly-modal-radar {
+    margin-bottom: 24px;
+    padding: 20px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 280px;
+    position: relative;
+}
+
+.performance__yearly-modal-radar::before {
+    content: '维度分布';
+    position: absolute;
+    top: 12px;
+    left: 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.performance__yearly-modal-radar:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.performance__yearly-modal-radar canvas {
+    max-width: 100%;
+    max-height: 250px;
+}
+
 /* 备注 */
 .performance__yearly-modal-remarks {
     padding: 14px 16px;
