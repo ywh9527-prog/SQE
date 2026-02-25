@@ -2329,48 +2329,52 @@
             // 左右各半布局：
             // 第一排：第1名（左）| 第N/2+1名（右）
             // 第二排：第2名（左）| 第N/2+2名（右）
-            const midPoint = Math.ceil(evaluatedDetails.length / 2);
+            const totalCount = evaluatedDetails.length;
+            const midPoint = Math.ceil(totalCount / 2);
             const leftDetails = evaluatedDetails.slice(0, midPoint);
             const rightDetails = evaluatedDetails.slice(midPoint);
 
             // 渲染左列（排名 1 ~ N/2）
             leftDetails.forEach((detail, index) => {
                 const rank = index + 1;
-                const row = this.createYearlyRankingRow(detail, rank);
+                const row = this.createYearlyRankingRow(detail, rank, totalCount);
                 tbodyLeft.appendChild(row);
             });
 
             // 渲染右列（排名 N/2+1 ~ N）
             rightDetails.forEach((detail, index) => {
                 const rank = midPoint + index + 1;
-                const row = this.createYearlyRankingRow(detail, rank);
+                const row = this.createYearlyRankingRow(detail, rank, totalCount);
                 tbodyRight.appendChild(row);
             });
         },
 
         // 创建年度排行表格行
-        createYearlyRankingRow(detail, rank) {
+        createYearlyRankingRow(detail, rank, totalCount) {
             const grade = detail.grade || '-';
-            const gradeClass = this.getYearlyGradeClass(grade);
-            const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
+            const gradeColor = this.getYearlyGradeColor(grade);
+            const environmental = detail.scores?.environmental || detail.scores?.green_environment || detail.scores?.green_environmental || '-';
+
+            // 计算排名样式：前5绿、后5红、中间黄
+            const rankClass = this.getYearlyRankClass(rank, totalCount);
 
             const row = document.createElement('tr');
             row.innerHTML = `
                 <td>
-                    <span class="performance__yearly-rank ${rank <= 3 ? 'rank-' + rank : 'rank-other'}">
+                    <span class="performance__yearly-rank ${rankClass}">
                         ${rank}
                     </span>
                 </td>
                 <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${detail.entityName || '-'}">${detail.entityName || '-'}</td>
                 <td style="font-weight: 600;">${detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-'}</td>
                 <td>
-                    <span class="performance__yearly-grade ${gradeClass}">
+                    <span class="performance__yearly-grade" style="background: ${gradeColor}20; color: ${gradeColor}; border-color: ${gradeColor}40;">
                         ${grade}
                     </span>
                 </td>
                 <td>
-                    <span class="performance__yearly-environmental ${environmental === '合格' || environmental === 'pass' ? 'pass' : 'fail'}">
-                        ${environmental === 'pass' ? '合格' : environmental}
+                    <span class="performance__yearly-environmental ${this.isEnvironmentalPass(environmental) ? 'pass' : 'fail'}">
+                        ${this.formatEnvironmental(environmental)}
                     </span>
                 </td>
             `;
@@ -2382,12 +2386,32 @@
             return row;
         },
 
+        // 获取年度排名样式类名（前5绿、后5红、中间黄）
+        getYearlyRankClass(rank, totalCount) {
+            if (rank <= 5) return 'rank-top';
+            if (rank > totalCount - 5) return 'rank-bottom';
+            return 'rank-middle';
+        },
+
         // 获取年度等级颜色
         getYearlyGradeColor(gradeName) {
             if (!gradeName || gradeName === '-' || !state.yearlyGradeRules) return '#6b7280';
 
             const rule = state.yearlyGradeRules.find(r => r.label === gradeName);
             return rule?.color || '#6b7280';
+        },
+
+        // 判断环保状态是否合格（支持多种格式）
+        isEnvironmentalPass(environmental) {
+            if (environmental === '合格' || environmental === 'pass' || environmental === true || environmental === 'true') return true;
+            if (environmental === '不合格' || environmental === 'fail' || environmental === false || environmental === 'false') return false;
+            return false;
+        },
+
+        // 格式化环保状态显示（直接显示原始值）
+        formatEnvironmental(environmental) {
+            if (environmental === undefined || environmental === null || environmental === '-') return '-';
+            return String(environmental);
         },
 
         // 获取年度等级CSS类名（与月度保持一致）
@@ -2424,20 +2448,21 @@
                 totalScoreEl.textContent = detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-';
             }
 
-            // 填充等级
+            // 填充等级（使用配置颜色）
             const gradeEl = document.getElementById('yearlyModalGrade');
             if (gradeEl) {
                 const grade = detail.grade || '-';
-                const gradeClass = this.getYearlyGradeClass(grade);
-                gradeEl.innerHTML = `<span class="performance__yearly-grade ${gradeClass}">${grade}</span>`;
+                const gradeColor = this.getYearlyGradeColor(grade);
+                gradeEl.innerHTML = `<span class="performance__yearly-grade" style="background: ${gradeColor}20; color: ${gradeColor}; border-color: ${gradeColor}40;">${grade}</span>`;
             }
 
             // 填充环保状态
             const environmentalEl = document.getElementById('yearlyModalEnvironmental');
             if (environmentalEl) {
-                const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
-                const isPass = environmental === '合格' || environmental === 'pass';
-                environmentalEl.innerHTML = `<span style="background: ${isPass ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${isPass ? '#10b981' : '#ef4444'}; padding: 4px 12px; border-radius: 4px;">${environmental === 'pass' ? '合格' : environmental}</span>`;
+                const environmental = detail.scores?.environmental || detail.scores?.green_environment || detail.scores?.green_environmental || '-';
+                const isPass = this.isEnvironmentalPass(environmental);
+                const displayText = this.formatEnvironmental(environmental);
+                environmentalEl.innerHTML = `<span style="background: ${isPass ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${isPass ? '#10b981' : '#ef4444'}; padding: 4px 12px; border-radius: 4px;">${displayText}</span>`;
             }
 
             // 填充等级策略

@@ -1881,7 +1881,7 @@
     border-bottom: none;
 }
 
-/* 排名徽章 - 与月度保持一致的金银铜设计 */
+/* 排名徽章 - 前5绿色，中间黄色，后5红色（与热力图一致） */
 .performance__yearly-rank {
     display: inline-flex;
     align-items: center;
@@ -1891,30 +1891,28 @@
     border-radius: 50%;
     font-weight: 700;
     font-size: 14px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 200ms ease;
 }
 
-.performance__yearly-rank.rank-1 {
-    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+/* 前5名 - 绿色 */
+.performance__yearly-rank.rank-top {
+    background: #16a34a;
     color: white;
 }
 
-.performance__yearly-rank.rank-2 {
-    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-600) 100%);
+/* 后5名 - 红色 */
+.performance__yearly-rank.rank-bottom {
+    background: #dc2626;
     color: white;
 }
 
-.performance__yearly-rank.rank-3 {
-    background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
-    color: white;
+/* 中间名次 - 黄色（默认） */
+.performance__yearly-rank.rank-middle {
+    background: #f59e0b;
+    color: var(--gray-900);
 }
 
-.performance__yearly-rank.rank-other {
-    background: var(--gray-300);
-    color: var(--gray-700);
-}
-
-/* 等级徽章 - 与月度保持一致的扁平化设计 */
+/* 等级徽章 - 使用配置颜色（JS动态设置） */
 .performance__yearly-grade {
     display: inline-flex;
     align-items: center;
@@ -1924,36 +1922,7 @@
     border-radius: 4px;
     font-size: 12px;
     font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.03em;
-}
-
-/* 优秀 - 绿色扁平 */
-.performance__yearly-grade.grade-excellent {
-    background: #dcfce7;
-    color: #166534;
-    border: 1px solid #86efac;
-}
-
-/* 合格 - 蓝色扁平 */
-.performance__yearly-grade.grade-good {
-    background: #dbeafe;
-    color: #1e40af;
-    border: 1px solid #93c5fd;
-}
-
-/* 整改后合格 - 橙色扁平 */
-.performance__yearly-grade.grade-improve {
-    background: #fef3c7;
-    color: #92400e;
-    border: 1px solid #fcd34d;
-}
-
-/* 不合格 - 红色扁平 */
-.performance__yearly-grade.grade-poor {
-    background: #fee2e2;
-    color: #991b1b;
-    border: 1px solid #fca5a5;
+    border: 1px solid;
 }
 
 /* 环保状态徽章 */
