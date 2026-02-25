@@ -1038,7 +1038,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                                                                                    }
+                                                                                                                                                                                                                                                                        },
 
     
 
@@ -1054,7 +1054,7 @@ class PerformanceEvaluationService {
 
     
 
-                                                                                                                                }))
+                                                                                                                                                                    yearlyQualityData: yearlyDataMap ? yearlyDataMap[v.supplier_name] : null
 
     
 
@@ -1070,13 +1070,327 @@ class PerformanceEvaluationService {
 
     
 
-                                                                                };
+                                                                                                                                                                }))
 
-                } 
+    
 
-                // 如果状态为in_progress，继续评价
+                    
 
-                else if (evaluation.status === 'in_progress') {
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                                            
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                        
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                                                                                    };
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                    } 
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                    // 如果状态为in_progress，继续评价
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                    
+
+    
+
+                    
+
+    
+
+                                        
+
+    
+
+                    
+
+    
+
+                                                                                                                                                    else if (evaluation.status === 'in_progress') {
 
                     // 获取已有的评价详情记录
 
