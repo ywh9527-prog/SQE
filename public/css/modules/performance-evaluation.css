@@ -5,6 +5,31 @@
  */
 
 /* ============================================
+   评价周期管理区域
+   ============================================ */
+
+/* 评价周期管理区域外层容器 - 白色背景 */
+.performance__period-management-wrapper {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    padding: 24px;
+    margin-bottom: 28px;
+}
+
+/* 历史评价周期列表在容器内的样式 */
+.performance__period-management-wrapper .performance__periods-list {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid var(--gray-200);
+}
+
+.performance__period-management-wrapper .performance__periods-list:not(.hidden) {
+    display: block;
+}
+
+/* ============================================
    评价周期选择区
    ============================================ */
 
@@ -12,7 +37,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: var(--border-radius-xl);
     padding: calc(var(--border-radius-lg) * 1.5);
     background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-900) 100%);
     border-radius: var(--border-radius-lg);
@@ -1551,17 +1575,12 @@
 
 .performance__periods-list {
     max-width: 1200px;
-    margin: var(--border-radius-xl) auto 0;
-    padding: 0 var(--border-radius-md);
+    margin: 0 auto;
 }
 
-/* 历史评价周期容器 - 白色背景 */
+/* 历史评价周期容器 - 移除白色背景（由外层容器提供） */
 .performance__periods-container {
-    background: white;
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    border: 1px solid var(--gray-200);
-    padding: 32px;
+    padding: 0;
 }
 
 .performance__periods-header {

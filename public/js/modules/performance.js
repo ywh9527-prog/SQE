@@ -217,6 +217,9 @@
         // 加载主界面
         async loadDashboard() {
             try {
+                // 确保显示主界面，隐藏历史评价周期列表
+                this.showDashboard();
+
                 // 从localStorage读取保存的年份，如果没有则使用当前年份
                 const savedYear = localStorage.getItem('performance_year');
                 const currentYear = savedYear ? parseInt(savedYear) : new Date().getFullYear();
