@@ -2326,27 +2326,32 @@
             tbodyLeft.innerHTML = '';
             tbodyRight.innerHTML = '';
 
-            // 奇偶分行布局：左列显示奇数排名（1,3,5...），右列显示偶数排名（2,4,6...）
-            // 第一排：第1名（左）| 第2名（右）
-            // 第二排：第3名（左）| 第4名（右）
-            evaluatedDetails.forEach((detail, index) => {
+            // 左右各半布局：
+            // 第一排：第1名（左）| 第N/2+1名（右）
+            // 第二排：第2名（左）| 第N/2+2名（右）
+            const midPoint = Math.ceil(evaluatedDetails.length / 2);
+            const leftDetails = evaluatedDetails.slice(0, midPoint);
+            const rightDetails = evaluatedDetails.slice(midPoint);
+
+            // 渲染左列（排名 1 ~ N/2）
+            leftDetails.forEach((detail, index) => {
                 const rank = index + 1;
                 const row = this.createYearlyRankingRow(detail, rank);
+                tbodyLeft.appendChild(row);
+            });
 
-                if (rank % 2 === 1) {
-                    // 奇数排名放左列
-                    tbodyLeft.appendChild(row);
-                } else {
-                    // 偶数排名放右列
-                    tbodyRight.appendChild(row);
-                }
+            // 渲染右列（排名 N/2+1 ~ N）
+            rightDetails.forEach((detail, index) => {
+                const rank = midPoint + index + 1;
+                const row = this.createYearlyRankingRow(detail, rank);
+                tbodyRight.appendChild(row);
             });
         },
 
         // 创建年度排行表格行
         createYearlyRankingRow(detail, rank) {
             const grade = detail.grade || '-';
-            const gradeColor = this.getYearlyGradeColor(grade);
+            const gradeClass = this.getYearlyGradeClass(grade);
             const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
 
             const row = document.createElement('tr');
@@ -2359,7 +2364,7 @@
                 <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${detail.entityName || '-'}">${detail.entityName || '-'}</td>
                 <td style="font-weight: 600;">${detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-'}</td>
                 <td>
-                    <span class="performance__yearly-grade" style="background: ${gradeColor}20; color: ${gradeColor};">
+                    <span class="performance__yearly-grade ${gradeClass}">
                         ${grade}
                     </span>
                 </td>
@@ -2385,6 +2390,23 @@
             return rule?.color || '#6b7280';
         },
 
+        // 获取年度等级CSS类名（与月度保持一致）
+        getYearlyGradeClass(gradeName) {
+            if (!gradeName || gradeName === '-') return '';
+            
+            // 按min从大到小排序，获取等级顺序
+            const sortedRules = [...(state.yearlyGradeRules || [])].sort((a, b) => b.min - a.min);
+            const gradeClasses = ['grade-excellent', 'grade-good', 'grade-improve', 'grade-poor'];
+            
+            for (let i = 0; i < sortedRules.length; i++) {
+                if (sortedRules[i].label === gradeName) {
+                    return gradeClasses[i] || '';
+                }
+            }
+            
+            return '';
+        },
+
         // 显示年度绩效详情模态框
         showYearlyDetailModal(detail) {
             const modal = document.getElementById('yearlyDetailModal');
@@ -2406,8 +2428,8 @@
             const gradeEl = document.getElementById('yearlyModalGrade');
             if (gradeEl) {
                 const grade = detail.grade || '-';
-                const gradeColor = this.getYearlyGradeColor(grade);
-                gradeEl.innerHTML = `<span style="background: ${gradeColor}20; color: ${gradeColor}; padding: 4px 12px; border-radius: 4px;">${grade}</span>`;
+                const gradeClass = this.getYearlyGradeClass(grade);
+                gradeEl.innerHTML = `<span class="performance__yearly-grade ${gradeClass}">${grade}</span>`;
             }
 
             // 填充环保状态

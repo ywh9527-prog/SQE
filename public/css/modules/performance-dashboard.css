@@ -1831,8 +1831,20 @@
     background: var(--gray-50);
 }
 
-.performance__yearly-table-wrapper {
-    overflow-x: auto;
+/* 双列布局容器 */
+.performance__yearly-dual-wrapper {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    overflow: hidden;
+}
+
+.performance__yearly-table-column {
+    overflow: hidden;
+}
+
+.performance__yearly-table-column:first-child {
+    border-right: 1px solid var(--gray-200);
 }
 
 .performance__yearly-table {
@@ -1842,16 +1854,18 @@
 
 .performance__yearly-table th,
 .performance__yearly-table td {
-    padding: 12px 16px;
+    padding: 10px 12px;
     text-align: left;
     border-bottom: 1px solid var(--gray-200);
+    font-size: 13px;
 }
 
 .performance__yearly-table th {
     font-weight: 600;
     color: var(--gray-700);
     background: white;
-    font-size: 14px;
+    font-size: 12px;
+    white-space: nowrap;
 }
 
 .performance__yearly-table tbody tr {
@@ -1867,7 +1881,7 @@
     border-bottom: none;
 }
 
-/* 排名徽章 */
+/* 排名徽章 - 与月度保持一致的金银铜设计 */
 .performance__yearly-rank {
     display: inline-flex;
     align-items: center;
@@ -1875,37 +1889,71 @@
     width: 28px;
     height: 28px;
     border-radius: 50%;
-    font-weight: 600;
+    font-weight: 700;
     font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .performance__yearly-rank.rank-1 {
-    background: linear-gradient(135deg, #ffd700, #ffb700);
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
     color: white;
 }
 
 .performance__yearly-rank.rank-2 {
-    background: linear-gradient(135deg, #c0c0c0, #a0a0a0);
+    background: linear-gradient(135deg, var(--gray-400) 0%, var(--gray-600) 100%);
     color: white;
 }
 
 .performance__yearly-rank.rank-3 {
-    background: linear-gradient(135deg, #cd7f32, #a0522d);
+    background: linear-gradient(135deg, #b45309 0%, #92400e 100%);
     color: white;
 }
 
 .performance__yearly-rank.rank-other {
-    background: var(--gray-100);
-    color: var(--gray-600);
+    background: var(--gray-300);
+    color: var(--gray-700);
 }
 
-/* 等级徽章 */
+/* 等级徽章 - 与月度保持一致的扁平化设计 */
 .performance__yearly-grade {
-    display: inline-block;
-    padding: 4px 12px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+    padding: 4px 10px;
     border-radius: 4px;
     font-size: 12px;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+/* 优秀 - 绿色扁平 */
+.performance__yearly-grade.grade-excellent {
+    background: #dcfce7;
+    color: #166534;
+    border: 1px solid #86efac;
+}
+
+/* 合格 - 蓝色扁平 */
+.performance__yearly-grade.grade-good {
+    background: #dbeafe;
+    color: #1e40af;
+    border: 1px solid #93c5fd;
+}
+
+/* 整改后合格 - 橙色扁平 */
+.performance__yearly-grade.grade-improve {
+    background: #fef3c7;
+    color: #92400e;
+    border: 1px solid #fcd34d;
+}
+
+/* 不合格 - 红色扁平 */
+.performance__yearly-grade.grade-poor {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 1px solid #fca5a5;
 }
 
 /* 环保状态徽章 */
