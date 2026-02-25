@@ -1898,30 +1898,6 @@ class PerformanceEvaluationService {
                 }
             });
 
-            // 计算统计数据（基于去重后的供应商）
-            const evaluatedCount = Array.from(entityStatusMap.values()).filter(status => status === 'evaluated').length;
-            const unevaluatedCount = totalEntities - evaluatedCount;
-
-            // 计算平均得分（基于所有评价记录，不去重）
-            const evaluatedDetails = allDetails.filter(d => d.total_score !== null);
-            const averageScore = evaluatedDetails.length > 0
-                ? evaluatedDetails.reduce((sum, d) => sum + (d.total_score || 0), 0) / evaluatedDetails.length
-                : 0;
-
-            // 统计各等级数量（基于所有评价记录，不去重）
-            const gradeCount = {
-                '优秀': 0,
-                '合格': 0,
-                '整改后合格': 0,
-                '不合格': 0
-            };
-
-            evaluatedDetails.forEach(d => {
-                if (d.grade && gradeCount[d.grade] !== undefined) {
-                    gradeCount[d.grade]++;
-                }
-            });
-
             // 获取趋势数据（按周期）
             const trendData = evaluations.map(evaluation => {
                 const periodDetails = evaluation.details || [];
@@ -1994,6 +1970,24 @@ class PerformanceEvaluationService {
                 })
                 .sort((a, b) => b.totalScore - a.totalScore); // 按平均分降序排列
 
+            // 【修正】统计年度等级数量（基于annualRankings，每个供应商只计一次）
+            const yearlyGradeCount = {
+                '优秀': 0,
+                '合格': 0,
+                '整改后合格': 0,
+                '不合格': 0
+            };
+            annualRankings.forEach(vendor => {
+                if (vendor.grade && yearlyGradeCount[vendor.grade] !== undefined) {
+                    yearlyGradeCount[vendor.grade]++;
+                }
+            });
+
+            // 【修正】计算年度平均得分（基于annualRankings的平均分）
+            const yearlyAverageScore = annualRankings.length > 0
+                ? annualRankings.reduce((sum, v) => sum + v.totalScore, 0) / annualRankings.length
+                : 0;
+
             return {
                 year,
                 type,
@@ -2005,11 +1999,11 @@ class PerformanceEvaluationService {
                     status: e.status
                 })),
                 statistics: {
-                    totalEntities,
-                    evaluatedCount,
-                    unevaluatedCount: totalEntities - evaluatedCount,
-                    averageScore: parseFloat(averageScore.toFixed(2)),
-                    gradeCount
+                    totalEntities: uniqueEntityNames.size,
+                    evaluatedCount: annualRankings.length,
+                    unevaluatedCount: uniqueEntityNames.size - annualRankings.length,
+                    averageScore: parseFloat(yearlyAverageScore.toFixed(2)),
+                    gradeCount: yearlyGradeCount
                 },
                 // 添加未评价的供应商列表
                 unevaluatedVendors: Array.from(entityStatusMap.entries())

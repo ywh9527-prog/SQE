@@ -2250,12 +2250,14 @@
 
         // 显示年度绩效概览空状态
         showYearlyEmptyState() {
-            const tbody = document.getElementById('yearlyRankingBody');
+            const tbodyLeft = document.getElementById('yearlyRankingBodyLeft');
+            const tbodyRight = document.getElementById('yearlyRankingBodyRight');
             const emptyState = document.getElementById('yearlyEmptyState');
-            const tableWrapper = document.querySelector('.performance__yearly-table-wrapper');
+            const dualWrapper = document.querySelector('.performance__yearly-dual-wrapper');
 
-            if (tbody) tbody.innerHTML = '';
-            if (tableWrapper) tableWrapper.classList.add('hidden');
+            if (tbodyLeft) tbodyLeft.innerHTML = '';
+            if (tbodyRight) tbodyRight.innerHTML = '';
+            if (dualWrapper) dualWrapper.classList.add('hidden');
             if (emptyState) emptyState.classList.remove('hidden');
         },
 
@@ -2266,9 +2268,10 @@
             // 加载年度配置
             await this.loadYearlyConfig();
 
-            const tbody = document.getElementById('yearlyRankingBody');
+            const tbodyLeft = document.getElementById('yearlyRankingBodyLeft');
+            const tbodyRight = document.getElementById('yearlyRankingBodyRight');
             const emptyState = document.getElementById('yearlyEmptyState');
-            const tableWrapper = document.querySelector('.performance__yearly-table-wrapper');
+            const dualWrapper = document.querySelector('.performance__yearly-dual-wrapper');
 
             if (!state.resultsData || !state.resultsData.details || state.resultsData.details.length === 0) {
                 this.showYearlyEmptyState();
@@ -2276,7 +2279,7 @@
             }
 
             // 显示表格，隐藏空状态
-            if (tableWrapper) tableWrapper.classList.remove('hidden');
+            if (dualWrapper) dualWrapper.classList.remove('hidden');
             if (emptyState) emptyState.classList.add('hidden');
 
             // 渲染排行榜
@@ -2301,10 +2304,11 @@
             }
         },
 
-        // 渲染年度绩效排行榜
+        // 渲染年度绩效排行榜（双列布局）
         renderYearlyRanking() {
-            const tbody = document.getElementById('yearlyRankingBody');
-            if (!tbody || !state.resultsData) return;
+            const tbodyLeft = document.getElementById('yearlyRankingBodyLeft');
+            const tbodyRight = document.getElementById('yearlyRankingBodyRight');
+            if (!tbodyLeft || !tbodyRight || !state.resultsData) return;
 
             const { details } = state.resultsData;
 
@@ -2318,40 +2322,59 @@
                 return;
             }
 
-            tbody.innerHTML = '';
+            // 清空两列
+            tbodyLeft.innerHTML = '';
+            tbodyRight.innerHTML = '';
 
+            // 奇偶分行布局：左列显示奇数排名（1,3,5...），右列显示偶数排名（2,4,6...）
+            // 第一排：第1名（左）| 第2名（右）
+            // 第二排：第3名（左）| 第4名（右）
             evaluatedDetails.forEach((detail, index) => {
                 const rank = index + 1;
-                const grade = detail.grade || '-';
-                const gradeColor = this.getYearlyGradeColor(grade);
-                const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
+                const row = this.createYearlyRankingRow(detail, rank);
 
-                const row = document.createElement('tr');
-                row.innerHTML = `
-                    <td>
-                        <span class="performance__yearly-rank ${rank <= 3 ? 'rank-' + rank : 'rank-other'}">
-                            ${rank}
-                        </span>
-                    </td>
-                    <td>${detail.entityName || '-'}</td>
-                    <td style="font-weight: 600;">${detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-'}</td>
-                    <td>
-                        <span class="performance__yearly-grade" style="background: ${gradeColor}20; color: ${gradeColor};">
-                            ${grade}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="performance__yearly-environmental ${environmental === '合格' || environmental === 'pass' ? 'pass' : 'fail'}">
-                            ${environmental === 'pass' ? '合格' : environmental}
-                        </span>
-                    </td>
-                `;
-
-                // 点击行显示详情
-                row.addEventListener('click', () => this.showYearlyDetailModal(detail));
-
-                tbody.appendChild(row);
+                if (rank % 2 === 1) {
+                    // 奇数排名放左列
+                    tbodyLeft.appendChild(row);
+                } else {
+                    // 偶数排名放右列
+                    tbodyRight.appendChild(row);
+                }
             });
+        },
+
+        // 创建年度排行表格行
+        createYearlyRankingRow(detail, rank) {
+            const grade = detail.grade || '-';
+            const gradeColor = this.getYearlyGradeColor(grade);
+            const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
+
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>
+                    <span class="performance__yearly-rank ${rank <= 3 ? 'rank-' + rank : 'rank-other'}">
+                        ${rank}
+                    </span>
+                </td>
+                <td style="max-width: 120px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${detail.entityName || '-'}">${detail.entityName || '-'}</td>
+                <td style="font-weight: 600;">${detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-'}</td>
+                <td>
+                    <span class="performance__yearly-grade" style="background: ${gradeColor}20; color: ${gradeColor};">
+                        ${grade}
+                    </span>
+                </td>
+                <td>
+                    <span class="performance__yearly-environmental ${environmental === '合格' || environmental === 'pass' ? 'pass' : 'fail'}">
+                        ${environmental === 'pass' ? '合格' : environmental}
+                    </span>
+                </td>
+            `;
+
+            // 点击行显示详情
+            row.addEventListener('click', () => this.showYearlyDetailModal(detail));
+            row.style.cursor = 'pointer';
+
+            return row;
         },
 
         // 获取年度等级颜色
