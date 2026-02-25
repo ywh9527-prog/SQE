@@ -1550,7 +1550,18 @@
    ============================================ */
 
 .performance__periods-list {
-    margin-top: var(--border-radius-xl);
+    max-width: 1200px;
+    margin: var(--border-radius-xl) auto 0;
+    padding: 0 var(--border-radius-md);
+}
+
+/* 历史评价周期容器 - 白色背景 */
+.performance__periods-container {
+    background: white;
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-200);
+    padding: 32px;
 }
 
 .performance__periods-header {

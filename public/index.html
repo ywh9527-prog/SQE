@@ -1303,14 +1303,16 @@
 
                     <!-- 评价周期列表（默认隐藏） -->
                     <div id="evaluationPeriodsList" class="performance__periods-list hidden">
-                        <div class="performance__periods-header">
-                            <h3>历史评价周期 <button class="btn btn-sm btn-warning" id="resetPeriodModeBtn" title="重置周期模式（删除所有月度/季度周期）" style="margin-left: 10px;">重置模式</button></h3>
-                            <button class="performance__back-btn" id="backToMainBtn">
-                                <i class="ph ph-arrow-left"></i>
-                                返回主界面
-                            </button>
+                        <div class="performance__periods-container">
+                            <div class="performance__periods-header">
+                                <h3>历史评价周期 <button class="btn btn-sm btn-warning" id="resetPeriodModeBtn" title="重置周期模式（删除所有月度/季度周期）" style="margin-left: 10px;">重置模式</button></h3>
+                                <button class="performance__back-btn" id="backToMainBtn">
+                                    <i class="ph ph-arrow-left"></i>
+                                    返回主界面
+                                </button>
+                            </div>
+                            <div id="periodsList"></div>
                         </div>
-                        <div id="periodsList"></div>
                     </div>
                 </div>
                 <div id="module-vendor-config" class="module-view hidden">
