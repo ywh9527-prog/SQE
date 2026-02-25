@@ -1973,7 +1973,7 @@
 }
 
 /* ========================================
-   年度绩效详情模态框
+   年度绩效详情模态框 - 与月度模态框样式统一
    ======================================== */
 
 .performance__yearly-modal-overlay {
@@ -1982,122 +1982,255 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+}
+
+.performance__yearly-modal-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* 遮罩层 */
+.performance__yearly-modal-overlay::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
 }
 
 .performance__yearly-modal {
+    position: relative;
     background: white;
-    border-radius: 12px;
+    border-radius: var(--border-radius-lg);
     width: 90%;
-    max-width: 600px;
-    max-height: 90vh;
+    max-width: 520px;
+    max-height: 85vh;
     overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+    transform: scale(0.9) translateY(20px);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.performance__yearly-modal-overlay.active .performance__yearly-modal {
+    transform: scale(1) translateY(0);
 }
 
 .performance__yearly-modal-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 16px 20px;
+    padding: 16px 24px;
     border-bottom: 1px solid var(--gray-200);
-    background: var(--gray-50);
+    background: linear-gradient(135deg, var(--primary-700) 0%, var(--primary-800) 100%);
 }
 
 .performance__yearly-modal-header h3 {
-    margin: 0;
-    font-size: 16px;
+    font-size: 1.1rem;
     font-weight: 600;
-    color: var(--gray-800);
+    color: var(--gray-50);
+    margin: 0;
 }
 
 .performance__yearly-modal-close {
-    background: none;
+    background: rgba(255, 255, 255, 0.15);
     border: none;
+    font-size: 1.1rem;
+    color: var(--gray-100);
     cursor: pointer;
-    padding: 4px;
-    color: var(--gray-500);
-    transition: color 0.2s;
+    padding: 6px 10px;
+    border-radius: var(--border-radius-sm);
+    transition: all 0.2s;
 }
 
 .performance__yearly-modal-close:hover {
-    color: var(--gray-700);
+    background: rgba(255, 255, 255, 0.25);
+    color: var(--gray-50);
 }
 
 .performance__yearly-modal-close i {
-    font-size: 20px;
+    font-size: 16px;
 }
 
 .performance__yearly-modal-body {
-    padding: 20px;
+    padding: 24px;
     overflow-y: auto;
+    max-height: calc(85vh - 60px);
 }
 
-/* 总分区域 */
+/* 总分区域 - 双列卡片布局 */
 .performance__yearly-modal-score {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: 1fr 1fr;
     gap: 16px;
-    margin-bottom: 20px;
+    margin-bottom: 24px;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
 }
 
-.performance__yearly-modal-score .score-item {
+/* 总分卡片 */
+.performance__yearly-modal-score .score-item:first-child {
+    position: relative;
     text-align: center;
-    padding: 16px;
-    background: var(--gray-50);
-    border-radius: 8px;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
 }
 
-.performance__yearly-modal-score .score-item label {
+.performance__yearly-modal-score .score-item:first-child::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--primary-400), var(--primary-600));
+}
+
+.performance__yearly-modal-score .score-item:first-child label {
     display: block;
-    font-size: 12px;
-    color: var(--gray-500);
+    font-size: 0.75rem;
+    color: var(--primary-600);
     margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.performance__yearly-modal-score .score-item span {
-    font-size: 24px;
+.performance__yearly-modal-score .score-item:first-child span {
+    display: block;
+    font-size: 2.25rem;
     font-weight: 700;
-    color: var(--gray-800);
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* 等级卡片 */
+.performance__yearly-modal-score .score-item:nth-child(2) {
+    position: relative;
+    text-align: center;
+    padding: 20px 16px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--gray-100) 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    overflow: hidden;
+}
+
+.performance__yearly-modal-score .score-item:nth-child(2)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gray-400), var(--gray-500));
+}
+
+.performance__yearly-modal-score .score-item:nth-child(2) label {
+    display: block;
+    font-size: 0.75rem;
+    color: var(--gray-600);
+    margin-bottom: 8px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.performance__yearly-modal-score .score-item:nth-child(2) span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 20px;
+    border-radius: 20px;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: white;
+    min-width: 80px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* 环保状态卡片 - 独占一行 */
+.performance__yearly-modal-score .score-item:nth-child(3) {
+    grid-column: 1 / -1;
+    text-align: center;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-md);
+}
+
+.performance__yearly-modal-score .score-item:nth-child(3) label {
+    display: inline;
+    font-size: 0.85rem;
+    color: var(--gray-600);
+    margin-right: 8px;
+}
+
+.performance__yearly-modal-score .score-item:nth-child(3) span {
+    font-size: 0.9rem;
+    font-weight: 600;
 }
 
 /* 等级策略 */
 .performance__yearly-modal-strategy {
-    margin-bottom: 20px;
-    padding: 16px;
-    background: var(--gray-50);
-    border-radius: 8px;
+    margin-bottom: 24px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--primary-50) 0%, var(--gray-50) 100%);
+    border: 1px solid var(--primary-200);
+    border-radius: var(--border-radius-md);
+    border-left: 4px solid var(--primary-500);
 }
 
 .performance__yearly-modal-strategy label {
     display: block;
-    font-size: 12px;
-    color: var(--gray-500);
-    margin-bottom: 8px;
+    font-size: 0.75rem;
+    color: var(--primary-600);
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .performance__yearly-modal-strategy p {
     margin: 0;
-    font-size: 14px;
+    font-size: 0.85rem;
     color: var(--gray-700);
     line-height: 1.6;
 }
 
 /* 维度得分 */
 .performance__yearly-modal-dimensions {
-    margin-bottom: 20px;
+    margin-bottom: 24px;
 }
 
 .performance__yearly-modal-dimensions label {
-    display: block;
-    font-size: 12px;
-    color: var(--gray-500);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-700);
     margin-bottom: 12px;
+}
+
+.performance__yearly-modal-dimensions label::before {
+    content: '\e9d6';
+    font-family: 'Phosphor';
+    font-size: 1rem;
+    color: var(--primary-500);
 }
 
 .performance__yearly-dimension-item {
@@ -2106,8 +2239,14 @@
     align-items: center;
     padding: 12px 16px;
     background: var(--gray-50);
-    border-radius: 8px;
+    border-radius: var(--border-radius-md);
     margin-bottom: 8px;
+    transition: all 0.2s;
+}
+
+.performance__yearly-dimension-item:hover {
+    background: var(--gray-100);
+    transform: translateX(4px);
 }
 
 .performance__yearly-dimension-item:last-child {
@@ -2115,33 +2254,46 @@
 }
 
 .performance__yearly-dimension-name {
-    font-size: 14px;
+    font-size: 0.9rem;
     color: var(--gray-700);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.performance__yearly-dimension-name i {
+    color: var(--primary-400);
 }
 
 .performance__yearly-dimension-score {
-    font-size: 16px;
-    font-weight: 600;
+    font-size: 1.1rem;
+    font-weight: 700;
     color: var(--gray-800);
 }
 
 /* 备注 */
 .performance__yearly-modal-remarks {
-    padding: 16px;
-    background: var(--gray-50);
-    border-radius: 8px;
+    padding: 14px 16px;
+    background: linear-gradient(135deg, var(--gray-50) 0%, var(--white) 100%);
+    border: 1px solid var(--gray-200);
+    border-radius: var(--border-radius-md);
 }
 
 .performance__yearly-modal-remarks label {
-    display: block;
-    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.75rem;
     color: var(--gray-500);
-    margin-bottom: 8px;
+    margin-bottom: 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .performance__yearly-modal-remarks p {
     margin: 0;
-    font-size: 14px;
+    font-size: 0.9rem;
     color: var(--gray-700);
     line-height: 1.6;
 }
@@ -2150,5 +2302,9 @@
 @media (max-width: 768px) {
     .performance__yearly-modal-score {
         grid-template-columns: 1fr;
+    }
+    
+    .performance__yearly-modal-score .score-item:nth-child(3) {
+        grid-column: 1;
     }
 }

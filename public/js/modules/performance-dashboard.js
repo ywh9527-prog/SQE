@@ -2500,15 +2500,23 @@
                 remarksEl.textContent = detail.remarks || '-';
             }
 
-            // 显示模态框
+            // 显示模态框（使用active类触发动画）
             modal.classList.remove('hidden');
+            // 延迟添加active类以触发过渡动画
+            requestAnimationFrame(() => {
+                modal.classList.add('active');
+            });
         },
 
         // 关闭年度绩效详情模态框
         closeYearlyDetailModal() {
             const modal = document.getElementById('yearlyDetailModal');
             if (modal) {
-                modal.classList.add('hidden');
+                modal.classList.remove('active');
+                // 等待动画完成后再隐藏
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                }, 300);
             }
         },
 
@@ -2521,9 +2529,10 @@
                 closeBtn.addEventListener('click', () => this.closeYearlyDetailModal());
             }
 
-            // 点击遮罩层关闭
+            // 点击遮罩层关闭（使用::before伪元素作为遮罩）
             if (modal) {
                 modal.addEventListener('click', (e) => {
+                    // 只有点击模态框本身（即遮罩层区域）才关闭
                     if (e.target === modal) {
                         this.closeYearlyDetailModal();
                     }
