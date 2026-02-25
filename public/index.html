@@ -1191,13 +1191,86 @@
                             </div>
                         </div>
 
-                        <!-- Tab 2: 年度绩效评价 -->
+                        <!-- Tab 2: 年度绩效概览 -->
                         <div id="tab-trend" class="performance__results-tab-content hidden">
                             <!-- 年度评价内容区域 -->
                             <div id="yearlyResultsContent">
-                                <div style="text-align: center; padding: 4rem; color: #718096;">
-                                    <i class="ph ph-chart-line" style="font-size: 48px; opacity: 0.5;"></i>
-                                    <p style="margin-top: 16px;">年度绩效评价功能开发中...</p>
+                                <!-- 排行榜表格 -->
+                                <div class="performance__yearly-section">
+                                    <div class="performance__yearly-container">
+                                        <h3>年度绩效排行榜</h3>
+                                        <div class="performance__yearly-table-wrapper">
+                                            <table class="performance__yearly-table" id="yearlyRankingTable">
+                                                <thead>
+                                                    <tr>
+                                                        <th>排名</th>
+                                                        <th>供应商名称</th>
+                                                        <th>年度总分</th>
+                                                        <th>等级</th>
+                                                        <th>环保状态</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="yearlyRankingBody">
+                                                    <!-- 动态生成 -->
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <!-- 无数据提示 -->
+                                        <div class="performance__yearly-empty hidden" id="yearlyEmptyState">
+                                            <i class="ph ph-chart-line"></i>
+                                            <p>暂无已完成的年度评价数据</p>
+                                            <p class="hint">请先创建年度评价周期并完成评价</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 详情模态框 -->
+                            <div class="performance__yearly-modal-overlay hidden" id="yearlyDetailModal">
+                                <div class="performance__yearly-modal">
+                                    <div class="performance__yearly-modal-header">
+                                        <h3 id="yearlyModalTitle">供应商 - 年度绩效评价详情</h3>
+                                        <button class="performance__yearly-modal-close" id="yearlyModalClose">
+                                            <i class="ph ph-x"></i>
+                                        </button>
+                                    </div>
+                                    <div class="performance__yearly-modal-body">
+                                        <!-- 总分区域 -->
+                                        <div class="performance__yearly-modal-score">
+                                            <div class="score-item">
+                                                <label>年度总分</label>
+                                                <span id="yearlyModalTotalScore">-</span>
+                                            </div>
+                                            <div class="score-item">
+                                                <label>等级</label>
+                                                <span id="yearlyModalGrade">-</span>
+                                            </div>
+                                            <div class="score-item">
+                                                <label>环保状态</label>
+                                                <span id="yearlyModalEnvironmental">-</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- 等级策略 -->
+                                        <div class="performance__yearly-modal-strategy">
+                                            <label>等级策略</label>
+                                            <p id="yearlyModalStrategy">-</p>
+                                        </div>
+
+                                        <!-- 维度得分 -->
+                                        <div class="performance__yearly-modal-dimensions">
+                                            <label>各维度得分</label>
+                                            <div id="yearlyModalDimensions">
+                                                <!-- 动态生成 -->
+                                            </div>
+                                        </div>
+
+                                        <!-- 备注 -->
+                                        <div class="performance__yearly-modal-remarks">
+                                            <label>备注</label>
+                                            <p id="yearlyModalRemarks">-</p>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

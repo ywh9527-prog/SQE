@@ -9,9 +9,12 @@
         resultsData: null,
         currentYear: null,
         currentType: 'purchase', // purchase-外购/external-外协
+        currentPeriodType: 'monthly', // monthly-月度季度/yearly-年度
         gradeRules: [], // 等级规则（从配置动态获取）
         gradeColors: [], // 预设颜色数组（按顺序分配）
         dimensions: [], // 评价维度（从配置动态获取）
+        yearlyGradeRules: [], // 年度评价等级规则
+        yearlyDimensions: [], // 年度评价维度
         charts: {
             ranking: null,
             gradePie: null,
@@ -30,6 +33,7 @@
             this.cacheElements();
             this.bindEvents();
             this.initYearSelector();
+            this.initYearlyModalEvents();
             console.log('Performance Dashboard Module: Initialization complete');
         },
 
@@ -363,6 +367,7 @@
                 }
                 state.currentYear = year;
                 state.currentType = type;
+                state.currentPeriodType = periodType; // 保存周期类型
 
                 const response = await this.authenticatedFetch(`/api/evaluations/accumulated/${year}?type=${type}&periodType=${periodType}`);
                 const result = await response.json();
@@ -373,17 +378,26 @@
                     // 检查是否有数据
                     if (result.data.evaluations && result.data.evaluations.length === 0) {
                         // 没有评价数据，显示友好提示
-                        this.showEmptyState();
+                        if (periodType === 'yearly') {
+                            this.showYearlyEmptyState();
+                        } else {
+                            this.showEmptyState();
+                        }
                         if (window.App && window.App.Toast) {
                             window.App.Toast.info(`${year}年暂未进行绩效评价`);
                         }
                         return;
                     }
 
-                    this.showAccumulatedResults();
-                    this.updateStats();
-                    this.renderCharts();
-                    this.updateTypeCounts();
+                    // 根据周期类型选择不同的渲染方法
+                    if (periodType === 'yearly') {
+                        this.showYearlyResults();
+                    } else {
+                        this.showAccumulatedResults();
+                        this.updateStats();
+                        this.renderCharts();
+                        this.updateTypeCounts();
+                    }
                 } else {
                     if (window.App && window.App.Toast) {
                         window.App.Toast.error('加载累计数据失败：' + result.message);
@@ -2227,6 +2241,223 @@
                 document.getElementById('evaluationPeriodsList').classList.remove('hidden');
                 state.currentEvaluation = null;
                 state.resultsData = null;
+            }
+        },
+
+        // ========================================
+        // 年度绩效概览相关方法
+        // ========================================
+
+        // 显示年度绩效概览空状态
+        showYearlyEmptyState() {
+            const tbody = document.getElementById('yearlyRankingBody');
+            const emptyState = document.getElementById('yearlyEmptyState');
+            const tableWrapper = document.querySelector('.performance__yearly-table-wrapper');
+
+            if (tbody) tbody.innerHTML = '';
+            if (tableWrapper) tableWrapper.classList.add('hidden');
+            if (emptyState) emptyState.classList.remove('hidden');
+        },
+
+        // 显示年度绩效概览
+        async showYearlyResults() {
+            console.log('显示年度绩效概览');
+
+            // 加载年度配置
+            await this.loadYearlyConfig();
+
+            const tbody = document.getElementById('yearlyRankingBody');
+            const emptyState = document.getElementById('yearlyEmptyState');
+            const tableWrapper = document.querySelector('.performance__yearly-table-wrapper');
+
+            if (!state.resultsData || !state.resultsData.details || state.resultsData.details.length === 0) {
+                this.showYearlyEmptyState();
+                return;
+            }
+
+            // 显示表格，隐藏空状态
+            if (tableWrapper) tableWrapper.classList.remove('hidden');
+            if (emptyState) emptyState.classList.add('hidden');
+
+            // 渲染排行榜
+            this.renderYearlyRanking();
+        },
+
+        // 加载年度评价配置
+        async loadYearlyConfig() {
+            try {
+                const response = await this.authenticatedFetch('/api/evaluation-config/yearly');
+                const result = await response.json();
+
+                if (result.success && result.data) {
+                    state.yearlyGradeRules = result.data.gradeRules || [];
+                    state.yearlyDimensions = result.data.dimensions || [];
+                }
+            } catch (error) {
+                console.error('加载年度配置失败:', error);
+                // 使用默认值
+                state.yearlyGradeRules = [];
+                state.yearlyDimensions = [];
+            }
+        },
+
+        // 渲染年度绩效排行榜
+        renderYearlyRanking() {
+            const tbody = document.getElementById('yearlyRankingBody');
+            if (!tbody || !state.resultsData) return;
+
+            const { details } = state.resultsData;
+
+            // 过滤出有评分的供应商，按总分降序排序
+            const evaluatedDetails = details
+                .filter(d => d.totalScore !== null && d.totalScore !== undefined)
+                .sort((a, b) => (b.totalScore || 0) - (a.totalScore || 0));
+
+            if (evaluatedDetails.length === 0) {
+                this.showYearlyEmptyState();
+                return;
+            }
+
+            tbody.innerHTML = '';
+
+            evaluatedDetails.forEach((detail, index) => {
+                const rank = index + 1;
+                const grade = detail.grade || '-';
+                const gradeColor = this.getYearlyGradeColor(grade);
+                const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
+
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <span class="performance__yearly-rank ${rank <= 3 ? 'rank-' + rank : 'rank-other'}">
+                            ${rank}
+                        </span>
+                    </td>
+                    <td>${detail.entityName || '-'}</td>
+                    <td style="font-weight: 600;">${detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-'}</td>
+                    <td>
+                        <span class="performance__yearly-grade" style="background: ${gradeColor}20; color: ${gradeColor};">
+                            ${grade}
+                        </span>
+                    </td>
+                    <td>
+                        <span class="performance__yearly-environmental ${environmental === '合格' || environmental === 'pass' ? 'pass' : 'fail'}">
+                            ${environmental === 'pass' ? '合格' : environmental}
+                        </span>
+                    </td>
+                `;
+
+                // 点击行显示详情
+                row.addEventListener('click', () => this.showYearlyDetailModal(detail));
+
+                tbody.appendChild(row);
+            });
+        },
+
+        // 获取年度等级颜色
+        getYearlyGradeColor(gradeName) {
+            if (!gradeName || gradeName === '-' || !state.yearlyGradeRules) return '#6b7280';
+
+            const rule = state.yearlyGradeRules.find(r => r.label === gradeName);
+            return rule?.color || '#6b7280';
+        },
+
+        // 显示年度绩效详情模态框
+        showYearlyDetailModal(detail) {
+            const modal = document.getElementById('yearlyDetailModal');
+            if (!modal) return;
+
+            // 填充标题
+            const titleEl = document.getElementById('yearlyModalTitle');
+            if (titleEl) {
+                titleEl.textContent = `${detail.entityName || '-'} - 年度绩效评价详情`;
+            }
+
+            // 填充总分
+            const totalScoreEl = document.getElementById('yearlyModalTotalScore');
+            if (totalScoreEl) {
+                totalScoreEl.textContent = detail.totalScore !== null ? detail.totalScore.toFixed(1) : '-';
+            }
+
+            // 填充等级
+            const gradeEl = document.getElementById('yearlyModalGrade');
+            if (gradeEl) {
+                const grade = detail.grade || '-';
+                const gradeColor = this.getYearlyGradeColor(grade);
+                gradeEl.innerHTML = `<span style="background: ${gradeColor}20; color: ${gradeColor}; padding: 4px 12px; border-radius: 4px;">${grade}</span>`;
+            }
+
+            // 填充环保状态
+            const environmentalEl = document.getElementById('yearlyModalEnvironmental');
+            if (environmentalEl) {
+                const environmental = detail.scores?.environmental || detail.scores?.green_environmental || '-';
+                const isPass = environmental === '合格' || environmental === 'pass';
+                environmentalEl.innerHTML = `<span style="background: ${isPass ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)'}; color: ${isPass ? '#10b981' : '#ef4444'}; padding: 4px 12px; border-radius: 4px;">${environmental === 'pass' ? '合格' : environmental}</span>`;
+            }
+
+            // 填充等级策略
+            const strategyEl = document.getElementById('yearlyModalStrategy');
+            if (strategyEl) {
+                const grade = detail.grade || '-';
+                const rule = state.yearlyGradeRules?.find(r => r.label === grade);
+                strategyEl.textContent = rule?.strategy || '-';
+            }
+
+            // 填充维度得分
+            const dimensionsEl = document.getElementById('yearlyModalDimensions');
+            if (dimensionsEl && state.yearlyDimensions) {
+                const scores = detail.scores || {};
+                let dimensionsHtml = '';
+
+                state.yearlyDimensions.forEach(dim => {
+                    const score = scores[dim.key];
+                    if (score !== undefined && score !== null && dim.key !== 'environmental' && dim.key !== 'green_environmental') {
+                        dimensionsHtml += `
+                            <div class="performance__yearly-dimension-item">
+                                <span class="performance__yearly-dimension-name">${dim.name}</span>
+                                <span class="performance__yearly-dimension-score">${typeof score === 'number' ? score.toFixed(1) : score}</span>
+                            </div>
+                        `;
+                    }
+                });
+
+                dimensionsEl.innerHTML = dimensionsHtml || '<p style="color: var(--gray-500);">暂无维度得分</p>';
+            }
+
+            // 填充备注
+            const remarksEl = document.getElementById('yearlyModalRemarks');
+            if (remarksEl) {
+                remarksEl.textContent = detail.remarks || '-';
+            }
+
+            // 显示模态框
+            modal.classList.remove('hidden');
+        },
+
+        // 关闭年度绩效详情模态框
+        closeYearlyDetailModal() {
+            const modal = document.getElementById('yearlyDetailModal');
+            if (modal) {
+                modal.classList.add('hidden');
+            }
+        },
+
+        // 初始化年度绩效模态框事件
+        initYearlyModalEvents() {
+            const closeBtn = document.getElementById('yearlyModalClose');
+            const modal = document.getElementById('yearlyDetailModal');
+
+            if (closeBtn) {
+                closeBtn.addEventListener('click', () => this.closeYearlyDetailModal());
+            }
+
+            // 点击遮罩层关闭
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        this.closeYearlyDetailModal();
+                    }
+                });
             }
         }
     };
