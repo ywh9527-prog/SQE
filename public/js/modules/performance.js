@@ -11,7 +11,8 @@
         selectedPeriodType: null,
         createEvaluationData: null,
         currentType: 'purchase', // 当前选择的数据类型：purchase-外购/external-外协
-        isInitialized: false // 防止重复初始化
+        isInitialized: false, // 防止重复初始化
+        isEditMode: false // 编辑模式标记：true=编辑已完成的评价，false=正常评价流程
     };
 
     // DOM 元素缓存
@@ -255,6 +256,8 @@
         },
 
         // 返回主界面
+        // 说明：从评价周期列表返回累计绩效主界面
+        // 会重新加载累计绩效数据，确保编辑后的数据能显示
         backToMain() {
             if (els.evaluationPeriodsList) {
                 els.evaluationPeriodsList.classList.add('hidden');
@@ -262,6 +265,9 @@
             if (els.resultsInterface) {
                 els.resultsInterface.classList.remove('hidden');
             }
+
+            // 重新加载累计绩效数据
+            this.loadDashboard();
         },
 
         // 加载评价周期列表
@@ -298,6 +304,11 @@
                 // ==========================================
                 // 测试数据生成按钮 - 结束
                 // ==========================================
+                // 按钮说明：
+                // - draft 状态：显示"开始评价"按钮
+                // - in_progress 状态：显示"继续评价"按钮
+                // - completed 状态：显示"编辑评价"和"查看结果"按钮
+                // ==========================================
                 item.innerHTML = `
                     <div class="performance__period-item-info">
                         <h4>${evaluation.period_name}</h4>
@@ -308,6 +319,7 @@
                         <div class="performance__period-item-actions">
                             ${evaluation.status === 'draft' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">开始评价</button>` : ''}
                             ${evaluation.status === 'in_progress' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">继续评价</button>` : ''}
+                            ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-warning" onclick="window.App.Modules.Performance.editEvaluation(${evaluation.id})">编辑评价</button>` : ''}
                             ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-secondary" onclick="window.App.Modules.Performance.viewResults(${evaluation.id})">查看结果</button>` : ''}
                             ${showGenerateTestDataBtn ? `<button class="btn btn-sm btn-info" onclick="window.App.Modules.Performance.generateTestData(${evaluation.id})" title="生成测试数据（自动评价所有有来料的供应商）">🧪 测试数据</button>` : ''}
                             ${evaluation.id ? `<button class="btn btn-sm btn-danger" onclick="window.App.Modules.Performance.deleteEvaluation(${evaluation.id})">删除</button>` : ''}
@@ -695,6 +707,55 @@
                 // 使用 Toast 通知
                 if (window.App && window.App.Toast) {
                     window.App.Toast.error('创建评价周期失败');
+                }
+            }
+        },
+
+        /**
+         * 编辑已完成的评价
+         * 说明：用于重新编辑已完成的评价周期，状态保持 completed 不变
+         * 与 startEvaluation 的区别：
+         *   - startEvaluation: 仅用于 draft/in_progress 状态，会调用 /start 接口
+         *   - editEvaluation: 用于 completed 状态，直接获取实体数据，设置编辑模式
+         */
+        async editEvaluation(evaluationId) {
+            try {
+                console.log('编辑评价, ID:', evaluationId);
+
+                // 获取评价周期基本信息
+                const periodsResponse = await this.authenticatedFetch('/api/evaluations');
+                const periodsResult = await periodsResponse.json();
+
+                if (!periodsResult.success) {
+                    throw new Error('获取评价周期失败');
+                }
+
+                const evaluation = periodsResult.data.find(e => e.id === evaluationId);
+                if (!evaluation) {
+                    throw new Error('评价周期不存在');
+                }
+
+                // 获取评价实体数据（已评价的数据）
+                const entitiesResponse = await this.authenticatedFetch(`/api/evaluations/${evaluationId}/entities`);
+                const entitiesResult = await entitiesResponse.json();
+
+                if (!entitiesResult.success) {
+                    throw new Error('获取评价实体失败');
+                }
+
+                // 设置编辑模式标记
+                state.isEditMode = true;
+                state.currentEvaluation = evaluation;
+                state.entities = entitiesResult.data;
+
+                console.log('编辑模式: 已加载评价实体数据', state.entities.length, '个');
+
+                // 显示评价界面（复用现有界面）
+                this.showEvaluationInterface();
+            } catch (error) {
+                console.error('编辑评价失败:', error);
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.error('编辑评价失败：' + error.message);
                 }
             }
         },
@@ -1723,6 +1784,10 @@
         },
 
         // 处理评价提交
+        // 说明：保存单个供应商的评价分数
+        // 编辑模式 vs 正常模式：
+        //   - 正常模式：保存后检查是否全部完成，自动提交周期
+        //   - 编辑模式：仅保存数据，不触发自动提交，保持 completed 状态
         async handleEvaluationSubmit() {
             if (!state.currentEvaluation || !state.currentEntity) {
                 return;
@@ -1749,6 +1814,7 @@
 
             console.log('📊 提交的评价分数:', scores);
             console.log('📊 当前评价实体:', state.currentEntity);
+            console.log('📊 当前模式:', state.isEditMode ? '编辑模式' : '正常模式');
 
             const remarks = els.evaluationRemarks.value;
 
@@ -1778,11 +1844,23 @@
                         alert('保存成功！');
                     }
                     this.closeEvaluationModal();
-                    // 重新加载当前评价周期的实体数据
-                    await this.startEvaluation(state.currentEvaluation.id);
-                    
-                    // 检查是否所有供应商都评价完了，如果是则提交评价周期
-                    await this.checkAndSubmitEvaluation();
+
+                    // 根据模式选择不同的后续处理
+                    if (state.isEditMode) {
+                        // 编辑模式：仅重新加载实体数据，不触发自动提交
+                        console.log('📊 编辑模式：重新加载实体数据，跳过自动提交');
+                        const entitiesResponse = await this.authenticatedFetch(`/api/evaluations/${state.currentEvaluation.id}/entities`);
+                        const entitiesResult = await entitiesResponse.json();
+                        if (entitiesResult.success) {
+                            state.entities = entitiesResult.data;
+                            this.renderEntityCards();
+                            this.loadTypeStatistics();
+                        }
+                    } else {
+                        // 正常模式：重新加载数据并检查是否需要自动提交
+                        await this.startEvaluation(state.currentEvaluation.id);
+                        await this.checkAndSubmitEvaluation();
+                    }
                 } else {
                     console.log('📊 保存失败，返回数据:', result);
                     // 使用 Toast 通知替代 alert
@@ -1836,6 +1914,8 @@
         },
 
         // 退出评价
+        // 说明：退出评价界面，返回评价周期列表
+        // 会重置 isEditMode 标记，确保下次进入是正常模式
         exitEvaluation() {
             // 防止重复调用
             if (this.isExiting) {
@@ -1843,16 +1923,25 @@
             }
             this.isExiting = true;
 
+            // 根据模式显示不同的提示信息
+            const confirmMessage = state.isEditMode
+                ? '确定要退出编辑吗？未保存的修改将丢失。'
+                : '确定要退出评价吗？未保存的数据将丢失。';
+
             // 使用自定义确认对话框
             this.showConfirmDialog(
-                '确认退出评价',
-                '确定要退出评价吗？未保存的数据将丢失。',
-                () => {
+                '确认退出',
+                confirmMessage,
+                async () => {
                     els.evaluationInterface.classList.add('hidden');
                     document.getElementById('evaluationPeriodsList').classList.remove('hidden');
                     state.currentEvaluation = null;
                     state.currentEntity = null;
                     state.entities = [];
+                    state.isEditMode = false; // 重置编辑模式标记
+
+                    // 重新加载评价周期列表，确保修改后的数据能显示
+                    await this.loadEvaluationPeriods();
 
                     // 重置标志
                     setTimeout(() => {
