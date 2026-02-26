@@ -303,7 +303,10 @@
                 // 测试数据生成按钮 - 开始
                 // 代码隔离：此功能仅用于测试，后续可一键删除
                 // ==========================================
-                const showGenerateTestDataBtn = (evaluation.status === 'draft' || evaluation.status === 'in_progress') && evaluation.id;
+                // ==========================================
+                // 测试数据生成按钮 - 已禁用
+                // const showGenerateTestDataBtn = (evaluation.status === 'draft' || evaluation.status === 'in_progress') && evaluation.id;
+                const showGenerateTestDataBtn = false; // 禁用测试数据按钮
                 // ==========================================
                 // 测试数据生成按钮 - 结束
                 // ==========================================
@@ -324,7 +327,8 @@
                             ${evaluation.status === 'in_progress' && evaluation.id ? `<button class="btn btn-sm btn-primary" onclick="window.App.Modules.Performance.startEvaluation(${evaluation.id})">继续评价</button>` : ''}
                             ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-warning" onclick="window.App.Modules.Performance.editEvaluation(${evaluation.id})">编辑评价</button>` : ''}
                             ${evaluation.status === 'completed' && evaluation.id ? `<button class="btn btn-sm btn-secondary" onclick="window.App.Modules.Performance.viewResults(${evaluation.id})">查看结果</button>` : ''}
-                            ${showGenerateTestDataBtn ? `<button class="btn btn-sm btn-info" onclick="window.App.Modules.Performance.generateTestData(${evaluation.id})" title="生成测试数据（自动评价所有有来料的供应商）">🧪 测试数据</button>` : ''}
+                            <!-- 测试数据按钮 - 已禁用，保留代码供后续启用 -->
+                            <!-- ${showGenerateTestDataBtn ? `<button class="btn btn-sm btn-info" onclick="window.App.Modules.Performance.generateTestData(${evaluation.id})" title="生成测试数据（自动评价所有有来料的供应商）">🧪 测试数据</button>` : ''} -->
                             ${evaluation.id ? `<button class="btn btn-sm btn-danger" onclick="window.App.Modules.Performance.deleteEvaluation(${evaluation.id})">删除</button>` : ''}
                         </div>
                     </div>

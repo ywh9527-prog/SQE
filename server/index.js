@@ -68,6 +68,10 @@ console.log('✅ evaluationsRoutes 加载完成');
 const evaluationConfigRoutes = require('./routes/evaluation-config');
 console.log('✅ evaluationConfigRoutes 加载完成');
 
+// 工作台路由
+const dashboardRoutes = require('./routes/dashboard');
+console.log('✅ dashboardRoutes 加载完成');
+
 // 路由注册
 console.log('🔧 开始注册API路由...');
 
@@ -121,6 +125,10 @@ app.use('/api/evaluation-config', evaluationConfigRoutes);
 console.log('✅ /api/evaluation-config/* 路由已注册 (evaluation-config)');
 app.use('/api/evaluations', evaluationsRoutes);
 console.log('✅ /api/evaluations/* 路由已注册 (evaluations)');
+
+// 工作台路由
+app.use('/api/dashboard', dashboardRoutes);
+console.log('✅ /api/dashboard/* 路由已注册 (dashboard)');
 
 console.log('🎉 所有API路由注册完成');
 

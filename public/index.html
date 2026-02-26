@@ -54,6 +54,8 @@
     <link rel="stylesheet" href="css/modules/performance-config.css?v=20250115">
     <link rel="stylesheet" href="css/modules/vendor-config-font-hierarchy.css?v=20250108">
     <link rel="stylesheet" href="css/modules/vendor-config-filter.css?v=20250108-4">
+    <!-- 工作台样式 -->
+    <link rel="stylesheet" href="css/modules/dashboard.css?v=20260226">
     <script src="js/chart.min.js"></script>
     <!-- 引入图标库 -->
     <script src="https://unpkg.com/@phosphor-icons/web"></script>
@@ -124,27 +126,146 @@
             <div id="content-container" class="content-container">
                 <!-- 默认显示 Dashboard -->
                 <div id="module-dashboard" class="module-view">
-                    <div class="welcome-card">
-                        <h3>欢迎回来，Admin</h3>
-                        <p>今天是 <span id="current-date"></span>，系统运行正常。</p>
-                        <script>
-                            document.getElementById('current-date').textContent = new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric' });
-                        </script>
-                    </div>
-                    <!-- 仪表盘概览卡片占位 -->
-                    <div class="stats-grid">
-                        <div class="stat-card">
-                            <div class="stat-icon warning"><i class="ph ph-warning-circle"></i></div>
-                            <div class="stat-info">
-                                <span class="label">即将过期证书</span>
-                                <span class="value">3</span>
+                    <!-- 工作台主容器 -->
+                    <div class="dashboard-container">
+                        <!-- 欢迎区域 -->
+                        <div class="dashboard-header">
+                            <div class="welcome-section">
+                                <h3>欢迎回来，<span id="user-name">Admin</span></h3>
+                                <p class="current-date">今天是 <span id="current-date"></span></p>
+                            </div>
+                            <div class="quick-actions">
+                                <button class="quick-btn" id="quick-upload-iqc">
+                                    <i class="ph ph-upload-simple"></i>
+                                    上传IQC数据
+                                </button>
+                                <button class="quick-btn" id="quick-create-evaluation">
+                                    <i class="ph ph-clipboard-text"></i>
+                                    创建评价周期
+                                </button>
+                                <button class="quick-btn" id="quick-document-mgmt">
+                                    <i class="ph ph-folder-open"></i>
+                                    资料管理
+                                </button>
                             </div>
                         </div>
-                        <div class="stat-card">
-                            <div class="stat-icon success"><i class="ph ph-check-circle"></i></div>
-                            <div class="stat-info">
-                                <span class="label">本月合格率</span>
-                                <span class="value">98.5%</span>
+
+                        <!-- 统计卡片区 -->
+                        <div class="dashboard-stats">
+                            <div class="stat-card">
+                                <div class="stat-icon primary"><i class="ph ph-buildings"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-vendor-total">0</span>
+                                    <span class="stat-label">供应商总数</span>
+                                    <span class="stat-sub" id="stat-vendor-purchase">外购 0</span>
+                                    <span class="stat-sub" id="stat-vendor-external">外协 0</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon success"><i class="ph ph-shopping-cart"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value success" id="stat-purchase-pass-rate">-</span>
+                                    <span class="stat-label" id="stat-purchase-label">外购合格率</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon info"><i class="ph ph-factory"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-external-pass-rate">-</span>
+                                    <span class="stat-label" id="stat-external-label">外协合格率</span>
+                                </div>
+                            </div>
+                            <div class="stat-card">
+                                <div class="stat-icon warning"><i class="ph ph-files"></i></div>
+                                <div class="stat-info">
+                                    <span class="stat-value" id="stat-document-alerts">0</span>
+                                    <span class="stat-label">待处理资料</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 预警提醒区 -->
+                        <div class="dashboard-alerts">
+                            <div class="alerts-header">
+                                <h4><i class="ph ph-warning"></i> 资料到期预警</h4>
+                            </div>
+                            <div class="alerts-content">
+                                <div class="alert-item expired">
+                                    <span class="alert-dot"></span>
+                                    <span class="alert-label">已过期</span>
+                                    <span class="alert-count" id="alert-expired">0</span>
+                                    <span class="alert-unit">份</span>
+                                </div>
+                                <div class="alert-item urgent">
+                                    <span class="alert-dot"></span>
+                                    <span class="alert-label">紧急(15天内)</span>
+                                    <span class="alert-count" id="alert-urgent">0</span>
+                                    <span class="alert-unit">份</span>
+                                </div>
+                                <div class="alert-item warning">
+                                    <span class="alert-dot"></span>
+                                    <span class="alert-label">警告(30天内)</span>
+                                    <span class="alert-count" id="alert-warning">0</span>
+                                    <span class="alert-unit">份</span>
+                                </div>
+                            </div>
+                            <!-- 即将过期资料列表 -->
+                            <div class="expiring-documents" id="expiring-documents-list">
+                                <div class="empty-hint">加载中...</div>
+                            </div>
+                        </div>
+
+                        <!-- 图表区域 -->
+                        <div class="dashboard-charts">
+                            <!-- 月度合格率趋势 -->
+                            <div class="chart-card">
+                                <div class="chart-header">
+                                    <h4><i class="ph ph-chart-line"></i> 月度合格率趋势</h4>
+                                    <div class="chart-legend">
+                                        <span class="legend-item"><span class="legend-color blue"></span>合格率</span>
+                                    </div>
+                                </div>
+                                <div class="chart-body" id="trendChart">
+                                    <div class="chart-empty">加载中...</div>
+                                </div>
+                            </div>
+                            <!-- 供应商绩效Top5 -->
+                            <div class="chart-card">
+                                <div class="chart-header">
+                                    <h4><i class="ph ph-trophy"></i> 供应商绩效Top5</h4>
+                                </div>
+                                <div class="chart-body" id="topVendorsChart">
+                                    <div class="chart-empty">加载中...</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- IQC数据状态 & 最近活动 -->
+                        <div class="dashboard-bottom">
+                            <!-- IQC数据状态 -->
+                            <div class="data-status-card">
+                                <div class="card-header">
+                                    <h4><i class="ph ph-database"></i> IQC数据状态</h4>
+                                </div>
+                                <div class="card-body">
+                                    <div class="data-status-item">
+                                        <span class="status-label">外购数据</span>
+                                        <span class="data-status updated" id="iqc-purchase-update">加载中...</span>
+                                    </div>
+                                    <div class="data-status-item">
+                                        <span class="status-label">外协数据</span>
+                                        <span class="data-status updated" id="iqc-external-update">加载中...</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- 最近活动 -->
+                            <div class="activity-card">
+                                <div class="card-header">
+                                    <h4><i class="ph ph-clock-counter-clockwise"></i> 最近操作</h4>
+                                </div>
+                                <div class="card-body" id="recent-activities-list">
+                                    <div class="empty-hint">加载中...</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -1483,6 +1604,7 @@
 
     <!-- 模块脚本 -->
     <script src="js/modules/router.js"></script>
+    <script src="js/modules/dashboard.js?v=20260226"></script>
     <script src="js/modules/iqc.js"></script>
     <script src="js/modules/supplier/services/supplier-services.js?v=3.2.1"></script>
     <!-- 旧版 supplier-ui.js 已废弃，避免全局变量冲突 -->
