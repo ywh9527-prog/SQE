@@ -139,12 +139,19 @@ body {
     height: var(--header-height);
     display: flex;
     align-items: center;
-    padding: 0 16px;
+    justify-content: center;
+    padding: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
     white-space: nowrap;
     overflow: hidden;
+    transition: padding var(--sidebar-transition), justify-content var(--sidebar-transition);
+}
+
+.sidebar:hover .sidebar-header {
+    padding: 0 16px;
+    justify-content: flex-start;
 }
 
 .logo-icon {
@@ -155,7 +162,6 @@ body {
     font-weight: 700;
     font-size: 16px;
     letter-spacing: 0.5px;
-    margin-right: 14px;
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
@@ -165,13 +171,18 @@ body {
     color: white;
     letter-spacing: -0.2px;
     opacity: 0;
+    width: 0;
+    margin: 0;
     transform: translateX(-10px);
-    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition);
+    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition), width var(--sidebar-transition);
     white-space: nowrap;
+    overflow: hidden;
 }
 
 .sidebar:hover .sidebar-header h2 {
     opacity: 1;
+    width: auto;
+    margin-left: 14px;
     transform: translateX(0);
 }
 
@@ -276,33 +287,49 @@ body {
 
 /* 侧边栏底部 */
 .sidebar-footer {
-    padding: 16px 10px;
+    padding: 16px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
+    gap: 0;
     white-space: nowrap;
     overflow: hidden;
-    transition: padding var(--sidebar-transition);
+    transition: padding var(--sidebar-transition), gap var(--sidebar-transition);
 }
 
 .sidebar:hover .sidebar-footer {
     padding: 16px 20px;
     justify-content: flex-start;
+    gap: 10px;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    padding: 12px;
+    justify-content: center;
+    padding: 0;
+    margin: 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all var(--sidebar-transition);
+    cursor: pointer;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.sidebar:hover .user-info {
+    justify-content: flex-start;
+    padding: 8px 12px;
+    margin: 0;
+    width: auto;
+    height: auto;
     border-radius: var(--border-radius-md);
     background: rgba(255, 255, 255, 0.05);
-    transition: background var(--transition-base);
-    cursor: pointer;
     flex: 1;
-    overflow: hidden;
 }
 
 .user-info .details {
@@ -315,6 +342,76 @@ body {
 .sidebar:hover .user-info .details {
     opacity: 1;
     transform: translateX(0);
+}
+
+.user-info .avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    transition: all var(--sidebar-transition);
+    flex-shrink: 0;
+}
+
+.sidebar:hover .user-info .avatar {
+    margin-right: 10px;
+}
+
+.user-info .details {
+    opacity: 0;
+    width: 0;
+    transform: translateX(-10px);
+    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition), width var(--sidebar-transition);
+    overflow: hidden;
+}
+
+.sidebar:hover .user-info .details {
+    opacity: 1;
+    width: auto;
+    transform: translateX(0);
+}
+
+.logout-btn {
+    padding: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base), opacity var(--sidebar-transition), width var(--sidebar-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.sidebar:hover .logout-btn {
+    width: auto;
+    opacity: 1;
+}
+
+.logout-btn span {
+    opacity: 0;
+    width: 0;
+    transition: opacity var(--sidebar-transition), width var(--sidebar-transition);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar:hover .logout-btn span {
+    opacity: 1;
+    width: auto;
 }
 
 .user-info:hover {
