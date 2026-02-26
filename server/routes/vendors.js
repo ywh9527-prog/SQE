@@ -200,23 +200,21 @@ router.get('/config/statistics', authenticateToken, async (req, res) => {
 /**
  * 2.1 获取类型统计数据
  * GET /api/vendors/config/type-statistics
- * 返回外购和外协的供应商数量
+ * 返回外购和外协的供应商数量（统计所有已同步的供应商）
  */
 router.get('/config/type-statistics', authenticateToken, async (req, res) => {
     try {
-        // 获取已启用绩效评价的外购供应商数
+        // 获取外购供应商数（所有已同步的）
         const purchaseCount = await VendorConfig.count({
             where: {
-                data_type: 'purchase',
-                enable_performance_mgmt: 1
+                data_type: 'purchase'
             }
         });
 
-        // 获取已启用绩效评价的外协供应商数
+        // 获取外协供应商数（所有已同步的）
         const externalCount = await VendorConfig.count({
             where: {
-                data_type: 'external',
-                enable_performance_mgmt: 1
+                data_type: 'external'
             }
         });
 
