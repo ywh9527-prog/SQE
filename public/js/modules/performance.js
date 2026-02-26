@@ -2009,6 +2009,7 @@
         },
 
         // 查找下一个未评价的供应商
+        // 说明：按照卡片显示顺序查找（有来料的供应商在前，无来料的在后，各组按拼音排序）
         findNextUnevaluatedEntity() {
             if (!state.entities || state.entities.length === 0) {
                 return null;
@@ -2017,22 +2018,48 @@
             // 过滤当前类型的供应商
             const filteredEntities = this.filterEntitiesByType(state.entities);
             
+            // 按是否有来料分组（与 renderEntityCards 保持一致）
+            const entitiesWithMaterial = [];
+            const entitiesWithoutMaterial = [];
+
+            filteredEntities.forEach(entity => {
+                const qualityData = entity.qualityData || { totalBatches: 0 };
+                if (qualityData.totalBatches > 0) {
+                    entitiesWithMaterial.push(entity);
+                } else {
+                    entitiesWithoutMaterial.push(entity);
+                }
+            });
+
+            // 按拼音排序
+            const sortByName = (a, b) => {
+                const nameA = (a.name || a.entityName || '').toLowerCase();
+                const nameB = (b.name || b.entityName || '').toLowerCase();
+                return nameA.localeCompare(nameB, 'zh-CN');
+            };
+
+            entitiesWithMaterial.sort(sortByName);
+            entitiesWithoutMaterial.sort(sortByName);
+
+            // 合并为显示顺序的列表
+            const displayOrderEntities = [...entitiesWithMaterial, ...entitiesWithoutMaterial];
+            
             // 找到当前供应商的索引
-            const currentIndex = filteredEntities.findIndex(
+            const currentIndex = displayOrderEntities.findIndex(
                 e => e.entityName === state.currentEntity.entityName
             );
 
             // 从当前位置往后找第一个未评价的
-            for (let i = currentIndex + 1; i < filteredEntities.length; i++) {
-                if (!filteredEntities[i].evaluated) {
-                    return filteredEntities[i];
+            for (let i = currentIndex + 1; i < displayOrderEntities.length; i++) {
+                if (!displayOrderEntities[i].evaluated) {
+                    return displayOrderEntities[i];
                 }
             }
 
             // 如果后面没有，从头开始找
             for (let i = 0; i < currentIndex; i++) {
-                if (!filteredEntities[i].evaluated) {
-                    return filteredEntities[i];
+                if (!displayOrderEntities[i].evaluated) {
+                    return displayOrderEntities[i];
                 }
             }
 
