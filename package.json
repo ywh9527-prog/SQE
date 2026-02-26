@@ -1,20 +1,26 @@
 {
-  "name": "sqe-data-analysis-assistant-refactored",
+  "name": "sqe-quality-management-system",
   "version": "1.0.0",
-  "description": "A refactored tool for analyzing IQC incoming inspection data for SQE professionals",
-  "main": "server/index.js",
+  "description": "SQE质量管理系统 - 供应商质量评价管理平台",
+  "main": "electron-main.js",
   "scripts": {
     "start": "node server/index.js",
     "dev": "node server/index.js",
-    "electron": "electron electron-main.js"
+    "electron": "electron .",
+    "electron:dev": "electron .",
+    "build:win": "electron-builder --win --x64",
+    "build:mac": "electron-builder --mac",
+    "build:all": "electron-builder --win --mac",
+    "postinstall": "electron-builder install-app-deps"
   },
   "keywords": [
     "sqe",
     "data-analysis",
     "iqc",
-    "incoming-inspection"
+    "incoming-inspection",
+    "quality-management"
   ],
-  "author": "Qwen Assistant",
+  "author": "SQE Team",
   "license": "MIT",
   "dependencies": {
     "bcrypt": "^6.0.0",
@@ -29,6 +35,84 @@
     "xlsx": "^0.18.5"
   },
   "devDependencies": {
-    "electron": "^39.2.3"
+    "electron": "^39.2.3",
+    "electron-builder": "^24.13.3"
+  },
+  "build": {
+    "appId": "com.sqe.quality-management",
+    "productName": "SQE质量管理系统",
+    "copyright": "Copyright © 2025 SQE Team",
+    "directories": {
+      "output": "dist",
+      "buildResources": "build"
+    },
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
+      "!dist",
+      "!backup",
+      "!docs",
+      "!test-files",
+      "!资料档案",
+      "!图片",
+      "!供应商月度绩效评价",
+      "!code-backups",
+      "!logs",
+      "!*.log",
+      "!*.bat",
+      "!*.sh",
+      "!.claude",
+      "!.iflow",
+      "!.git",
+      "!.DS_Store",
+      "!nodejs-portable"
+    ],
+    "extraResources": [
+      {
+        "from": "server",
+        "to": "server",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "build/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico",
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SQE质量管理系统",
+      "include": "build/installer.nsh"
+    },
+    "mac": {
+      "target": [
+        "dmg"
+      ],
+      "icon": "build/icon.icns"
+    }
   }
 }

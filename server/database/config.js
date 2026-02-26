@@ -1,10 +1,42 @@
 const { Sequelize, Op } = require('sequelize');
 const path = require('path');
+const fs = require('fs');
 const logger = require('../utils/logger');
 
 // 确定数据库文件路径
-// 统一存储在server/data目录
-const dbPath = process.env.DB_PATH || path.join(__dirname, '../data/sqe_database.sqlite');
+// 优先使用 Electron 用户数据目录（打包环境）
+// 否则使用项目目录（开发环境）
+let dbPath;
+let uploadsPath;
+
+if (process.env.USER_DATA_PATH) {
+    // Electron 打包环境
+    const userDataDir = process.env.USER_DATA_PATH;
+    dbPath = path.join(userDataDir, 'database', 'sqe_database.sqlite');
+    uploadsPath = path.join(userDataDir, 'uploads');
+    
+    // 确保目录存在
+    const dbDir = path.dirname(dbPath);
+    if (!fs.existsSync(dbDir)) {
+        fs.mkdirSync(dbDir, { recursive: true });
+    }
+    if (!fs.existsSync(uploadsPath)) {
+        fs.mkdirSync(uploadsPath, { recursive: true });
+    }
+    
+    logger.info(`使用用户数据目录: ${userDataDir}`);
+} else if (process.env.DB_PATH) {
+    // 自定义数据库路径
+    dbPath = process.env.DB_PATH;
+    uploadsPath = path.join(path.dirname(dbPath), '..', 'uploads');
+} else {
+    // 开发环境：使用项目目录
+    dbPath = path.join(__dirname, '../data/sqe_database.sqlite');
+    uploadsPath = path.join(__dirname, '../../uploads');
+}
+
+// 导出上传路径供其他模块使用
+global.UPLOADS_PATH = uploadsPath;
 
 // 初始化 Sequelize 实例
 const sequelize = new Sequelize({
@@ -70,5 +102,6 @@ module.exports = {
     sequelize,
     Op,
     connectDB,
-    getModels: loadModels
+    getModels: loadModels,
+    getUploadsPath: () => uploadsPath
 };

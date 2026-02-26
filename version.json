@@ -1,0 +1,27 @@
+{
+  "currentVersion": "1.0.0",
+  "releaseDate": "2025-02-26",
+  "changes": [
+    "初始版本发布",
+    "工作台模块上线",
+    "供应商绩效评价功能"
+  ],
+  "updateInstructions": [
+    "1. 关闭正在运行的SQE系统",
+    "2. 运行更新脚本 update.bat",
+    "3. 等待更新完成",
+    "4. 重新启动系统"
+  ],
+  "filesToUpdate": [
+    "public/",
+    "server/routes/",
+    "server/services/",
+    "server/models/",
+    "server/index.js",
+    "electron-main.js"
+  ],
+  "filesToKeep": [
+    "server/database/",
+    "uploads/"
+  ]
+}
