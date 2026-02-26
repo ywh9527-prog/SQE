@@ -103,6 +103,7 @@
             els.totalScorePreview = document.getElementById('totalScorePreview');
             els.totalScoreGrade = document.getElementById('totalScoreGrade');
             els.submitEvaluationBtn = document.getElementById('submitEvaluationBtn');
+            els.evaluateNextBtn = document.getElementById('evaluateNextBtn');
 
             // 确认对话框元素
             els.confirmDialog = document.getElementById('confirmDialog');
@@ -173,6 +174,14 @@
                 
                 // 绑定新的事件监听器
                 els.submitEvaluationBtn.addEventListener('click', () => this.handleEvaluationSubmit());
+            }
+
+            // 评价下一个按钮事件
+            if (els.evaluateNextBtn) {
+                const newNextBtn = els.evaluateNextBtn.cloneNode(true);
+                els.evaluateNextBtn.parentNode.replaceChild(newNextBtn, els.evaluateNextBtn);
+                els.evaluateNextBtn = newNextBtn;
+                els.evaluateNextBtn.addEventListener('click', () => this.handleEvaluateNext());
             }
         },
 
@@ -1844,29 +1853,47 @@
 
                 if (result && result.success === true) {
                     console.log('📊 保存成功，进入成功分支');
-                    // 使用 Toast 通知替代 alert
+                    console.log('📊 API返回数据:', result.data);
+                    
+                    // 显示保存成功视觉反馈
+                    this.showSaveSuccessFeedback();
+                    
+                    // 标记当前实体已评价
+                    state.currentEntity.evaluated = true;
+                    
+                    // 直接用API返回的数据更新当前实体
+                    if (result.data) {
+                        state.currentEntity.totalScore = result.data.total_score;
+                        state.currentEntity.grade = result.data.grade;
+                        state.currentEntity.scores = result.data.scores;
+                        
+                        // 更新模态框内显示的总分
+                        this.updateModalScoreDisplay({
+                            totalScore: result.data.total_score,
+                            grade: result.data.grade
+                        });
+                    }
+                    
+                    // 使用 Toast 通知
                     if (window.App && window.App.Toast) {
                         window.App.Toast.success('保存成功！');
-                    } else {
-                        alert('保存成功！');
                     }
-                    this.closeEvaluationModal();
-
-                    // 根据模式选择不同的后续处理
+                    
+                    // 重新获取实体列表并更新卡片显示
+                    const entitiesResponse = await this.authenticatedFetch(`/api/evaluations/${state.currentEvaluation.id}/entities`);
+                    const entitiesResult = await entitiesResponse.json();
+                    if (entitiesResult.success) {
+                        state.entities = entitiesResult.data;
+                        // 重新渲染卡片列表以更新分数显示
+                        this.renderEntityCards();
+                        // 更新统计
+                        this.loadTypeStatistics();
+                    }
+                    
+                    // 如果是编辑模式，更新统计
                     if (state.isEditMode) {
-                        // 编辑模式：仅重新加载实体数据，不触发自动提交
-                        console.log('📊 编辑模式：重新加载实体数据，跳过自动提交');
-                        const entitiesResponse = await this.authenticatedFetch(`/api/evaluations/${state.currentEvaluation.id}/entities`);
-                        const entitiesResult = await entitiesResponse.json();
-                        if (entitiesResult.success) {
-                            state.entities = entitiesResult.data;
-                            this.renderEntityCards();
-                            this.loadTypeStatistics();
-                        }
-                    } else {
-                        // 正常模式：重新加载数据并检查是否需要自动提交
-                        await this.startEvaluation(state.currentEvaluation.id);
-                        await this.checkAndSubmitEvaluation();
+                        this.renderEntityCards();
+                        this.loadTypeStatistics();
                     }
                 } else {
                     console.log('📊 保存失败，返回数据:', result);
@@ -1886,6 +1913,130 @@
                     alert('提交失败，请重试');
                 }
             }
+        },
+
+        // 显示保存成功视觉反馈
+        showSaveSuccessFeedback() {
+            if (!els.submitEvaluationBtn) return;
+            
+            els.submitEvaluationBtn.classList.remove('btn-primary');
+            els.submitEvaluationBtn.classList.add('btn-success');
+            els.submitEvaluationBtn.innerHTML = '<i class="ph ph-check-circle"></i> 已保存';
+            
+            setTimeout(() => {
+                this.resetSaveButtonState();
+            }, 2000);
+        },
+
+        // 重置保存按钮状态
+        resetSaveButtonState() {
+            if (els.submitEvaluationBtn) {
+                els.submitEvaluationBtn.classList.remove('btn-success');
+                els.submitEvaluationBtn.classList.add('btn-primary');
+                els.submitEvaluationBtn.innerHTML = '<i class="ph ph-check"></i> 保存';
+            }
+        },
+
+        // 更新模态框内分数显示
+        updateModalScoreDisplay(entity) {
+            if (!entity) return;
+            
+            // 更新总分
+            const totalScorePreview = document.getElementById('totalScorePreview');
+            if (totalScorePreview) {
+                const totalScore = entity.totalScore || 0;
+                totalScorePreview.textContent = totalScore.toFixed(1);
+            }
+            
+            // 更新等级
+            if (els.totalScoreGrade && entity.grade) {
+                els.totalScoreGrade.textContent = entity.grade;
+                // 使用已有的等级样式类
+                els.totalScoreGrade.className = 'performance__total-score-grade ' + this.getGradeClass(entity.grade);
+            }
+        },
+
+        // 更新实体卡片状态
+        updateEntityCardStatus(entityName) {
+            if (!entityName) return;
+            
+            const allCards = [];
+            if (els.entityCardsListWithMaterial) {
+                allCards.push(...els.entityCardsListWithMaterial.querySelectorAll('.performance__entity-card'));
+            }
+            if (els.entityCardsListWithoutMaterial) {
+                allCards.push(...els.entityCardsListWithoutMaterial.querySelectorAll('.performance__entity-card'));
+            }
+            
+            allCards.forEach(card => {
+                const nameEl = card.querySelector('.performance__entity-name');
+                if (nameEl && nameEl.textContent === entityName) {
+                    card.classList.add('evaluated');
+                    const statusBadge = card.querySelector('.performance__entity-status');
+                    if (statusBadge) {
+                        statusBadge.textContent = '已评价';
+                        statusBadge.classList.remove('status-pending');
+                        statusBadge.classList.add('status-completed');
+                    }
+                }
+            });
+        },
+
+        // 处理"评价下一个"
+        async handleEvaluateNext() {
+            if (!state.currentEvaluation || !state.currentEntity) {
+                return;
+            }
+
+            // 先保存当前评价
+            await this.handleEvaluationSubmit();
+
+            // 找到下一个未评价的供应商
+            const nextEntity = this.findNextUnevaluatedEntity();
+            
+            if (nextEntity) {
+                // 重置保存按钮状态
+                this.resetSaveButtonState();
+                // 打开下一个供应商的评价
+                this.openEvaluationModal(nextEntity);
+            } else {
+                // 所有供应商都已评价完成
+                if (window.App && window.App.Toast) {
+                    window.App.Toast.success('所有供应商已评价完成！');
+                }
+                this.closeEvaluationModal();
+            }
+        },
+
+        // 查找下一个未评价的供应商
+        findNextUnevaluatedEntity() {
+            if (!state.entities || state.entities.length === 0) {
+                return null;
+            }
+
+            // 过滤当前类型的供应商
+            const filteredEntities = this.filterEntitiesByType(state.entities);
+            
+            // 找到当前供应商的索引
+            const currentIndex = filteredEntities.findIndex(
+                e => e.entityName === state.currentEntity.entityName
+            );
+
+            // 从当前位置往后找第一个未评价的
+            for (let i = currentIndex + 1; i < filteredEntities.length; i++) {
+                if (!filteredEntities[i].evaluated) {
+                    return filteredEntities[i];
+                }
+            }
+
+            // 如果后面没有，从头开始找
+            for (let i = 0; i < currentIndex; i++) {
+                if (!filteredEntities[i].evaluated) {
+                    return filteredEntities[i];
+                }
+            }
+
+            return null;
         },
 
         // 显示确认对话框

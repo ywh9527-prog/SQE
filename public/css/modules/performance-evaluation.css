@@ -1442,6 +1442,33 @@
     box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.4);
 }
 
+/* 保存成功按钮状态 */
+.performance__evaluation-modal-footer .btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: var(--white) !important;
+    box-shadow: 0 4px 6px -1px rgba(16, 185, 129, 0.3) !important;
+    animation: successPulse 0.5s ease-out;
+}
+
+@keyframes successPulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+/* 评价下一个按钮 */
+.performance__evaluation-modal-footer .btn-accent {
+    background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+    color: var(--white);
+    box-shadow: 0 4px 6px -1px rgba(245, 158, 11, 0.3);
+}
+
+.performance__evaluation-modal-footer .btn-accent:hover {
+    background: linear-gradient(135deg, var(--accent-600) 0%, var(--accent-700) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px -1px rgba(245, 158, 11, 0.4);
+}
+
 /* 质量数据展示 */
 .performance__quality-data-section {
     margin-bottom: calc(var(--border-radius-lg) * 1.5);

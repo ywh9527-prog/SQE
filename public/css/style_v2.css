@@ -61,6 +61,8 @@
 
     /* 布局 */
     --sidebar-width: 280px;
+  --sidebar-collapsed-width: 72px;
+  --sidebar-transition: 300ms cubic-bezier(0.4, 0, 0.2, 1);
     --header-height: 72px;
     --content-max-width: 1400px;
     --border-radius-sm: 6px;
@@ -114,16 +116,22 @@ body {
 }
 
 /* ============================================
-   侧边栏 (Sidebar)
+   侧边栏 (Sidebar) - 智能Hover展开
    ============================================ */
 .sidebar {
-    width: var(--sidebar-width);
+    width: var(--sidebar-collapsed-width);
     background: linear-gradient(180deg, var(--primary-900) 0%, var(--primary-800) 100%);
     display: flex;
     flex-direction: column;
     box-shadow: var(--shadow-xl);
     z-index: 100;
     position: relative;
+    transition: width var(--sidebar-transition);
+    overflow: hidden;
+}
+
+.sidebar:hover {
+    width: var(--sidebar-width);
 }
 
 /* 侧边栏头部 */
@@ -131,10 +139,19 @@ body {
     height: var(--header-height);
     display: flex;
     align-items: center;
-    padding: 0 28px;
+    justify-content: center;
+    padding: 0;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
+    white-space: nowrap;
+    overflow: hidden;
+    transition: padding var(--sidebar-transition), justify-content var(--sidebar-transition);
+}
+
+.sidebar:hover .sidebar-header {
+    padding: 0 16px;
+    justify-content: flex-start;
 }
 
 .logo-icon {
@@ -145,7 +162,6 @@ body {
     font-weight: 700;
     font-size: 16px;
     letter-spacing: 0.5px;
-    margin-right: 14px;
     box-shadow: 0 4px 12px rgba(255, 107, 53, 0.3);
 }
 
@@ -154,6 +170,20 @@ body {
     font-weight: 600;
     color: white;
     letter-spacing: -0.2px;
+    opacity: 0;
+    width: 0;
+    margin: 0;
+    transform: translateX(-10px);
+    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition), width var(--sidebar-transition);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar:hover .sidebar-header h2 {
+    opacity: 1;
+    width: auto;
+    margin-left: 14px;
+    transform: translateX(0);
 }
 
 /* 导航区域 */
@@ -177,16 +207,24 @@ body {
 .nav-item {
     display: flex;
     align-items: center;
-    padding: 12px 16px;
+    padding: 12px;
+    margin: 0 10px 6px;
     color: rgba(255, 255, 255, 0.7);
     text-decoration: none;
     border-radius: var(--border-radius-md);
-    margin-bottom: 6px;
     transition: all var(--transition-base);
     font-size: 15px;
     font-weight: 500;
     position: relative;
     overflow: hidden;
+    white-space: nowrap;
+    justify-content: center;
+}
+
+.sidebar:hover .nav-item {
+    padding: 12px 16px;
+    margin: 0 16px 6px;
+    justify-content: flex-start;
 }
 
 .nav-item::before {
@@ -203,8 +241,13 @@ body {
 
 .nav-item i {
     font-size: 22px;
+    min-width: 24px;
+    text-align: center;
+    transition: transform var(--transition-base), margin var(--sidebar-transition);
+}
+
+.sidebar:hover .nav-item i {
     margin-right: 14px;
-    transition: transform var(--transition-base);
 }
 
 .nav-item:hover {
@@ -215,6 +258,21 @@ body {
 
 .nav-item:hover i {
     transform: scale(1.1);
+}
+
+/* 导航文字标签 - 折叠时隐藏，展开时显示 */
+.nav-item span {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition);
+    white-space: nowrap;
+    display: inline-block;
+    overflow: hidden;
+}
+
+.sidebar:hover .nav-item span {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 .nav-item.active {
@@ -229,23 +287,131 @@ body {
 
 /* 侧边栏底部 */
 .sidebar-footer {
-    padding: 20px;
+    padding: 16px 0;
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     background: rgba(0, 0, 0, 0.1);
     display: flex;
     align-items: center;
+    justify-content: center;
+    gap: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: padding var(--sidebar-transition), gap var(--sidebar-transition);
+}
+
+.sidebar:hover .sidebar-footer {
+    padding: 16px 20px;
+    justify-content: flex-start;
     gap: 10px;
 }
 
 .user-info {
     display: flex;
     align-items: center;
-    padding: 12px;
+    justify-content: center;
+    padding: 0;
+    margin: 0 auto;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: transparent;
+    transition: all var(--sidebar-transition);
+    cursor: pointer;
+    flex: 0 0 auto;
+    overflow: hidden;
+}
+
+.sidebar:hover .user-info {
+    justify-content: flex-start;
+    padding: 8px 12px;
+    margin: 0;
+    width: auto;
+    height: auto;
     border-radius: var(--border-radius-md);
     background: rgba(255, 255, 255, 0.05);
-    transition: background var(--transition-base);
-    cursor: pointer;
     flex: 1;
+}
+
+.user-info .details {
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition);
+    overflow: hidden;
+}
+
+.sidebar:hover .user-info .details {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.user-info .avatar {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent-500) 0%, var(--accent-600) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 600;
+    font-size: 14px;
+    box-shadow: 0 2px 8px rgba(255, 107, 53, 0.3);
+    transition: all var(--sidebar-transition);
+    flex-shrink: 0;
+}
+
+.sidebar:hover .user-info .avatar {
+    margin-right: 10px;
+}
+
+.user-info .details {
+    opacity: 0;
+    width: 0;
+    transform: translateX(-10px);
+    transition: opacity var(--sidebar-transition), transform var(--sidebar-transition), width var(--sidebar-transition);
+    overflow: hidden;
+}
+
+.sidebar:hover .user-info .details {
+    opacity: 1;
+    width: auto;
+    transform: translateX(0);
+}
+
+.logout-btn {
+    padding: 10px;
+    border: none;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base), opacity var(--sidebar-transition), width var(--sidebar-transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.sidebar:hover .logout-btn {
+    width: auto;
+    opacity: 1;
+}
+
+.logout-btn span {
+    opacity: 0;
+    width: 0;
+    transition: opacity var(--sidebar-transition), width var(--sidebar-transition);
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.sidebar:hover .logout-btn span {
+    opacity: 1;
+    width: auto;
 }
 
 .user-info:hover {
@@ -601,5 +767,18 @@ body {
 @media (max-width: 768px) {
     .stats-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+/* 减少动画偏好支持 */
+@media (prefers-reduced-motion: reduce) {
+    .sidebar,
+    .sidebar-header h2,
+    .nav-item,
+    .nav-item i,
+    .nav-item span,
+    .sidebar-footer,
+    .user-info .details {
+        transition: none;
     }
 }
