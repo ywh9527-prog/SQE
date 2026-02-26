@@ -2063,14 +2063,18 @@
                             if (window.App && window.App.Modules && window.App.Modules.PerformanceDashboard) {
                                 const dashboard = window.App.Modules.PerformanceDashboard;
                                 
+                                // 直接调用 loadAccumulatedResults 加载数据并切换Tab
+                                // 注意：不再调用 switchTab，因为 switchTab 内部也会调用 loadAccumulatedResults 导致重复
                                 if (periodType === 'yearly') {
-                                    // 年度：切换到年度Tab，加载年度数据
-                                    dashboard.switchTab('tab-trend');
+                                    // 年度：加载年度数据
                                     dashboard.loadAccumulatedResults(year, 'purchase', 'yearly');
+                                    // 手动切换Tab样式
+                                    dashboard.switchTabStyle('tab-trend');
                                 } else {
-                                    // 月度/季度：切换到月度Tab，加载月度数据
-                                    dashboard.switchTab('tab-heatmap');
+                                    // 月度/季度：加载月度数据
                                     dashboard.loadAccumulatedResults(year, 'purchase', 'monthly');
+                                    // 手动切换Tab样式
+                                    dashboard.switchTabStyle('tab-heatmap');
                                 }
                             }
                         }, 100);

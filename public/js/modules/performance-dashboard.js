@@ -591,6 +591,42 @@
             }
         },
 
+        // 只切换Tab样式，不加载数据（用于外部调用时已经确定要加载的数据）
+        switchTabStyle(tabId) {
+            // 隐藏历史评价周期列表
+            document.getElementById('evaluationPeriodsList').classList.add('hidden');
+
+            // 显示结果界面
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.remove('hidden');
+            }
+
+            // 更新按钮样式
+            if (els.tabButtons.length > 0) {
+                els.tabButtons.forEach(btn => {
+                    const btnTabId = btn.getAttribute('data-tab');
+                    if (btnTabId === tabId) {
+                        btn.classList.add('active');
+                    } else {
+                        btn.classList.remove('active');
+                    }
+                });
+            }
+
+            // 切换内容显示
+            if (els.tabContents.length > 0) {
+                els.tabContents.forEach(content => {
+                    if (content.id === tabId) {
+                        content.classList.add('active');
+                        content.classList.remove('hidden');
+                    } else {
+                        content.classList.remove('active');
+                        content.classList.add('hidden');
+                    }
+                });
+            }
+        },
+
         // 渲染年度排名热力图
         async renderSimpleHeatmap() {
             if (!els.heatmapTable || !state.resultsData) return;
@@ -2264,6 +2300,19 @@
         // 显示年度绩效概览
         async showYearlyResults() {
             console.log('显示年度绩效概览');
+
+            // 显示结果界面
+            if (els.resultsInterface) {
+                els.resultsInterface.classList.remove('hidden');
+            }
+
+            // 更新标题
+            if (els.resultsTitle) {
+                els.resultsTitle.textContent = `${state.currentYear}年年度绩效评价`;
+            }
+            if (els.resultsPeriod) {
+                els.resultsPeriod.textContent = `${state.currentYear}年度绩效评价汇总`;
+            }
 
             // 加载年度配置
             await this.loadYearlyConfig();
