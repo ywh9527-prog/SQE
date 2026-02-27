@@ -12,7 +12,7 @@
 .vendor-config__filter select,
 .vendor-config__filter input[type="text"],
 .vendor-config__checkbox,
-.vendor-config__toggle-checkbox,
+.vendor-config__toggle-input,
 .vendor-config__status-select {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     /* 优化渲染，修复110%缩放时的模糊问题 */
@@ -54,20 +54,31 @@
 }
 
 /* 复选框交互效果 */
-.vendor-config__checkbox,
-.vendor-config__toggle-checkbox {
+.vendor-config__checkbox {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: transform, box-shadow;
 }
 
-.vendor-config__checkbox:hover,
-.vendor-config__toggle-checkbox:hover {
+.vendor-config__checkbox:hover {
     transform: scale(1.15);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.vendor-config__checkbox:active,
-.vendor-config__toggle-checkbox:active {
+.vendor-config__checkbox:active {
+    transform: scale(0.95);
+}
+
+/* 开关交互效果 */
+.vendor-config__toggle-switch {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform, box-shadow;
+}
+
+.vendor-config__toggle-switch:hover {
+    transform: scale(1.05);
+}
+
+.vendor-config__toggle-switch:active {
     transform: scale(0.95);
 }
 

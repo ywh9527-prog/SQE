@@ -265,7 +265,7 @@ class VendorConfigManager {
                     this.toggleSelectVendor(parseInt(e.target.dataset.id));
                 }
                 // 切换复选框点击（用于启用/禁用功能）
-                if (e.target.matches('.vendor-config__toggle-checkbox')) {
+                if (e.target.matches('.vendor-config__toggle-input')) {
                     this.toggleVendorConfig(parseInt(e.target.dataset.vendorId), e.target.dataset.field, e.target.checked);
                 }
                 // 删除按钮点击
@@ -546,13 +546,6 @@ class VendorConfigManager {
 
         const fieldName = field === 'enable_document_mgmt' ? '资料管理' : '绩效评价';
         const action = value ? '启用' : '禁用';
-        const message = `确定要${action}供应商"${vendor.supplier_name}"的${fieldName}功能吗？`;
-
-        if (!await window.vendorConfigUIUtils.confirm(message)) {
-            // 如果用户取消，恢复复选框状态
-            this.updateVendorRow(id, field, !value);
-            return;
-        }
 
         try {
             // 先更新要修改的字段
@@ -571,7 +564,7 @@ class VendorConfigManager {
             const result = await window.vendorConfigServices.updateConfig(id, updateData);
 
             if (result.success) {
-                window.vendorConfigUIUtils.showToast(`${action}成功`, 'success');
+                window.vendorConfigUIUtils.showToast(`已${action}供应商"${vendor.supplier_name}"的${fieldName}功能`, 'success');
                 // 只更新单个供应商行，不刷新整个列表
                 this.updateVendorRow(id, field, value);
                 // 如果状态改变了，也要更新状态选择器
@@ -1006,18 +999,26 @@ class VendorConfigManager {
                 <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
                 <td class="vendor-config__cell vendor-config__cell--document">
-                    <input type="checkbox"
-                           class="vendor-config__toggle-checkbox"
-                           data-vendor-id="${vendor.id}"
-                           data-field="enable_document_mgmt"
-                           ${vendor.enable_document_mgmt ? 'checked' : ''}>
+                    <div class="vendor-config__toggle-wrapper">
+                        <input type="checkbox"
+                               class="vendor-config__toggle-input"
+                               id="doc-toggle-${vendor.id}"
+                               data-vendor-id="${vendor.id}"
+                               data-field="enable_document_mgmt"
+                               ${vendor.enable_document_mgmt ? 'checked' : ''}>
+                        <label class="vendor-config__toggle-switch" for="doc-toggle-${vendor.id}"></label>
+                    </div>
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--performance">
-                    <input type="checkbox"
-                           class="vendor-config__toggle-checkbox"
-                           data-vendor-id="${vendor.id}"
-                           data-field="enable_performance_mgmt"
-                           ${vendor.enable_performance_mgmt ? 'checked' : ''}>
+                    <div class="vendor-config__toggle-wrapper">
+                        <input type="checkbox"
+                               class="vendor-config__toggle-input"
+                               id="perf-toggle-${vendor.id}"
+                               data-vendor-id="${vendor.id}"
+                               data-field="enable_performance_mgmt"
+                               ${vendor.enable_performance_mgmt ? 'checked' : ''}>
+                        <label class="vendor-config__toggle-switch" for="perf-toggle-${vendor.id}"></label>
+                    </div>
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--status">
                     <select class="vendor-config__status-select" data-vendor-id="${vendor.id}">

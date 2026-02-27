@@ -451,65 +451,60 @@
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.15);
 }
 
-/* 切换复选框（用于启用/禁用功能） - 苹果风格开关 */
-.vendor-config__toggle-checkbox {
-    appearance: none;
-    width: 44px;
-    height: 24px;
-    cursor: pointer;
-    border-radius: 12px;
-    transition: all var(--vendor-transition-base);
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
+/* 切换开关容器 */
+.vendor-config__toggle-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 隐藏原生checkbox */
+.vendor-config__toggle-input {
+    display: none;
+}
+
+/* 开关样式 */
+.vendor-config__toggle-switch {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    background: var(--vendor-color-gray-200);
-    border: none;
+    width: 52px;
+    height: 28px;
+    background-color: rgb(199, 199, 199);
+    border-radius: 14px;
+    cursor: pointer;
+    transition-duration: 0.3s;
 }
 
-.vendor-config__toggle-checkbox::before {
-    content: '';
+/* 开关圆形按钮 */
+.vendor-config__toggle-switch::after {
+    content: "";
     position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
+    height: 28px;
+    width: 28px;
+    left: 0px;
+    background: conic-gradient(rgb(104, 104, 104), white, rgb(104, 104, 104), white, rgb(104, 104, 104));
     border-radius: 50%;
-    background: var(--vendor-color-white);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all var(--vendor-transition-base);
+    transition-duration: 0.3s;
+    box-shadow: 3px 2px 5px rgba(8, 8, 8, 0.2);
 }
 
-.vendor-config__toggle-checkbox:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.15);
+/* 选中状态 - 按钮移动 */
+.vendor-config__toggle-input:checked + .vendor-config__toggle-switch::after {
+    transform: translateX(100%);
+    transition-duration: 0.3s;
 }
 
-.vendor-config__toggle-checkbox:hover::before {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+/* 选中状态 - 背景变色 */
+.vendor-config__toggle-input:checked + .vendor-config__toggle-switch {
+    background-color: rgb(153, 197, 151);
+    transition-duration: 0.3s;
 }
 
-.vendor-config__toggle-checkbox:checked {
-    background: linear-gradient(135deg, var(--vendor-color-success-light) 0%, var(--vendor-color-success) 100%);
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
-}
-
-.vendor-config__toggle-checkbox:checked::before {
-    left: 22px;
-    background: var(--vendor-color-white);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.vendor-config__toggle-checkbox:checked:hover {
-    background: linear-gradient(135deg, var(--vendor-color-success-lighter) 0%, var(--vendor-color-success-light) 100%);
-    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-}
-
-.vendor-config__toggle-checkbox:active {
-    transform: scale(0.95);
-}
-
-.vendor-config__toggle-checkbox:active::before {
-    width: 18px;
-    height: 18px;
+/* hover效果 */
+.vendor-config__toggle-switch:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 /* 状态徽章组件（玻璃态） */
@@ -708,67 +703,6 @@
 .vendor-config__error-subtext {
     font-size: var(--vendor-font-size-sm);
     color: var(--vendor-color-text-tertiary);
-}
-
-/* 切换复选框（用于启用/禁用功能） */
-.vendor-config__toggle-checkbox {
-    appearance: none;
-    width: 44px;
-    height: 24px;
-    cursor: pointer;
-    border-radius: 12px;
-    transition: all var(--vendor-transition-base);
-    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.1);
-    position: relative;
-    background: var(--vendor-color-gray-200);
-    border: none;
-}
-
-.vendor-config__toggle-checkbox::before {
-    content: '';
-    position: absolute;
-    top: 2px;
-    left: 2px;
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background: var(--vendor-color-white);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    transition: all var(--vendor-transition-base);
-}
-
-.vendor-config__toggle-checkbox:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.15);
-}
-
-.vendor-config__toggle-checkbox:hover::before {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.vendor-config__toggle-checkbox:checked {
-    background: linear-gradient(135deg, var(--vendor-color-primary-light) 0%, var(--vendor-color-primary) 100%);
-    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
-}
-
-.vendor-config__toggle-checkbox:checked::before {
-    left: 22px;
-    background: var(--vendor-color-white);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-}
-
-.vendor-config__toggle-checkbox:checked:hover {
-    background: linear-gradient(135deg, var(--vendor-color-primary-lighter) 0%, var(--vendor-color-primary-light) 100%);
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
-}
-
-.vendor-config__toggle-checkbox:active {
-    transform: scale(0.95);
-}
-
-.vendor-config__toggle-checkbox:active::before {
-    width: 18px;
-    height: 18px;
 }
 
 /* 状态下拉框（玻璃态） */
