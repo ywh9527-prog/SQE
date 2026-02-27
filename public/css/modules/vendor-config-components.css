@@ -458,53 +458,178 @@
     justify-content: center;
 }
 
-/* 隐藏原生checkbox */
-.vendor-config__toggle-input {
-    display: none;
-}
-
-/* 开关样式 */
-.vendor-config__toggle-switch {
+/* 飞机开关样式 - From Uiverse.io by Nawsome */
+.vendor-config__plane-switch {
+    --dot: #fff;
+    --street: #6B6D76;
+    --street-line: #A8AAB4;
+    --street-line-mid: #C0C2C8;
+    --sky-1: #60A7FA;
+    --sky-2: #2F8EFC;
+    --light-1: rgba(255, 233, 0, 1);
+    --light-2: rgba(255, 233, 0, .3);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
     display: flex;
     align-items: center;
     justify-content: center;
-    position: relative;
-    width: 52px;
-    height: 28px;
-    background-color: rgb(199, 199, 199);
-    border-radius: 14px;
-    cursor: pointer;
-    transition-duration: 0.3s;
 }
 
-/* 开关圆形按钮 */
-.vendor-config__toggle-switch::after {
+.vendor-config__plane-switch input {
+    display: none;
+}
+
+.vendor-config__plane-switch input + div {
+    -webkit-mask-image: -webkit-radial-gradient(white, black);
+    position: relative;
+    overflow: hidden;
+    width: 50px;
+    height: 25px;
+    padding: 1px;
+    border-radius: 13px;
+    background: linear-gradient(90deg, var(--street) 0%, var(--street) 25%, var(--sky-1) 75%, var(--sky-2) 100%) left var(--p, 0%) top 0;
+    background-position-x: var(--p, 0%);
+    background-size: 400% auto;
+    transition: background-position 0.6s;
+}
+
+.vendor-config__plane-switch input + div:before,
+.vendor-config__plane-switch input + div:after {
+    content: "";
+    display: block;
+    position: absolute;
+    transform: translateX(var(--s, 0));
+    transition: transform 0.3s;
+}
+
+.vendor-config__plane-switch input + div:before {
+    width: 42px;
+    right: 2px;
+    top: 4px;
+    height: 1px;
+    background: var(--street-line);
+    box-shadow: 0 16px 0 0 var(--street-line);
+}
+
+.vendor-config__plane-switch input + div:after {
+    width: 2px;
+    height: 2px;
+    border-radius: 50%;
+    left: 23px;
+    top: 1px;
+    -webkit-animation: lights2 2s linear infinite;
+    animation: lights2 2s linear infinite;
+    box-shadow: inset 0 0 0 2px var(--light-1), 0 21px 0 var(--light-1), 8px 0 0 var(--light-2), 8px 21px 0 var(--light-2), 16px 0 0 var(--light-2), 16px 21px 0 var(--light-2);
+}
+
+.vendor-config__plane-switch input + div span {
+    display: block;
+    position: absolute;
+}
+
+.vendor-config__plane-switch input + div span.street-middle {
+    top: 12px;
+    left: 21px;
+    width: 3px;
+    height: 1px;
+    transform: translateX(var(--s, 0));
+    background: var(--street-line-mid);
+    box-shadow: 5px 0 0 var(--street-line-mid), 10px 0 0 var(--street-line-mid), 15px 0 0 var(--street-line-mid), 20px 0 0 var(--street-line-mid), 25px 0 0 var(--street-line-mid);
+    transition: transform 0.3s;
+}
+
+.vendor-config__plane-switch input + div span.cloud {
+    width: 12px;
+    height: 4px;
+    border-radius: 2px;
+    background: #fff;
+    position: absolute;
+    top: var(--ct, 8px);
+    left: 100%;
+    opacity: var(--co, 0);
+    transition: opacity 0.3s;
+    -webkit-animation: clouds2 2s linear infinite var(--cd, 0s);
+    animation: clouds2 2s linear infinite var(--cd, 0s);
+}
+
+.vendor-config__plane-switch input + div span.cloud:before,
+.vendor-config__plane-switch input + div span.cloud:after {
     content: "";
     position: absolute;
-    height: 28px;
-    width: 28px;
-    left: 0px;
-    background: conic-gradient(rgb(104, 104, 104), white, rgb(104, 104, 104), white, rgb(104, 104, 104));
+    transform: translateX(var(--cx, 0));
     border-radius: 50%;
-    transition-duration: 0.3s;
-    box-shadow: 3px 2px 5px rgba(8, 8, 8, 0.2);
+    width: var(--cs, 5px);
+    height: var(--cs, 5px);
+    background: #fff;
+    bottom: 1px;
+    left: 1px;
 }
 
-/* 选中状态 - 按钮移动 */
-.vendor-config__toggle-input:checked + .vendor-config__toggle-switch::after {
-    transform: translateX(100%);
-    transition-duration: 0.3s;
+.vendor-config__plane-switch input + div span.cloud:after {
+    --cs: 6px;
+    --cx: 4px;
 }
 
-/* 选中状态 - 背景变色 */
-.vendor-config__toggle-input:checked + .vendor-config__toggle-switch {
-    background-color: rgb(153, 197, 151);
-    transition-duration: 0.3s;
+.vendor-config__plane-switch input + div span.cloud.two {
+    --ct: 20px;
+    --cd: 1s;
+    opacity: var(--co-2, 0);
 }
 
-/* hover效果 */
-.vendor-config__toggle-switch:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+.vendor-config__plane-switch input + div div {
+    display: table;
+    position: relative;
+    z-index: 1;
+    padding: 5px;
+    border-radius: 50%;
+    background: var(--dot);
+    transform: translateX(var(--x, 0));
+    transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.35, 1.2);
+}
+
+.vendor-config__plane-switch input + div div svg {
+    width: 13px;
+    height: 13px;
+    display: block;
+    color: var(--c, var(--street));
+    transition: color 0.6s;
+}
+
+.vendor-config__plane-switch input:checked + div {
+    --p: 100%;
+    --x: 25px;
+    --s: -50px;
+    --c: var(--sky-2);
+    --co: .8;
+    --co-2: .6;
+}
+
+@keyframes lights2 {
+    20%, 30% {
+        box-shadow: inset 0 0 0 2px var(--light-2), 0 21px 0 var(--light-2), 8px 0 0 var(--light-1), 8px 21px 0 var(--light-1), 16px 0 0 var(--light-2), 16px 21px 0 var(--light-2);
+    }
+    55%, 65% {
+        box-shadow: inset 0 0 0 2px var(--light-2), 0 21px 0 var(--light-2), 8px 0 0 var(--light-2), 8px 21px 0 var(--light-2), 16px 0 0 var(--light-1), 16px 21px 0 var(--light-1);
+    }
+    90%, 100% {
+        box-shadow: inset 0 0 0 2px var(--light-1), 0 21px 0 var(--light-1), 8px 0 0 var(--light-2), 8px 21px 0 var(--light-2), 16px 0 0 var(--light-2), 16px 21px 0 var(--light-2);
+    }
+}
+
+@keyframes clouds2 {
+    97% {
+        transform: translateX(-72px);
+        visibility: visible;
+    }
+    98%, 100% {
+        visibility: hidden;
+    }
+    99% {
+        transform: translateX(-72px);
+    }
+    100% {
+        transform: translateX(0);
+    }
 }
 
 /* 状态徽章组件（玻璃态） */

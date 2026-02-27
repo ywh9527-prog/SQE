@@ -12,7 +12,7 @@
 .vendor-config__filter select,
 .vendor-config__filter input[type="text"],
 .vendor-config__checkbox,
-.vendor-config__toggle-input,
+.vendor-config__plane-switch input,
 .vendor-config__status-select {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     /* 优化渲染，修复110%缩放时的模糊问题 */
@@ -68,17 +68,16 @@
     transform: scale(0.95);
 }
 
-/* 开关交互效果 */
-.vendor-config__toggle-switch {
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    will-change: transform, box-shadow;
+/* 飞机开关交互效果 */
+.vendor-config__plane-switch {
+    transition: transform 0.2s ease;
 }
 
-.vendor-config__toggle-switch:hover {
+.vendor-config__plane-switch:hover {
     transform: scale(1.05);
 }
 
-.vendor-config__toggle-switch:active {
+.vendor-config__plane-switch:active {
     transform: scale(0.95);
 }
 

@@ -264,8 +264,8 @@ class VendorConfigManager {
                 if (e.target.matches('.vendor-config__checkbox')) {
                     this.toggleSelectVendor(parseInt(e.target.dataset.id));
                 }
-                // 切换复选框点击（用于启用/禁用功能）
-                if (e.target.matches('.vendor-config__toggle-input')) {
+                // 切换开关点击（用于启用/禁用功能）
+                if (e.target.matches('.vendor-config__plane-switch input')) {
                     this.toggleVendorConfig(parseInt(e.target.dataset.vendorId), e.target.dataset.field, e.target.checked);
                 }
                 // 删除按钮点击
@@ -999,26 +999,40 @@ class VendorConfigManager {
                 <td class="vendor-config__cell vendor-config__cell--name"><i class="ph ph-building-office" style="color: var(--primary-600); margin-right: 4px;"></i>${vendor.supplier_name}</td>
                 <td class="vendor-config__cell vendor-config__cell--source">${window.vendorConfigUIUtils.renderSourceBadge(vendor.source)}</td>
                 <td class="vendor-config__cell vendor-config__cell--document">
-                    <div class="vendor-config__toggle-wrapper">
+                    <label class="vendor-config__plane-switch">
                         <input type="checkbox"
-                               class="vendor-config__toggle-input"
-                               id="doc-toggle-${vendor.id}"
                                data-vendor-id="${vendor.id}"
                                data-field="enable_document_mgmt"
                                ${vendor.enable_document_mgmt ? 'checked' : ''}>
-                        <label class="vendor-config__toggle-switch" for="doc-toggle-${vendor.id}"></label>
-                    </div>
+                        <div>
+                            <span class="street-middle"></span>
+                            <span class="cloud"></span>
+                            <span class="cloud two"></span>
+                            <div>
+                                <svg viewBox="0 0 13 13">
+                                    <path d="M1.5535 6.375L6.5 1.4285V6.375H1.5535ZM6.5 12.3215V7.375H1.5535L6.5 12.3215ZM7.5 1.4285L12.4465 6.375H7.5V1.4285ZM12.4465 7.375L7.5 12.3215V7.375H12.4465Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--performance">
-                    <div class="vendor-config__toggle-wrapper">
+                    <label class="vendor-config__plane-switch">
                         <input type="checkbox"
-                               class="vendor-config__toggle-input"
-                               id="perf-toggle-${vendor.id}"
                                data-vendor-id="${vendor.id}"
                                data-field="enable_performance_mgmt"
                                ${vendor.enable_performance_mgmt ? 'checked' : ''}>
-                        <label class="vendor-config__toggle-switch" for="perf-toggle-${vendor.id}"></label>
-                    </div>
+                        <div>
+                            <span class="street-middle"></span>
+                            <span class="cloud"></span>
+                            <span class="cloud two"></span>
+                            <div>
+                                <svg viewBox="0 0 13 13">
+                                    <path d="M1.5535 6.375L6.5 1.4285V6.375H1.5535ZM6.5 12.3215V7.375H1.5535L6.5 12.3215ZM7.5 1.4285L12.4465 6.375H7.5V1.4285ZM12.4465 7.375L7.5 12.3215V7.375H12.4465Z" fill="currentColor"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </label>
                 </td>
                 <td class="vendor-config__cell vendor-config__cell--status">
                     <select class="vendor-config__status-select" data-vendor-id="${vendor.id}">
