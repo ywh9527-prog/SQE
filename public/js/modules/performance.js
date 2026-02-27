@@ -1153,6 +1153,9 @@
         // 打开评价模态框
         async openEvaluationModal(entity) {
             state.currentEntity = entity;
+            
+            // 重置保存按钮状态
+            this.resetSaveButtonState();
 
             els.modalEntityName.textContent = entity.entityName;
             
@@ -1921,11 +1924,10 @@
             
             els.submitEvaluationBtn.classList.remove('btn-primary');
             els.submitEvaluationBtn.classList.add('btn-success');
-            els.submitEvaluationBtn.innerHTML = '<i class="ph ph-check-circle"></i> 已保存';
+            // 已勾选框 + 已保存
+            els.submitEvaluationBtn.innerHTML = '<span class="performance__save-checkbox performance__save-checkbox--checked"></span> 已保存';
             
-            setTimeout(() => {
-                this.resetSaveButtonState();
-            }, 2000);
+            // 不自动恢复，保持已保存状态
         },
 
         // 重置保存按钮状态
@@ -1933,7 +1935,8 @@
             if (els.submitEvaluationBtn) {
                 els.submitEvaluationBtn.classList.remove('btn-success');
                 els.submitEvaluationBtn.classList.add('btn-primary');
-                els.submitEvaluationBtn.innerHTML = '<i class="ph ph-check"></i> 保存';
+                // 未勾选框 + 保存
+                els.submitEvaluationBtn.innerHTML = '<span class="performance__save-checkbox performance__save-checkbox--unchecked"></span> 保存';
             }
         },
 
@@ -1995,8 +1998,6 @@
             const nextEntity = this.findNextUnevaluatedEntity();
             
             if (nextEntity) {
-                // 重置保存按钮状态
-                this.resetSaveButtonState();
                 // 打开下一个供应商的评价
                 this.openEvaluationModal(nextEntity);
             } else {

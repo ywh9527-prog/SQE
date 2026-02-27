@@ -1394,8 +1394,9 @@
     background: var(--white);
     border-top: 1px solid var(--gray-200);
     display: flex;
-    justify-content: flex-end;
-    gap: 12px;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
     animation: footer-appear 0.4s ease-out 0.5s both;
 }
 
@@ -1411,8 +1412,10 @@
 }
 
 .performance__evaluation-modal-footer .btn {
-    padding: 12px 24px;
-    font-size: 0.875rem;
+    flex: 1;
+    min-width: 120px;
+    padding: 14px 24px;
+    font-size: 0.9rem;
     font-weight: 600;
     border-radius: var(--border-radius-lg);
     transition: all 0.2s ease;
@@ -1434,12 +1437,77 @@
     background: linear-gradient(135deg, var(--primary-500) 0%, var(--primary-600) 100%);
     color: var(--white);
     box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .performance__evaluation-modal-footer .btn-primary:hover {
     background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-700) 100%);
     transform: translateY(-1px);
     box-shadow: 0 6px 8px -1px rgba(59, 130, 246, 0.4);
+}
+
+/* 保存按钮勾选框样式 */
+.performance__save-checkbox {
+    display: block;
+    position: relative;
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+/* 未勾选状态 - 空框 */
+.performance__save-checkbox--unchecked {
+    background: transparent;
+}
+
+/* 已勾选状态 - 绿色背景 + 对号 */
+.performance__save-checkbox--checked {
+    background: #10b981;
+    border-color: #10b981;
+    animation: checkAppear 0.3s ease-out;
+}
+
+/* 对号标记 */
+.performance__save-checkbox--checked::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 2px;
+    width: 5px;
+    height: 10px;
+    border: solid white;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+    animation: checkmarkDraw 0.3s ease-out;
+}
+
+@keyframes checkAppear {
+    0% {
+        background: transparent;
+        transform: scale(0.8);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        background: #10b981;
+        transform: scale(1);
+    }
+}
+
+@keyframes checkmarkDraw {
+    0% {
+        opacity: 0;
+        transform: rotate(45deg) scale(0);
+    }
+    100% {
+        opacity: 1;
+        transform: rotate(45deg) scale(1);
+    }
 }
 
 /* 保存成功按钮状态 */
