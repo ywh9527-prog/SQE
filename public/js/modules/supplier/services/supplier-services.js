@@ -193,23 +193,6 @@ class SupplierServices {
     }
   }
 
-  // ==================== 图标映射方法 ====================
-
-  /**
-   * 获取状态图标
-   * @param {string} status - 状态字符串
-   * @return {string} 对应的状态图标
-   */
-  getStatusIcon(status) {
-    const map = {
-      normal: '🟢',
-      warning: '🟡',
-      urgent: '🟠',
-      expired: '🔴'
-    };
-    return map[status] || '⚪';
-  }
-
   /**
    * 获取证书类型文本
    * @param {string} documentType - 证书类型代码或ID

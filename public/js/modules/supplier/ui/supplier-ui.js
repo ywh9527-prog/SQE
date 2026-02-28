@@ -171,23 +171,6 @@ class SupplierUI {
   }
 
   /**
-   * 渲染物料文档统计
-   * @param {Object} stat - 物料文档统计
-   * @return {string} HTML字符串
-   */
-  renderMaterialDocStat(stat) {
-    if (stat.count === 0) {
-      return '<div class="doc-cell missing">❌ 0份</div>';
-    }
-
-    return `
-      <div class="doc-cell ${stat.worstStatus}">
-        ${window.supplierServices.getStatusIcon(stat.worstStatus)} ${stat.count}份
-      </div>
-    `;
-  }
-
-  /**
    * 渲染供应商详情
    * @param {string} supplierId - 供应商ID
    * @param {Object} detailsCache - 详情数据缓存

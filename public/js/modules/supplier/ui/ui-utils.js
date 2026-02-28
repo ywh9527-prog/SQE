@@ -300,20 +300,9 @@ class SupplierUIUtils {
    * @param {string} content - 邮件内容
    */
   showEmailModal(subject, content) {
-    console.log('📧 显示邮件模态框:', { subject });
-
     const modal = document.getElementById('emailPreviewModal');
     const subjectInput = document.getElementById('emailSubject');
     const contentTextarea = document.getElementById('emailContent');
-
-    console.log('📊 邮件模态框显示前状态:', {
-      modalExists: !!modal,
-      display: modal?.style.display,
-      classList: modal ? [...modal.classList.values()] : [],
-      computedDisplay: modal ? getComputedStyle(modal).display : 'N/A',
-      computedVisibility: modal ? getComputedStyle(modal).visibility : 'N/A',
-      computedOpacity: modal ? getComputedStyle(modal).opacity : 'N/A'
-    });
 
     if (modal && subjectInput && contentTextarea) {
       subjectInput.value = subject;
@@ -321,34 +310,15 @@ class SupplierUIUtils {
 
       // 先设置 display，再操作类（顺序很重要）
       modal.style.display = 'flex';
-      console.log('📊 设置display:flex后:', {
-        display: modal.style.display,
-        computedDisplay: getComputedStyle(modal).display
-      });
-
       // 强制重置动画：先移除类，触发重排，再添加类
       modal.classList.remove('supplier-modal--active');
-      console.log('📊 移除--active类后:', {
-        classList: [...modal.classList.values()],
-        computedOpacity: getComputedStyle(modal).opacity
-      });
-
       void modal.offsetWidth;
-
       modal.classList.add('supplier-modal--active');
-      console.log('📊 添加--active类后:', {
-        classList: [...modal.classList.values()],
-        computedDisplay: getComputedStyle(modal).display,
-        computedVisibility: getComputedStyle(modal).visibility,
-        computedOpacity: getComputedStyle(modal).opacity
-      });
 
       // 设置 modal-manager 的 currentModal，支持 ESC 键关闭
       if (window.supplierUIUtils?.modalManager) {
         window.supplierUIUtils.modalManager.currentModal = 'email';
       }
-
-      console.log('✅ 邮件预览模态框已显示');
     } else {
       console.error('❌ 找不到邮件预览模态框元素');
       this.showError('邮件预览模态框加载失败');
@@ -457,37 +427,10 @@ class SupplierUIUtils {
     }
 
     // 显示模态框 - 先设置 display，再操作类（顺序很重要）
-    console.log('📊 上传模态框显示前状态:', {
-      display: modal.style.display,
-      classList: [...modal.classList.values()],
-      computedDisplay: getComputedStyle(modal).display,
-      computedVisibility: getComputedStyle(modal).visibility,
-      computedOpacity: getComputedStyle(modal).opacity
-    });
-
     modal.style.display = 'flex';
-    console.log('📊 设置display:flex后:', {
-      display: modal.style.display,
-      computedDisplay: getComputedStyle(modal).display
-    });
-
     modal.classList.remove('supplier-modal--active');
-    console.log('📊 移除--active类后:', {
-      classList: [...modal.classList.values()],
-      computedOpacity: getComputedStyle(modal).opacity
-    });
-
     void modal.offsetWidth;
-
     modal.classList.add('supplier-modal--active');
-    console.log('📊 添加--active类后:', {
-      classList: [...modal.classList.values()],
-      computedDisplay: getComputedStyle(modal).display,
-      computedVisibility: getComputedStyle(modal).visibility,
-      computedOpacity: getComputedStyle(modal).opacity
-    });
-
-    console.log('✅ 上传模态框显示完成');
   }
 
   // 初始化检测类型选择功能
@@ -610,21 +553,9 @@ class SupplierUIUtils {
    */
   hideUploadModal() {
     const modal = document.getElementById('uploadModal');
-    console.log('📊 上传模态框隐藏前状态:', {
-      display: modal?.style.display,
-      classList: modal ? [...modal.classList.values()] : [],
-      computedDisplay: modal ? getComputedStyle(modal).display : 'N/A',
-      computedOpacity: modal ? getComputedStyle(modal).opacity : 'N/A'
-    });
-
     if (modal) {
       modal.classList.remove('supplier-modal--active');
       modal.style.display = 'none';
-      console.log('📊 上传模态框隐藏后状态:', {
-        display: modal.style.display,
-        classList: [...modal.classList.values()],
-        computedDisplay: getComputedStyle(modal).display
-      });
     }
     this.uploadContext = null;
     this.selectedFile = null;
@@ -643,7 +574,6 @@ class SupplierUIUtils {
       window.supplierManager.uploadContext = this.uploadContext;
       window.supplierManager.selectedFile = this.selectedFile;
     }
-    console.log('✅ 上传模态框隐藏完成');
   }
 
   /**
