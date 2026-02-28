@@ -2,6 +2,26 @@
 console.log('🐱 API.js is loading...');
 (function () {
     const API = {
+        // 🎯 [CORE-LOGIC] 带认证的fetch请求 - 自动附加token到请求头
+        // 📍 被多个模块引用：dashboard.js, performance.js, performance-dashboard.js, performance-config.js
+        // 🔗 统一管理，避免重复代码
+        async authenticatedFetch(url, options = {}) {
+            const token = localStorage.getItem('authToken');
+            const headers = {
+                'Content-Type': 'application/json',
+                ...options.headers
+            };
+
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
+            }
+
+            return fetch(url, {
+                ...options,
+                headers
+            });
+        },
+
         // 获取工作表信息
         async getSheets(formData) {
             const response = await fetch('/api/get-sheets', {

@@ -90,23 +90,8 @@
             }
         },
 
-        // 辅助函数：发送带认证的请求
-        async authenticatedFetch(url, options = {}) {
-            const token = localStorage.getItem('authToken');
-            const headers = {
-                'Content-Type': 'application/json',
-                ...options.headers
-            };
-
-            if (token) {
-                headers['Authorization'] = `Bearer ${token}`;
-            }
-
-            return fetch(url, {
-                ...options,
-                headers
-            });
-        },
+        // 引用公共API方法
+        authenticatedFetch: window.App.API.authenticatedFetch.bind(window.App.API),
 
         // 加载所有数据
         async loadData() {
