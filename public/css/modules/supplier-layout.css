@@ -24,13 +24,7 @@
 /* 按钮样式已迁移到 supplier-interactions.css 和 supplier-core.css */
 
 /* ==================== 容器 ==================== */
-.supplier-table-container {
-    width: 100%;
-    overflow-x: auto;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
+/* supplier-table-container 基础样式统一在文件末尾"表格布局"部分，使用CSS变量 */
 
 /* ==================== 表格 ==================== */
 .supplier-table {
@@ -1342,6 +1336,7 @@
     background: #fff;
     border-radius: var(--radius-lg);
     box-shadow: var(--shadow-md);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* 基础表格样式 */

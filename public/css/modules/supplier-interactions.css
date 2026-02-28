@@ -1028,11 +1028,6 @@
     transition: background 0.2s ease;
 }
 
-/* 供应商卡片过渡 - 来自 layout 第1090行 */
-.supplier-table-container {
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 /* 通用文档项过渡 - 来自 layout 第1198行 */
 .document-item {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);

@@ -1378,12 +1378,6 @@ body .supplier-modal.supplier-modal--active {
 /* ==================== Phase 4.1: 增强样式整合 ==================== */
 /* 🎯 [MERGE] 从 supplier-modal-enhanced.css 合并的优秀样式 */
 
-/* 应用增强动画到所有模态框内容 */
-.supplier-modal__content {
-    animation: slideUpScale 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
-}
-
-
 /* 增强的文件上传区域 */
 .supplier-modal__file-upload {
     border: 2px dashed #d1d5db !important;
