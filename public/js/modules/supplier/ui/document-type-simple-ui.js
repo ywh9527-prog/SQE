@@ -76,12 +76,12 @@ class DocumentTypeSimpleUI {
     const categoryText = category === 'common' ? '通用资料' : '检测报告';
 
     return `
-      <div class="supplier-modal__overlay supplier-modal--document-type-settings" style="z-index: 1001000 !important;">
+      <div class="supplier-modal__overlay supplier-modal--document-type-settings">
         <div class="supplier-modal__content">
           <!-- 模态框头部 -->
           <div class="supplier-modal__header">
             <h3>⚙️ ${categoryText}类型设置</h3>
-            <button class="supplier-modal__close-btn" onclick="documentTypeSimpleUI.closeModal(this)">✕</button>
+            <button class="supplier-modal__close" onclick="documentTypeSimpleUI.closeModal(this)">✕</button>
           </div>
 
           <!-- 模态框主体 -->
