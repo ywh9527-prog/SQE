@@ -670,13 +670,14 @@
 
 /* 展开按钮样式 (来自 layout 第142-160行) */
 .toggle-details-btn {
-    padding: 6px 16px;
+    padding: 8px 20px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: #fff;
     border: none;
     border-radius: 6px;
     cursor: pointer;
     font-weight: 500;
+    font-size: 14px;
     transition: all 0.2s;
 }
 
@@ -777,9 +778,10 @@
             var(--primary-500) 0%,
             var(--primary-600) 100%) !important;
     border: none;
-    padding: 0.5rem 1rem;
+    padding: 8px 20px;
     border-radius: 12px;
     font-weight: 600;
+    font-size: 14px;
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
