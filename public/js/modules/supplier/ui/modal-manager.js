@@ -50,7 +50,7 @@
                 upload: document.getElementById('uploadModal'),
                 edit: document.getElementById('editModal'),
                 addMaterial: document.getElementById('addMaterialModal'),
-                email: document.getElementById('emailModal')
+                email: document.getElementById('emailPreviewModal')
             };
 
             console.log('🎭 Modal Manager: 缓存结果:', {
@@ -64,7 +64,7 @@
                 uploadModal: !!document.getElementById('uploadModal'),
                 editModal: !!document.getElementById('editModal'),
                 addMaterialModal: !!document.getElementById('addMaterialModal'),
-                emailModal: !!document.getElementById('emailModal')
+                emailPreviewModal: !!document.getElementById('emailPreviewModal')
             });
         }
 
@@ -196,12 +196,51 @@
             console.log('- 隐藏前display:', modal.style.display);
             console.log('- 隐藏前classList:', modal.className);
 
-            // 隐藏弹窗 - 移除所有可能的激活类
-            modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
-            modal.style.display = 'none';
+                        // 隐藏弹窗 - 移除所有可能的激活类
 
-            console.log('- 隐藏后display:', modal.style.display);
-            console.log('- 隐藏后classList:', modal.className);
+                        modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
+
+            
+
+                        // 🔧 修复: 清除所有show方法中设置的!important inline样式，防止残留影响下次显示
+
+                        modal.style.removeProperty('display');
+
+                        modal.style.removeProperty('position');
+
+                        modal.style.removeProperty('top');
+
+                        modal.style.removeProperty('left');
+
+                        modal.style.removeProperty('width');
+
+                        modal.style.removeProperty('height');
+
+                        modal.style.removeProperty('background');
+
+                        modal.style.removeProperty('backdrop-filter');
+
+                        modal.style.removeProperty('align-items');
+
+                        modal.style.removeProperty('justify-content');
+
+                        modal.style.removeProperty('opacity');
+
+                        modal.style.removeProperty('visibility');
+
+                        modal.style.removeProperty('z-index');
+
+            
+
+                        // 最后确保隐藏
+
+                        modal.style.setProperty('display', 'none', 'important');
+
+            
+
+                        console.log('- 隐藏后display:', modal.style.display);
+
+                        console.log('- 隐藏后classList:', modal.className);
 
             // 清除当前弹窗
             if (this.currentModal === modalName) {

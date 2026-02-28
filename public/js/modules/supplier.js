@@ -350,7 +350,7 @@ class SupplierDocumentManager {
         const editModal = document.getElementById('editModal');
         const componentModal = document.getElementById('componentManagementModal');
         const addMaterialModal = document.getElementById('addMaterialModal');
-        const emailModal = document.getElementById('emailModal');
+        const emailModal = document.getElementById('emailPreviewModal');
 
         // 检查模态框的实际显示状态（包括通过modalManager显示的情况）
         const editModalVisible = editModal && (
@@ -2322,11 +2322,23 @@ ${certType}：
     // 移除所有可能的激活类
     modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
 
-    // 强制设置隐藏样式
+    // 🔧 修复: 先清除所有可能的inline样式，防止残留
+    modal.style.removeProperty('display');
+    modal.style.removeProperty('visibility');
+    modal.style.removeProperty('opacity');
+    modal.style.removeProperty('z-index');
+    modal.style.removeProperty('position');
+    modal.style.removeProperty('top');
+    modal.style.removeProperty('left');
+    modal.style.removeProperty('width');
+    modal.style.removeProperty('height');
+    modal.style.removeProperty('background');
+    modal.style.removeProperty('backdrop-filter');
+    modal.style.removeProperty('align-items');
+    modal.style.removeProperty('justify-content');
+
+    // 最后确保隐藏
     modal.style.setProperty('display', 'none', 'important');
-    modal.style.setProperty('visibility', 'hidden', 'important');
-    modal.style.setProperty('opacity', '0', 'important');
-    modal.style.setProperty('z-index', '-1', 'important');
 
     console.log('- 隐藏后display:', modal.style.display);
     console.log('- 隐藏后classList:', modal.className);

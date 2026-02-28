@@ -311,17 +311,11 @@ class SupplierUIUtils {
       subjectInput.value = subject;
       contentTextarea.value = content;
 
-      // 显示模态框
+      // 使用CSS类控制显示，而不是inline样式
+      modal.classList.add('supplier-modal--active');
+      
+      // 确保基础样式生效（只设置必要的覆盖）
       modal.style.setProperty('display', 'flex', 'important');
-      modal.style.setProperty('z-index', '9999', 'important');
-      modal.style.setProperty('position', 'fixed', 'important');
-      modal.style.setProperty('top', '0', 'important');
-      modal.style.setProperty('left', '0', 'important');
-      modal.style.setProperty('width', '100%', 'important');
-      modal.style.setProperty('height', '100%', 'important');
-      modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-      modal.style.setProperty('align-items', 'center', 'important');
-      modal.style.setProperty('justify-content', 'center', 'important');
 
       console.log('✅ 邮件预览模态框已显示');
     } else {
@@ -336,7 +330,21 @@ class SupplierUIUtils {
   hideEmailModal() {
     const modal = document.getElementById('emailPreviewModal');
     if (modal) {
-      modal.style.display = 'none';
+      // 清除所有inline样式，让CSS变量重新生效
+      modal.style.removeProperty('display');
+      modal.style.removeProperty('z-index');
+      modal.style.removeProperty('position');
+      modal.style.removeProperty('top');
+      modal.style.removeProperty('left');
+      modal.style.removeProperty('width');
+      modal.style.removeProperty('height');
+      modal.style.removeProperty('background-color');
+      modal.style.removeProperty('align-items');
+      modal.style.removeProperty('justify-content');
+      
+      // 移除激活状态类
+      modal.classList.remove('supplier-modal--active');
+      
       console.log('✅ 邮件预览模态框已隐藏');
     }
   }
@@ -560,7 +568,20 @@ class SupplierUIUtils {
   hideUploadModal() {
     const modal = document.getElementById('uploadModal');
     if (modal) {
-      modal.style.display = 'none';
+      // 🔧 修复: 清除所有showUploadModal中设置的!important inline样式
+      modal.style.removeProperty('display');
+      modal.style.removeProperty('z-index');
+      modal.style.removeProperty('position');
+      modal.style.removeProperty('top');
+      modal.style.removeProperty('left');
+      modal.style.removeProperty('width');
+      modal.style.removeProperty('height');
+      modal.style.removeProperty('background-color');
+      modal.style.removeProperty('align-items');
+      modal.style.removeProperty('justify-content');
+      
+      // 最后确保隐藏
+      modal.style.setProperty('display', 'none', 'important');
     }
     this.uploadContext = null;
     this.selectedFile = null;
@@ -629,6 +650,19 @@ class SupplierUIUtils {
   hideAddMaterialModal() {
     const modal = document.getElementById('addMaterialModal');
     if (modal) {
+      // 🔧 修复: 清除所有showAddMaterialModal中设置的!important inline样式
+      modal.style.removeProperty('display');
+      modal.style.removeProperty('background-color');
+      modal.style.removeProperty('position');
+      modal.style.removeProperty('top');
+      modal.style.removeProperty('left');
+      modal.style.removeProperty('width');
+      modal.style.removeProperty('height');
+      modal.style.removeProperty('z-index');
+      modal.style.removeProperty('align-items');
+      modal.style.removeProperty('justify-content');
+      
+      // 最后确保隐藏
       modal.style.setProperty('display', 'none', 'important');
       console.log('✅ 新增物料模态框已隐藏');
     }
@@ -824,11 +858,23 @@ class SupplierUIUtils {
     // 移除所有可能的激活类
     modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
 
-    // 强制设置隐藏样式
+    // 🔧 修复: 先清除所有可能的inline样式，防止残留
+    modal.style.removeProperty('display');
+    modal.style.removeProperty('visibility');
+    modal.style.removeProperty('opacity');
+    modal.style.removeProperty('z-index');
+    modal.style.removeProperty('position');
+    modal.style.removeProperty('top');
+    modal.style.removeProperty('left');
+    modal.style.removeProperty('width');
+    modal.style.removeProperty('height');
+    modal.style.removeProperty('background');
+    modal.style.removeProperty('backdrop-filter');
+    modal.style.removeProperty('align-items');
+    modal.style.removeProperty('justify-content');
+
+    // 最后确保隐藏
     modal.style.setProperty('display', 'none', 'important');
-    modal.style.setProperty('visibility', 'hidden', 'important');
-    modal.style.setProperty('opacity', '0', 'important');
-    modal.style.setProperty('z-index', '-1', 'important');
 
     console.log('- 隐藏后display:', modal.style.display);
     console.log('- 隐藏后classList:', modal.className);

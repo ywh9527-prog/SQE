@@ -273,8 +273,8 @@
     /* 层级属性 - 使用变量系统 */
     z-index: var(--modal-z-index-base);
 
-    /* 动画属性 */
-    animation: fadeIn 0.3s ease-out forwards;
+    /* 🔧 修复: 移除基础类的动画，避免动画状态混乱 */
+    /* animation: fadeIn 0.3s ease-out forwards; */
 }
 
 /* 🎯 [UI-EVENT] 激活状态 - 使用更具体的选择器提高优先级 */
@@ -282,6 +282,8 @@ body .supplier-modal.supplier-modal--active {
     display: var(--modal-display-visible);
     align-items: center;
     justify-content: center;
+    /* 🔧 修复: 动画移到激活状态，确保每次显示时触发 */
+    animation: fadeIn 0.3s ease-out forwards;
 }
 
 /* 入场动画 */
