@@ -668,28 +668,6 @@
    从 supplier-layout.css 移动的按钮样式
    ============================================ */
 
-/* 展开按钮样式 (来自 layout 第142-160行) */
-.toggle-details-btn {
-    padding: 8px 20px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: #fff;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: 500;
-    font-size: 14px;
-    transition: all 0.2s;
-}
-
-.toggle-details-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
-}
-
-.toggle-details-btn:active {
-    transform: translateY(0);
-}
-
 /* 物料操作按钮样式 (来自 layout 第302-328行) */
 .material-actions .delete-material-btn {
     /* 覆盖.action-btn的圆形样式，保持现代化按钮外观 */
@@ -772,7 +750,7 @@
   background: #059669;
 }
 
-/* 展开按钮增强样式 (来自 layout 第1276-1315行) */
+/* 展开按钮样式 - 统一定义 */
 .toggle-details-btn {
     background: linear-gradient(135deg,
             var(--primary-500) 0%,
@@ -782,9 +760,14 @@
     border-radius: 12px;
     font-weight: 600;
     font-size: 14px;
+    cursor: pointer;
+    color: #fff;
     position: relative;
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* 硬件加速 */
+    will-change: transform;
+    transform: translateZ(0);
 }
 
 /* 按钮光晕效果 */
@@ -1072,8 +1055,7 @@
 
 /* 硬件加速优化 - 来自 layout 第1262行 */
 .supplier-table tbody tr,
-.document-item,
-.toggle-details-btn {
+.document-item {
     will-change: transform;
     transform: translateZ(0);
 }
