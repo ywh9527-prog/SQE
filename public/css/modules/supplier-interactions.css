@@ -922,7 +922,7 @@
     word-break: break-word;
     line-height: 1.6;
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
-    z-index: 9999;
+    z-index: 1100;
     border: 1px solid rgba(148, 163, 184, 0.2);
     text-align: left;
     animation: tooltipFadeIn 0.3s ease-out;
