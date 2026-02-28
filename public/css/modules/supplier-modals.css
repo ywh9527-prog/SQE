@@ -11,9 +11,9 @@
 /* ==================== 模态框专用变量系统 ==================== */
 /* 🎯 [CONFIG] 模态框变量 - 基于 style_v2.css 的设计令牌 */
 
-/* 模态框层级系统 - 解决 z-index !important 问题 */
+/* 模态框层级系统 - 规范的 z-index 层级 */
 :root {
-  --modal-z-index-base: 99999;
+  --modal-z-index-base: 1000;
   --modal-z-index-backdrop: calc(var(--modal-z-index-base) - 1);
   --modal-z-index-content: var(--modal-z-index-base);
 }

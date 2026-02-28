@@ -82,7 +82,7 @@ class SupplierUIUtils {
         padding: 20px 28px;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(16, 185, 129, 0.3);
-        z-index: 999999;
+        z-index: 1100;
         font-size: 16px;
         font-weight: 500;
         min-width: 380px;
@@ -141,7 +141,7 @@ class SupplierUIUtils {
         padding: 20px 28px;
         border-radius: 16px;
         box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
-        z-index: 999999;
+        z-index: 1100;
         font-size: 16px;
         font-weight: 500;
         min-width: 380px;
