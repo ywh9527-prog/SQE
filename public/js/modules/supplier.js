@@ -2297,51 +2297,15 @@ ${certType}：
    * 隐藏编辑模态框
    */
   hideEditModal() {
-    console.log('🎯 开始隐藏编辑模态框...');
-
     const modal = document.getElementById('editModal');
     if (!modal) {
       console.error('❌ 找不到编辑模态框元素');
       return;
     }
 
-    // 优先使用统一弹窗管理器隐藏模态框
-    if (window.supplierUIUtils?.modalManager) {
-      console.log('🎭 使用Modal Manager隐藏模态框');
-      const result = window.supplierUIUtils.modalManager.hide('edit');
-      console.log('🎭 Modal Manager隐藏结果:', result);
-    } else {
-      console.log('🚨 Modal Manager不可用，使用降级方案');
-    }
-
-    // 🔧 强制降级方案 - 确保模态框真正隐藏
-    console.log('🔧 执行强制隐藏操作...');
-    console.log('- 隐藏前display:', modal.style.display);
-    console.log('- 隐藏前classList:', modal.className);
-
-    // 移除所有可能的激活类
-    modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
-
-    // 🔧 修复: 先清除所有可能的inline样式，防止残留
-    modal.style.removeProperty('display');
-    modal.style.removeProperty('visibility');
-    modal.style.removeProperty('opacity');
-    modal.style.removeProperty('z-index');
-    modal.style.removeProperty('position');
-    modal.style.removeProperty('top');
-    modal.style.removeProperty('left');
-    modal.style.removeProperty('width');
-    modal.style.removeProperty('height');
-    modal.style.removeProperty('background');
-    modal.style.removeProperty('backdrop-filter');
-    modal.style.removeProperty('align-items');
-    modal.style.removeProperty('justify-content');
-
-    // 最后确保隐藏
-    modal.style.setProperty('display', 'none', 'important');
-
-    console.log('- 隐藏后display:', modal.style.display);
-    console.log('- 隐藏后classList:', modal.className);
+    // 统一使用类 + display
+    modal.classList.remove('supplier-modal--active');
+    modal.style.display = 'none';
 
     // 清理上下文
     this.editContext = null;

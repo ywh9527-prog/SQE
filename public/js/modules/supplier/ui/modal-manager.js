@@ -75,7 +75,12 @@
             // ESC键关闭弹窗
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape' && this.currentModal) {
-                    this.hide(this.currentModal);
+                    // 对于email模态框，调用ui-utils的方法以保持一致性
+                    if (this.currentModal === 'email' && window.supplierUIUtils) {
+                        window.supplierUIUtils.hideEmailModal();
+                    } else {
+                        this.hide(this.currentModal);
+                    }
                 }
             });
 
@@ -85,7 +90,12 @@
                     modal.addEventListener('click', (e) => {
                         if (e.target === modal) {
                             const modalName = this.getModalName(modal);
-                            this.hide(modalName);
+                            // 对于email模态框，调用ui-utils的方法以保持一致性
+                            if (modalName === 'email' && window.supplierUIUtils) {
+                                window.supplierUIUtils.hideEmailModal();
+                            } else {
+                                this.hide(modalName);
+                            }
                         }
                     });
                 }
@@ -114,6 +124,16 @@
                 return false;
             }
 
+            console.log(`🎭 Modal Manager: 显示弹窗 "${modalName}"`);
+            console.log(`📊 显示前状态:`, {
+                display: modal.style.display,
+                classList: [...modal.classList.values()],
+                computedDisplay: getComputedStyle(modal).display,
+                computedVisibility: getComputedStyle(modal).visibility,
+                computedOpacity: getComputedStyle(modal).opacity,
+                computedZIndex: getComputedStyle(modal).zIndex
+            });
+
             // 如果已有弹窗打开，先关闭
             if (this.currentModal && this.currentModal !== modalName) {
                 this.hide(this.currentModal);
@@ -125,37 +145,31 @@
             // 应用自定义配置
             this.applyModalConfig(modal, options);
 
-            // 🔍 调试信息 - 检查modal元素状态
-            console.log(`🎭 Modal Manager: 显示弹窗 "${modalName}" - 调试信息:`);
-            console.log('- modal元素:', modal);
-            console.log('- modal.id:', modal.id);
-            console.log('- 显示前display:', modal.style.display);
-            console.log('- 显示前classList:', modal.className);
-            console.log('- modal.offsetWidth:', modal.offsetWidth);
-            console.log('- modal.offsetHeight:', modal.offsetHeight);
+            // 先设置 display（顺序很重要：inline 样式优先级高于 CSS 类）
+            modal.style.display = 'flex';
+            console.log(`📊 设置display:flex后:`, {
+                display: modal.style.display,
+                computedDisplay: getComputedStyle(modal).display
+            });
 
-            // 显示弹窗 - 添加BEM规范的类和样式
-            modal.classList.add('supplier-modal', 'supplier-modal--active');
+            // 强制重置动画：先移除类，触发重排，再添加类
+            modal.classList.remove('supplier-modal--active');
+            console.log(`📊 移除--active类后:`, {
+                classList: [...modal.classList.values()],
+                computedDisplay: getComputedStyle(modal).display,
+                computedOpacity: getComputedStyle(modal).opacity
+            });
 
-            // 🚨 临时修复: 强制设置背景遮罩和尺寸，确保弹窗可见
-            modal.style.setProperty('display', 'flex', 'important');
-            modal.style.setProperty('position', 'fixed', 'important');
-            modal.style.setProperty('top', '0', 'important');
-            modal.style.setProperty('left', '0', 'important');
-            modal.style.setProperty('width', '100vw', 'important');
-            modal.style.setProperty('height', '100vh', 'important');
-            modal.style.setProperty('background', 'rgba(0, 0, 0, 0.6)', 'important');
-            modal.style.setProperty('backdrop-filter', 'blur(4px)', 'important');
-            modal.style.setProperty('align-items', 'center', 'important');
-            modal.style.setProperty('justify-content', 'center', 'important');
-            modal.style.setProperty('opacity', '1', 'important');
-            modal.style.setProperty('visibility', 'visible', 'important');
-            modal.style.setProperty('z-index', '99999', 'important');
+            void modal.offsetWidth; // 强制重排
 
-            console.log('- 显示后display:', modal.style.display);
-            console.log('- 显示后classList:', modal.className);
-            console.log('- 计算样式display:', window.getComputedStyle(modal).display);
-            console.log('- 计算样式visibility:', window.getComputedStyle(modal).visibility);
+            modal.classList.add('supplier-modal--active');
+            console.log(`📊 添加--active类后:`, {
+                classList: [...modal.classList.values()],
+                computedDisplay: getComputedStyle(modal).display,
+                computedVisibility: getComputedStyle(modal).visibility,
+                computedOpacity: getComputedStyle(modal).opacity,
+                computedZIndex: getComputedStyle(modal).zIndex
+            });
 
             // [修复-2025-12-27] 特殊处理编辑模态框的尺寸问题
             if (modalName === 'edit') {
@@ -192,55 +206,26 @@
                 return false;
             }
 
-            console.log(`🎭 Modal Manager: 开始隐藏弹窗 "${modalName}"`);
-            console.log('- 隐藏前display:', modal.style.display);
-            console.log('- 隐藏前classList:', modal.className);
+            console.log(`🎭 Modal Manager: 隐藏弹窗 "${modalName}"`);
+            console.log(`📊 隐藏前状态:`, {
+                display: modal.style.display,
+                classList: [...modal.classList.values()],
+                computedDisplay: getComputedStyle(modal).display,
+                computedVisibility: getComputedStyle(modal).visibility,
+                computedOpacity: getComputedStyle(modal).opacity
+            });
 
-                        // 隐藏弹窗 - 移除所有可能的激活类
+            // 隐藏弹窗 - 移除激活类，恢复display:none
+            modal.classList.remove('supplier-modal--active');
+            modal.style.display = 'none';
 
-                        modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
-
-            
-
-                        // 🔧 修复: 清除所有show方法中设置的!important inline样式，防止残留影响下次显示
-
-                        modal.style.removeProperty('display');
-
-                        modal.style.removeProperty('position');
-
-                        modal.style.removeProperty('top');
-
-                        modal.style.removeProperty('left');
-
-                        modal.style.removeProperty('width');
-
-                        modal.style.removeProperty('height');
-
-                        modal.style.removeProperty('background');
-
-                        modal.style.removeProperty('backdrop-filter');
-
-                        modal.style.removeProperty('align-items');
-
-                        modal.style.removeProperty('justify-content');
-
-                        modal.style.removeProperty('opacity');
-
-                        modal.style.removeProperty('visibility');
-
-                        modal.style.removeProperty('z-index');
-
-            
-
-                        // 最后确保隐藏
-
-                        modal.style.setProperty('display', 'none', 'important');
-
-            
-
-                        console.log('- 隐藏后display:', modal.style.display);
-
-                        console.log('- 隐藏后classList:', modal.className);
+            console.log(`📊 隐藏后状态:`, {
+                display: modal.style.display,
+                classList: [...modal.classList.values()],
+                computedDisplay: getComputedStyle(modal).display,
+                computedVisibility: getComputedStyle(modal).visibility,
+                computedOpacity: getComputedStyle(modal).opacity
+            });
 
             // 清除当前弹窗
             if (this.currentModal === modalName) {

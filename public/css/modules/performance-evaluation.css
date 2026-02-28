@@ -1425,11 +1425,14 @@
 
 .performance__evaluation-modal-footer .btn-secondary {
     background: var(--gray-100);
-    color: var(--gray-600);
+    color: var(--gray-700);
+    border: 1px solid var(--gray-300);
 }
 
 .performance__evaluation-modal-footer .btn-secondary:hover {
-    background: var(--gray-200);
+    background: var(--gray-600);
+    color: var(--white);
+    border-color: var(--gray-600);
     transform: translateY(-1px);
 }
 

@@ -12,21 +12,93 @@
 ✅ materialsRoutes 加载完成
 ✅ documentsUploadRoutes 加载完成
 ✅ suppliersSummaryRoutes 加载完成
+✅ suppliersSyncRoutes 加载完成
+✅ vendorsRoutes 加载完成
+✅ documentTypesRoutes 加载完成
+✅ systemRoutes 加载完成
+✅ evaluationsRoutes 加载完成
+✅ evaluationConfigRoutes 加载完成
+✅ dashboardRoutes 加载完成
 🔧 开始注册API路由...
 ✅ /api/* 路由已注册 (upload)
 ✅ /api/* 路由已注册 (supplier)
 ✅ /api/* 路由已注册 (comparison)
 ✅ /api/* 路由已注册 (data-source)
 ✅ /api/* 路由已注册 (supplier-search)
-✅ /api/documents/* 路由已注册 (documents)
+✅ /api/documents/upload 路由已注册 (documents-upload)
 ✅ /api/suppliers/tree 路由已注册 (suppliers-tree)
 ✅ /api/suppliers/summary 路由已注册 (suppliers-summary)
+✅ /api/suppliers/sync-from-iqc 路由已注册 (suppliers-sync)
+✅ /api/vendors/* 路由已注册 (vendors)
 ✅ /api/suppliers/* 路由已注册 (suppliers，包含 /:id)
 ✅ /api/materials/* 路由已注册 (materials)
-✅ /api/documents/upload 路由已注册 (documents-upload)
+✅ /api/documents/* 路由已注册 (documents)
+✅ /api/document-types/* 路由已注册 (document-types)
+✅ /api/system/* 路由已注册 (system)
+✅ /api/evaluation-config/* 路由已注册 (evaluation-config)
+✅ /api/evaluations/* 路由已注册 (evaluations)
+✅ /api/dashboard/* 路由已注册 (dashboard)
 🎉 所有API路由注册完成
-[32minfo[39m: 数据库连接成功 (SQLite) {"timestamp":"2025-12-03 01:23:19"}
-[32minfo[39m: 数据库路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite {"timestamp":"2025-12-03 01:23:19"}
-🗄️ 数据库连接成功，使用路径: D:\AI\IFLOW-SQE-Data-Analysis-Assistant-refactored\server\data\sqe_database.sqlite
-[32minfo[39m: 数据库模型已同步 {"timestamp":"2025-12-03 01:23:19"}
+[32minfo[39m: 数据库连接成功 (SQLite) {"timestamp":"2026-03-01 02:01:02"}
+[32minfo[39m: 数据库路径: /Users/owen/ai项目/sqe/server/data/sqe_database.sqlite {"timestamp":"2026-03-01 02:01:02"}
+🗄️ 数据库连接成功，使用路径: /Users/owen/ai项目/sqe/server/data/sqe_database.sqlite
+[32minfo[39m: 数据库模型已同步 {"timestamp":"2026-03-01 02:01:02"}
 数据库已同步
+SQE数据分析助手服务器运行在端口 8888
+访问 http://localhost:8888 开始使用
+📋 获取文档类型列表...
+✅ 返回 8 个文档类型
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+🌐 2026-02-28T18:01:03.568Z - GET /api/auth/verify
+🌐 2026-02-28T18:01:03.568Z - GET /api/auth/verify
+[32minfo[39m: 获取年度评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 📊 统计数据API调用，data_type参数: purchase {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 📊 查询条件: {"data_type":"purchase","timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 📊 按类型筛选的供应商数: 45 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+📋 获取文档类型列表...
+✅ 返回 8 个文档类型
+🌐 2026-02-28T18:01:03.748Z - GET /api/auth/verify
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+🌐 2026-02-28T18:01:03.749Z - GET /api/auth/verify
+[32minfo[39m: 获取年度评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 📊 统计数据API调用，data_type参数: purchase {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 📊 查询条件: {"data_type":"purchase","timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 📊 按类型筛选的供应商数: 45 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:03"}
+📋 获取文档类型列表...
+✅ 返回 8 个文档类型
+🌐 2026-02-28T18:01:15.664Z - GET /api/auth/verify
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:15"}
+🌐 2026-02-28T18:01:15.665Z - GET /api/auth/verify
+[32minfo[39m: 获取年度评价配置成功 {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 📊 统计数据API调用，data_type参数: purchase {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 📊 查询条件: {"data_type":"purchase","timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 📊 按类型筛选的供应商数: 45 {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 获取评价配置成功 {"timestamp":"2026-03-01 02:01:15"}
+[32minfo[39m: 周度统计: 本周(2026-02-20~2026-02-26) 数据量=0, 上周(2026-02-13~2026-02-19) 数据量=0 {"timestamp":"2026-03-01 02:01:19"}
+[32minfo[39m: 周度统计: 本周(2026-02-20~2026-02-26) 数据量=0, 上周(2026-02-13~2026-02-19) 数据量=0 {"timestamp":"2026-03-01 02:01:19"}
+[32minfo[39m: 周度统计: 本周(2026-02-20~2026-02-26) 数据量=0, 上周(2026-02-13~2026-02-19) 数据量=0 {"timestamp":"2026-03-01 02:01:19"}
+external 可用年份: [ '2025' ]
+purchase 可用年份: [ '2025' ]
+📋 获取文档类型列表...
+✅ 返回 5 个文档类型
+📋 获取文档类型列表...
+✅ 返回 5 个文档类型
+📋 获取文档类型列表...
+✅ 返回 5 个文档类型
+📋 获取文档类型列表...
+✅ 返回 5 个文档类型
+📋 获取文档类型列表...
+✅ 返回 5 个文档类型
+📋 获取文档类型列表...
+✅ 返回 5 个文档类型

@@ -302,20 +302,51 @@ class SupplierUIUtils {
   showEmailModal(subject, content) {
     console.log('📧 显示邮件模态框:', { subject });
 
-    // 使用HTML中已存在的邮件预览模态框
     const modal = document.getElementById('emailPreviewModal');
     const subjectInput = document.getElementById('emailSubject');
     const contentTextarea = document.getElementById('emailContent');
+
+    console.log('📊 邮件模态框显示前状态:', {
+      modalExists: !!modal,
+      display: modal?.style.display,
+      classList: modal ? [...modal.classList.values()] : [],
+      computedDisplay: modal ? getComputedStyle(modal).display : 'N/A',
+      computedVisibility: modal ? getComputedStyle(modal).visibility : 'N/A',
+      computedOpacity: modal ? getComputedStyle(modal).opacity : 'N/A'
+    });
 
     if (modal && subjectInput && contentTextarea) {
       subjectInput.value = subject;
       contentTextarea.value = content;
 
-      // 使用CSS类控制显示，而不是inline样式
+      // 先设置 display，再操作类（顺序很重要）
+      modal.style.display = 'flex';
+      console.log('📊 设置display:flex后:', {
+        display: modal.style.display,
+        computedDisplay: getComputedStyle(modal).display
+      });
+
+      // 强制重置动画：先移除类，触发重排，再添加类
+      modal.classList.remove('supplier-modal--active');
+      console.log('📊 移除--active类后:', {
+        classList: [...modal.classList.values()],
+        computedOpacity: getComputedStyle(modal).opacity
+      });
+
+      void modal.offsetWidth;
+
       modal.classList.add('supplier-modal--active');
-      
-      // 确保基础样式生效（只设置必要的覆盖）
-      modal.style.setProperty('display', 'flex', 'important');
+      console.log('📊 添加--active类后:', {
+        classList: [...modal.classList.values()],
+        computedDisplay: getComputedStyle(modal).display,
+        computedVisibility: getComputedStyle(modal).visibility,
+        computedOpacity: getComputedStyle(modal).opacity
+      });
+
+      // 设置 modal-manager 的 currentModal，支持 ESC 键关闭
+      if (window.supplierUIUtils?.modalManager) {
+        window.supplierUIUtils.modalManager.currentModal = 'email';
+      }
 
       console.log('✅ 邮件预览模态框已显示');
     } else {
@@ -330,22 +361,13 @@ class SupplierUIUtils {
   hideEmailModal() {
     const modal = document.getElementById('emailPreviewModal');
     if (modal) {
-      // 清除所有inline样式，让CSS变量重新生效
-      modal.style.removeProperty('display');
-      modal.style.removeProperty('z-index');
-      modal.style.removeProperty('position');
-      modal.style.removeProperty('top');
-      modal.style.removeProperty('left');
-      modal.style.removeProperty('width');
-      modal.style.removeProperty('height');
-      modal.style.removeProperty('background-color');
-      modal.style.removeProperty('align-items');
-      modal.style.removeProperty('justify-content');
-      
-      // 移除激活状态类
       modal.classList.remove('supplier-modal--active');
-      
+      modal.style.display = 'none';
       console.log('✅ 邮件预览模态框已隐藏');
+    }
+    // 清除 modal-manager 的 currentModal
+    if (window.supplierUIUtils?.modalManager) {
+      window.supplierUIUtils.modalManager.currentModal = null;
     }
   }
 
@@ -434,17 +456,38 @@ class SupplierUIUtils {
       window.supplierManager.bindFileUploadEvents();
     }
 
-    // 显示模态框 - 使用!important覆盖内联样式
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('z-index', '9999', 'important');
-    modal.style.setProperty('position', 'fixed', 'important');
-    modal.style.setProperty('top', '0', 'important');
-    modal.style.setProperty('left', '0', 'important');
-    modal.style.setProperty('width', '100%', 'important');
-    modal.style.setProperty('height', '100%', 'important');
-    modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-    modal.style.setProperty('align-items', 'center', 'important');
-    modal.style.setProperty('justify-content', 'center', 'important');
+    // 显示模态框 - 先设置 display，再操作类（顺序很重要）
+    console.log('📊 上传模态框显示前状态:', {
+      display: modal.style.display,
+      classList: [...modal.classList.values()],
+      computedDisplay: getComputedStyle(modal).display,
+      computedVisibility: getComputedStyle(modal).visibility,
+      computedOpacity: getComputedStyle(modal).opacity
+    });
+
+    modal.style.display = 'flex';
+    console.log('📊 设置display:flex后:', {
+      display: modal.style.display,
+      computedDisplay: getComputedStyle(modal).display
+    });
+
+    modal.classList.remove('supplier-modal--active');
+    console.log('📊 移除--active类后:', {
+      classList: [...modal.classList.values()],
+      computedOpacity: getComputedStyle(modal).opacity
+    });
+
+    void modal.offsetWidth;
+
+    modal.classList.add('supplier-modal--active');
+    console.log('📊 添加--active类后:', {
+      classList: [...modal.classList.values()],
+      computedDisplay: getComputedStyle(modal).display,
+      computedVisibility: getComputedStyle(modal).visibility,
+      computedOpacity: getComputedStyle(modal).opacity
+    });
+
+    console.log('✅ 上传模态框显示完成');
   }
 
   // 初始化检测类型选择功能
@@ -567,21 +610,21 @@ class SupplierUIUtils {
    */
   hideUploadModal() {
     const modal = document.getElementById('uploadModal');
+    console.log('📊 上传模态框隐藏前状态:', {
+      display: modal?.style.display,
+      classList: modal ? [...modal.classList.values()] : [],
+      computedDisplay: modal ? getComputedStyle(modal).display : 'N/A',
+      computedOpacity: modal ? getComputedStyle(modal).opacity : 'N/A'
+    });
+
     if (modal) {
-      // 🔧 修复: 清除所有showUploadModal中设置的!important inline样式
-      modal.style.removeProperty('display');
-      modal.style.removeProperty('z-index');
-      modal.style.removeProperty('position');
-      modal.style.removeProperty('top');
-      modal.style.removeProperty('left');
-      modal.style.removeProperty('width');
-      modal.style.removeProperty('height');
-      modal.style.removeProperty('background-color');
-      modal.style.removeProperty('align-items');
-      modal.style.removeProperty('justify-content');
-      
-      // 最后确保隐藏
-      modal.style.setProperty('display', 'none', 'important');
+      modal.classList.remove('supplier-modal--active');
+      modal.style.display = 'none';
+      console.log('📊 上传模态框隐藏后状态:', {
+        display: modal.style.display,
+        classList: [...modal.classList.values()],
+        computedDisplay: getComputedStyle(modal).display
+      });
     }
     this.uploadContext = null;
     this.selectedFile = null;
@@ -600,6 +643,7 @@ class SupplierUIUtils {
       window.supplierManager.uploadContext = this.uploadContext;
       window.supplierManager.selectedFile = this.selectedFile;
     }
+    console.log('✅ 上传模态框隐藏完成');
   }
 
   /**
@@ -629,17 +673,11 @@ class SupplierUIUtils {
     if (codeInput) codeInput.value = '';
     if (remarkInput) remarkInput.value = '';
 
-    // 显示模态框
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('background-color', 'rgba(0, 0, 0, 0.5)', 'important');
-    modal.style.setProperty('position', 'fixed', 'important');
-    modal.style.setProperty('top', '0', 'important');
-    modal.style.setProperty('left', '0', 'important');
-    modal.style.setProperty('width', '100%', 'important');
-    modal.style.setProperty('height', '100%', 'important');
-    modal.style.setProperty('z-index', '9999', 'important');
-    modal.style.setProperty('align-items', 'center', 'important');
-    modal.style.setProperty('justify-content', 'center', 'important');
+    // 显示模态框 - 先设置 display，再操作类（顺序很重要）
+    modal.style.display = 'flex';
+    modal.classList.remove('supplier-modal--active');
+    void modal.offsetWidth;
+    modal.classList.add('supplier-modal--active');
 
     console.log('✅ 新增物料模态框已显示');
   }
@@ -650,20 +688,8 @@ class SupplierUIUtils {
   hideAddMaterialModal() {
     const modal = document.getElementById('addMaterialModal');
     if (modal) {
-      // 🔧 修复: 清除所有showAddMaterialModal中设置的!important inline样式
-      modal.style.removeProperty('display');
-      modal.style.removeProperty('background-color');
-      modal.style.removeProperty('position');
-      modal.style.removeProperty('top');
-      modal.style.removeProperty('left');
-      modal.style.removeProperty('width');
-      modal.style.removeProperty('height');
-      modal.style.removeProperty('z-index');
-      modal.style.removeProperty('align-items');
-      modal.style.removeProperty('justify-content');
-      
-      // 最后确保隐藏
-      modal.style.setProperty('display', 'none', 'important');
+      modal.classList.remove('supplier-modal--active');
+      modal.style.display = 'none';
       console.log('✅ 新增物料模态框已隐藏');
     }
   }
@@ -825,14 +851,11 @@ class SupplierUIUtils {
     // 加载构成列表
     this.loadComponentList();
 
-    // 显示模态框 - 强制覆盖内联样式
-    console.log('📝 显示模态框，添加active类...');
+    // 显示模态框 - 先设置 display，再操作类（顺序很重要）
+    modal.style.display = 'flex';
+    modal.classList.remove('supplier-modal--active');
+    void modal.offsetWidth;
     modal.classList.add('supplier-modal--active');
-    // 强制覆盖所有隐藏样式
-    modal.style.setProperty('display', 'flex', 'important');
-    modal.style.setProperty('visibility', 'visible', 'important');
-    modal.style.setProperty('opacity', '1', 'important');
-    modal.style.setProperty('z-index', '99999', 'important');
 
     // 重新绑定关闭按钮事件（确保DOM元素存在）
     this.bindCloseButtons();
@@ -844,40 +867,14 @@ class SupplierUIUtils {
    * 隐藏构成管理模态框
    */
   hideComponentManagementModal() {
-    console.log('🎯 开始隐藏构成管理模态框...');
     const modal = document.getElementById('componentManagementModal');
     if (!modal) {
       console.error('❌ 找不到构成管理模态框元素');
       return;
     }
 
-    console.log('🔧 执行强制隐藏操作...');
-    console.log('- 隐藏前display:', modal.style.display);
-    console.log('- 隐藏前classList:', modal.className);
-
-    // 移除所有可能的激活类
-    modal.classList.remove('supplier-modal--active', 'modal-active', 'supplier-modal--visible');
-
-    // 🔧 修复: 先清除所有可能的inline样式，防止残留
-    modal.style.removeProperty('display');
-    modal.style.removeProperty('visibility');
-    modal.style.removeProperty('opacity');
-    modal.style.removeProperty('z-index');
-    modal.style.removeProperty('position');
-    modal.style.removeProperty('top');
-    modal.style.removeProperty('left');
-    modal.style.removeProperty('width');
-    modal.style.removeProperty('height');
-    modal.style.removeProperty('background');
-    modal.style.removeProperty('backdrop-filter');
-    modal.style.removeProperty('align-items');
-    modal.style.removeProperty('justify-content');
-
-    // 最后确保隐藏
-    modal.style.setProperty('display', 'none', 'important');
-
-    console.log('- 隐藏后display:', modal.style.display);
-    console.log('- 隐藏后classList:', modal.className);
+    modal.classList.remove('supplier-modal--active');
+    modal.style.display = 'none';
 
     console.log('✅ 构成管理模态框隐藏完成');
   }
