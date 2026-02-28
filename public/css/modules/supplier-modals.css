@@ -283,8 +283,8 @@ body .supplier-modal.supplier-modal--active {
     justify-content: center;
     visibility: visible;
     opacity: 1 !important;  /* 强制确保可见 - 动画可能因display切换而失效 */
-    /* 动画放在激活状态，确保每次显示时都能正确触发 */
-    animation: fadeIn 0.3s ease-out forwards;
+    /* 移除动画，避免动画from状态覆盖opacity值 */
+    /* animation: fadeIn 0.3s ease-out forwards; */
 }
 
 /* 入场动画 */
