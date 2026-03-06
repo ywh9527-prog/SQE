@@ -99,6 +99,9 @@ function initializeApp() {
     // 显示用户信息
     displayUserInfo();
 
+    // 加载版本信息
+    loadVersionInfo();
+
     // 添加登出功能
     document.getElementById('logoutBtn').addEventListener('click', logout);
 }
@@ -151,4 +154,24 @@ async function logout() {
 
     // 跳转到登录页面
     window.location.href = '/pages/login.html';
+}
+
+// 加载版本信息
+async function loadVersionInfo() {
+    try {
+        const response = await fetch('/api/system/version');
+        if (response.ok) {
+            const result = await response.json();
+            if (result.success && result.data) {
+                const versionEl = document.getElementById('appVersion');
+                if (versionEl) {
+                    versionEl.textContent = result.data.version;
+                }
+                // 存储版本信息到全局
+                window.App.version = result.data;
+            }
+        }
+    } catch (error) {
+        console.warn('加载版本信息失败:', error);
+    }
 }

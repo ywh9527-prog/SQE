@@ -1,6 +1,6 @@
 {
   "name": "sqe-quality-management-system",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "SQE质量管理系统 - 供应商质量评价管理平台",
   "main": "electron-main.js",
   "scripts": {

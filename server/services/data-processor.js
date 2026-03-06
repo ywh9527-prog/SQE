@@ -95,50 +95,45 @@ class DataProcessorService {
   }
 
   // 检测文件类型（外购/外协）
+  // 由于外协和外购列索引统一，优先根据文件名判断
   detectFileType(data, fileName) {
-    // 优先通过表头检测
-    const headerType = this.detectByHeader(data);
-    
-    // 调试日志：记录文件类型检测结果
-    const detectedType = headerType || 'purchase';
-    console.log(`[FILE-TYPE] 文件: ${fileName}, 检测类型: ${detectedType}`);
-    
-    return detectedType;
-    if (headerType !== FILE_TYPE_CONSTANTS.UNKNOWN) {
-      return headerType;
-    }
-
-    // 通过文件名检测
+    // 优先通过文件名检测
     if (fileName) {
-      if (fileName.includes('外协')) return FILE_TYPE_CONSTANTS.EXTERNAL;
-      if (fileName.includes('外购')) return FILE_TYPE_CONSTANTS.PURCHASE;
-    }
-
-    return FILE_TYPE_CONSTANTS.PURCHASE;
-  }
-
-  // 通过表头检测文件类型
-  detectByHeader(data) {
-    if (!Array.isArray(data[2])) return FILE_TYPE_CONSTANTS.UNKNOWN;
-
-    const headerRow = data[2];
-    const R_COL = headerRow[17] ? String(headerRow[17]).toLowerCase() : '';
-    const S_COL = headerRow[18] ? String(headerRow[18]).toLowerCase() : '';
-
-    if (R_COL.includes('最终') || R_COL.includes('判定')) {
-      if (S_COL.includes('处理') || S_COL.includes('方式')) {
+      const lowerFileName = fileName.toLowerCase();
+      if (lowerFileName.includes('外协')) {
+        console.log(`[FILE-TYPE] 文件: ${fileName}, 检测类型: external (根据文件名)`);
         return FILE_TYPE_CONSTANTS.EXTERNAL;
+      }
+      if (lowerFileName.includes('外购')) {
+        console.log(`[FILE-TYPE] 文件: ${fileName}, 检测类型: purchase (根据文件名)`);
+        return FILE_TYPE_CONSTANTS.PURCHASE;
       }
     }
 
+    // 通过表头检测（作为后备）
+    const headerType = this.detectByHeader(data);
+    console.log(`[FILE-TYPE] 文件: ${fileName}, 检测类型: ${headerType} (根据表头)`);
+
+    return headerType;
+  }
+
+  // 通过表头检测文件类型（后备方案）
+  detectByHeader(data) {
+    if (!Array.isArray(data[2])) return FILE_TYPE_CONSTANTS.PURCHASE;
+
+    const headerRow = data[2];
+    // 由于外协和外购列索引统一，检查S列和T列
+    const S_COL = headerRow[18] ? String(headerRow[18]).toLowerCase() : '';
     const T_COL = headerRow[19] ? String(headerRow[19]).toLowerCase() : '';
+
+    // 检查是否包含必要的列标识
     if (S_COL.includes('最终') || S_COL.includes('判定')) {
       if (T_COL.includes('处理') || T_COL.includes('方式')) {
         return FILE_TYPE_CONSTANTS.PURCHASE;
       }
     }
 
-    return FILE_TYPE_CONSTANTS.UNKNOWN;
+    return FILE_TYPE_CONSTANTS.PURCHASE;
   }
 
   // 获取列索引

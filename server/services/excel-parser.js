@@ -4,30 +4,30 @@ const { FILE_TYPE_CONSTANTS, COLUMN_INDICES, YEAR_PRIORITY } = require('../const
 
 class ExcelParserService {
   // 检测文件类型（外购/外协）
-  static detectFileType(data) {
-    if (!Array.isArray(data[2])) return FILE_TYPE_CONSTANTS.PURCHASE;
-
-    const headerRow = data[2];
-    // 使用常量定义的列索引
-    const extIndices = COLUMN_INDICES[FILE_TYPE_CONSTANTS.EXTERNAL];
-    const purIndices = COLUMN_INDICES[FILE_TYPE_CONSTANTS.PURCHASE];
-
-    const R_COL = headerRow[extIndices.RESULT] ? String(headerRow[extIndices.RESULT]).toLowerCase() : '';
-    const S_COL = headerRow[extIndices.ACTION] ? String(headerRow[extIndices.ACTION]).toLowerCase() : '';
-
-    // 检查外协格式特征
-    if (R_COL.includes('最终') || R_COL.includes('判定')) {
-      if (S_COL.includes('处理') || S_COL.includes('方式')) {
+  // 由于外协和外购列索引统一，改为根据文件名判断类型
+  static detectFileType(data, fileName = '') {
+    // 优先根据文件名判断
+    if (fileName) {
+      const lowerFileName = fileName.toLowerCase();
+      if (lowerFileName.includes('外协')) {
         return FILE_TYPE_CONSTANTS.EXTERNAL;
+      }
+      if (lowerFileName.includes('外购')) {
+        return FILE_TYPE_CONSTANTS.PURCHASE;
       }
     }
 
-    // 检查外购格式特征
-    const T_COL = headerRow[purIndices.ACTION] ? String(headerRow[purIndices.ACTION]).toLowerCase() : '';
-    // 注意：外购的S列是RESULT，T列是ACTION
-    const purS_COL = headerRow[purIndices.RESULT] ? String(headerRow[purIndices.RESULT]).toLowerCase() : '';
+    // 如果文件名无法判断，检查表头特征
+    if (!Array.isArray(data[2])) return FILE_TYPE_CONSTANTS.PURCHASE;
 
-    if (purS_COL.includes('最终') || purS_COL.includes('判定')) {
+    const headerRow = data[2];
+    const indices = COLUMN_INDICES[FILE_TYPE_CONSTANTS.PURCHASE];
+
+    // 检查S列是否包含"最终"/"判定"，T列是否包含"处理"/"方式"
+    const S_COL = headerRow[indices.RESULT] ? String(headerRow[indices.RESULT]).toLowerCase() : '';
+    const T_COL = headerRow[indices.ACTION] ? String(headerRow[indices.ACTION]).toLowerCase() : '';
+
+    if (S_COL.includes('最终') || S_COL.includes('判定')) {
       if (T_COL.includes('处理') || T_COL.includes('方式')) {
         return FILE_TYPE_CONSTANTS.PURCHASE;
       }

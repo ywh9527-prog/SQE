@@ -1,10 +1,10 @@
 {
-  "currentVersion": "1.0.0",
-  "releaseDate": "2025-02-26",
+  "currentVersion": "2.0.0",
+  "releaseDate": "2026-03-06",
   "changes": [
-    "初始版本发布",
-    "工作台模块上线",
-    "供应商绩效评价功能"
+    "版本号显示功能上线",
+    "优化软件更新机制",
+    "数据隔离配置完善"
   ],
   "updateInstructions": [
     "1. 关闭正在运行的SQE系统",

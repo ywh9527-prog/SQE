@@ -68,8 +68,8 @@ router.post('/upload', upload.single('excelFile'), async (req, res) => {
 
     ExcelParserService.validateExcelData(jsonData);
 
-    // 使用现有的检测逻辑确定数据类型
-    const dataType = ExcelParserService.detectFileType(jsonData);
+    // 使用现有的检测逻辑确定数据类型（传入文件名以支持根据文件名判断）
+    const dataType = ExcelParserService.detectFileType(jsonData, req.file.originalname);
     
     // 强制输出调试信息
     const logger = require('../utils/logger');

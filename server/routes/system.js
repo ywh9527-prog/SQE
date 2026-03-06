@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const path = require('path');
+const fs = require('fs');
 const { spawn } = require('child_process');
 
 // 认证中间件
@@ -8,6 +9,48 @@ const authenticateToken = (req, res, next) => {
     // 简化版认证，暂时允许所有请求
     next();
 };
+
+/**
+ * 获取版本信息 API
+ * 返回当前软件版本号和更新说明
+ */
+router.get('/version', authenticateToken, async (req, res) => {
+    try {
+        const versionPath = path.join(__dirname, '../../version.json');
+        
+        if (fs.existsSync(versionPath)) {
+            const versionData = JSON.parse(fs.readFileSync(versionPath, 'utf8'));
+            res.json({
+                success: true,
+                data: {
+                    version: versionData.currentVersion || '1.0.0',
+                    releaseDate: versionData.releaseDate || '',
+                    changes: versionData.changes || []
+                }
+            });
+        } else {
+            // 如果 version.json 不存在，返回默认版本
+            res.json({
+                success: true,
+                data: {
+                    version: '1.0.0',
+                    releaseDate: '',
+                    changes: []
+                }
+            });
+        }
+    } catch (error) {
+        console.error('读取版本信息失败:', error);
+        res.json({
+            success: true,
+            data: {
+                version: '1.0.0',
+                releaseDate: '',
+                changes: []
+            }
+        });
+    }
+});
 
 // 打开本地文件夹
 router.post('/open-folder', authenticateToken, async (req, res) => {
