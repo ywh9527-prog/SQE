@@ -238,6 +238,11 @@ const startServer = async () => {
     await sequelize.sync(); // 自动创建表
     console.log('数据库已同步');
 
+    // 自动创建默认管理员用户（首次启动时）
+    const AuthService = require('./services/authService');
+    await AuthService.createDefaultUser();
+    console.log('默认用户检查完成');
+
     app.listen(PORT, () => {
       console.log(`SQE数据分析助手服务器运行在端口 ${PORT}`);
       console.log(`访问 http://localhost:${PORT} 开始使用`);
