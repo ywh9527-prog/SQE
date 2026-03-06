@@ -468,9 +468,9 @@
             if (!els.yearSelector) return;
 
             const currentYear = new Date().getFullYear();
-            // 生成最近5年的选项
-            const startYear = currentYear - 4;
-            const endYear = currentYear + 1;
+            // 生成过去5年到未来5年的选项
+            const startYear = currentYear - 5;
+            const endYear = currentYear + 5;
 
             // 读取localStorage中保存的上一次年份选择
             const savedYear = localStorage.getItem('performance_year');

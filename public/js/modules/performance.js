@@ -466,8 +466,8 @@
             const currentYear = new Date().getFullYear();
             const years = [];
 
-            // 生成前后5年的年份
-            for (let i = currentYear - 5; i <= currentYear + 1; i++) {
+            // 生成过去5年到未来5年的年份
+            for (let i = currentYear - 5; i <= currentYear + 5; i++) {
                 years.push(i);
             }
 
